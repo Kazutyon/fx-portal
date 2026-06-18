@@ -10,6 +10,9 @@
 - `style.css` の `.logo` を濃紺 + シアンのAUXENロゴ枠に調整
 - `trigger_prompt.txt` も更新し、今後の自動生成日報・index再生成で新ロゴ参照が維持されるようにした
 - サイドバーのAUXENロゴ表示サイズを約30%拡大（48px → 62px、モバイルは56px）
+- GitHub Pages 反映用に commit & push 済み
+  - commit: `653374b Add AUXEN logo and favicon`
+  - push先: `origin main`
 
 ## 2026-06-18 ポータル完成・法的整備 / Claude Code
 
