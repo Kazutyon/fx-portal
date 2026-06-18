@@ -16,7 +16,7 @@
   - 表はパネル内スクロールにしてページ全体の横スクロールを避ける
 - `trigger_prompt.txt` を更新し、明朝以降の自動日報にもスマホ専用構造が入るよう指示を追加
 - ローカルHTMLをブラウザで開いてプレビュー可能な状態にした
-- 未push。ユーザー確認後にcommit/pushする
+- ユーザー確認後、commit `4e6c2da Add mobile report UX` を origin main へpush済み
 
 ## 2026-06-18 スマホ版UXローカル実装 / Codex
 
