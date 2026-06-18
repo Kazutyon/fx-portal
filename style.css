@@ -153,10 +153,44 @@ a:hover { text-decoration: underline; }
   padding: 32px;
   border: 1px solid rgba(255,255,255,.06);
   border-radius: 24px;
-  background: linear-gradient(135deg, rgba(18,28,46,.96), rgba(7,11,20,.97));
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 65% 90% at 0% 5%,  rgba(56,189,248,.07) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 55% at 98% 90%, rgba(214,168,79,.05) 0%, transparent 50%),
+    linear-gradient(150deg, rgba(16,26,44,.97) 0%, rgba(7,11,18,.98) 100%);
   box-shadow: 0 32px 80px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
   margin-bottom: 24px;
 }
+
+/* ドットグリッド */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(56,189,248,.13) 1px, transparent 1px);
+  background-size: 26px 26px;
+  opacity: .28;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 波形ライン */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0 38 C240 18 480 52 720 32 C960 12 1200 48 1440 28' fill='none' stroke='%2338bdf8' stroke-width='1.5' opacity='0.28'/%3E%3Cpath d='M0 52 C180 32 420 58 720 46 C960 30 1280 54 1440 42' fill='none' stroke='%2338bdf8' stroke-width='0.8' opacity='0.15'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* テキストを装飾の前面に */
+.hero > * { position: relative; z-index: 1; }
 
 .eyebrow {
   margin: 0 0 8px;
@@ -170,6 +204,7 @@ a:hover { text-decoration: underline; }
 .hero h2 {
   margin: 0 0 8px;
   font-size: clamp(22px, 3vw, 36px);
+  text-shadow: 0 0 48px rgba(56,189,248,.1);
 }
 
 .hero .sub { color: var(--muted); margin: 0; font-size: 14px; }
