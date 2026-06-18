@@ -8,7 +8,40 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/logo.svg">
 </head>
-<body>
+<body class="home-page">
+<header class="mobile-header">
+  <a href="index.html" class="mobile-brand">
+    <img src="assets/logo.svg" alt="AUXEN">
+    <span><strong>AUXEN</strong><em>FX Research Lab</em></span>
+  </a>
+  <a href="#mobile-menu" class="mobile-menu-button" aria-label="メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-hero">
+  <p class="eyebrow">AUXEN FX PORTAL</p>
+  <h1>AIと統計で相場を研究する</h1>
+  <p>日報・重要指標・政策金利を毎朝更新。</p>
+  <span class="mobile-update">更新: 2026-06-18 / 毎朝7時</span>
+</section>
+
+<nav class="mobile-quick-grid" id="mobile-menu" aria-label="スマホ用メニュー">
+  <a href="#latest-report"><span>最新日報</span><strong>今日の戦略</strong></a>
+  <a href="reports/2026-06-18.html#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="reports/2026-06-18.html#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#rates"><span>政策金利</span><strong>主要中銀</strong></a>
+  <a href="#reports"><span>アーカイブ</span><strong>過去日報</strong></a>
+  <a href="contact.html"><span>お問い合わせ</span><strong>連絡先</strong></a>
+</nav>
+
+<section class="mobile-latest-card" id="latest-report">
+  <p class="eyebrow">2026-06-18（木） — AI Daily Report</p>
+  <h2>FOMCタカ派翌日——BOE金利・PhillyFed</h2>
+  <p>USD/JPY ロング継続。BOE次第でGBP/USDの方向性が決まる。</p>
+  <a href="reports/2026-06-18.html" class="btn-primary">詳細を読む →</a>
+</section>
+
 <div class="app">
 
   <!-- ── Sidebar ── -->
@@ -71,11 +104,11 @@
     </header>
 
     <!-- ─── 最新日報 ─── -->
-    <div class="hub-section">
+    <div class="hub-section desktop-latest-section">
       <p class="hub-label">📰 最新日報</p>
     </div>
 
-    <div class="report-feature">
+    <div class="report-feature desktop-report-feature">
       <div class="report-feature-header">
         <div>
           <p class="eyebrow">2026-06-18（木） — AI Daily Report</p>
@@ -270,6 +303,13 @@
 
   </main>
 </div>
+
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="index.html" class="active">Home</a>
+  <a href="#latest-report">日報</a>
+  <a href="reports/2026-06-18.html#calendar">指標</a>
+  <a href="#reports">Menu</a>
+</nav>
 
 <footer class="footer">
   <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>

@@ -1,5 +1,19 @@
 # LOG
 
+## 2026-06-18 スマホ版UXローカル実装 / Codex
+
+- ChatGPT評価とユーザー方針を受け、スマホ専用レイアウトをローカル実装
+- `index.html` にスマホ専用 `mobile-header` / `mobile-hero` / `mobile-quick-grid` / `mobile-latest-card` / `mobile-bottom-nav` を追加
+- `style.css` に560px以下専用のスマホ導線CSSを追加
+  - PC版サイドバー/heroはトップページのスマホ表示のみ非表示
+  - Quick Menu 2列グリッドと最新日報CTAをファーストビュー付近に配置
+  - 下部固定ナビを追加
+- `reports/2026-06-18.html` に `#ranking` / `#calendar` アンカーを追加
+- `trigger_prompt.txt` にスマホ版UX構造維持ルールとindex生成テンプレートを反映
+- ローカルChromeで390px表示を確認し、横スクロールなしを確認
+- PC版表示も確認し、既存デザインが維持されていることを確認
+- 状態: ローカルcommit済み、ユーザープレビュー確認待ち（未push）
+
 ## 2026-06-18 スマホ版デザイン仕様書作成 / Codex
 
 - 羊飼いのFXさんのスマホ表示とFX Portalのスマホ表示を比較
