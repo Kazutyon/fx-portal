@@ -100,7 +100,18 @@ a:hover { text-decoration: underline; }
   font-size: 11px;
 }
 
-.side-nav { display: grid; gap: 4px; }
+.side-nav { display: grid; gap: 2px; }
+
+/* ── Nav icon ── */
+.nav-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  opacity: .7;
+  transition: opacity .15s;
+}
+.side-nav a:hover .nav-icon,
+.side-nav a.active .nav-icon { opacity: 1; }
 
 .side-nav a {
   color: var(--muted);
