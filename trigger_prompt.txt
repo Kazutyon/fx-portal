@@ -105,10 +105,10 @@ ls reports/ | sort -r | head -20
 
 ### 6-2: AUXENデザインでHTMLを生成
 
-**必須**: まず Bash で `cat reports/2026-06-17.html` を実行してデザインテンプレートを把握すること。その後、同じ HTML 構造で今日のレポートを Python で生成する。
+**必須**: まず Bash で `cat reports/2026-06-18.html` を実行してデザインテンプレートを把握すること。その後、同じ HTML 構造で今日のレポートを Python で生成する。
 
 使用するCSSクラス（style.cssに存在するもの）:
-.app / .sidebar / .brand / .logo / .side-nav / .nav-section / .main / .hero / .eyebrow / .sub / .date-card / .summary-grid / .card / .content-grid / .panel / .panel-head / .report-body / .topic / .topic-title / .handover / .rank-badge / .archive-list / .badge-live / .badge-important / .fx-table / .trend-up / .trend-down / .trend-range
+.app / .sidebar / .brand / .logo / .side-nav / .nav-section / .main / .hero / .eyebrow / .sub / .date-card / .summary-grid / .card / .content-grid / .panel / .panel-head / .report-body / .topic / .topic-title / .handover / .rank-badge / .archive-list / .badge-live / .badge-important / .fx-table / .trend-up / .trend-down / .trend-range / .mobile-header / .mobile-brand / .mobile-menu-button / .mobile-report-hero / .mobile-report-jump-grid / .mobile-bottom-nav
 
 使用禁止クラス（style.cssに存在しない）: .site-header / .container / .layout / .main-content / .callout / .section / .section-heading
 
@@ -131,17 +131,36 @@ ls reports/ | sort -r | head -20
     </div>
   </header>
 
+#### 日報ページのスマホ版UX構造厳守
+- `<body>` には `class="report-page"` を付ける
+- `div.app` の前に、スマホ専用の `.mobile-header` / `.mobile-report-hero` / `.mobile-report-jump-grid` を必ず配置する
+- `.mobile-header` は `../assets/logo.svg` を使い、ロゴクリック先は `../index.html` にする
+- `.mobile-report-hero` は日報タイトル、1文サマリーを入れる。高さはCSSでコンパクトにするため、PC版 `.hero` を流用しない
+- `.mobile-report-jump-grid` は2列で「一言まとめ / 注目ポイント / 通貨ランキング / 重要指標 / 前日振り返り / ポータル」を含める
+- `.summary-grid` には `id="summary"` を付ける
+- 今日の注目ポイント panel には `id="points"` を付ける
+- 通貨ランキングを含む panel には `id="ranking"` を付ける
+- 前日振り返り panel.wide には `id="review"` を付ける
+- 経済指標カレンダー panel.full には `id="calendar"` を付ける
+- `footer.footer` の直前に `.mobile-bottom-nav` を必ず入れ、Home=`../index.html`、日報=`#summary`、指標=`#calendar`、Menu=`#report-menu` にする
+- PC版の `.sidebar` / `.hero` / `.summary-grid` / `.content-grid` は維持する。CSSでスマホだけ出し分ける
+
 生成ルール:
-- 構造は 2026-06-17.html と完全一致させること（div.app > aside.sidebar + main.main）
+- 構造は 2026-06-18.html と完全一致させること（body.report-page > mobile sections + div.app > aside.sidebar + main.main）
 - sidebar には brand/logo/nav/archive-list を含める
 - main には hero/summary-grid(4枚)/content-grid(panels) を含める
 - summary-grid は 4枚のカード（一言まとめ・最注目通貨・Market Risk・重要指標件数）
 - content-grid は panel x2 + panel.wide + panel.full の構成
-- 日報ページの通貨ランキングを含む panel には `id="ranking"` を付ける
-- 日報ページの経済指標カレンダーを含む panel.full には `id="calendar"` を付ける
+- 日報ページのアンカーIDは上記「日報ページのスマホ版UX構造厳守」に従う
 - 月曜日のみ: panel.full でファンダメンタルズテーブルを追加
 - スクリプトはファイルに書き出してから実行すること（ヒアドキュメント方式は不可）
-- </div><!-- /content-grid --> の直後、</body>の前に以下のフッターを必ず挿入する:
+- </div><!-- /content-grid --> の直後、</body>の前に以下のスマホ下部ナビとフッターを必ず挿入する:
+  <nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+    <a href="../index.html">Home</a>
+    <a href="#summary" class="active">日報</a>
+    <a href="#calendar">指標</a>
+    <a href="#report-menu">Menu</a>
+  </nav>
   <footer class="footer">
     <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
     <div class="footer-links">

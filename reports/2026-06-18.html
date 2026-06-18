@@ -8,7 +8,35 @@
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/logo.svg">
 </head>
-<body>
+<body class="report-page">
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 2026-06-18（木）</h1>
+  <p>FOMCタカ派翌日。BOE金利・PhillyFedを軸にドル高継続を確認。</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
 <div class="app">
 
   <!-- ── Sidebar ── -->
@@ -64,7 +92,7 @@
     </header>
 
     <!-- Summary cards -->
-    <div class="summary-grid">
+    <div class="summary-grid" id="summary">
       <div class="card highlight">
         <p class="label">一言まとめ</p>
         <h3>USD/JPY ロング継続</h3>
@@ -91,7 +119,7 @@
     <div class="content-grid">
 
       <!-- 注目ポイント -->
-      <div class="panel" id="ranking">
+      <div class="panel" id="points">
         <div class="panel-head">
           <h3>⚔️ 今日の注目ポイント</h3>
           <span>経済指標・イベント</span>
@@ -127,7 +155,7 @@
       </div>
 
       <!-- 市場環境 + 通貨ランキング -->
-      <div class="panel">
+      <div class="panel" id="ranking">
         <div class="panel-head">
           <h3>🌏 今日の市場環境</h3>
           <span>地合い・センチメント</span>
@@ -176,7 +204,7 @@
       </div>
 
       <!-- 前日振り返り（wide） -->
-      <div class="panel wide">
+      <div class="panel wide" id="review">
         <div class="panel-head">
           <h3>📰 前日の相場振り返り（2026-06-17）</h3>
           <span>昨日の主要トピック</span>
@@ -226,6 +254,13 @@
     </div><!-- /content-grid -->
   </main>
 </div>
+
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
 
 <footer class="footer">
   <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>

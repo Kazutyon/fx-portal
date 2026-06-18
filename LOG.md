@@ -1,5 +1,23 @@
 # LOG
 
+## 2026-06-19 日報ページのスマホUXローカル実装 / Codex
+
+- ユーザー提示スクショで、日報ページがスマホ表示時にPC用サイドバー/大型hero寄りで読みにくいことを確認
+- `reports/2026-06-18.html` にスマホ専用 `mobile-header` / `mobile-report-hero` / `mobile-report-jump-grid` / `mobile-bottom-nav` を追加
+- 日報内アンカーを整理
+  - `#summary`: 一言まとめカード
+  - `#points`: 今日の注目ポイント
+  - `#ranking`: 通貨ランキング
+  - `#calendar`: 経済指標カレンダー
+  - `#review`: 前日振り返り
+- `style.css` に560px以下の日報専用CSSを追加
+  - スマホではPC用サイドバー/PC heroを非表示
+  - 日報heroを小型化し、2列ジャンプメニューを表示
+  - 表はパネル内スクロールにしてページ全体の横スクロールを避ける
+- `trigger_prompt.txt` を更新し、明朝以降の自動日報にもスマホ専用構造が入るよう指示を追加
+- ローカルHTMLをブラウザで開いてプレビュー可能な状態にした
+- 未push。ユーザー確認後にcommit/pushする
+
 ## 2026-06-18 スマホ版UXローカル実装 / Codex
 
 - ChatGPT評価とユーザー方針を受け、スマホ専用レイアウトをローカル実装
