@@ -1,5 +1,18 @@
 # LOG
 
+## 2026-06-18 スマホ版デザイン仕様書作成 / Codex
+
+- 羊飼いのFXさんのスマホ表示とFX Portalのスマホ表示を比較
+- PC版を縮めるだけではなく、スマホ専用の情報導線が必要と判断
+- `MOBILE-DESIGN-SPEC.md` を作成
+  - スマホ版のファーストビュー構成
+  - Quick Menu Grid
+  - Latest Report Card
+  - Sticky Bottom Nav
+  - 実装ステップと受け入れ条件を整理
+- Claudeレビュー用の仕事票を作成
+  - `docs/ai-team-queue/active/task-2026-06-18-fx-portal-mobile-design-review-claude.md`
+
 ## 2026-06-18 hero原本比率への最終調整 / Codex
 
 - ユーザー提示の原本画像に合わせて `style.css` の hero を微調整
