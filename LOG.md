@@ -12,7 +12,7 @@
 - `trigger_prompt.txt` にスマホ版UX構造維持ルールとindex生成テンプレートを反映
 - ローカルChromeで390px表示を確認し、横スクロールなしを確認
 - PC版表示も確認し、既存デザインが維持されていることを確認
-- 状態: ローカルcommit済み、ユーザープレビュー確認待ち（未push）
+- commit: `e1d3013 Add mobile UX layout` / push to origin main 済み
 
 ## 2026-06-18 スマホ版デザイン仕様書作成 / Codex
 

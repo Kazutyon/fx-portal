@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-06-18 / Codex（スマホ版UXローカル実装・プレビュー待ち）
+最終更新: 2026-06-19 / Codex（スマホ版UX実装・push済み）
 状態: active
 
 ## 現在の状態
@@ -16,15 +16,15 @@ Phase 1 完了。デザインも一通り完成。
 - サイドバー: 絵文字 → SVGアウトラインアイコンに刷新済み（全9ページ）
 - hero: `assets/hero-wave.png` 背景 + 暗色オーバーレイ + 粒子ドット + 小型 date-card。原本画像に近い横長比率へ調整済み。
 - スマホ版デザイン仕様書: `MOBILE-DESIGN-SPEC.md` 作成済み
-- スマホ版UX: `index.html` / `style.css` / `trigger_prompt.txt` にローカル実装済み。390pxプレビュー確認済み、ローカルcommit済み・ユーザーOK後にpush予定。
+- スマホ版UX: `index.html` / `style.css` / `trigger_prompt.txt` に実装済み。390pxプレビュー確認済み。commit `e1d3013` を origin main へpush済み。
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中
 
 ## 次の一手
 
-1. ユーザーがスマホ版ローカルプレビューを確認し、OKならpushする
-2. 必要なら日報ページ側のスマホ専用導線も追加設計する
-3. 翌朝の自動日報生成を確認（正常なら `reports/YYYY-MM-DD.html` が追加される）
+1. 翌朝の自動日報生成を確認（正常なら `reports/YYYY-MM-DD.html` が追加される）
+2. 自動生成後の `index.html` でスマホ版UX構造が維持されているか確認
+3. 必要なら日報ページ側のスマホ専用導線も追加設計する
 
 ## 残件・検討中
 
@@ -38,4 +38,4 @@ Phase 1 完了。デザインも一通り完成。
 明朝7時の自動実行を確認すること。
 正常なら新規日報ファイルが `reports/YYYY-MM-DD.html` として追加され、`index.html` の最新日報カードとアーカイブが更新される。
 新規日報の hero が `assets/hero-wave.png` 背景 + `.date-card` 付きで生成されているか確認する。
-スマホ版トップはローカル実装・commit済み。次はユーザープレビューOKを得てからpushする。
+スマホ版トップは実装・commit・push済み。次は自動生成後にスマホ版UX構造が維持されているか確認する。
