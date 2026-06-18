@@ -57,7 +57,7 @@ a:hover { text-decoration: underline; }
 .brand {
   display: flex;
   gap: 14px;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 32px;
   padding-bottom: 24px;
   border-bottom: 1px solid rgba(255,255,255,.04);
@@ -149,19 +149,20 @@ a:hover { text-decoration: underline; }
 .hero {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 32px;
-  min-height: 330px;
-  padding: 58px 52px;
+  align-items: flex-start;
+  gap: 24px;
+  min-height: 276px;
+  padding: 48px 48px;
   border: 1px solid rgba(98,139,190,.42);
   border-radius: 24px;
   position: relative;
   overflow: hidden;
   background:
-    linear-gradient(90deg, rgba(5,12,24,.95) 0%, rgba(5,12,24,.88) 45%, rgba(5,12,24,.64) 100%),
+    linear-gradient(180deg, rgba(5,12,24,.96) 0%, rgba(5,12,24,.88) 55%, rgba(5,12,24,.46) 100%),
+    linear-gradient(90deg, rgba(5,12,24,.40) 0%, rgba(5,12,24,.22) 58%, rgba(5,12,24,.10) 100%),
     radial-gradient(ellipse 80% 90% at 0% 0%, rgba(56,189,248,.16) 0%, transparent 52%),
     radial-gradient(ellipse 58% 70% at 88% 10%, rgba(56,189,248,.10) 0%, transparent 56%),
-    url("assets/hero-wave.png") center bottom / cover no-repeat,
+    url("assets/hero-wave.png") center calc(100% - 2px) / 112% auto no-repeat,
     linear-gradient(150deg, rgba(8,16,31,.98) 0%, rgba(3,8,16,.99) 100%);
   box-shadow: 0 36px 90px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06);
   margin-bottom: 24px;
@@ -195,20 +196,24 @@ a:hover { text-decoration: underline; }
 
 /* テキストを装飾の前面に */
 .hero > * { position: relative; z-index: 1; }
-.hero > div:first-child { max-width: 720px; }
+.hero > div:first-child {
+  flex: 1 1 auto;
+  max-width: none;
+  min-width: 0;
+}
 
 .eyebrow {
-  margin: 0 0 22px;
+  margin: 0 0 20px;
   color: #f2b744;
-  font-size: 17px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: .16em;
+  letter-spacing: .13em;
   text-transform: uppercase;
 }
 
 .hero h2 {
-  margin: 0 0 22px;
-  font-size: clamp(34px, 4.6vw, 56px);
+  margin: 0 0 14px;
+  font-size: clamp(30px, 3vw, 44px);
   line-height: 1.18;
   letter-spacing: 0;
   text-shadow: 0 0 46px rgba(56,189,248,.22), 0 8px 24px rgba(0,0,0,.42);
@@ -217,15 +222,16 @@ a:hover { text-decoration: underline; }
 .hero .sub {
   color: #b5c4d8;
   margin: 0;
-  font-size: 23px;
-  line-height: 1.62;
+  font-size: 16px;
+  line-height: 1.45;
 }
 
 .date-card {
-  min-width: 268px;
-  align-self: center;
-  padding: 34px 28px;
-  border-radius: 26px;
+  width: 168px;
+  min-width: 160px;
+  align-self: flex-start;
+  padding: 16px 16px;
+  border-radius: 17px;
   background: linear-gradient(180deg, rgba(19,29,46,.82), rgba(12,19,31,.82));
   border: 1px solid rgba(148,163,184,.32);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 24px 56px rgba(0,0,0,.28);
@@ -235,7 +241,7 @@ a:hover { text-decoration: underline; }
 .date-card span {
   display: block;
   color: #aebbd0;
-  font-size: 17px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: .10em;
   text-transform: uppercase;
@@ -243,8 +249,8 @@ a:hover { text-decoration: underline; }
 
 .date-card strong {
   display: block;
-  margin-top: 18px;
-  font-size: 30px;
+  margin-top: 9px;
+  font-size: 19px;
   color: #f2b744;
   letter-spacing: .02em;
 }
@@ -252,9 +258,9 @@ a:hover { text-decoration: underline; }
 .date-card em {
   display: block;
   font-style: normal;
-  font-size: 19px;
+  font-size: 11px;
   color: #b5c4d8;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 /* ── Summary cards ── */

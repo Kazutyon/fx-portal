@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-06-18 / Codex（hero背景画像アセット化・自動生成指示更新）
+最終更新: 2026-06-18 / Codex（hero原本比率への最終調整）
 状態: active
 
 ## 現在の状態
@@ -14,7 +14,7 @@ Phase 1 完了。デザインも一通り完成。
 
 - GitHub Pages 稼働中: https://kazutyon.github.io/fx-portal/
 - サイドバー: 絵文字 → SVGアウトラインアイコンに刷新済み（全9ページ）
-- hero: `assets/hero-wave.png` 背景 + 暗色オーバーレイ + 粒子ドット + 右側 date-card に更新済み。見出し「AIと統計で相場を研究する」
+- hero: `assets/hero-wave.png` 背景 + 暗色オーバーレイ + 粒子ドット + 小型 date-card。原本画像に近い横長比率へ調整済み。
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中
 
