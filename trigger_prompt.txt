@@ -120,19 +120,276 @@ ls reports/ | sort -r | head -20
 - content-grid は panel x2 + panel.wide + panel.full の構成
 - 月曜日のみ: panel.full でファンダメンタルズテーブルを追加
 - スクリプトはファイルに書き出してから実行すること（ヒアドキュメント方式は不可）
+- </div><!-- /content-grid --> の直後、</body>の前に以下のフッターを必ず挿入する:
+  <footer class="footer">
+    <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+    <div class="footer-links">
+      <a href="../about.html">About</a>
+      <a href="../disclaimer.html">免責事項</a>
+      <a href="../privacy.html">プライバシーポリシー</a>
+      <a href="../terms.html">利用規約</a>
+      <a href="../contact.html">お問い合わせ</a>
+    </div>
+  </footer>
 
-### 6-3: index.html を更新（最新レポートへリダイレクト）
-```bash
-python3 -c "
-date_str = 'YYYY-MM-DD'
-idx = '''<!DOCTYPE html>
-<html lang=\"ja\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
-<title>AUXEN FX Portal</title><link rel=\"stylesheet\" href=\"style.css\">
-<meta http-equiv=\"refresh\" content=\"0; url=reports/''' + date_str + '''.html\">
-</head><body><p style=\"color:#ccc;font-family:sans-serif;margin:40px auto;text-align:center;\">最新レポートへ移動中... <a href=\"reports/''' + date_str + '''.html\" style=\"color:#4f9eff;\">こちら</a></p></body></html>'''
-open('index.html','w',encoding='utf-8').write(idx)
-print('✅ index.html 更新完了')
-"
+### 6-3: index.html を更新（ポータルダッシュボード再生成）
+
+Step 1〜5で収集したデータを使って、ポータルの index.html を丸ごと再生成する。
+`generate_index.py` として書き出してから実行すること。
+
+**スクリプト内の変数を今日の実際の値に必ず差し替えること：**
+- TODAY: Step 1 で取得した YYYY-MM-DD
+- WEEKDAY: Step 1 で取得した曜日（月〜金）
+- CARD1_H3: summary-grid カード1（一言まとめ）の h3 テキスト
+- CARD1_P: カード1の説明文
+- CARD2_H3: カード2（最注目通貨）の h3 テキスト
+- CARD2_P: カード2の説明文
+- RISK_LEVEL: HIGH / MEDIUM / LOW
+- RISK_COLOR: HIGH=var(--yellow) / MEDIUM=var(--orange) / LOW=var(--green)
+- RISK_P: Market Risk の説明文
+- CARD4_H3: 重要指標件数（例: "3件"）
+- CARD4_P: 重要指標名（例: "BOE / PhillyFed / 失業保険"）
+- HERO_SUB: 日報 hero の .sub テキスト（1〜2文）
+- FRB_RATE / FRB_STANCE: FRB金利とスタンス（月曜のみ最新値に更新、平日はそのまま）
+- BOE_RATE / BOE_STANCE: BOE金利とスタンス
+- BOJ_RATE / BOJ_STANCE: 日銀金利とスタンス
+
+```python
+import glob, os
+
+# ── 今日のデータ（実際の値に差し替え） ──────────────────
+TODAY      = 'YYYY-MM-DD'
+WEEKDAY    = '曜'
+CARD1_H3   = '一言まとめH3'
+CARD1_P    = '一言まとめ説明'
+CARD2_H3   = '最注目通貨ペア 🇺🇸🇯🇵'
+CARD2_P    = '最注目通貨の理由'
+RISK_LEVEL = 'HIGH'
+RISK_COLOR = 'var(--yellow)'
+RISK_P     = 'Market Riskの説明'
+CARD4_H3   = 'N件'
+CARD4_P    = '重要指標名'
+HERO_SUB   = '日報サブタイトル1〜2文'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立';   BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化'; BOJ_COLOR = 'var(--blue)'
+# ────────────────────────────────────────────────────────
+
+# アーカイブ一覧（reportsフォルダを自動取得）
+report_files = sorted(glob.glob('reports/*.html'), reverse=True)
+DAYS = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
+
+def make_archive_cards(files):
+    cards = ''
+    for i, f in enumerate(files[:12]):
+        name = os.path.basename(f).replace('.html','')  # 例: 2026-06-18
+        try:
+            import datetime
+            d = datetime.date.fromisoformat(name)
+            wd = DAYS[d.strftime('%A')]
+            label = f'{name}（{wd}）'
+        except:
+            label = name
+        badge = '<span class="badge-live" style="font-size:9px;margin-left:6px;">最新</span>' if i == 0 else ''
+        # 最新レポートのカードは詳細を入れる
+        if i == 0:
+            title = HERO_SUB[:40] + '…' if len(HERO_SUB) > 40 else HERO_SUB
+            sub   = f'{CARD1_H3} / Market Risk {RISK_LEVEL}'
+        else:
+            title = ''; sub = ''
+        cards += f'''
+        <a href="{f}" class="archive-card">
+          <span class="archive-card-date">{label}{badge}</span>
+          <p class="archive-card-title">{title}</p>
+          <p class="archive-card-sub">{sub}</p>
+        </a>'''
+    return cards
+
+def make_sidebar_archive(files):
+    items = ''
+    for i, f in enumerate(files[:10]):
+        name = os.path.basename(f).replace('.html','')
+        try:
+            import datetime
+            d = datetime.date.fromisoformat(name)
+            wd = DAYS[d.strftime('%A')]
+            label = f'{name}（{wd}）'
+        except:
+            label = name
+        items += f'<li><a href="{f}">{label}</a></li>\n'
+    return items
+
+ARCHIVE_CARDS = make_archive_cards(report_files)
+SIDEBAR_ARCHIVE = make_sidebar_archive(report_files)
+TOTAL = len(report_files)
+LATEST_PATH = report_files[0] if report_files else f'reports/{TODAY}.html'
+
+html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUXEN FX Portal | FXトレーダーの情報ハブ</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/logo-180.png">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <!-- ロゴ変更: assets/logo.png を置くか、div テキスト "AX" を変更 -->
+      <div class="logo">AX</div>
+      <div><h1>AUXEN</h1><p>FX Research Lab</p></div>
+    </div>
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="index.html" class="active">🏠 ダッシュボード</a>
+      <a href="#reports">📰 日報アーカイブ</a>
+      <span class="nav-section">データ</span>
+      <a href="#rates">📊 政策金利</a>
+      <a href="#strength">💹 通貨強弱 <span class="badge-soon">Soon</span></a>
+      <span class="nav-section">ツール・販売</span>
+      <a href="#tools">🔧 インジケーター <span class="badge-soon">Soon</span></a>
+      <a href="#tools">🤖 EA <span class="badge-soon">Soon</span></a>
+      <a href="#analysis">📈 チャート分析 <span class="badge-soon">Soon</span></a>
+      <span class="nav-section">サイト情報</span>
+      <a href="about.html">ℹ️ About</a>
+      <a href="disclaimer.html">⚠️ 免責事項</a>
+      <a href="contact.html">✉️ お問い合わせ</a>
+    </nav>
+    <div class="sidebar-archive">
+      <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--line);">
+        <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">最新レポート</p>
+        <ul class="archive-list">{SIDEBAR_ARCHIVE}</ul>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI-Powered Research</p>
+        <h2>FXトレーダーの情報ハブ <span class="badge-live">LIVE</span></h2>
+        <p class="sub">日報・政策金利・ツールをここに集約。AIが毎朝7時（JST）に市場分析を自動更新。</p>
+      </div>
+      <div class="date-card">
+        <span>Last Update</span>
+        <strong>{TODAY}</strong>
+        <em>毎朝7時 自動更新</em>
+      </div>
+    </header>
+    <div class="hub-section"><p class="hub-label">📰 最新日報</p></div>
+    <div class="report-feature">
+      <div class="report-feature-header">
+        <div>
+          <p class="eyebrow">{TODAY}（{WEEKDAY}） — AI Daily Report</p>
+          <h3>{HERO_SUB}</h3>
+          <p style="color:var(--muted);font-size:14px;margin:8px 0 0;">{CARD1_H3}。{CARD2_P}</p>
+        </div>
+        <a href="{LATEST_PATH}" class="btn-primary">詳細を読む →</a>
+      </div>
+      <div class="summary-grid">
+        <div class="card highlight">
+          <p class="label">一言まとめ</p>
+          <h3>{CARD1_H3}</h3>
+          <p>{CARD1_P}</p>
+        </div>
+        <div class="card">
+          <p class="label">最注目通貨</p>
+          <h3>{CARD2_H3}</h3>
+          <p>{CARD2_P}</p>
+        </div>
+        <div class="card">
+          <p class="label">Market Risk</p>
+          <h3 style="color:{RISK_COLOR}">{RISK_LEVEL}</h3>
+          <p>{RISK_P}</p>
+        </div>
+        <div class="card">
+          <p class="label">本日の重要指標</p>
+          <h3>{CARD4_H3}</h3>
+          <p>{CARD4_P}</p>
+        </div>
+      </div>
+    </div>
+    <div class="hub-section" id="reports"><p class="hub-label">📂 日報アーカイブ</p></div>
+    <div class="panel full" style="margin-bottom:20px;">
+      <div class="panel-head"><h3>過去のレポート</h3><span>全{TOTAL}件</span></div>
+      <div class="archive-grid">{ARCHIVE_CARDS}</div>
+    </div>
+    <div class="hub-section" id="rates"><p class="hub-label">📊 データコーナー</p></div>
+    <div class="content-grid" style="margin-bottom:20px;">
+      <div class="panel">
+        <div class="panel-head"><h3>🏦 主要中銀 政策金利</h3><span>{TODAY} 現在</span></div>
+        <table class="fx-table">
+          <thead><tr><th>中銀</th><th>通貨</th><th>金利</th><th>スタンス</th></tr></thead>
+          <tbody>
+            <tr><td>FRB</td><td>🇺🇸 USD</td><td><strong>{FRB_RATE}</strong></td><td style="color:{FRB_COLOR};font-size:12px;">{FRB_STANCE}</td></tr>
+            <tr><td>BOE</td><td>🇬🇧 GBP</td><td><strong>{BOE_RATE}</strong></td><td style="color:{BOE_COLOR};font-size:12px;">{BOE_STANCE}</td></tr>
+            <tr><td>日銀</td><td>🇯🇵 JPY</td><td><strong>{BOJ_RATE}</strong></td><td style="color:{BOJ_COLOR};font-size:12px;">{BOJ_STANCE}</td></tr>
+            <tr><td>ECB</td><td>🇪🇺 EUR</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+            <tr><td>RBA</td><td>🇦🇺 AUD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+            <tr><td>RBNZ</td><td>🇳🇿 NZD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+            <tr><td>BOC</td><td>🇨🇦 CAD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+            <tr><td>SNB</td><td>🇨🇭 CHF</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ 毎週月曜の日報で全通貨を更新</p>
+      </div>
+      <div class="panel" id="strength">
+        <div class="panel-head"><h3>💹 通貨強弱</h3><span class="badge-soon">Coming Soon</span></div>
+        <div class="coming-soon-block">
+          <div class="coming-soon-icon">📈</div>
+          <p style="color:var(--text);font-weight:600;">通貨強弱チャートを追加予定</p>
+          <p style="font-size:13px;">主要8通貨のリアルタイム強弱スコア</p>
+        </div>
+      </div>
+    </div>
+    <div class="hub-section" id="tools"><p class="hub-label">🔧 ツール・販売</p></div>
+    <div class="content-grid" style="margin-bottom:20px;">
+      <div class="panel">
+        <div class="panel-head"><h3>📐 MT4インジケーター</h3><span class="badge-soon">Coming Soon</span></div>
+        <div class="coming-soon-block">
+          <div class="coming-soon-icon">🔧</div>
+          <p style="color:var(--text);font-weight:600;">独自開発インジケーター</p>
+          <p style="font-size:13px;">4H・15分足特化のトレンドフォロー系</p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>🤖 EA（自動売買）</h3><span class="badge-soon">Coming Soon</span></div>
+        <div class="coming-soon-block">
+          <div class="coming-soon-icon">🤖</div>
+          <p style="color:var(--text);font-weight:600;">バックテスト済みEA</p>
+          <p style="font-size:13px;">USD/JPY・EUR/USD対応</p>
+        </div>
+      </div>
+    </div>
+    <div class="hub-section" id="analysis"><p class="hub-label">📈 独自チャート分析</p></div>
+    <div class="panel full">
+      <div class="panel-head"><h3>週次・月次の独自分析レポート</h3><span class="badge-soon">Coming Soon</span></div>
+      <div class="coming-soon-block">
+        <div class="coming-soon-icon">📊</div>
+        <p style="color:var(--text);font-weight:600;">日報に載らない中長期の相場見通し・独自チャート分析を公開予定</p>
+        <p style="font-size:13px;">週足・月足レベルのトレンド分析、重要節目の解説</p>
+      </div>
+    </div>
+  </main>
+</div>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="disclaimer.html">免責事項</a>
+    <a href="privacy.html">プライバシーポリシー</a>
+    <a href="terms.html">利用規約</a>
+    <a href="contact.html">お問い合わせ</a>
+  </div>
+</footer>
+</body>
+</html>"""
+
+with open('index.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print('✅ index.html 再生成完了')
 ```
 
 ### 6-4: Git commit & push
