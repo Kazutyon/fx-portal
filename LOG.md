@@ -1,5 +1,16 @@
 # LOG
 
+## 2026-06-18 AUXENロゴ・SVGファビコン追加 / Codex
+
+- AUXEN FX Portal にブランドロゴとファビコンを追加
+  - 追加: `assets/logo.svg`
+  - 追加: `favicon.svg`
+- 既存ページのサイドバー `AX` ロゴをSVG画像ロゴへ差し替え
+  - 対象: `index.html` / about / contact / disclaimer / privacy / terms / reports配下の既存日報
+- `style.css` の `.logo` を濃紺 + シアンのAUXENロゴ枠に調整
+- `trigger_prompt.txt` も更新し、今後の自動生成日報・index再生成で新ロゴ参照が維持されるようにした
+- サイドバーのAUXENロゴ表示サイズを約30%拡大（48px → 62px、モバイルは56px）
+
 ## 2026-06-18 ポータル完成・法的整備 / Claude Code
 
 - index.html をリダイレクトから本格ポータルダッシュボードに刷新

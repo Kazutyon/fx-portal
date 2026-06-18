@@ -1,0 +1,27 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AUXEN logo">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#0b273c"/>
+      <stop offset="62%" stop-color="#061522"/>
+      <stop offset="100%" stop-color="#020812"/>
+    </radialGradient>
+    <linearGradient id="cyan" x1="112" y1="148" x2="404" y2="300">
+      <stop offset="0%" stop-color="#18e2f4"/>
+      <stop offset="48%" stop-color="#04bdd4"/>
+      <stop offset="100%" stop-color="#008fa7"/>
+    </linearGradient>
+    <linearGradient id="white" x1="122" y1="302" x2="400" y2="122">
+      <stop offset="0%" stop-color="#cbd3db"/>
+      <stop offset="43%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dce3ea"/>
+    </linearGradient>
+    <filter id="shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="10" flood-color="#000000" flood-opacity="0.48"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <circle cx="256" cy="234" r="168" fill="#05d7e8" opacity="0.08"/>
+  <path d="M112 303C178 278 227 214 287 169C324 141 360 124 405 121C336 158 292 220 239 263C200 295 163 306 112 303Z" fill="url(#white)" filter="url(#shadow)"/>
+  <path d="M107 148C171 144 229 189 284 236C329 275 365 298 407 301C342 309 290 273 232 224C187 186 151 157 107 148Z" fill="url(#cyan)" filter="url(#shadow)"/>
+  <path d="M127 156C178 156 226 193 278 235" fill="none" stroke="#72f6ff" stroke-width="4" stroke-linecap="round" opacity="0.46"/>
+</svg>
