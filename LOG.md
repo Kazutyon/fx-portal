@@ -1,5 +1,35 @@
 # LOG
 
+## 2026-06-18 hero背景画像アセット化・自動生成指示更新 / Codex
+
+- 画像ヘッダーの波形背景を `assets/hero-wave.png` として追加
+- `style.css` の `.hero` を実画像背景 + 暗色オーバーレイ + 粒子ドット + 右側 date-card の構成へ更新
+- 既存日報 `reports/2026-06-17.html` / `reports/2026-06-18.html` の hero 見出しから絵文字を外し、デザイン内で折れにくい表記へ統一
+- `trigger_prompt.txt` に Heroデザイン厳守ルールを追加
+  - 今後の自動日報生成で `header.hero` / `.date-card` / `assets/hero-wave.png` を維持するよう明記
+  - 自動commit対象に `style.css` / `assets/hero-wave.png` / `trigger_prompt.txt` を追加
+- Playwright + ローカルChromeでトップ・日報のデスクトップ/モバイル表示を確認
+
+## 2026-06-18 heroセクション高級化 / Claude Code
+
+- h2: 「FXトレーダーの情報ハブ」→「AIと統計で相場を研究する」
+- サブ: 「分析ツールを集約。」+改行 に変更
+- `::before` ドットグリッド（26px間隔、1px シアン、opacity .28）
+- `::after` SVGインライン波形ライン（下部60px、opacity .28/.15）
+- multi-layer radial-gradient: 左上シアン光・右下ゴールド微光
+- h2 text-shadow: シアングロー（opacity .10）
+- hero に `position:relative; overflow:hidden` 追加、`> *` に z-index:1
+- commit: `5ee2cbb` / push 済み
+
+## 2026-06-18 サイドバーアイコンをSVGアウトラインに刷新 / Claude Code
+
+- 全ページの絵文字ナビアイコン（🏠📰📊💹🔧🤖📈ℹ️⚠️✉️📓🔄）を廃止
+- Heroicons/Linear スタイルのインラインSVGアウトラインアイコンに置き換え
+- `stroke="currentColor"` で色は CSS の `--muted` → `var(--gold)` を自動継承
+- `style.css` に `.nav-icon`（15×15px, opacity .7）と hover/active opacity 1 を追加
+- 対象ファイル: index / about / disclaimer / privacy / terms / contact / reports/2026-06-17 / reports/2026-06-18
+- commit: `329dedc` / push to origin main 済み
+
 ## 2026-06-18 AUXENロゴ・SVGファビコン追加 / Codex
 
 - AUXEN FX Portal にブランドロゴとファビコンを追加

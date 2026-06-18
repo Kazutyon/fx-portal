@@ -112,6 +112,25 @@ ls reports/ | sort -r | head -20
 
 使用禁止クラス（style.cssに存在しない）: .site-header / .container / .layout / .main-content / .callout / .section / .section-heading
 
+#### Heroデザイン厳守
+- `header.hero` は必ず左側テキストブロック + 右側 `.date-card` の2カラム構造にする
+- `style.css` の `.hero` は `assets/hero-wave.png` を背景に使っているため、HTML側で別の背景画像やインライン背景を追加しない
+- hero内のテキストは必ず `.eyebrow` / `h2` / `.sub` / `.badge-live` / `.date-card` を使う
+- `header.hero` を単なる画像だけ、または文字だけのブロックに置き換えない
+- 日報ページの例:
+  <header class="hero">
+    <div>
+      <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+      <h2>FX日報 YYYY-MM-DD（曜）<span class="badge-live">最新</span></h2>
+      <p class="sub">今日の日報サブタイトルを1〜2文で記載</p>
+    </div>
+    <div class="date-card">
+      <span>Report Date</span>
+      <strong>YYYY-MM-DD</strong>
+      <em>曜日</em>
+    </div>
+  </header>
+
 生成ルール:
 - 構造は 2026-06-17.html と完全一致させること（div.app > aside.sidebar + main.main）
 - sidebar には brand/logo/nav/archive-list を含める
@@ -268,7 +287,7 @@ html = f"""<!DOCTYPE html>
     <header class="hero">
       <div>
         <p class="eyebrow">AUXEN FX PORTAL — AI-Powered Research</p>
-        <h2>FXトレーダーの情報ハブ <span class="badge-live">LIVE</span></h2>
+        <h2>AIと統計で相場を研究する <span class="badge-live">LIVE</span></h2>
         <p class="sub">日報・政策金利・ツールをここに集約。AIが毎朝7時（JST）に市場分析を自動更新。</p>
       </div>
       <div class="date-card">
@@ -394,7 +413,7 @@ print('✅ index.html 再生成完了')
 ### 6-4: Git commit & push
 ```bash
 git config user.email "bot@fx-portal" && git config user.name "FX Bot"
-git add reports/ index.html
+git add reports/ index.html style.css assets/hero-wave.png trigger_prompt.txt
 git commit -m "FX日報 YYYY-MM-DD（曜日）"
 git push origin main
 ```

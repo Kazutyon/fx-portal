@@ -149,97 +149,112 @@ a:hover { text-decoration: underline; }
 .hero {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
-  padding: 32px;
-  border: 1px solid rgba(255,255,255,.06);
+  align-items: center;
+  gap: 32px;
+  min-height: 330px;
+  padding: 58px 52px;
+  border: 1px solid rgba(98,139,190,.42);
   border-radius: 24px;
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 65% 90% at 0% 5%,  rgba(56,189,248,.07) 0%, transparent 55%),
-    radial-gradient(ellipse 55% 55% at 98% 90%, rgba(214,168,79,.05) 0%, transparent 50%),
-    linear-gradient(150deg, rgba(16,26,44,.97) 0%, rgba(7,11,18,.98) 100%);
-  box-shadow: 0 32px 80px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.05);
+    linear-gradient(90deg, rgba(5,12,24,.95) 0%, rgba(5,12,24,.88) 45%, rgba(5,12,24,.64) 100%),
+    radial-gradient(ellipse 80% 90% at 0% 0%, rgba(56,189,248,.16) 0%, transparent 52%),
+    radial-gradient(ellipse 58% 70% at 88% 10%, rgba(56,189,248,.10) 0%, transparent 56%),
+    url("assets/hero-wave.png") center bottom / cover no-repeat,
+    linear-gradient(150deg, rgba(8,16,31,.98) 0%, rgba(3,8,16,.99) 100%);
+  box-shadow: 0 36px 90px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06);
   margin-bottom: 24px;
 }
 
-/* ドットグリッド */
+/* 星屑のような微細ドット */
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(56,189,248,.13) 1px, transparent 1px);
-  background-size: 26px 26px;
-  opacity: .28;
+  background-image:
+    radial-gradient(rgba(56,189,248,.72) 1px, transparent 1.5px),
+    radial-gradient(rgba(56,189,248,.28) 1px, transparent 1.5px);
+  background-position: 0 0, 13px 11px;
+  background-size: 96px 76px, 58px 52px;
+  opacity: .32;
   pointer-events: none;
   z-index: 0;
 }
 
-/* 波形ライン */
+/* 背景画像の下端をカードに馴染ませる */
 .hero::after {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0 38 C240 18 480 52 720 32 C960 12 1200 48 1440 28' fill='none' stroke='%2338bdf8' stroke-width='1.5' opacity='0.28'/%3E%3Cpath d='M0 52 C180 32 420 58 720 46 C960 30 1280 54 1440 42' fill='none' stroke='%2338bdf8' stroke-width='0.8' opacity='0.15'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
+  inset: auto 0 0;
+  height: 42%;
+  background: linear-gradient(0deg, rgba(3,8,16,.28), transparent);
   pointer-events: none;
   z-index: 0;
 }
 
 /* テキストを装飾の前面に */
 .hero > * { position: relative; z-index: 1; }
+.hero > div:first-child { max-width: 720px; }
 
 .eyebrow {
-  margin: 0 0 8px;
-  color: var(--gold);
-  font-size: 11px;
+  margin: 0 0 22px;
+  color: #f2b744;
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: .14em;
+  letter-spacing: .16em;
   text-transform: uppercase;
 }
 
 .hero h2 {
-  margin: 0 0 8px;
-  font-size: clamp(22px, 3vw, 36px);
-  text-shadow: 0 0 48px rgba(56,189,248,.1);
+  margin: 0 0 22px;
+  font-size: clamp(34px, 4.6vw, 56px);
+  line-height: 1.18;
+  letter-spacing: 0;
+  text-shadow: 0 0 46px rgba(56,189,248,.22), 0 8px 24px rgba(0,0,0,.42);
 }
 
-.hero .sub { color: var(--muted); margin: 0; font-size: 14px; }
+.hero .sub {
+  color: #b5c4d8;
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.62;
+}
 
 .date-card {
-  min-width: 170px;
+  min-width: 268px;
   align-self: center;
-  padding: 18px;
-  border-radius: 18px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.07);
+  padding: 34px 28px;
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(19,29,46,.82), rgba(12,19,31,.82));
+  border: 1px solid rgba(148,163,184,.32);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 24px 56px rgba(0,0,0,.28);
   text-align: center;
 }
 
 .date-card span {
   display: block;
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: .08em;
+  color: #aebbd0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .10em;
   text-transform: uppercase;
 }
 
 .date-card strong {
   display: block;
-  margin-top: 6px;
-  font-size: 18px;
-  color: var(--gold);
+  margin-top: 18px;
+  font-size: 30px;
+  color: #f2b744;
+  letter-spacing: .02em;
 }
 
 .date-card em {
   display: block;
   font-style: normal;
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 2px;
+  font-size: 19px;
+  color: #b5c4d8;
+  margin-top: 8px;
 }
 
 /* ── Summary cards ── */
@@ -666,12 +681,28 @@ a:hover { text-decoration: underline; }
   .sidebar-archive { display: none; }
   .content-grid { grid-template-columns: 1fr; }
   .report-feature-header { flex-direction: column; }
-  .hero { flex-direction: column; }
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 0;
+    padding: 34px 28px;
+    gap: 22px;
+  }
+  .hero .sub { font-size: 17px; }
+  .date-card { align-self: stretch; min-width: 0; }
   .col2 { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 560px) {
   .main { padding: 16px; }
+  .hero { padding: 28px 22px; border-radius: 18px; }
+  .eyebrow { font-size: 11px; margin-bottom: 14px; }
+  .hero h2 { font-size: 28px; }
+  .hero .sub { font-size: 15px; }
+  .date-card { padding: 22px 18px; border-radius: 18px; }
+  .date-card strong { font-size: 24px; }
+  .date-card span,
+  .date-card em { font-size: 13px; }
   .summary-grid  { grid-template-columns: 1fr; }
   .archive-grid  { grid-template-columns: 1fr; }
   .hub-section   { margin: 20px 0 10px; }
