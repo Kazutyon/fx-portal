@@ -1,5 +1,14 @@
 # LOG
 
+## 2026-06-19 トップページサイドバーSVGアイコン復旧 / Codex
+
+- 2026-06-19の日報自動生成後、`index.html` のPCサイドバーアイコンがSVGアウトラインから絵文字へ戻っていた問題を確認
+- 原因: `generate_index.py` と `trigger_prompt.txt` のindex生成テンプレートが絵文字ナビのままだった
+- `index.html` / `generate_index.py` / `trigger_prompt.txt` のPCサイドバーナビをインラインSVG + `.nav-icon` へ復旧
+- `generate_index.py` に欠けていたGoatCounterタグ、FXマーケットニュース枠、20件展開スクリプトも追加
+- `trigger_prompt.txt` に「PC版サイドバーの絵文字アイコン禁止、SVG nav-icon固定」を明記
+- `python -m py_compile generate_index.py` で構文確認済み
+
 ## 2026-06-19 GoatCounterアクセス解析導入 / Codex
 
 - GoatCounterの計測タグを既存HTML全ページに追加

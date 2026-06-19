@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-06-19 / Codex（GoatCounterアクセス解析実装・push済み）
+最終更新: 2026-06-19 / Codex（トップページサイドバーSVG復旧）
 状態: active
 
 ## 現在の状態
@@ -13,7 +13,7 @@
 Phase 1 完了。デザインも一通り完成。
 
 - GitHub Pages 稼働中: https://kazutyon.github.io/fx-portal/
-- サイドバー: 絵文字 → SVGアウトラインアイコンに刷新済み（全9ページ）
+- サイドバー: 絵文字 → SVGアウトラインアイコンに刷新済み。2026-06-19自動生成でトップだけ絵文字へ戻ったため、`index.html` / `generate_index.py` / `trigger_prompt.txt` をSVG版に復旧済み。
 - hero: `assets/hero-wave.png` 背景 + 暗色オーバーレイ + 粒子ドット + 小型 date-card。原本画像に近い横長比率へ調整済み。
 - スマホ版デザイン仕様書: `MOBILE-DESIGN-SPEC.md` 作成済み
 - スマホ版UX: `index.html` / `style.css` / `trigger_prompt.txt` に実装済み。390pxプレビュー確認済み。commit `e1d3013` を origin main へpush済み。
@@ -26,7 +26,7 @@ Phase 1 完了。デザインも一通り完成。
 
 ## 次の一手
 
-1. ドメイン管理画面で不足している `185.199.109.153` のAレコードを追加
+1. サイドバーSVG復旧をcommit/push
 2. DNS反映後、`https://auxen.jp/` の表示とGitHub PagesのHTTPS enforceを確認
 3. GoatCounter側でアクセス計測が入るか確認
 
@@ -40,6 +40,6 @@ Phase 1 完了。デザインも一通り完成。
 ## 前回AIが残した次の一手
 
 独自ドメイン `auxen.jp` のため、リポジトリルートに `CNAME` を追加し、commit `90da1ee` でpush済み。
-GoatCounterアクセス解析タグはcommit `fb62b6f` でpush済み。
-次にDNS管理画面でGitHub Pages向けA/AAAAレコードを設定する。
-DNS反映後、`https://auxen.jp/` と `https://www.auxen.jp/` のリダイレクト/HTTPSを確認する。
+トップページのPCサイドバーが自動生成で絵文字へ戻ったため、`index.html` / `generate_index.py` / `trigger_prompt.txt` をSVGアイコン版に復旧済み。
+次にcommit/pushする。
+DNSはAレコード4本とwww CNAMEが反映済み。HTTPSはGitHub Pages側の証明書発行待ちの可能性が高い。

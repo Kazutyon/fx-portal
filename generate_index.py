@@ -75,6 +75,7 @@ html = f"""<!DOCTYPE html>
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body class="home-page">
 <header class="mobile-header">
@@ -118,19 +119,19 @@ html = f"""<!DOCTYPE html>
     </div>
     <nav class="side-nav">
       <span class="nav-section">メイン</span>
-      <a href="index.html" class="active">🏠 ダッシュボード</a>
-      <a href="#reports">📰 日報アーカイブ</a>
+      <a href="index.html" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="#reports"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報アーカイブ</a>
       <span class="nav-section">データ</span>
-      <a href="#rates">📊 政策金利</a>
-      <a href="#strength">💹 通貨強弱 <span class="badge-soon">Soon</span></a>
+      <a href="#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
+      <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>通貨強弱 <span class="badge-soon">Soon</span></a>
       <span class="nav-section">ツール・販売</span>
-      <a href="#tools">🔧 インジケーター <span class="badge-soon">Soon</span></a>
-      <a href="#tools">🤖 EA <span class="badge-soon">Soon</span></a>
-      <a href="#analysis">📈 チャート分析 <span class="badge-soon">Soon</span></a>
+      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター <span class="badge-soon">Soon</span></a>
+      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA <span class="badge-soon">Soon</span></a>
+      <a href="#analysis"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>チャート分析 <span class="badge-soon">Soon</span></a>
       <span class="nav-section">サイト情報</span>
-      <a href="about.html">ℹ️ About</a>
-      <a href="disclaimer.html">⚠️ 免責事項</a>
-      <a href="contact.html">✉️ お問い合わせ</a>
+      <a href="about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
     </nav>
     <div class="sidebar-archive">
       <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--line);">
@@ -189,6 +190,12 @@ html = f"""<!DOCTYPE html>
     <div class="panel full" style="margin-bottom:20px;">
       <div class="panel-head"><h3>過去のレポート</h3><span>全{TOTAL}件</span></div>
       <div class="archive-grid">{ARCHIVE_CARDS}</div>
+    </div>
+    <div class="hub-section" id="market-news"><p class="hub-label">FXマーケットニュース</p></div>
+    <div class="panel full fx-news-panel" style="margin-bottom:20px;">
+      <div class="panel-head"><h3>主要ヘッドライン <span class="fx-news-source-badge">InvestingLive</span><span class="fx-news-translate-badge">自動翻訳</span></h3><span id="fxNewsUpdated">2分ごとに自動更新</span></div>
+      <ul class="fx-news-list" id="fxNewsLive"><li class="fx-news-empty">ニュースを読み込み中...</li></ul>
+      <button type="button" class="fx-news-more" id="fxNewsMore">もっと見る →</button>
     </div>
     <div class="hub-section" id="rates"><p class="hub-label">📊 データコーナー</p></div>
     <div class="content-grid" style="margin-bottom:20px;">
@@ -264,6 +271,69 @@ html = f"""<!DOCTYPE html>
     <a href="contact.html">お問い合わせ</a>
   </div>
 </footer>
+<script>
+(function(){{
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyt2OkhAzglhoQOHZDHx_8fpY11lQsKXFQHIzMt-VkZO9Ki6Y02IVpkhgBY8KMVeWgR/exec";
+  const list = document.getElementById("fxNewsLive");
+  const updated = document.getElementById("fxNewsUpdated");
+  const moreButton = document.getElementById("fxNewsMore");
+  let latestItems = [];
+  let expanded = false;
+  if (!list) return;
+  function formatTime(value) {{
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString("ja-JP", {{ month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }});
+  }}
+  function renderNews(items) {{
+    list.innerHTML = "";
+    const visibleItems = items.slice(0, expanded ? 20 : 5);
+    visibleItems.forEach((item) => {{
+      const li = document.createElement("li");
+      li.className = "fx-news-item";
+      const a = document.createElement("a");
+      a.href = item.link || "https://www.investing.com/news/forex-news";
+      a.target = "_blank";
+      a.rel = "noopener";
+      const meta = document.createElement("span");
+      meta.className = "fx-news-meta";
+      meta.textContent = formatTime(item.pubDate);
+      const title = document.createElement("strong");
+      title.textContent = item.titleJa || item.title || "Market headline";
+      a.append(meta, title);
+      li.appendChild(a);
+      list.appendChild(li);
+    }});
+    if (updated) updated.textContent = "最終更新: " + new Date().toLocaleTimeString("ja-JP", {{ hour: "2-digit", minute: "2-digit" }});
+    if (moreButton) {{
+      moreButton.hidden = items.length <= 5;
+      moreButton.textContent = expanded ? "5件に戻す ↑" : "もっと見る →";
+    }}
+  }}
+  async function loadNews() {{
+    try {{
+      const response = await fetch(GAS_URL, {{ cache: "no-store" }});
+      const data = await response.json();
+      if (data.status !== "ok" || !Array.isArray(data.items)) throw new Error("news unavailable");
+      latestItems = data.items;
+      renderNews(latestItems);
+    }} catch (error) {{
+      if (!list.children.length || list.querySelector(".fx-news-empty")) {{
+        list.innerHTML = '<li class="fx-news-empty">ニュースを取得できませんでした。時間をおいて再読み込みしてください。</li>';
+      }}
+      if (updated) updated.textContent = "自動更新待機中";
+    }}
+  }}
+  if (moreButton) {{
+    moreButton.addEventListener("click", () => {{
+      expanded = !expanded;
+      renderNews(latestItems);
+    }});
+  }}
+  loadNews();
+  setInterval(loadNews, 120000);
+}})();
+</script>
 </body>
 </html>"""
 
