@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-06-19 / Claude（デザイン刷新・archive.html新設・trigger_prompt.txt完全同期・push済み）
+最終更新: 2026-06-19 / Claude（Twemoji導入・過去日報12件HTML移植完了・push済み）
 状態: active
 
 ## 現在の状態
@@ -32,4 +32,4 @@ Phase 1 完了。デザインも一通り完成。
 - お問い合わせ: Google フォームを作成して contact.html に埋め込む
 - 政策金利: RBA / RBNZ / BOC / SNB の値を月曜日報で更新（ECBは実装済み）
 - 特定商取引法ページ: インジ・EA販売前に追加
-- 過去レポート（Notion 6/1〜16分）HTML移行: DeepSeek仕事票発行済み（`docs\ai-team-queue\active\fx-notion-migration.md`）。コンテンツ参照ファイル（fx-notion-content.md）準備完了。DeepSeek実行待ち。
+- 過去レポート（Notion 6/1〜16分）HTML移行: 完了済み（reports/2026-06-01〜16.html 全12件）

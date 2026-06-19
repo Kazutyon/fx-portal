@@ -1,5 +1,12 @@
 # LOG
 
+## 2026-06-19 Twemoji導入・国旗絵文字修正 / Claude
+
+- Windows環境で国旗絵文字が "US"/"GB" などの文字列に変換される問題を解消
+- 全15レポート（reports/2026-06-01〜19.html）+ index.html + archive.html に Twemoji（v14.0.2）を追加
+- 政策金利テーブル・経済指標カレンダーの旗絵文字を復元（🇺🇸🇬🇧🇯🇵🇪🇺🇦🇺🇳🇿🇨🇦🇨🇭）
+- generate_index.py / trigger_prompt.txt も同様に更新（将来の日報に自動適用）
+
 ## 2026-06-19 Notion FX日報12件 HTML移植完了 / DeepSeek
 
 - `fx-notion-migration.md` の仕事票に従い、2026-06-01〜06-16 の日報12件をHTML生成
