@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-06-19 / Codex（日報スマホUX実装・push済み）
+最終更新: 2026-06-19 / Codex（FXマーケットニュース枠ローカル実装・確認待ち）
 状態: active
 
 ## 現在の状態
@@ -18,14 +18,15 @@ Phase 1 完了。デザインも一通り完成。
 - スマホ版デザイン仕様書: `MOBILE-DESIGN-SPEC.md` 作成済み
 - スマホ版UX: `index.html` / `style.css` / `trigger_prompt.txt` に実装済み。390pxプレビュー確認済み。commit `e1d3013` を origin main へpush済み。
 - 日報ページスマホUX: `reports/2026-06-18.html` / `style.css` / `trigger_prompt.txt` に実装済み。スマホ専用ヘッダー・小型日報hero・ジャンプメニュー・下部ナビを追加。commit `4e6c2da` を origin main へpush済み。
+- FXマーケットニュース枠: `index.html` / `style.css` / `trigger_prompt.txt` にローカル実装済み。GASから自動取得し、2分ごとに自動更新。未push。
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中
 
 ## 次の一手
 
-1. 翌朝の自動日報生成後、日報ページにもスマホ専用構造が維持されるか確認
-2. 自動生成後の `index.html` でスマホ版トップ導線が維持されているか確認
-3. 必要なら日報本文の表・カード表示を追加で微調整する
+1. ローカルでFXマーケットニュース枠のPC/スマホ表示をユーザー確認
+2. 問題なければニュース枠対応をcommit/push
+3. 翌朝の自動生成後、ニュース枠・スマホ版トップ・日報スマホ構造が維持されるか確認
 
 ## 残件・検討中
 
@@ -36,6 +37,6 @@ Phase 1 完了。デザインも一通り完成。
 
 ## 前回AIが残した次の一手
 
-日報ページのスマホUX対応はcommit `4e6c2da` でpush済み。
-明朝7時の自動生成で、新規日報にも `body.report-page` / `mobile-report-hero` / `mobile-report-jump-grid` / `mobile-bottom-nav` が維持されるか確認する。
-あわせて `index.html` のスマホ版トップ導線が自動更新後も維持されているか確認する。
+FXマーケットニュース枠をローカル実装済み、まだ未push。
+ユーザーが `D:\vs_code\projects\FX\fx-portal\index.html` を確認し、OKならcommit/pushする。
+push後は明朝7時の自動生成で、ニュース枠・スマホ版トップ導線・日報スマホ構造が維持されているか確認する。
