@@ -855,6 +855,15 @@ a:hover { text-decoration: underline; }
 /* ── Sidebar archive — hidden on mobile ── */
 .sidebar-archive { }
 
+/* ── Twemoji emoji image size fix ── */
+img.emoji {
+  height: 1em !important;
+  width: 1em !important;
+  display: inline !important;
+  vertical-align: -0.1em;
+  margin: 0 0.05em 0 0.1em;
+}
+
 /* ── Mobile-only portal layout ── */
 .mobile-header,
 .mobile-hero,
