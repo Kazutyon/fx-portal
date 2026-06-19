@@ -12,6 +12,7 @@
 - `trigger_prompt.txt` に自動生成後もニュース枠と自動更新スクリプトを維持する指示を追加
 - GASはHTTP 200でJSON応答を確認済み
 - リモートに先行していた2026-06-19日報生成コミットを取り込み、競合解消後にcommit `af701a1 Add live FX market news` を origin main へpush済み
+- `もっと見る` 展開変更はcommit `fbf2743 Expand market news inline` を origin main へpush済み
 
 ## 2026-06-19 日報ページのスマホUXローカル実装 / Codex
 
