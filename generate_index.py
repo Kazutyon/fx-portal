@@ -1,30 +1,63 @@
-import glob, os
+import glob, os, re
+from html import unescape
 
 # ── 今日のデータ ──────────────────
 TODAY      = '2026-06-19'
 WEEKDAY    = '金'
-CARD1_H3   = '円安161円超え・米国休場'
-CARD1_P    = 'Juneteenth休場で米国勢不在。英小売売上高・日本CPIで欧州・アジア中心。USD/JPY161台で介入ライン警戒継続。'
-CARD2_H3   = 'GBP/USD 🇬🇧🇺🇸'
-CARD2_P    = '英5月小売売上高（前回-1.3%）でBOEの次の一手を確認。ハト派傾向が続けばポンド売り圧力が強まる。'
-RISK_LEVEL = 'MEDIUM'
-RISK_COLOR = 'var(--orange)'
-RISK_P     = '米国休場で流動性低下。英小売サプライズ時は値幅増幅しやすい。USD/JPY介入警戒でポジション偏り注意。'
-CARD4_H3   = '2件'
-CARD4_P    = '日本CPI / 英小売売上高'
 HERO_SUB   = 'Juneteenth米国休場——英小売売上高・日本CPIで欧州・アジア中心。161円突破後の介入ラインを警戒。'
+MARKET_HOLIDAY_H3 = '米国市場休場'
+MARKET_HOLIDAY_P  = 'Juneteenth: NYSE・NASDAQ・米国債市場が全日休場。米国勢不在で流動性低下。'
+KEY_EVENTS_ITEMS  = [
+    '08:30 🇯🇵 日本CPI（全国・前年比）★重要',
+    '08:30 🇯🇵 日本コアCPI（生鮮除く）★重要',
+    '15:00 🇬🇧 英小売売上高（5月）★最重要',
+    '15:00 🇬🇧 英小売（燃料除く）★',
+    '21:30 🇨🇦 カナダ小売売上高（4月）',
+]
+REPORT_SUMMARY = '円安161円超え・米国休場'
+RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（年内利上げ観測）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ）'; BOJ_COLOR = 'var(--blue)'
 ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11利上げ）'; ECB_COLOR = 'var(--red)'
 # ────────────────────────────────────────────────────────
 
+KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
+
 report_files = sorted(glob.glob('reports/*.html'), reverse=True)
 DAYS = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
+
+def clean_text(value):
+    value = re.sub(r'<[^>]+>', '', value or '')
+    return unescape(value).strip()
+
+def shorten(value, limit=42):
+    value = clean_text(value)
+    return value[:limit] + '…' if len(value) > limit else value
+
+def extract_report_summary(path):
+    try:
+        with open(path, encoding='utf-8') as f:
+            text = f.read()
+    except OSError:
+        return '', ''
+
+    title_match = re.search(r'<p class="sub">(.*?)</p>', text, re.S)
+    title = shorten(title_match.group(1), 42) if title_match else ''
+
+    summary_match = re.search(r'<p class="label">一言まとめ</p>\s*<h3>(.*?)</h3>', text, re.S)
+    risk_match = re.search(r'<p class="label">Market Risk</p>\s*<h3[^>]*>(.*?)</h3>', text, re.S)
+    sub_parts = []
+    if summary_match:
+        sub_parts.append(shorten(summary_match.group(1), 24))
+    if risk_match:
+        sub_parts.append(f'Market Risk {shorten(risk_match.group(1), 12)}')
+    return title, ' / '.join(sub_parts)
 
 def make_archive_cards(files):
     cards = ''
     for i, f in enumerate(files[:12]):
+        href = f.replace(os.sep, '/')
         name = os.path.basename(f).replace('.html','')
         try:
             import datetime
@@ -36,11 +69,11 @@ def make_archive_cards(files):
         badge = '<span class="badge-live" style="font-size:9px;margin-left:6px;">最新</span>' if i == 0 else ''
         if i == 0:
             title = HERO_SUB[:40] + '…' if len(HERO_SUB) > 40 else HERO_SUB
-            sub   = f'{CARD1_H3} / Market Risk {RISK_LEVEL}'
+            sub   = f'{REPORT_SUMMARY} / Market Risk {RISK_LEVEL}'
         else:
-            title = ''; sub = ''
+            title, sub = extract_report_summary(f)
         cards += f'''
-        <a href="{f}" class="archive-card">
+        <a href="{href}" class="archive-card">
           <span class="archive-card-date">{label}{badge}</span>
           <p class="archive-card-title">{title}</p>
           <p class="archive-card-sub">{sub}</p>
@@ -50,6 +83,7 @@ def make_archive_cards(files):
 def make_sidebar_archive(files):
     items = ''
     for i, f in enumerate(files[:10]):
+        href = f.replace(os.sep, '/')
         name = os.path.basename(f).replace('.html','')
         try:
             import datetime
@@ -58,13 +92,13 @@ def make_sidebar_archive(files):
             label = f'{name}（{wd}）'
         except:
             label = name
-        items += f'<li><a href="{f}">{label}</a></li>\n'
+        items += f'<li><a href="{href}">{label}</a></li>\n'
     return items
 
 ARCHIVE_CARDS = make_archive_cards(report_files)
 SIDEBAR_ARCHIVE = make_sidebar_archive(report_files)
 TOTAL = len(report_files)
-LATEST_PATH = report_files[0] if report_files else f'reports/{TODAY}.html'
+LATEST_PATH = report_files[0].replace(os.sep, '/') if report_files else f'reports/{TODAY}.html'
 
 html = f"""<!DOCTYPE html>
 <html lang="ja">
@@ -100,14 +134,25 @@ html = f"""<!DOCTYPE html>
   <a href="{LATEST_PATH}#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
   <a href="{LATEST_PATH}#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
   <a href="#rates"><span>政策金利</span><strong>主要中銀</strong></a>
-  <a href="#reports"><span>アーカイブ</span><strong>過去日報</strong></a>
+  <a href="archive.html"><span>アーカイブ</span><strong>過去日報</strong></a>
   <a href="contact.html"><span>お問い合わせ</span><strong>連絡先</strong></a>
 </nav>
 
 <section class="mobile-latest-card" id="latest-report">
   <p class="eyebrow">{TODAY}（{WEEKDAY}） — AI Daily Report</p>
   <h2>{HERO_SUB}</h2>
-  <p>{CARD1_H3}。{CARD2_P}</p>
+  <div class="mobile-latest-points">
+    <div class="mobile-holiday-bar">
+      <span class="mh-label">市場休場</span>
+      <strong class="mh-title">{MARKET_HOLIDAY_H3}</strong>
+    </div>
+    <div>
+      <span>必見経済指標</span>
+      <ul class="key-events-list">
+{KEY_EVENTS_LIST_HTML}
+      </ul>
+    </div>
+  </div>
   <a href="{LATEST_PATH}" class="btn-primary">詳細を読む →</a>
 </section>
 
@@ -120,8 +165,9 @@ html = f"""<!DOCTYPE html>
     <nav class="side-nav">
       <span class="nav-section">メイン</span>
       <a href="index.html" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
-      <a href="#reports"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報アーカイブ</a>
+      <a href="archive.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報アーカイブ</a>
       <span class="nav-section">データ</span>
+      <a href="#market-news"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/></svg>FXニュース</a>
       <a href="#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
       <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>通貨強弱 <span class="badge-soon">Soon</span></a>
       <span class="nav-section">ツール・販売</span>
@@ -159,37 +205,22 @@ html = f"""<!DOCTYPE html>
         <div>
           <p class="eyebrow">{TODAY}（{WEEKDAY}） — AI Daily Report</p>
           <h3>{HERO_SUB}</h3>
-          <p style="color:var(--muted);font-size:14px;margin:8px 0 0;">{CARD1_H3}。{CARD2_P}</p>
         </div>
         <a href="{LATEST_PATH}" class="btn-primary">詳細を読む →</a>
       </div>
-      <div class="summary-grid">
-        <div class="card highlight">
-          <p class="label">一言まとめ</p>
-          <h3>{CARD1_H3}</h3>
-          <p>{CARD1_P}</p>
+      <div class="today-priority-wrap">
+        <div class="market-holiday-bar">
+          <span class="mh-label">市場休場</span>
+          <strong class="mh-title">{MARKET_HOLIDAY_H3}</strong>
+          <span class="mh-desc">{MARKET_HOLIDAY_P}</span>
         </div>
-        <div class="card">
-          <p class="label">最注目通貨</p>
-          <h3>{CARD2_H3}</h3>
-          <p>{CARD2_P}</p>
-        </div>
-        <div class="card">
-          <p class="label">Market Risk</p>
-          <h3 style="color:{RISK_COLOR}">{RISK_LEVEL}</h3>
-          <p>{RISK_P}</p>
-        </div>
-        <div class="card">
-          <p class="label">本日の重要指標</p>
-          <h3>{CARD4_H3}</h3>
-          <p>{CARD4_P}</p>
+        <div class="priority-card key-events-card">
+          <p class="label">必見経済指標</p>
+          <ul class="key-events-list">
+{KEY_EVENTS_LIST_HTML}
+          </ul>
         </div>
       </div>
-    </div>
-    <div class="hub-section" id="reports"><p class="hub-label">📂 日報アーカイブ</p></div>
-    <div class="panel full" style="margin-bottom:20px;">
-      <div class="panel-head"><h3>過去のレポート</h3><span>全{TOTAL}件</span></div>
-      <div class="archive-grid">{ARCHIVE_CARDS}</div>
     </div>
     <div class="hub-section" id="market-news"><p class="hub-label">FXマーケットニュース</p></div>
     <div class="panel full fx-news-panel" style="margin-bottom:20px;">
@@ -259,7 +290,7 @@ html = f"""<!DOCTYPE html>
   <a href="index.html" class="active">Home</a>
   <a href="#latest-report">日報</a>
   <a href="{LATEST_PATH}#calendar">指標</a>
-  <a href="#reports">Menu</a>
+  <a href="archive.html">アーカイブ</a>
 </nav>
 <footer class="footer">
   <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
@@ -339,4 +370,157 @@ html = f"""<!DOCTYPE html>
 
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(html)
-print('✅ index.html 再生成完了')
+print('index.html regenerated')
+
+# ── archive.html 生成 ────────────────────────────────────
+import datetime as _dt
+
+def _risk_color(r):
+    return {'HIGH':'var(--yellow)','MEDIUM':'var(--orange)','LOW':'var(--green)'}.get(r,'var(--muted)')
+
+def _extract_info(path):
+    try:
+        with open(path, encoding='utf-8') as f:
+            t = f.read()
+    except OSError:
+        return '', '', ''
+    title_m = re.search(r'<p class="sub">(.*?)</p>', t, re.S)
+    summ_m  = re.search(r'<p class="label">一言まとめ</p>\s*<h3>(.*?)</h3>', t, re.S)
+    risk_m  = re.search(r'<p class="label">Market Risk</p>\s*<h3[^>]*>(.*?)</h3>', t, re.S)
+    def _c(m): return unescape(re.sub(r'<[^>]+>', '', m.group(1))).strip() if m else ''
+    title = _c(title_m); s = _c(title_m)
+    title_short = (title[:55] + '…') if len(title) > 55 else title
+    return title_short, _c(summ_m), _c(risk_m)
+
+archive_cards = ''
+for f in report_files:
+    href = f.replace(os.sep, '/')
+    name = os.path.basename(f).replace('.html','')
+    try:
+        d  = _dt.date.fromisoformat(name)
+        wd = DAYS[d.strftime('%A')]
+        label = f'{name}（{wd}）'
+    except Exception:
+        label = name
+    title, summary, risk = _extract_info(f)
+    rc = _risk_color(risk)
+    risk_span = f' <span style="color:{rc};font-weight:700;">{risk}</span>' if risk else ''
+    search_data = f'{name} {label} {title} {summary}'.replace('"','')
+    archive_cards += f'''    <a href="{href}" class="archive-card" data-search="{search_data}">
+      <span class="archive-card-date">{label}</span>
+      <p class="archive-card-title">{title}</p>
+      <p class="archive-card-sub">{summary}{risk_span}</p>
+    </a>\n'''
+
+ATOTAL = len(report_files)
+
+archive_html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日報アーカイブ | AUXEN FX Portal</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body class="home-page">
+<header class="mobile-header">
+  <a href="index.html" class="mobile-brand">
+    <img src="assets/logo.svg" alt="AUXEN">
+    <span><strong>AUXEN</strong><em>FX Research Lab</em></span>
+  </a>
+</header>
+<section class="mobile-hero">
+  <p class="eyebrow">AUXEN FX PORTAL</p>
+  <h1>日報アーカイブ</h1>
+  <p>全{ATOTAL}件 — 日付・キーワードで絞り込み</p>
+</section>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="assets/logo.svg" alt="AUXEN"></div>
+      <div><h1>AUXEN</h1><p>FX Research Lab</p></div>
+    </div>
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="archive.html" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報アーカイブ</a>
+      <span class="nav-section">データ</span>
+      <a href="index.html#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
+    </nav>
+    <div class="sidebar-archive">
+      <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--line);">
+        <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">最新レポート</p>
+        <ul class="archive-list">{SIDEBAR_ARCHIVE}</ul>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — Archive</p>
+        <h2>日報アーカイブ</h2>
+        <p class="sub">過去の全FX日報。日付やキーワードで絞り込み検索できます。</p>
+      </div>
+      <div class="date-card">
+        <span>Total</span>
+        <strong>{ATOTAL}件</strong>
+        <em>全レポート</em>
+      </div>
+    </header>
+    <div class="hub-section"><p class="hub-label">🔍 絞り込み検索</p></div>
+    <div class="archive-search-wrap">
+      <input type="search" id="archiveSearch" class="archive-search-input"
+             placeholder="日付（例: 2026-06）やキーワード（例: FOMC、USD/JPY）で絞り込み">
+      <span class="archive-count" id="archiveCount">{ATOTAL}件</span>
+    </div>
+    <div class="hub-section"><p class="hub-label">📂 全レポート</p></div>
+    <div class="archive-grid" id="archiveGrid">
+{archive_cards}    </div>
+  </main>
+</div>
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="index.html">Home</a>
+  <a href="archive.html" class="active">アーカイブ</a>
+  <a href="index.html#rates">金利</a>
+  <a href="contact.html">連絡</a>
+</nav>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="disclaimer.html">免責事項</a>
+    <a href="privacy.html">プライバシーポリシー</a>
+    <a href="terms.html">利用規約</a>
+    <a href="contact.html">お問い合わせ</a>
+  </div>
+</footer>
+<script>
+(function(){{
+  const input = document.getElementById('archiveSearch');
+  const cards = document.querySelectorAll('#archiveGrid .archive-card');
+  const count = document.getElementById('archiveCount');
+  input.addEventListener('input', function() {{
+    const q = this.value.toLowerCase().trim();
+    let n = 0;
+    cards.forEach(function(c) {{
+      const match = !q || c.dataset.search.toLowerCase().includes(q);
+      c.hidden = !match;
+      if (match) n++;
+    }});
+    count.textContent = n + '件';
+  }});
+}})();
+</script>
+</body>
+</html>"""
+
+with open('archive.html', 'w', encoding='utf-8') as f:
+    f.write(archive_html)
+print('archive.html regenerated')

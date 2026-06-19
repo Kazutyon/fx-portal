@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日報アーカイブ | AUXEN FX Portal</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body class="home-page">
+<header class="mobile-header">
+  <a href="index.html" class="mobile-brand">
+    <img src="assets/logo.svg" alt="AUXEN">
+    <span><strong>AUXEN</strong><em>FX Research Lab</em></span>
+  </a>
+</header>
+<section class="mobile-hero">
+  <p class="eyebrow">AUXEN FX PORTAL</p>
+  <h1>日報アーカイブ</h1>
+  <p>全3件 — 日付・キーワードで絞り込み</p>
+</section>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="assets/logo.svg" alt="AUXEN"></div>
+      <div><h1>AUXEN</h1><p>FX Research Lab</p></div>
+    </div>
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="archive.html" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報アーカイブ</a>
+      <span class="nav-section">データ</span>
+      <a href="index.html#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
+    </nav>
+    <div class="sidebar-archive">
+      <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--line);">
+        <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">最新レポート</p>
+        <ul class="archive-list"><li><a href="reports/2026-06-19.html">2026-06-19（金）</a></li>
+<li><a href="reports/2026-06-18.html">2026-06-18（木）</a></li>
+<li><a href="reports/2026-06-17.html">2026-06-17（水）</a></li>
+</ul>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — Archive</p>
+        <h2>日報アーカイブ</h2>
+        <p class="sub">過去の全FX日報。日付やキーワードで絞り込み検索できます。</p>
+      </div>
+      <div class="date-card">
+        <span>Total</span>
+        <strong>3件</strong>
+        <em>全レポート</em>
+      </div>
+    </header>
+    <div class="hub-section"><p class="hub-label">🔍 絞り込み検索</p></div>
+    <div class="archive-search-wrap">
+      <input type="search" id="archiveSearch" class="archive-search-input"
+             placeholder="日付（例: 2026-06）やキーワード（例: FOMC、USD/JPY）で絞り込み">
+      <span class="archive-count" id="archiveCount">3件</span>
+    </div>
+    <div class="hub-section"><p class="hub-label">📂 全レポート</p></div>
+    <div class="archive-grid" id="archiveGrid">
+    <a href="reports/2026-06-19.html" class="archive-card" data-search="2026-06-19 2026-06-19（金） Juneteenth米国休場——英小売売上高・日本CPIで欧州・アジア中心の相場。161円突破後の介入ラインを… 円安161円超え・米国休場">
+      <span class="archive-card-date">2026-06-19（金）</span>
+      <p class="archive-card-title">Juneteenth米国休場——英小売売上高・日本CPIで欧州・アジア中心の相場。161円突破後の介入ラインを…</p>
+      <p class="archive-card-sub">円安161円超え・米国休場 <span style="color:var(--orange);font-weight:700;">MEDIUM</span></p>
+    </a>
+    <a href="reports/2026-06-18.html" class="archive-card" data-search="2026-06-18 2026-06-18（木） FOMCタカ派翌日——今夜BOE金利・PhillyFed。明日Juneteenth休場で薄商い警戒。 USD/JPY ロング継続">
+      <span class="archive-card-date">2026-06-18（木）</span>
+      <p class="archive-card-title">FOMCタカ派翌日——今夜BOE金利・PhillyFed。明日Juneteenth休場で薄商い警戒。</p>
+      <p class="archive-card-sub">USD/JPY ロング継続 <span style="color:var(--yellow);font-weight:700;">HIGH</span></p>
+    </a>
+    <a href="reports/2026-06-17.html" class="archive-card" data-search="2026-06-17 2026-06-17（水） 今夜FOMC・ウォーシュ新議長初会見。USD/JPY最大変動日。 USD/JPY ロング優勢">
+      <span class="archive-card-date">2026-06-17（水）</span>
+      <p class="archive-card-title">今夜FOMC・ウォーシュ新議長初会見。USD/JPY最大変動日。</p>
+      <p class="archive-card-sub">USD/JPY ロング優勢 <span style="color:var(--yellow);font-weight:700;">HIGH</span></p>
+    </a>
+    </div>
+  </main>
+</div>
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="index.html">Home</a>
+  <a href="archive.html" class="active">アーカイブ</a>
+  <a href="index.html#rates">金利</a>
+  <a href="contact.html">連絡</a>
+</nav>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="about.html">About</a>
+    <a href="disclaimer.html">免責事項</a>
+    <a href="privacy.html">プライバシーポリシー</a>
+    <a href="terms.html">利用規約</a>
+    <a href="contact.html">お問い合わせ</a>
+  </div>
+</footer>
+<script>
+(function(){
+  const input = document.getElementById('archiveSearch');
+  const cards = document.querySelectorAll('#archiveGrid .archive-card');
+  const count = document.getElementById('archiveCount');
+  input.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    let n = 0;
+    cards.forEach(function(c) {
+      const match = !q || c.dataset.search.toLowerCase().includes(q);
+      c.hidden = !match;
+      if (match) n++;
+    });
+    count.textContent = n + '件';
+  });
+})();
+</script>
+</body>
+</html>

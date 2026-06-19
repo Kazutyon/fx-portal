@@ -1,5 +1,38 @@
 # LOG
 
+## 2026-06-19 デザイン刷新・archive.html新設・trigger_prompt.txt完全同期 / Claude
+
+- PC版「今日の優先情報」: `.today-priority-grid` 2分割 → `today-priority-wrap` + `market-holiday-bar` 横並びバー構造に変更。必見経済指標は全件 `<ul class="key-events-list">` で2列グリッド表示（スマホは1列）
+- 日報アーカイブ: `index.html` のアーカイブパネルを削除し `archive.html` を独立ページとして新設。日付・キーワードJSリアルタイム検索付き
+- サイドバーナビ: 「日報アーカイブ」リンクを `#reports` → `archive.html` へ変更。「FXニュース」リンクを追加（#market-news）
+- モバイルナビ: mobile-quick-grid と mobile-bottom-nav の `#reports` を `archive.html` に変更
+- `trigger_prompt.txt`: 全上記変更を反映（今-priority-wrap構造・archive.html生成コードブロック追加・ECB_RATE変数追加）
+- `style.css`: `.today-priority-wrap` / `.market-holiday-bar` / `.mh-*` / `.archive-search-*` スタイルを追加
+- `python generate_index.py` 実行で index.html / archive.html 両ファイル正常生成確認済み
+
+## 2026-06-19 ポータルトップのUI簡素化（必見経済指標全件表示） / Claude
+
+- ユーザー方針: ポータルには「本日の市場休場」と「必見経済指標（全件）」だけを即見せる。詳細は日報へのリンクをクリックしてから
+- `generate_index.py`: CARD1/CARD2/RISK_COLOR/RISK_P/CARD4 変数を削除。`KEY_EVENTS_H3/P` を `KEY_EVENTS_ITEMS`（リスト）に変更。`REPORT_SUMMARY`・`RISK_LEVEL` はアーカイブカード用に残す
+- `generate_index.py` テンプレートから `summary-grid`（一言まとめ・最注目通貨・Market Risk・重要指標件数の4カード）を削除
+- `generate_index.py` テンプレート: 必見経済指標カードを `<h3>/<p>` から `<ul class="key-events-list"><li>...</li></ul>` に変更（全件表示）
+- `generate_index.py` テンプレート: PC版 `report-feature-header` の「まず確認:」サブテキストを削除
+- `style.css`: `.key-events-list` / `.key-events-list li` スタイルを追加
+- `trigger_prompt.txt`: 変数説明・テンプレートを同様に更新
+- `python generate_index.py` 実行で `index.html` 再生成済み
+
+## 2026-06-19 トップ最新日報の優先情報化 / Codex
+
+- ユーザー要望に合わせ、トップページの最新日報枠で「本日の市場休場」と「必見経済指標」を先に確認できる構成へ変更
+- `index.html` にPC用 `.today-priority-grid`、スマホ用 `.mobile-latest-points` を追加
+- `style.css` に優先情報カードのPC/スマホ表示を追加
+- `generate_index.py` に `MARKET_HOLIDAY_*` / `KEY_EVENTS_*` 変数を追加し、自動生成でも同じ導線を維持
+- 日報アーカイブの過去カードが空欄になる問題を修正
+  - 既存 `reports/*.html` から日報サブタイトル、一言まとめ、Market Risk を抽出して表示
+- Windowsローカル生成でもリンクが `reports/...` 形式になるようパスを正規化
+- `python -m py_compile generate_index.py` と `python generate_index.py` で確認済み
+- ローカル `index.html` をブラウザでプレビュー起動済み
+
 ## 2026-06-19 トップページサイドバーSVGアイコン復旧 / Codex
 
 - 2026-06-19の日報自動生成後、`index.html` のPCサイドバーアイコンがSVGアウトラインから絵文字へ戻っていた問題を確認
