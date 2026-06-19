@@ -1,5 +1,16 @@
 # LOG
 
+## 2026-06-19 独自ドメイン auxen.jp 設定 / Codex
+
+- ユーザー取得済みドメイン `auxen.jp` をGitHub Pagesへ向けるため、リポジトリルートに `CNAME` を追加
+- `CNAME` の内容: `auxen.jp`
+- GitHub公式ドキュメントでapex domainのDNS設定値を確認
+  - Aレコード: `185.199.108.153` / `185.199.109.153` / `185.199.110.153` / `185.199.111.153`
+  - AAAAレコード: `2606:50c0:8000::153` / `2606:50c0:8001::153` / `2606:50c0:8002::153` / `2606:50c0:8003::153`
+  - `www` は `CNAME` で `kazutyon.github.io` へ向ける
+- 作業時点では `auxen.jp` / `www.auxen.jp` のDNS応答なし
+- DNS反映後、GitHub Pages側でHTTPS enforce確認が必要
+
 ## 2026-06-19 FXマーケットニュース枠実装 / Codex
 
 - ユーザー提供のGoogle Apps ScriptニュースAPIを `index.html` に組み込み
