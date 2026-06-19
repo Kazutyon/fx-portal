@@ -686,10 +686,16 @@ a:hover { text-decoration: underline; }
 .fx-news-more {
   display: inline-flex;
   margin: 14px auto 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--blue);
   font-size: 13px;
   font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
 }
+.fx-news-more:hover { text-decoration: underline; }
 
 /* ── Footer ── */
 .footer {

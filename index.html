@@ -153,7 +153,7 @@
       <ul class="fx-news-list" id="fxNewsLive">
         <li class="fx-news-empty">ニュースを読み込み中...</li>
       </ul>
-      <a href="https://www.investing.com/news/forex-news" target="_blank" rel="noopener" class="fx-news-more">もっと見る →</a>
+      <button type="button" class="fx-news-more" id="fxNewsMore">もっと見る →</button>
     </div>
 
     <!-- ─── データコーナー ─── -->
@@ -238,6 +238,9 @@
   const GAS_URL = "https://script.google.com/macros/s/AKfycbyt2OkhAzglhoQOHZDHx_8fpY11lQsKXFQHIzMt-VkZO9Ki6Y02IVpkhgBY8KMVeWgR/exec";
   const list = document.getElementById("fxNewsLive");
   const updated = document.getElementById("fxNewsUpdated");
+  const moreButton = document.getElementById("fxNewsMore");
+  let latestItems = [];
+  let expanded = false;
   if (!list) return;
 
   function formatTime(value) {
@@ -253,7 +256,8 @@
 
   function renderNews(items) {
     list.innerHTML = "";
-    items.slice(0, 5).forEach((item) => {
+    const visibleItems = items.slice(0, expanded ? 20 : 5);
+    visibleItems.forEach((item) => {
       const li = document.createElement("li");
       li.className = "fx-news-item";
 
@@ -277,6 +281,10 @@
     if (updated) {
       updated.textContent = "最終更新: " + new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" });
     }
+    if (moreButton) {
+      moreButton.hidden = items.length <= 5;
+      moreButton.textContent = expanded ? "5件に戻す ↑" : "もっと見る →";
+    }
   }
 
   async function loadNews() {
@@ -284,13 +292,21 @@
       const response = await fetch(GAS_URL, { cache: "no-store" });
       const data = await response.json();
       if (data.status !== "ok" || !Array.isArray(data.items)) throw new Error("news unavailable");
-      renderNews(data.items);
+      latestItems = data.items;
+      renderNews(latestItems);
     } catch (error) {
       if (!list.children.length || list.querySelector(".fx-news-empty")) {
         list.innerHTML = '<li class="fx-news-empty">ニュースを取得できませんでした。時間をおいて再読み込みしてください。</li>';
       }
       if (updated) updated.textContent = "自動更新待機中";
     }
+  }
+
+  if (moreButton) {
+    moreButton.addEventListener("click", () => {
+      expanded = !expanded;
+      renderNews(latestItems);
+    });
   }
 
   loadNews();
