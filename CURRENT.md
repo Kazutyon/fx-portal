@@ -32,4 +32,4 @@ Phase 1 完了。デザインも一通り完成。
 - お問い合わせ: Google フォームを作成して contact.html に埋め込む
 - 政策金利: RBA / RBNZ / BOC / SNB の値を月曜日報で更新（ECBは実装済み）
 - 特定商取引法ページ: インジ・EA販売前に追加
-- 過去レポート（Notion 5〜6月分）HTML移行: Phase 2 以降
+- 過去レポート（Notion 6/1〜16分）HTML移行: DeepSeek仕事票発行済み（`docs\ai-team-queue\active\fx-notion-migration.md`）。コンテンツ参照ファイル（fx-notion-content.md）準備完了。DeepSeek実行待ち。

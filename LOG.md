@@ -1,5 +1,22 @@
 # LOG
 
+## 2026-06-19 Notion FX日報12件 HTML移植完了 / DeepSeek
+
+- `fx-notion-migration.md` の仕事票に従い、2026-06-01〜06-16 の日報12件をHTML生成
+- 生成スクリプト: `generate_reports_from_notion.py`（データ埋め込み型、1ファイル生成）
+- 全12ファイル: `reports/2026-06-01.html`〜`reports/2026-06-16.html`
+- `generate_index.py` を実行し `index.html` / `archive.html` を再生成
+- 月曜日分（6/1・6/8・6/15）は主要通貨ファンダメンタルズ＋市場センチメントのパネル追加済み
+- git commit & push 完了
+- 仕事票を `done/` へ移動、ACTIVE-LOCKS.md を released に更新
+
+## 2026-06-19 Notion FX日報移植準備（DeepSeek仕事票 + コンテンツファイル作成） / Claude
+
+- Notion 2026-06-01〜06-16の日報12ページをMCP経由で取得し、全文を `docs\ai-team-queue\active\fx-notion-content.md` に書き出し
+- DeepSeek向け仕事票 `docs\ai-team-queue\active\fx-notion-migration.md` を発行（12ファイル・マッピングルール・完了後処理付き）
+- CURRENT.md の残件欄を更新（移行フェーズの状態を明記）
+- DeepSeek が仕事票を受け取り次第、reports/2026-06-01.html〜reports/2026-06-16.html の12ファイルが自動生成される予定
+
 ## 2026-06-19 デザイン刷新・archive.html新設・trigger_prompt.txt完全同期 / Claude
 
 - PC版「今日の優先情報」: `.today-priority-grid` 2分割 → `today-priority-wrap` + `market-holiday-bar` 横並びバー構造に変更。必見経済指標は全件 `<ul class="key-events-list">` で2列グリッド表示（スマホは1列）
