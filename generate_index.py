@@ -235,14 +235,14 @@ html = f"""<!DOCTYPE html>
         <table class="fx-table">
           <thead><tr><th>中銀</th><th>通貨</th><th>金利</th><th>スタンス</th></tr></thead>
           <tbody>
-            <tr><td>FRB</td><td>🇺🇸 USD</td><td><strong>{FRB_RATE}</strong></td><td style="color:{FRB_COLOR};font-size:12px;">{FRB_STANCE}</td></tr>
-            <tr><td>BOE</td><td>🇬🇧 GBP</td><td><strong>{BOE_RATE}</strong></td><td style="color:{BOE_COLOR};font-size:12px;">{BOE_STANCE}</td></tr>
-            <tr><td>日銀</td><td>🇯🇵 JPY</td><td><strong>{BOJ_RATE}</strong></td><td style="color:{BOJ_COLOR};font-size:12px;">{BOJ_STANCE}</td></tr>
-            <tr><td>ECB</td><td>🇪🇺 EUR</td><td><strong>{ECB_RATE}</strong></td><td style="color:{ECB_COLOR};font-size:12px;">{ECB_STANCE}</td></tr>
-            <tr><td>RBA</td><td>🇦🇺 AUD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
-            <tr><td>RBNZ</td><td>🇳🇿 NZD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
-            <tr><td>BOC</td><td>🇨🇦 CAD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
-            <tr><td>SNB</td><td>🇨🇭 CHF</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+            <tr><td>FRB</td><td>USD</td><td><strong>{FRB_RATE}</strong></td><td style="color:{FRB_COLOR};font-size:12px;">{FRB_STANCE}</td></tr>
+            <tr><td>BOE</td><td>GBP</td><td><strong>{BOE_RATE}</strong></td><td style="color:{BOE_COLOR};font-size:12px;">{BOE_STANCE}</td></tr>
+            <tr><td>日銀</td><td>JPY</td><td><strong>{BOJ_RATE}</strong></td><td style="color:{BOJ_COLOR};font-size:12px;">{BOJ_STANCE}</td></tr>
+            <tr><td>ECB</td><td>EUR</td><td><strong>{ECB_RATE}</strong></td><td style="color:{ECB_COLOR};font-size:12px;">{ECB_STANCE}</td></tr>
+            <tr><td>RBA</td><td>AUD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+            <tr><td>RBNZ</td><td>NZD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+            <tr><td>BOC</td><td>CAD</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
+            <tr><td>SNB</td><td>CHF</td><td style="color:var(--muted);">要確認</td><td style="color:var(--muted);font-size:12px;">—</td></tr>
           </tbody>
         </table>
         <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ FRB/BOE/日銀/ECBは複数ソース確認済み。RBA/RBNZ/BOC/SNBは月曜日報で更新予定。</p>
