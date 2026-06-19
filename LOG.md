@@ -1,5 +1,16 @@
 # LOG
 
+## 2026-06-19 GoatCounterアクセス解析導入 / Codex
+
+- GoatCounterの計測タグを既存HTML全ページに追加
+  - 対象: `index.html` / about / contact / disclaimer / privacy / terms / reports配下3ページ
+- 計測先: `https://auxen.goatcounter.com/count`
+- `trigger_prompt.txt` にGoatCounterタグ維持ルールを追加
+  - 今後の `index.html` 再生成
+  - 今後の日報HTML生成
+- `privacy.html` を更新し、GoatCounterによるアクセス解析利用を明記
+- GoatCounterはCookieによる個人追跡を前提にしない軽量アクセス解析として採用
+
 ## 2026-06-19 独自ドメイン auxen.jp 設定 / Codex
 
 - ユーザー取得済みドメイン `auxen.jp` をGitHub Pagesへ向けるため、リポジトリルートに `CNAME` を追加
