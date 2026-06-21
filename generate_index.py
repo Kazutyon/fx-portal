@@ -2,24 +2,23 @@ import glob, os, re
 from html import unescape
 
 # ── 今日のデータ ──────────────────
-TODAY      = '2026-06-19'
-WEEKDAY    = '金'
-HERO_SUB   = 'Juneteenth米国休場——英小売売上高・日本CPIで欧州・アジア中心。161円突破後の介入ラインを警戒。'
-MARKET_HOLIDAY_H3 = '米国市場休場'
-MARKET_HOLIDAY_P  = 'Juneteenth: NYSE・NASDAQ・米国債市場が全日休場。米国勢不在で流動性低下。'
+TODAY      = '2026-06-22'
+WEEKDAY    = '月'
+HERO_SUB   = 'USD/JPY 161円台継続・介入警戒。今週の本命は6/23フラッシュPMIと6/26 PCE。日銀1.00% vs FRB 3.50–3.75%の金利差が円安の構造的背景。'
+MARKET_HOLIDAY_H3 = 'なし（全市場通常営業）'
+MARKET_HOLIDAY_P  = '本日は主要市場すべて通常営業。月曜は材料薄（中国LPRのみ）でスプレッド拡大に注意。'
 KEY_EVENTS_ITEMS  = [
-    '08:30 🇯🇵 日本CPI（全国・前年比）★重要',
-    '08:30 🇯🇵 日本コアCPI（生鮮除く）★重要',
-    '15:00 🇬🇧 英小売売上高（5月）★最重要',
-    '15:00 🇬🇧 英小売（燃料除く）★',
-    '21:30 🇨🇦 カナダ小売売上高（4月）',
+    '10:15 🇨🇳 中国 ローンプライムレート（1年）6月',
+    '10:15 🇨🇳 中国 ローンプライムレート（5年）6月',
+    '6/23 🇺🇸🇪🇺🇬🇧 フラッシュ製造業・サービス業PMI ★今週最重要',
+    '6/26 🇺🇸 米PCEデフレーター（5月）★重要',
 ]
-REPORT_SUMMARY = '円安161円超え・米国休場'
-RISK_LEVEL = 'MEDIUM'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（年内利上げ観測）'; FRB_COLOR = 'var(--red)'
+REPORT_SUMMARY = '161円台・今週はPMI次第'
+RISK_LEVEL = 'HIGH'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（9月追加利上げ観測強）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11利上げ）'; ECB_COLOR = 'var(--red)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11利上げ・追加観測あり）'; ECB_COLOR = 'var(--red)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
