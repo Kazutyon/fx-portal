@@ -19,6 +19,10 @@ FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（9月追加利上げ観測
 BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
 ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11利上げ・追加観測あり）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
+RBNZ_RATE  = '2.25%';      RBNZ_STANCE = 'タカ派寄り（5/27据え置き・利上げ票あり）'; RBNZ_COLOR = 'var(--red)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立（6/10・5会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
@@ -240,10 +244,10 @@ html = f"""<!DOCTYPE html>
             <tr><td>BOE</td><td>🇬🇧 GBP</td><td><strong>{BOE_RATE}</strong></td><td style="color:{BOE_COLOR};font-size:12px;">{BOE_STANCE}</td></tr>
             <tr><td>日銀</td><td>🇯🇵 JPY</td><td><strong>{BOJ_RATE}</strong></td><td style="color:{BOJ_COLOR};font-size:12px;">{BOJ_STANCE}</td></tr>
             <tr><td>ECB</td><td>🇪🇺 EUR</td><td><strong>{ECB_RATE}</strong></td><td style="color:{ECB_COLOR};font-size:12px;">{ECB_STANCE}</td></tr>
-            <tr><td>RBA</td><td>🇦🇺 AUD</td><td><strong>4.35%</strong></td><td style="color:var(--red);font-size:12px;">タカ派（6/16据え置き・追加利上げ余地）</td></tr>
-            <tr><td>RBNZ</td><td>🇳🇿 NZD</td><td><strong>2.25%</strong></td><td style="color:var(--red);font-size:12px;">タカ派寄り（5/27据え置き・利上げ票あり）</td></tr>
-            <tr><td>BOC</td><td>🇨🇦 CAD</td><td><strong>2.25%</strong></td><td style="color:var(--muted);font-size:12px;">中立（6/10・5会合連続据え置き）</td></tr>
-            <tr><td>SNB</td><td>🇨🇭 CHF</td><td><strong>0.00%</strong></td><td style="color:var(--muted);font-size:12px;">中立（6/18据え置き・為替介入警戒）</td></tr>
+            <tr><td>RBA</td><td>🇦🇺 AUD</td><td><strong>{RBA_RATE}</strong></td><td style="color:{RBA_COLOR};font-size:12px;">{RBA_STANCE}</td></tr>
+            <tr><td>RBNZ</td><td>🇳🇿 NZD</td><td><strong>{RBNZ_RATE}</strong></td><td style="color:{RBNZ_COLOR};font-size:12px;">{RBNZ_STANCE}</td></tr>
+            <tr><td>BOC</td><td>🇨🇦 CAD</td><td><strong>{BOC_RATE}</strong></td><td style="color:{BOC_COLOR};font-size:12px;">{BOC_STANCE}</td></tr>
+            <tr><td>SNB</td><td>🇨🇭 CHF</td><td><strong>{SNB_RATE}</strong></td><td style="color:{SNB_COLOR};font-size:12px;">{SNB_STANCE}</td></tr>
           </tbody>
         </table>
         <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ {TODAY}時点。各中銀の公式発表と複数ソースで確認済み。</p>

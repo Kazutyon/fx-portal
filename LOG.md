@@ -24,6 +24,13 @@
 - SNB: 0.00%（6/18据え置き、為替介入警戒）。SNB現行金利ページと6/18公式政策評価で確認。
 - `index.html` / `generate_index.py` / `trigger_prompt.txt` を同じ表示に統一し、次回自動生成で「要確認」へ戻らないよう修正。
 
+## 2026-06-22 8中銀の月曜自動更新化 / Codex
+
+- 前回修正でRBA / RBNZ / BOC / SNBが固定値のままだったことを確認。
+- `generate_index.py` に4中銀の `*_RATE` / `*_STANCE` / `*_COLOR` 変数を追加し、表のHTMLを変数参照へ変更。
+- `trigger_prompt.txt` に8中銀全ての変数と更新ルールを追加。月曜は公式発表+複数ソースで全行更新、火〜金は `index.html` の直近値を引き継ぐ。
+- トリガー内の例示値も現在の8中銀データと同期し、平日に古い例示値で上書きしないよう明記。
+
 ## 2026-06-19 Twemoji 絵文字アイコン大きさバグ修正 / Claude
 
 - 原因① `generate_index.py` の index.html テンプレートで Twemoji `base` URL が抜けていた → archive.html テンプレートは正常。修正後 `python generate_index.py` 再生成 → push (commit: ad6abbc)

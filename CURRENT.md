@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-06-22 / Codex（RBA/RBNZ/BOC/SNB政策金利反映）
+最終更新: 2026-06-22 / Codex（8中銀の月曜自動更新化）
 状態: active
 
 ## 現在の状態
@@ -18,7 +18,7 @@ Phase 1 完了。デザインも一通り完成。
 - 日報アーカイブ: `archive.html` を独立ページとして新設。日付・キーワードJSリアルタイム検索付き。`index.html` からアーカイブパネルを削除
 - FXマーケットニュース枠: GASから自動取得、2分ごと自動更新
 - 独自ドメイン: `https://auxen.jp/` 稼働中。TLS証明書発行済み、`Enforce HTTPS` 有効、HTTPからHTTPSへ301リダイレクト確認済み
-- 政策金利: RBA 4.35% / RBNZ 2.25% / BOC 2.25% / SNB 0.00%を公式発表と複数ソースで確認し、トップ・生成スクリプト・トリガー指示へ反映済み
+- 政策金利: 8中銀すべてを変数化済み。月曜は公式発表+複数ソースで最新値へ更新、火〜金曜は直近値を維持するよう `trigger_prompt.txt` と `generate_index.py` を統一済み
 - アクセス解析: GoatCounter全ページ済み
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中。`trigger_prompt.txt` は generate_index.py と完全同期済み

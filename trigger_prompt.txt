@@ -200,10 +200,18 @@ Step 1〜5で収集したデータを使って、ポータルの index.html と 
 - KEY_EVENTS_ITEMS: 本日の必見経済指標を全件リストで（例: ['08:30 🇯🇵 日本CPI', '21:30 🇺🇸 非農業部門雇用者数']）
 - REPORT_SUMMARY: アーカイブカード用の一言まとめ（短く）
 - RISK_LEVEL: HIGH / MEDIUM / LOW（アーカイブカード用）
-- FRB_RATE / FRB_STANCE: FRB金利とスタンス（月曜のみ最新値に更新、平日はそのまま）
+- FRB_RATE / FRB_STANCE: FRB金利とスタンス
 - BOE_RATE / BOE_STANCE: BOE金利とスタンス
 - BOJ_RATE / BOJ_STANCE: 日銀金利とスタンス
-- ECB_RATE / ECB_STANCE: ECB金利とスタンス（月曜のみ最新値に更新、平日はそのまま）
+- ECB_RATE / ECB_STANCE: ECB金利とスタンス
+- RBA_RATE / RBA_STANCE: RBA金利とスタンス
+- RBNZ_RATE / RBNZ_STANCE: RBNZ金利とスタンス
+- BOC_RATE / BOC_STANCE: BOC金利とスタンス
+- SNB_RATE / SNB_STANCE: SNB金利とスタンス
+
+**8中銀の更新ルール（必須）:**
+- 月曜日: Step 5の調査結果を使い、8中銀すべての `*_RATE` / `*_STANCE` / `*_COLOR` を公式発表と複数ソースで確認して更新する。
+- 火〜金曜日: 現在の `index.html` にある直近の金利・スタンスを引き継ぐ。下の例示値で上書きしない。
 
 ```python
 import glob, os, re
@@ -221,10 +229,14 @@ KEY_EVENTS_ITEMS  = [
 ]
 REPORT_SUMMARY = '一言まとめ（短く）'
 RISK_LEVEL = 'HIGH'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = '中立';   BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';     ECB_STANCE = 'タカ派';  ECB_COLOR = 'var(--red)'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（9月追加利上げ観測強）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11利上げ・追加観測あり）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
+RBNZ_RATE  = '2.25%';      RBNZ_STANCE = 'タカ派寄り（5/27据え置き・利上げ票あり）'; RBNZ_COLOR = 'var(--red)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立（6/10・5会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
@@ -448,10 +460,10 @@ html = f"""<!DOCTYPE html>
             <tr><td>BOE</td><td>🇬🇧 GBP</td><td><strong>{BOE_RATE}</strong></td><td style="color:{BOE_COLOR};font-size:12px;">{BOE_STANCE}</td></tr>
             <tr><td>日銀</td><td>🇯🇵 JPY</td><td><strong>{BOJ_RATE}</strong></td><td style="color:{BOJ_COLOR};font-size:12px;">{BOJ_STANCE}</td></tr>
             <tr><td>ECB</td><td>🇪🇺 EUR</td><td><strong>{ECB_RATE}</strong></td><td style="color:{ECB_COLOR};font-size:12px;">{ECB_STANCE}</td></tr>
-            <tr><td>RBA</td><td>🇦🇺 AUD</td><td><strong>4.35%</strong></td><td style="color:var(--red);font-size:12px;">タカ派（6/16据え置き・追加利上げ余地）</td></tr>
-            <tr><td>RBNZ</td><td>🇳🇿 NZD</td><td><strong>2.25%</strong></td><td style="color:var(--red);font-size:12px;">タカ派寄り（5/27据え置き・利上げ票あり）</td></tr>
-            <tr><td>BOC</td><td>🇨🇦 CAD</td><td><strong>2.25%</strong></td><td style="color:var(--muted);font-size:12px;">中立（6/10・5会合連続据え置き）</td></tr>
-            <tr><td>SNB</td><td>🇨🇭 CHF</td><td><strong>0.00%</strong></td><td style="color:var(--muted);font-size:12px;">中立（6/18据え置き・為替介入警戒）</td></tr>
+            <tr><td>RBA</td><td>🇦🇺 AUD</td><td><strong>{RBA_RATE}</strong></td><td style="color:{RBA_COLOR};font-size:12px;">{RBA_STANCE}</td></tr>
+            <tr><td>RBNZ</td><td>🇳🇿 NZD</td><td><strong>{RBNZ_RATE}</strong></td><td style="color:{RBNZ_COLOR};font-size:12px;">{RBNZ_STANCE}</td></tr>
+            <tr><td>BOC</td><td>🇨🇦 CAD</td><td><strong>{BOC_RATE}</strong></td><td style="color:{BOC_COLOR};font-size:12px;">{BOC_STANCE}</td></tr>
+            <tr><td>SNB</td><td>🇨🇭 CHF</td><td><strong>{SNB_RATE}</strong></td><td style="color:{SNB_COLOR};font-size:12px;">{SNB_STANCE}</td></tr>
           </tbody>
         </table>
         <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ {TODAY}時点。各中銀の公式発表と複数ソースで確認済み。</p>
