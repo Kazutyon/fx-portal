@@ -1,5 +1,40 @@
 # LOG
 
+## 2026-06-22 独自ドメインHTTPS診断 / Codex
+
+- `auxen.jp` のAレコード4件はGitHub Pages公式IPへ正しく解決。`www` CNAMEも `kazutyon.github.io` へ解決。
+- `http://auxen.jp/` は200 OKのままでHTTPSへリダイレクトされない。
+- `https://auxen.jp/` はコンテンツ自体はGitHubから応答するが、証明書名不一致で通常ブラウザで保護されない。
+- GitHub Pages APIは `status: built` / `cname: auxen.jp` / `https_enforced: false` / `html_url: http://auxen.jp/` を返した。
+- 6/19設定から3日経過しているため、待機ではなくGitHub Settings > PagesでカスタムドメインのRemove→再Saveによる証明書発行ジョブ再開が必要と判定。
+
+## 2026-06-22 auxen.jp HTTPS復旧 / Codex
+
+- ユーザー承認のもと、GitHub Pages APIでCustom domainを一度解除し、`auxen.jp` を再登録。
+- TLS証明書が `authorization_created` → `approved` に進み、有効期限2026-09-20の `auxen.jp` / `www.auxen.jp` 証明書を確認。
+- `Enforce HTTPS` を有効化。GitHub Pages APIで `status: built` / `html_url: https://auxen.jp/` / `https_enforced: true` を確認。
+- `http://auxen.jp/` が301で `https://auxen.jp/` へリダイレクトし、HTTPSが証明書エラーなし200 OKを返すことを実機確認。
+
+## 2026-06-22 主要中銀4行の政策金利更新 / Codex
+
+- 公開トップで「要確認」だったRBA / RBNZ / BOC / SNBを更新。
+- RBA: 4.35%（6/16据え置き、追加利上げ余地）。RBA Cash Rate Targetと6/16金融政策声明、複数媒体で照合。
+- RBNZ: 2.25%（5/27据え置き、利上げ票あり）。RBNZ 2026年5月MPSと複数媒体で照合。
+- BOC: 2.25%（6/10、5会合連続据え置き）。Bank of Canada公式Valet APIと6/10公式声明で確認。
+- SNB: 0.00%（6/18据え置き、為替介入警戒）。SNB現行金利ページと6/18公式政策評価で確認。
+- `index.html` / `generate_index.py` / `trigger_prompt.txt` を同じ表示に統一し、次回自動生成で「要確認」へ戻らないよう修正。
+
+## 2026-06-19 Twemoji 絵文字アイコン大きさバグ修正 / Claude
+
+- 原因① `generate_index.py` の index.html テンプレートで Twemoji `base` URL が抜けていた → archive.html テンプレートは正常。修正後 `python generate_index.py` 再生成 → push (commit: ad6abbc)
+- 原因② `img.emoji` の CSS サイズ制約が style.css になかった → 📰・🏦 などのアイコンが大きいブロックとして表示された。`img.emoji { height: 1em !important; width: 1em !important; display: inline !important; }` を追加 → push (commit: bea9d1b) で解消確認
+
+## 2026-06-19 index.html Twemoji base URL バグ修正 / Claude
+
+- `generate_index.py` の index.html テンプレート（114行目）に `base` パラメータが抜けていたため、ポータルトップの国旗絵文字が壊れたimgタグとなりレイアウト崩壊していた
+- archive.html テンプレート・trigger_prompt.txt には正しく入っており、index.html テンプレートだけ抜けていた
+- `generate_index.py` 修正 → `python generate_index.py` 再生成 → git push 完了（commit: ad6abbc）
+
 ## 2026-06-19 Twemoji導入・国旗絵文字修正 / Claude
 
 - Windows環境で国旗絵文字が "US"/"GB" などの文字列に変換される問題を解消
