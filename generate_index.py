@@ -1,29 +1,36 @@
-import glob, json, os, re
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""index.html + archive.html 再生成スクリプト (2026-06-23)"""
+
+import glob, json, os, re, datetime as _dt
 from html import unescape
 
-# ── 今日のデータ ──────────────────
-TODAY      = '2026-06-22'
-WEEKDAY    = '月'
-HERO_SUB   = 'USD/JPY 161円台継続・介入警戒。今週の本命は6/23フラッシュPMIと6/26 PCE。日銀1.00% vs FRB 3.50–3.75%の金利差が円安の構造的背景。'
-MARKET_HOLIDAY_H3 = 'なし（全市場通常営業）'
-MARKET_HOLIDAY_P  = '本日は主要市場すべて通常営業。月曜は材料薄（中国LPRのみ）でスプレッド拡大に注意。'
+# ── 今日のデータ ─────────────────────────────────────────────
+TODAY      = '2026-06-23'
+WEEKDAY    = '火'
+HERO_SUB   = 'USD/JPY 161円台・介入警戒継続。本日は各国フラッシュPMI速報が集中。強弱でドル・ユーロ・ポンドの週間トレンドが決まる最重要デー。'
+MARKET_HOLIDAY_H3 = 'なし'
+MARKET_HOLIDAY_P  = '本日（6/23）の主要市場に休場なし。米・英・日・欧州・豪・NZ・加すべて通常取引。'
 KEY_EVENTS_ITEMS  = [
-    '10:15 🇨🇳 中国 ローンプライムレート（1年）6月',
-    '10:15 🇨🇳 中国 ローンプライムレート（5年）6月',
-    '6/23 🇺🇸🇪🇺🇬🇧 フラッシュ製造業・サービス業PMI ★今週最重要',
-    '6/26 🇺🇸 米PCEデフレーター（5月）★重要',
+    '09:30 🇯🇵 日本 au Jibun Bank 製造業PMI速報（6月）',
+    '16:15 🇫🇷 フランス HCOB 製造業・サービス業PMI速報（6月）',
+    '16:30 🇩🇪 ドイツ HCOB 製造業・サービス業PMI速報（6月）',
+    '17:00 🇪🇺 ユーロ圏 HCOB 総合PMI速報（6月）',
+    '17:30 🇬🇧 英国 S&amp;P Global 製造業・サービス業PMI速報（6月）',
+    '22:45 🇺🇸 米国 S&amp;P Global 製造業・サービス業・総合PMI速報（6月）',
 ]
-REPORT_SUMMARY = '161円台・今週はPMI次第'
+REPORT_SUMMARY = 'PMI速報が週の方向性を決定する最重要日'
 RISK_LEVEL = 'HIGH'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（9月追加利上げ観測強）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11利上げ・追加観測あり）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
-RBNZ_RATE  = '2.25%';      RBNZ_STANCE = 'タカ派寄り（5/27据え置き・利上げ票あり）'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.25%';      BOC_STANCE = '中立（6/10・5会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
-SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
-# ────────────────────────────────────────────────────────
+
+# 火〜金曜日: 直近の金利・スタンスを引き継ぎ
+FRB_RATE   = '3.50–3.75%';   FRB_STANCE = 'タカ派（9月追加利上げ観測強）';           FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';        BOE_STANCE = 'ハト派寄り（次は利下げ観測）';              BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';        BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';        ECB_STANCE = 'タカ派転換（6/11利上げ・追加観測あり）';    ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';        RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）';    RBA_COLOR = 'var(--red)'
+RBNZ_RATE  = '2.25%';        RBNZ_STANCE = 'タカ派寄り（5/27据え置き・利上げ票あり）'; RBNZ_COLOR = 'var(--red)'
+BOC_RATE   = '2.25%';        BOC_STANCE = '中立（6/10・5会合連続据え置き）';           BOC_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';        SNB_STANCE = '中立（6/18据え置き・為替介入警戒）';        SNB_COLOR = 'var(--muted)'
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
 
@@ -35,15 +42,11 @@ def make_daytrade_ranking(path='data/daytrade-ranking.json'):
         updated = payload['generated_at_jst'].replace('T', ' ')[:16]
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
         return '<tr><td colspan="8" class="daytrade-empty">初回データを準備中です</td></tr>', '準備中'
-
     rows = []
     for item in rankings:
         rank = item.get('rank') or '—'
         direction_class = {'上昇': 'trend-up', '下降': 'trend-down'}.get(item['direction'], 'trend-range')
-        verdict_class = {
-            '最適': 'rank-best', '適': 'rank-good', '候補': 'rank-watch',
-            '見送り': 'rank-skip', '対象外': 'rank-out'
-        }.get(item['verdict'], 'rank-skip')
+        verdict_class = {'最適':'rank-best','適':'rank-good','候補':'rank-watch','見送り':'rank-skip','対象外':'rank-out'}.get(item['verdict'], 'rank-skip')
         rows.append(f'''<tr>
           <td class="daytrade-rank">{rank}</td><td><strong>{item['pair']}</strong></td>
           <td>{item['adr_5_pips']:.1f}</td><td>{item['adr_ratio_pct']:.0f}%</td>
@@ -72,10 +75,8 @@ def extract_report_summary(path):
             text = f.read()
     except OSError:
         return '', ''
-
     title_match = re.search(r'<p class="sub">(.*?)</p>', text, re.S)
     title = shorten(title_match.group(1), 42) if title_match else ''
-
     summary_match = re.search(r'<p class="label">一言まとめ</p>\s*<h3>(.*?)</h3>', text, re.S)
     risk_match = re.search(r'<p class="label">Market Risk</p>\s*<h3[^>]*>(.*?)</h3>', text, re.S)
     sub_parts = []
@@ -91,8 +92,7 @@ def make_archive_cards(files):
         href = f.replace(os.sep, '/')
         name = os.path.basename(f).replace('.html','')
         try:
-            import datetime
-            d = datetime.date.fromisoformat(name)
+            d = _dt.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
         except:
@@ -117,8 +117,7 @@ def make_sidebar_archive(files):
         href = f.replace(os.sep, '/')
         name = os.path.basename(f).replace('.html','')
         try:
-            import datetime
-            d = datetime.date.fromisoformat(name)
+            d = _dt.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
         except:
@@ -175,9 +174,10 @@ html = f"""<!DOCTYPE html>
   <p class="eyebrow">{TODAY}（{WEEKDAY}） — AI Daily Report</p>
   <h2>{HERO_SUB}</h2>
   <div class="mobile-latest-points">
-    <div class="mobile-holiday-bar">
-      <span class="mh-label">市場休場</span>
-      <strong class="mh-title">{MARKET_HOLIDAY_H3}</strong>
+    <div>
+      <span>本日の市場休場</span>
+      <strong>{MARKET_HOLIDAY_H3}</strong>
+      <p>{MARKET_HOLIDAY_P}</p>
     </div>
     <div>
       <span>必見経済指標</span>
@@ -199,13 +199,13 @@ html = f"""<!DOCTYPE html>
       <span class="nav-section">メイン</span>
       <a href="index.html" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
       <a href="archive.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報アーカイブ</a>
+      <a href="#market-news"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/><rect x="2" y="8" width="8" height="14" rx="1"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="4" y1="16" x2="8" y2="16"/></svg>FXニュース</a>
       <span class="nav-section">データ</span>
-      <a href="#market-news"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/></svg>FXニュース</a>
       <a href="#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
       <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>デイトレ適性</a>
       <span class="nav-section">ツール・販売</span>
       <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター <span class="badge-soon">Soon</span></a>
-      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA <span class="badge-soon">Soon</span></a>
+      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA <span class="badge-soon">Soon</span></a>
       <a href="#analysis"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>チャート分析 <span class="badge-soon">Soon</span></a>
       <span class="nav-section">サイト情報</span>
       <a href="about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
@@ -278,18 +278,16 @@ html = f"""<!DOCTYPE html>
             <tr><td>SNB</td><td>🇨🇭 CHF</td><td><strong>{SNB_RATE}</strong></td><td style="color:{SNB_COLOR};font-size:12px;">{SNB_STANCE}</td></tr>
           </tbody>
         </table>
-        <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ {TODAY}時点。各中銀の公式発表と複数ソースで確認済み。</p>
+        <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ {TODAY}時点。火〜金曜日は直近確認値を引き継ぎ。各中銀の公式発表と複数ソースで6/22確認済み。</p>
       </div>
     </div>
     <div class="panel full daytrade-panel" id="strength" style="margin-bottom:20px;">
       <div class="panel-head"><h3>📈 4H デイトレ適性ランキング</h3><span>{DAYTRADE_UPDATED} JST 更新</span></div>
       <p class="daytrade-lead">直近5日の日中値幅を5年平均と比較し、4時間足ATR・ADX・EMAトレンド・概算コストを総合採点。直近ADR 30pips未満は対象外。</p>
-      <div class="daytrade-table-wrap">
-        <table class="fx-table daytrade-table">
-          <thead><tr><th>順位</th><th>通貨ペア</th><th>5日ADR</th><th>5年比</th><th>4H ATR</th><th>ADX</th><th>方向</th><th>判定/点</th></tr></thead>
-          <tbody>{DAYTRADE_ROWS_HTML}</tbody>
-        </table>
-      </div>
+      <div class="daytrade-table-wrap"><table class="fx-table daytrade-table">
+        <thead><tr><th>順位</th><th>通貨ペア</th><th>5日ADR</th><th>5年比</th><th>4H ATR</th><th>ADX</th><th>方向</th><th>判定/点</th></tr></thead>
+        <tbody>{DAYTRADE_ROWS_HTML}</tbody>
+      </table></div>
       <p class="daytrade-note">価格データ: Yahoo Finance。スプレッドは概算でリアルタイム値ではありません。ランキングは売買推奨ではなく、相場環境を比較する参考情報です。</p>
     </div>
     <div class="hub-section" id="tools"><p class="hub-label">🔧 ツール・販売</p></div>
@@ -406,10 +404,9 @@ html = f"""<!DOCTYPE html>
 
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(html)
-print('index.html regenerated')
+print('✅ index.html 再生成完了')
 
-# ── archive.html 生成 ────────────────────────────────────
-import datetime as _dt
+# ── archive.html 生成 ────────────────────────────────────────
 
 def _risk_color(r):
     return {'HIGH':'var(--yellow)','MEDIUM':'var(--orange)','LOW':'var(--green)'}.get(r,'var(--muted)')
@@ -424,11 +421,11 @@ def _extract_info(path):
     summ_m  = re.search(r'<p class="label">一言まとめ</p>\s*<h3>(.*?)</h3>', t, re.S)
     risk_m  = re.search(r'<p class="label">Market Risk</p>\s*<h3[^>]*>(.*?)</h3>', t, re.S)
     def _c(m): return unescape(re.sub(r'<[^>]+>', '', m.group(1))).strip() if m else ''
-    title = _c(title_m); s = _c(title_m)
+    title = _c(title_m)
     title_short = (title[:55] + '…') if len(title) > 55 else title
     return title_short, _c(summ_m), _c(risk_m)
 
-archive_cards = ''
+archive_cards_html = ''
 for f in report_files:
     href = f.replace(os.sep, '/')
     name = os.path.basename(f).replace('.html','')
@@ -442,7 +439,7 @@ for f in report_files:
     rc = _risk_color(risk)
     risk_span = f' <span style="color:{rc};font-weight:700;">{risk}</span>' if risk else ''
     search_data = f'{name} {label} {title} {summary}'.replace('"','')
-    archive_cards += f'''    <a href="{href}" class="archive-card" data-search="{search_data}">
+    archive_cards_html += f'''    <a href="{href}" class="archive-card" data-search="{search_data}">
       <span class="archive-card-date">{label}</span>
       <p class="archive-card-title">{title}</p>
       <p class="archive-card-sub">{summary}{risk_span}</p>
@@ -485,8 +482,6 @@ archive_html = f"""<!DOCTYPE html>
       <span class="nav-section">メイン</span>
       <a href="index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
       <a href="archive.html" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報アーカイブ</a>
-      <span class="nav-section">データ</span>
-      <a href="index.html#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
       <span class="nav-section">サイト情報</span>
       <a href="about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
       <a href="disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
@@ -520,7 +515,7 @@ archive_html = f"""<!DOCTYPE html>
     </div>
     <div class="hub-section"><p class="hub-label">📂 全レポート</p></div>
     <div class="archive-grid" id="archiveGrid">
-{archive_cards}    </div>
+{archive_cards_html}    </div>
   </main>
 </div>
 <nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
@@ -561,4 +556,4 @@ archive_html = f"""<!DOCTYPE html>
 
 with open('archive.html', 'w', encoding='utf-8') as f:
     f.write(archive_html)
-print('archive.html regenerated')
+print('✅ archive.html 再生成完了')
