@@ -852,6 +852,36 @@ a:hover { text-decoration: underline; }
 .coming-soon-icon { font-size: 38px; margin-bottom: 12px; }
 .coming-soon-block p { margin: 4px 0; }
 
+/* ── 4H day-trading suitability ranking ── */
+.daytrade-panel { overflow: hidden; }
+.daytrade-lead {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
+.daytrade-table-wrap { overflow-x: auto; }
+.daytrade-table { min-width: 720px; }
+.daytrade-table th, .daytrade-table td { white-space: nowrap; }
+.daytrade-rank { color: var(--blue); font-weight: 800; text-align: center; }
+.daytrade-verdict {
+  display: inline-block;
+  min-width: 70px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+.rank-best { color: #0f766e; background: #ccfbf1; }
+.rank-good { color: #1d4ed8; background: #dbeafe; }
+.rank-watch { color: #a16207; background: #fef3c7; }
+.rank-skip { color: #64748b; background: #f1f5f9; }
+.rank-out { color: #991b1b; background: #fee2e2; }
+.daytrade-note, .daytrade-empty { color: var(--muted); font-size: 11px; }
+.daytrade-note { margin: 12px 0 0; line-height: 1.65; }
+.daytrade-empty { padding: 28px !important; text-align: center; }
+
 /* ── Sidebar archive — hidden on mobile ── */
 .sidebar-archive { }
 

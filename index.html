@@ -72,7 +72,7 @@
       <span class="nav-section">データ</span>
       <a href="#market-news"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/></svg>FXニュース</a>
       <a href="#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
-      <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>通貨強弱 <span class="badge-soon">Soon</span></a>
+      <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>デイトレ適性</a>
       <span class="nav-section">ツール・販売</span>
       <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター <span class="badge-soon">Soon</span></a>
       <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA <span class="badge-soon">Soon</span></a>
@@ -146,7 +146,7 @@
     </div>
     <div class="hub-section" id="rates"><p class="hub-label">📊 データコーナー</p></div>
     <div class="content-grid" style="margin-bottom:20px;">
-      <div class="panel">
+      <div class="panel full">
         <div class="panel-head"><h3>🏦 主要中銀 政策金利</h3><span>2026-06-22 現在</span></div>
         <table class="fx-table">
           <thead><tr><th>中銀</th><th>通貨</th><th>金利</th><th>スタンス</th></tr></thead>
@@ -163,14 +163,17 @@
         </table>
         <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ 2026-06-22時点。各中銀の公式発表と複数ソースで確認済み。</p>
       </div>
-      <div class="panel" id="strength">
-        <div class="panel-head"><h3>💹 通貨強弱</h3><span class="badge-soon">Coming Soon</span></div>
-        <div class="coming-soon-block">
-          <div class="coming-soon-icon">📈</div>
-          <p style="color:var(--text);font-weight:600;">通貨強弱チャートを追加予定</p>
-          <p style="font-size:13px;">主要8通貨のリアルタイム強弱スコア</p>
-        </div>
+    </div>
+    <div class="panel full daytrade-panel" id="strength" style="margin-bottom:20px;">
+      <div class="panel-head"><h3>📈 4H デイトレ適性ランキング</h3><span>準備中 JST 更新</span></div>
+      <p class="daytrade-lead">直近5日の日中値幅を5年平均と比較し、4時間足ATR・ADX・EMAトレンド・概算コストを総合採点。直近ADR 30pips未満は対象外。</p>
+      <div class="daytrade-table-wrap">
+        <table class="fx-table daytrade-table">
+          <thead><tr><th>順位</th><th>通貨ペア</th><th>5日ADR</th><th>5年比</th><th>4H ATR</th><th>ADX</th><th>方向</th><th>判定/点</th></tr></thead>
+          <tbody><tr><td colspan="8" class="daytrade-empty">初回データを準備中です</td></tr></tbody>
+        </table>
       </div>
+      <p class="daytrade-note">価格データ: Yahoo Finance。スプレッドは概算でリアルタイム値ではありません。ランキングは売買推奨ではなく、相場環境を比較する参考情報です。</p>
     </div>
     <div class="hub-section" id="tools"><p class="hub-label">🔧 ツール・販売</p></div>
     <div class="content-grid" style="margin-bottom:20px;">

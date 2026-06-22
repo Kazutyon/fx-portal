@@ -291,3 +291,22 @@
   - 許可ツール：`notion-create-pages` / `notion-fetch` を削除、`Bash` + `WebFetch` のみに
   - 接続リポジトリ：`kazutyon/Deli` → `kazutyon/fx-portal` に変更
 - `README.md` / `CURRENT.md` / `LOG.md` 作成
+## 2026-06-22 4Hデイトレ適性ランキング実装 / Codex
+
+- 旧「通貨強弱 Coming Soon」を「4H デイトレ適性ランキング」へ置換
+- `daytrade_ranking.py` を追加
+  - Yahoo Financeの5年日足と60日1時間足を取得し、完了足だけを使用
+  - 5年ADR、直近5日ADR、5年比、4時間足ATR(14)、ADX(14)、EMA20/50方向を計算
+  - 概算スプレッド比をコスト評価へ反映し、直近ADR 30pips未満は対象外
+  - 12通貨ペアを0〜100点で採点し、`data/daytrade-ranking.json` へ安全に置換保存
+  - 取得成功が6ペア未満の場合は前回JSONを保持し、空データで壊さない
+- `generate_index.py` と `trigger_prompt.txt` のテンプレートを同期
+  - 平日毎朝、日報生成前にランキングを更新
+  - JSON未生成時は「初回データを準備中」と表示
+- `style.css` に横スクロール対応テーブル、判定バッジ、注記表示を追加
+- about / contact / disclaimer / privacy / terms のサイドバー表記も更新
+- 検証
+  - Python構文検査: OK
+  - 疑似OHLCデータによるADR・ATR・ADX・EMA・採点計算: OK
+  - index/archive再生成の隔離レンダリングテスト: OK
+  - 実データ初回生成は外部実行枠上限のため、次回RemoteTriggerで確認予定
