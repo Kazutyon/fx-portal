@@ -1,0 +1,307 @@
+import glob, os, datetime
+
+TODAY = '2026-06-24'
+WEEKDAY = '水'
+REPORT_FILE = f'reports/{TODAY}.html'
+
+DAYS = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
+
+report_files_raw = sorted(glob.glob('reports/*.html'), reverse=True)
+
+def make_sidebar_archive(files):
+    items = f'<li class="active"><a href="{TODAY}.html">{TODAY}（{WEEKDAY}）</a></li>\n'
+    for f in files[:9]:
+        name = os.path.basename(f).replace('.html','')
+        try:
+            d = datetime.date.fromisoformat(name)
+            wd = DAYS[d.strftime('%A')]
+            label = f'{name}（{wd}）'
+        except Exception:
+            label = name
+        items += f'<li><a href="{name}.html">{label}</a></li>\n'
+    return items
+
+SIDEBAR_ARCHIVE = make_sidebar_archive(report_files_raw)
+
+html = """<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX日報 2026-06-24（水） | AUXEN FX Portal</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){twemoji.parse(document.body,{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'});});</script>
+</head>
+<body class="report-page">
+
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 2026-06-24（水）</h1>
+  <p>豪5月CPI・植田総裁発言・独IFO——3指標が本日の相場を制する。USD/JPYは161円台で介入警戒継続。</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
+<div class="app">
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="../assets/logo.svg" alt="AUXEN"></div>
+      <div>
+        <h1>AUXEN</h1>
+        <p>FX Research Lab</p>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="../index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="#" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報</a>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>市場分析</a>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>統計・検証</a>
+
+      <span class="nav-section">トレード</span>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>トレード日誌</a>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>PDCAラボ</a>
+
+      <span class="nav-section">ツール・販売</span>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター</a>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EAラボ</a>
+    </nav>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
+      <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
+      <ul class="archive-list">
+""" + SIDEBAR_ARCHIVE + """      </ul>
+    </div>
+  </aside>
+
+  <!-- ── Main ── -->
+  <main class="main">
+
+    <!-- Hero -->
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+        <h2>FX日報 2026-06-24（水）<span class="badge-live">最新</span></h2>
+        <p class="sub">豪5月CPI・植田総裁発言・独IFO——3指標が本日の相場を制する。USD/JPYは161円台で介入警戒継続。</p>
+      </div>
+      <div class="date-card">
+        <span>Report Date</span>
+        <strong>2026-06-24</strong>
+        <em>水曜日</em>
+      </div>
+    </header>
+
+    <!-- Summary cards -->
+    <div class="summary-grid" id="summary">
+      <div class="card highlight">
+        <p class="label">一言まとめ</p>
+        <h3>AUD/USD 豪CPI上振れで買い / USD/JPY 162円介入ライン警戒</h3>
+        <p>豪5月CPI（10:30）が予想4.3%を上回ればAUD/USD ロング方向。USD/JPYは161円台で介入口頭けん制継続、162円タッチで実介入リスク急上昇。</p>
+      </div>
+      <div class="card">
+        <p class="label">最注目通貨</p>
+        <h3>AUD/USD 🇦🇺🇺🇸</h3>
+        <p>10:30 豪5月CPI発表でAUDの方向性が決定。RBAスタンスに直結する最重要指標。</p>
+      </div>
+      <div class="card">
+        <p class="label">Market Risk</p>
+        <h3 style="color:var(--orange)">MEDIUM</h3>
+        <p>豪CPI・植田日銀・独IFO・米新築住宅——4本立てのイベントリスク</p>
+      </div>
+      <div class="card">
+        <p class="label">本日の重要指標</p>
+        <h3>7件</h3>
+        <p>豪CPI / 植田発言 / 独IFO / MBA住宅 / 経常収支 / 新築住宅販売</p>
+      </div>
+    </div>
+
+    <!-- Content grid -->
+    <div class="content-grid">
+
+      <!-- 注目ポイント -->
+      <div class="panel" id="points">
+        <div class="panel-head">
+          <h3>⚔️ 今日の注目ポイント</h3>
+          <span>経済指標・イベント</span>
+        </div>
+        <div class="report-body">
+          <div class="points-block">
+            <div class="block-title">🚫 本日の市場休場</div>
+            <ul class="points-list">
+              <li>なし（NYSE・LSE・東証すべて通常取引日）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">📌 必見経済指標（時刻順）</div>
+            <ul class="points-list">
+              <li>08:50 🇯🇵 5月企業向けサービス価格指数（前年同月比）予想3.3%</li>
+              <li>10:30 🇦🇺 5月消費者物価指数（CPI）前年同月比 予想4.3% <span class="badge-important">★最重要</span></li>
+              <li>15:40 🇯🇵 植田和男日銀総裁発言 <span class="badge-important">★最重要</span></li>
+              <li>17:00 🇩🇪 6月IFO企業景況感指数 予想85.5 <span class="badge-important">★</span></li>
+              <li>20:00 🇺🇸 MBA住宅ローン申請指数（前週比）</li>
+              <li>21:30 🇺🇸 1-3月期 経常収支 予想-2,144億ドル</li>
+              <li>23:00 🇺🇸 5月新築住宅販売件数（年率換算） 予想63.8万件 <span class="badge-important">★</span></li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">👁 その他注目点</div>
+            <ul class="points-list">
+              <li><strong>豪CPI上振れシナリオ</strong>：前年比4.3%超えならRBAタカ派観測が強化され、AUD/USD 0.6450以上への反発。RBA次回会合での利上げ確率が上昇。</li>
+              <li><strong>植田総裁発言</strong>：6/16の0.25%→1.00%利上げ後の初めての公式発言機会。「次回7月は据え置き」の発言で円高一服継続を確認。タカ派示唆なら円買い急進。</li>
+              <li><strong>独IFO景況感</strong>：昨日の独サービスPMI 46.8（予想49.0）が衝撃的な弱さだったため、IFOも下振れすればEUR/USDのさらなる下落（1.1450割れ）が現実味を帯びる。</li>
+              <li><strong>USD/JPY 介入ライン</strong>：昨日、日米財務相オンライン会談後に161.74円→161.33円へ急落。162円が実介入の引き金として市場に認識されており、近づくほど上値は重くなる。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 市場環境 + 通貨ランキング -->
+      <div class="panel" id="ranking">
+        <div class="panel-head">
+          <h3>🌏 今日の市場環境</h3>
+          <span>地合い・センチメント</span>
+        </div>
+        <div class="report-body" style="margin-bottom:20px;">
+          FOMCタカ派（据え置き・PCEインフレ上方修正）を受けたドル高基調が継続する中、本日は豪CPI・植田発言・独IFOの三重イベントで各通貨に個別の動意が生まれやすい。USD/JPYは161円台で日米財務相会談後の介入けん制が効いており、162円手前では売りが集まりやすい構図。EUR/USDは昨日の欧州PMI弱からドル高×ユーロ安の流れが継続中。AUD/USDは本日の豪CPIが唯一の方向確定イベントとなる。<br><br>
+          <strong>政策金利：</strong> 米FRB 3.50〜3.75%（タカ派） / 日銀 1.00%（6/16利上げ） / RBA 4.35%（タカ派・利上げ余地）
+        </div>
+
+        <div class="panel-head" style="margin-top:4px;">
+          <h3>🏆 通貨ランキング</h3>
+          <span>本日の優先順</span>
+        </div>
+        <table class="fx-table">
+          <thead>
+            <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank-badge rank-s">S</span></td>
+              <td><strong>AUD/USD</strong><br><span style="color:var(--muted);font-size:12px;">10:30 豪CPI次第。上振れ(4.3%超)で0.6450以上・下振れで0.6380試し</span></td>
+              <td><span class="trend-range">→</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>USD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">161円台もみあい。植田発言タカ派なら円高。162円実介入リスク警戒。</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>EUR/JPY</strong><br><span style="color:var(--muted);font-size:12px;">独IFO弱→EUR売り×植田発言でボラ拡大の可能性。184円前後で神経質。</span></td>
+              <td><span class="trend-range">→</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>EUR/USD</strong><br><span style="color:var(--muted);font-size:12px;">ドル高＋欧州PMI弱のダブル圧力。1.1450がサポート目途。</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>GBP/USD</strong><br><span style="color:var(--muted);font-size:12px;">昨日英サービスPMI 48.7（予想51）が失望。本日UK指標なし。1.32台の重い展開。</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 前日振り返り（wide） -->
+      <div class="panel wide" id="review">
+        <div class="panel-head">
+          <h3>📰 前日の相場振り返り（2026-06-23）</h3>
+          <span>昨日の主要トピック</span>
+        </div>
+        <div class="report-body">
+          <div class="topic">
+            <div class="topic-title">【トピック①】日米財務相オンライン会談とUSD/JPY介入警戒</div>
+            USD/JPYは東京タイムに161.74円まで上昇し40年ぶり高値圏に迫ったが、片山財務相とベッセント米財務長官のオンライン会談実施の報道で161.33円まで急落。日本当局が「口頭けん制による162円ライン死守」の姿勢を示した。日銀当座預金の試算では大規模な実介入は確認されなかったが、市場は162円タッチに向けた上値を抑制。FOMCタカ派（据え置き・インフレ上方修正）を背景にしたドル買い地合いと、日本の介入警戒のせめぎ合いが続いた。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック②】欧州PMI速報が大幅下振れ——EUR/USD 10ヶ月ぶり安値</div>
+            6月のS&Pグローバル速報PMIで独サービスPMI 46.8（予想49.0、前回48.1）が市場に衝撃を与えた。ドイツの製造業PMIは50.0と辛うじて拡大圏を維持したものの、サービス業の急速な収縮がユーロ圏リセッション懸念を再燃させた。英サービスPMI 48.7（予想50.1）も収縮域に転落。EUR/USDは1.1450近辺まで下落し10ヶ月ぶり安値を更新。ユーロ圏経済の二極化（製造業は回復・サービスは急悪化）がECBの追加利上げ観測と矛盾する複雑な状況を生み出している。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック③】米PMI速報は堅調——Composite 52.2で米経済の強さ確認</div>
+            S&Pグローバル米国Composite PMI 52.2（前回51.5）が発表され、6年ぶり最高水準の製造業Output指数（57.7）が牽引。FIFAワールドカップ開幕によるサービス需要増が一因。ただし雇用は2ヶ月連続での減少。米欧のPMI格差がドル高・ユーロ安の構図を強化した。FRBのタカ派スタンス（9月追加利上げ観測）の維持を裏付けるデータとなった。
+          </div>
+          <div class="handover">
+            <strong>本日への引継ぎ：</strong>
+            USD/JPYは161円台で推移。162円が実介入の節目として市場認識を固めており、近づくほど上値は重い。本日10:30の豪5月CPI（予想4.3%）がAUD/USDの方向を決定づける最重要指標。植田日銀総裁（15:40）の発言で次回7月会合への見通しを確認。独IFO（17:00）は昨日の欧州PMI弱を受け、EUR/USDの下値追いが続くかを見極める。夕方以降は米経常収支（21:30）・新築住宅販売（23:00）でドル買いの継続力をチェック。
+          </div>
+        </div>
+      </div>
+
+      <!-- 経済指標カレンダー（full） -->
+      <div class="panel full" id="calendar">
+        <div class="panel-head">
+          <h3>📅 本日の経済指標カレンダー（全件）</h3>
+          <span>Investing.com・ForexFactory・みんかぶ 統合</span>
+        </div>
+        <table class="fx-table" style="font-size:0.9em;">
+          <thead><tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr></thead>
+          <tbody>
+            <tr><td>08:50</td><td>🇯🇵 日本</td><td>5月企業向けサービス価格指数（前年同月比）</td><td>△</td><td>3.3%</td><td>3.5%（4月）</td></tr>
+            <tr><td><strong>10:30</strong></td><td>🇦🇺 豪州</td><td><strong>5月消費者物価指数（CPI）前年同月比</strong></td><td><strong>◎</strong></td><td><strong>4.3%</strong></td><td>2.4%（4月）</td></tr>
+            <tr><td><strong>15:40</strong></td><td>🇯🇵 日本</td><td><strong>植田和男 日銀総裁 発言</strong></td><td><strong>◎</strong></td><td>—</td><td>—</td></tr>
+            <tr><td><strong>17:00</strong></td><td>🇩🇪 ドイツ</td><td><strong>6月IFO企業景況感指数</strong></td><td><strong>○</strong></td><td><strong>85.5</strong></td><td>86.4（5月）</td></tr>
+            <tr><td>20:00</td><td>🇺🇸 米国</td><td>MBA住宅ローン申請指数（前週比）</td><td>B</td><td>—</td><td>—</td></tr>
+            <tr><td>21:30</td><td>🇺🇸 米国</td><td>1-3月期 経常収支</td><td>BB</td><td>-2,144億ドル</td><td>—</td></tr>
+            <tr><td><strong>23:00</strong></td><td>🇺🇸 米国</td><td><strong>5月新築住宅販売件数（年率換算）</strong></td><td><strong>A</strong></td><td><strong>63.8万件</strong></td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div><!-- /content-grid -->
+  </main>
+</div>
+
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
+
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="../about.html">About</a>
+    <a href="../disclaimer.html">免責事項</a>
+    <a href="../privacy.html">プライバシーポリシー</a>
+    <a href="../terms.html">利用規約</a>
+    <a href="../contact.html">お問い合わせ</a>
+  </div>
+</footer>
+
+</body>
+</html>"""
+
+with open(REPORT_FILE, 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f'✅ {REPORT_FILE} 生成完了')

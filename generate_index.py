@@ -1,36 +1,29 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""index.html + archive.html 再生成スクリプト (2026-06-23)"""
-
-import glob, json, os, re, datetime as _dt
+import glob, json, os, re
 from html import unescape
 
-# ── 今日のデータ ─────────────────────────────────────────────
-TODAY      = '2026-06-23'
-WEEKDAY    = '火'
-HERO_SUB   = 'USD/JPY 161円台・介入警戒継続。本日は各国フラッシュPMI速報が集中。強弱でドル・ユーロ・ポンドの週間トレンドが決まる最重要デー。'
+# ── 今日のデータ ──────────────────
+TODAY      = '2026-06-24'
+WEEKDAY    = '水'
+HERO_SUB   = '豪5月CPI・植田総裁発言・独IFO——3指標が本日の相場を制する。USD/JPYは161円台で介入警戒継続。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日（6/23）の主要市場に休場なし。米・英・日・欧州・豪・NZ・加すべて通常取引。'
+MARKET_HOLIDAY_P  = '本日（2026-06-24）は主要市場すべて通常取引日です（NYSE・LSE・東証）。'
 KEY_EVENTS_ITEMS  = [
-    '09:30 🇯🇵 日本 au Jibun Bank 製造業PMI速報（6月）',
-    '16:15 🇫🇷 フランス HCOB 製造業・サービス業PMI速報（6月）',
-    '16:30 🇩🇪 ドイツ HCOB 製造業・サービス業PMI速報（6月）',
-    '17:00 🇪🇺 ユーロ圏 HCOB 総合PMI速報（6月）',
-    '17:30 🇬🇧 英国 S&amp;P Global 製造業・サービス業PMI速報（6月）',
-    '22:45 🇺🇸 米国 S&amp;P Global 製造業・サービス業・総合PMI速報（6月）',
+    '10:30 🇦🇺 豪5月CPI（前年比）予想4.3%',
+    '15:40 🇯🇵 植田和男日銀総裁発言',
+    '17:00 🇩🇪 独6月IFO企業景況感 予想85.5',
+    '23:00 🇺🇸 米5月新築住宅販売件数 予想63.8万件',
 ]
-REPORT_SUMMARY = 'PMI速報が週の方向性を決定する最重要日'
-RISK_LEVEL = 'HIGH'
-
-# 火〜金曜日: 直近の金利・スタンスを引き継ぎ
-FRB_RATE   = '3.50–3.75%';   FRB_STANCE = 'タカ派（9月追加利上げ観測強）';           FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';        BOE_STANCE = 'ハト派寄り（次は利下げ観測）';              BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';        BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';        ECB_STANCE = 'タカ派転換（6/11利上げ・追加観測あり）';    ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';        RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）';    RBA_COLOR = 'var(--red)'
-RBNZ_RATE  = '2.25%';        RBNZ_STANCE = 'タカ派寄り（5/27据え置き・利上げ票あり）'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.25%';        BOC_STANCE = '中立（6/10・5会合連続据え置き）';           BOC_COLOR = 'var(--muted)'
-SNB_RATE   = '0.00%';        SNB_STANCE = '中立（6/18据え置き・為替介入警戒）';        SNB_COLOR = 'var(--muted)'
+REPORT_SUMMARY = 'AUD/USD 豪CPI上振れで買い / USD/JPY 162円介入ライン警戒'
+RISK_LEVEL = 'MEDIUM'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（9月追加利上げ観測強）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11利上げ・追加観測あり）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
+RBNZ_RATE  = '2.25%';      RBNZ_STANCE = 'タカ派寄り（5/27据え置き・利上げ票あり）'; RBNZ_COLOR = 'var(--red)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立（6/10・5会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
+# ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
 
@@ -42,6 +35,7 @@ def make_daytrade_ranking(path='data/daytrade-ranking.json'):
         updated = payload['generated_at_jst'].replace('T', ' ')[:16]
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
         return '<tr><td colspan="8" class="daytrade-empty">初回データを準備中です</td></tr>', '準備中'
+
     rows = []
     for item in rankings:
         rank = item.get('rank') or '—'
@@ -58,6 +52,7 @@ def make_daytrade_ranking(path='data/daytrade-ranking.json'):
 
 DAYTRADE_ROWS_HTML, DAYTRADE_UPDATED = make_daytrade_ranking()
 
+# アーカイブ一覧（reportsフォルダを自動取得）
 report_files = sorted(glob.glob('reports/*.html'), reverse=True)
 DAYS = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
 
@@ -75,6 +70,7 @@ def extract_report_summary(path):
             text = f.read()
     except OSError:
         return '', ''
+
     title_match = re.search(r'<p class="sub">(.*?)</p>', text, re.S)
     title = shorten(title_match.group(1), 42) if title_match else ''
     summary_match = re.search(r'<p class="label">一言まとめ</p>\s*<h3>(.*?)</h3>', text, re.S)
@@ -92,7 +88,8 @@ def make_archive_cards(files):
         href = f.replace(os.sep, '/')
         name = os.path.basename(f).replace('.html','')
         try:
-            d = _dt.date.fromisoformat(name)
+            import datetime
+            d = datetime.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
         except:
@@ -117,7 +114,8 @@ def make_sidebar_archive(files):
         href = f.replace(os.sep, '/')
         name = os.path.basename(f).replace('.html','')
         try:
-            d = _dt.date.fromisoformat(name)
+            import datetime
+            d = datetime.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
         except:
@@ -205,7 +203,7 @@ html = f"""<!DOCTYPE html>
       <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>デイトレ適性</a>
       <span class="nav-section">ツール・販売</span>
       <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター <span class="badge-soon">Soon</span></a>
-      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA <span class="badge-soon">Soon</span></a>
+      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA <span class="badge-soon">Soon</span></a>
       <a href="#analysis"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>チャート分析 <span class="badge-soon">Soon</span></a>
       <span class="nav-section">サイト情報</span>
       <a href="about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
@@ -278,7 +276,7 @@ html = f"""<!DOCTYPE html>
             <tr><td>SNB</td><td>🇨🇭 CHF</td><td><strong>{SNB_RATE}</strong></td><td style="color:{SNB_COLOR};font-size:12px;">{SNB_STANCE}</td></tr>
           </tbody>
         </table>
-        <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ {TODAY}時点。火〜金曜日は直近確認値を引き継ぎ。各中銀の公式発表と複数ソースで6/22確認済み。</p>
+        <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ {TODAY}時点。各中銀の公式発表と複数ソースで確認済み。</p>
       </div>
     </div>
     <div class="panel full daytrade-panel" id="strength" style="margin-bottom:20px;">
@@ -406,7 +404,8 @@ with open('index.html', 'w', encoding='utf-8') as f:
     f.write(html)
 print('✅ index.html 再生成完了')
 
-# ── archive.html 生成 ────────────────────────────────────────
+# ── archive.html 生成 ────────────────────────────────────
+import datetime as _dt
 
 def _risk_color(r):
     return {'HIGH':'var(--yellow)','MEDIUM':'var(--orange)','LOW':'var(--green)'}.get(r,'var(--muted)')
