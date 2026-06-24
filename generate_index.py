@@ -402,7 +402,7 @@ html = f"""<!DOCTYPE html>
 
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(html)
-print('✅ index.html 再生成完了')
+print('index.html regenerated')
 
 # ── archive.html 生成 ────────────────────────────────────
 import datetime as _dt
@@ -555,4 +555,4 @@ archive_html = f"""<!DOCTYPE html>
 
 with open('archive.html', 'w', encoding='utf-8') as f:
     f.write(archive_html)
-print('✅ archive.html 再生成完了')
+print('archive.html regenerated')

@@ -100,11 +100,13 @@ https://zai.diamond.jp/category/zaifxnews
 
 ```bash
 python daytrade_ranking.py
+test -s data/daytrade-ranking.json
 ```
 
 - 5年ADR・直近5日ADR・4時間足ATR/ADX/EMA・概算コストからランキングを更新する。
 - データ取得障害時は既存の `data/daytrade-ranking.json` を保持する設計なので、手作業で空データに上書きしない。
 - 直近5日ADRが30pips未満の通貨ペアは対象外とする。
+- `test -s data/daytrade-ranking.json` が失敗した場合は、`index.html` を「準備中」のまま公開しない。必ず `python daytrade_ranking.py` のエラーを確認してから再実行する。
 
 ---
 
@@ -631,7 +633,7 @@ html = f"""<!DOCTYPE html>
 
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(html)
-print('✅ index.html 再生成完了')
+print('index.html regenerated')
 
 # ── archive.html 生成 ────────────────────────────────────
 import datetime as _dt
@@ -784,12 +786,15 @@ archive_html = f"""<!DOCTYPE html>
 
 with open('archive.html', 'w', encoding='utf-8') as f:
     f.write(archive_html)
-print('✅ archive.html 再生成完了')
+print('archive.html regenerated')
 ```
 
 ### 6-4: Git commit & push
 ```bash
 git config user.email "bot@fx-portal" && git config user.name "FX Bot"
+python daytrade_ranking.py
+test -s data/daytrade-ranking.json
+python generate_index.py
 git add reports/ index.html archive.html style.css assets/hero-wave.png trigger_prompt.txt generate_index.py daytrade_ranking.py
 if [ -f data/daytrade-ranking.json ]; then git add data/daytrade-ranking.json; fi
 git commit -m "FX日報 YYYY-MM-DD（曜日）"

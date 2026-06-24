@@ -1,5 +1,36 @@
 # BUGS.md — fx-portal
 
+## BUG-002 デイトレ適性ランキングJSONが生成されず準備中表示のまま
+
+**発生日:** 2026-06-24
+**発見者:** ユーザー
+**状態:** 修正済み（次回RemoteTriggerで継続確認）
+
+### 症状
+
+`index.html` の「4H デイトレ適性ランキング」が、数日経っても「初回データを準備中です」のまま更新されなかった。
+
+### 発生条件
+
+- 2026-06-22 に `daytrade_ranking.py` を追加後、RemoteTrigger が 2026-06-23 / 2026-06-24 の日報を生成
+- ただし `data/daytrade-ranking.json` が作成・コミットされなかった
+
+### 原因
+
+- 自動実行手順で `python daytrade_ranking.py` の実行確認が弱く、JSON未生成でも `index.html` が公開されうる状態だった
+- 追加で、`generate_index.py` の完了ログに `✅` が含まれており、Windows cp932 コンソールでは `UnicodeEncodeError` で終了する可能性があった
+
+### 修正内容
+
+- 手動で `python daytrade_ranking.py` を実行し、12通貨ペアの実データJSONを生成
+- `python generate_index.py` で `index.html` / `archive.html` を再生成
+- `generate_index.py` と `trigger_prompt.txt` の完了ログから絵文字を削除
+- `trigger_prompt.txt` に `test -s data/daytrade-ranking.json` を追加し、JSON未生成のまま公開しないようにした
+
+### 未解決点
+
+- 次回平日朝7時のRemoteTriggerで、JSONの `generated_at_jst` が自動更新されるか確認する。
+
 ## BUG-001 Twemoji 導入後にアイコンが巨大化した
 
 **発生日:** 2026-06-19  

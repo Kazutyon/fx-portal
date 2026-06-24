@@ -310,3 +310,22 @@
   - 疑似OHLCデータによるADR・ATR・ADX・EMA・採点計算: OK
   - index/archive再生成の隔離レンダリングテスト: OK
   - 実データ初回生成は外部実行枠上限のため、次回RemoteTriggerで確認予定
+
+## 2026-06-24 デイトレ適性ランキング未更新の修正 / Codex
+
+- ユーザー確認で、数日経っても「4H デイトレ適性ランキング」が「初回データを準備中」のままになっていると判明
+- 調査結果
+  - RemoteTriggerの日報更新自体は 2026-06-23 / 2026-06-24 と実行済み
+  - `data/daytrade-ranking.json` が未生成で、`index.html` が準備中表示のままだった
+  - `daytrade_ranking.py` を実データで手動実行したところ12通貨ペアすべて取得成功し、スクリプト本体は正常
+  - `generate_index.py` の完了ログに `✅` が含まれ、Windows cp932 コンソールで `UnicodeEncodeError` になる問題も発見
+- 修正内容
+  - `data/daytrade-ranking.json` を実データで生成
+  - `python generate_index.py` で `index.html` / `archive.html` を再生成し、ランキング表示へ反映
+  - `generate_index.py` と `trigger_prompt.txt` の完了ログから絵文字を削除
+  - `trigger_prompt.txt` に `test -s data/daytrade-ranking.json` を追加し、JSON未生成のまま公開しないよう手順を強化
+- 検証
+  - `python daytrade_ranking.py`: 12/12通貨ペア成功
+  - `python generate_index.py`: OK
+  - `python -m py_compile daytrade_ranking.py generate_index.py`: OK
+  - `index.html` に `GBP/USD` など実ランキングが出力されることを確認
