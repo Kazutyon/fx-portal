@@ -1,27 +1,18 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 import glob, json, os, re
 from html import unescape
 
-# ── 今日のデータ（実際の値） ──────────────────
-TODAY      = '2026-06-25'
-WEEKDAY    = '木'
-HERO_SUB   = 'PCE・GDP確定値・失業保険が21:30に集中——コアPCEがFRBタカ派論の行方を決める最重要デー。'
+# ── 今日のデータ（実際の値に差し替え） ──────────────────
+TODAY      = '2026-06-26'
+WEEKDAY    = '金'
+HERO_SUB   = '5月PCE想定内でドル売り転換——今朝の東京CPI（6月速報）が日銀の追加利上げ観測を左右する週末。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日は主要市場すべて通常営業（明日6/26も通常）'
+MARKET_HOLIDAY_P  = '本日は全主要市場が通常営業。週末前の薄商いに注意。'
 KEY_EVENTS_ITEMS  = [
-    '08:50 🇯🇵 企業向けサービス価格指数（5月）',
-    '10:30 🇦🇺 消費者物価指数（5月）予想:4.3%',
-    '21:30 🇺🇸 コアPCEデフレーター（5月）★最重要',
-    '21:30 🇺🇸 GDP確定値（Q1）予想:1.6%',
-    '21:30 🇺🇸 新規失業保険申請件数 予想:225K',
-    '21:30 🇺🇸 個人所得・消費支出（5月）',
-    '21:30 🇺🇸 耐久財受注（5月速報）予想:+0.2%',
-    '23:00 🇺🇸 中古住宅販売仮契約（5月）',
+    '08:30 🇯🇵 東京CPI（6月速報・前年比）',
+    '22:30 🇺🇸 ダラス連銀製造業景況指数（6月）',
 ]
-REPORT_SUMMARY = 'ドル高継続。PCEでFRB追加利上げ観測を確認'
-RISK_LEVEL = 'HIGH'
-# 火〜金は前日の index.html から引き継ぎ
+REPORT_SUMMARY = 'PCE想定内・ドル売り転換。東京CPIが日銀観測を左右'
+RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（9月追加利上げ観測強）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
@@ -99,7 +90,7 @@ def make_archive_cards(files):
             d = datetime.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
-        except Exception:
+        except:
             label = name
         badge = '<span class="badge-live" style="font-size:9px;margin-left:6px;">最新</span>' if i == 0 else ''
         if i == 0:
@@ -125,7 +116,7 @@ def make_sidebar_archive(files):
             d = datetime.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
-        except Exception:
+        except:
             label = name
         items += f'<li><a href="{href}">{label}</a></li>\n'
     return items
