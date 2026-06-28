@@ -1,22 +1,26 @@
 import glob, json, os, re
 from html import unescape
 
-# ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-06-26'
-WEEKDAY    = '金'
-HERO_SUB   = '5月PCE想定内でドル売り転換——今朝の東京CPI（6月速報）が日銀の追加利上げ観測を左右する週末。'
+# ── 今日のデータ ──────────────────
+TODAY      = '2026-06-29'
+WEEKDAY    = '月'
+HERO_SUB   = 'Q2末・月末リバランス先行——日本雇用・独CPI速報・未決住宅販売がドル円と欧州通貨の方向性を左右する週明け。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日は全主要市場が通常営業。週末前の薄商いに注意。'
+MARKET_HOLIDAY_P  = '全主要市場は通常営業'
 KEY_EVENTS_ITEMS  = [
-    '08:30 🇯🇵 東京CPI（6月速報・前年比）',
-    '22:30 🇺🇸 ダラス連銀製造業景況指数（6月）',
+    '08:30 🇯🇵 完全失業率・有効求人倍率（5月）',
+    '08:30 🇯🇵 鉱工業生産・速報（5月）',
+    '10:00 🇨🇳 中国 製造業PMI（6月）',
+    '21:00 🇩🇪 ドイツ CPI速報（6月）',
+    '23:00 🇺🇸 未決住宅販売指数（5月）',
 ]
-REPORT_SUMMARY = 'PCE想定内・ドル売り転換。東京CPIが日銀観測を左右'
+REPORT_SUMMARY = 'USD/JPY 161円台 Q2末攻防。月末リバランスと独CPI速報が方向性を決める。'
 RISK_LEVEL = 'MEDIUM'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（9月追加利上げ観測強）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11利上げ・追加観測あり）'; ECB_COLOR = 'var(--red)'
+# ── 8中銀（月曜: 既存データ引き継ぎ＋要確認注記） ──
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（6/17FOMC・年内追加利上げ9月観測）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（6/18 7-2据え置き・次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・7月追加観測）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11 50bp利上げ・7月追加観測）'; ECB_COLOR = 'var(--red)'
 RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
 RBNZ_RATE  = '2.25%';      RBNZ_STANCE = 'タカ派寄り（5/27据え置き・利上げ票あり）'; RBNZ_COLOR = 'var(--red)'
 BOC_RATE   = '2.25%';      BOC_STANCE = '中立（6/10・5会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
@@ -90,7 +94,7 @@ def make_archive_cards(files):
             d = datetime.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
-        except:
+        except Exception:
             label = name
         badge = '<span class="badge-live" style="font-size:9px;margin-left:6px;">最新</span>' if i == 0 else ''
         if i == 0:
@@ -116,7 +120,7 @@ def make_sidebar_archive(files):
             d = datetime.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
-        except:
+        except Exception:
             label = name
         items += f'<li><a href="{href}">{label}</a></li>\n'
     return items
