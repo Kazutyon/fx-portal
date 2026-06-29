@@ -1,29 +1,4 @@
-import glob, os, datetime
-
-DATE    = '2026-06-30'
-WEEKDAY = '火'
-
-DAYS = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
-
-report_files = sorted(glob.glob('reports/*.html'), reverse=True)
-
-def make_sidebar(files, today):
-    items = f'        <li class="active"><a href="{today}.html">{today}（{WEEKDAY}）</a></li>\n'
-    for f in files[:9]:
-        href = os.path.basename(f).replace('.html','')
-        name = href
-        try:
-            d = datetime.date.fromisoformat(name)
-            wd = DAYS[d.strftime('%A')]
-            label = f'{name}（{wd}）'
-        except Exception:
-            label = name
-        items += f'        <li><a href="{name}.html">{label}</a></li>\n'
-    return items
-
-SIDEBAR_ARCHIVE = make_sidebar(report_files, DATE)
-
-html = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -89,7 +64,17 @@ html = """<!DOCTYPE html>
     <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
       <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
       <ul class="archive-list">
-""" + SIDEBAR_ARCHIVE + """      </ul>
+        <li class="active"><a href="2026-06-30.html">2026-06-30（火）</a></li>
+        <li><a href="2026-06-29.html">2026-06-29（月）</a></li>
+        <li><a href="2026-06-26.html">2026-06-26（金）</a></li>
+        <li><a href="2026-06-25.html">2026-06-25（木）</a></li>
+        <li><a href="2026-06-24.html">2026-06-24（水）</a></li>
+        <li><a href="2026-06-23.html">2026-06-23（火）</a></li>
+        <li><a href="2026-06-22.html">2026-06-22（月）</a></li>
+        <li><a href="2026-06-19.html">2026-06-19（金）</a></li>
+        <li><a href="2026-06-18.html">2026-06-18（木）</a></li>
+        <li><a href="2026-06-17.html">2026-06-17（水）</a></li>
+      </ul>
     </div>
   </aside>
 
@@ -328,9 +313,4 @@ html = """<!DOCTYPE html>
 </footer>
 
 </body>
-</html>"""
-
-out_path = f'reports/{DATE}.html'
-with open(out_path, 'w', encoding='utf-8') as f:
-    f.write(html)
-print(f'Generated {out_path}')
+</html>
