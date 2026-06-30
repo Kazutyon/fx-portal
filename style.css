@@ -881,6 +881,8 @@ a:hover { text-decoration: underline; }
 .daytrade-note, .daytrade-empty { color: var(--muted); font-size: 11px; }
 .daytrade-note { margin: 12px 0 0; line-height: 1.65; }
 .daytrade-empty { padding: 28px !important; text-align: center; }
+.daytrade-update-stale { color: var(--red) !important; font-weight: 800; }
+.daytrade-update-partial { color: #d97706 !important; font-weight: 800; }
 
 /* ── Sidebar archive — hidden on mobile ── */
 .sidebar-archive { }

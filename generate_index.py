@@ -1,4 +1,5 @@
 import glob, json, os, re
+from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ ──────────────────
@@ -36,9 +37,29 @@ def make_daytrade_ranking(path='data/daytrade-ranking.json'):
         with open(path, encoding='utf-8') as f:
             payload = json.load(f)
         rankings = payload['rankings']
-        updated = payload['generated_at_jst'].replace('T', ' ')[:16]
+        generated_at = datetime.fromisoformat(payload['generated_at_jst'])
+        updated = generated_at.strftime('%Y-%m-%d %H:%M')
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
-        return '<tr><td colspan="8" class="daytrade-empty">初回データを準備中です</td></tr>', '準備中'
+        return (
+            '<tr><td colspan="8" class="daytrade-empty">ランキングデータを取得できませんでした</td></tr>',
+            'データ取得失敗',
+            'daytrade-update-stale',
+        )
+
+    report_date = datetime.fromisoformat(TODAY).date()
+    stale_days = max((report_date - generated_at.date()).days, 0)
+    is_fresh = stale_days == 0
+    has_partial_errors = bool(payload.get('errors'))
+    if not is_fresh:
+        prefix = f'要確認: {stale_days}日未更新' if stale_days >= 2 else 'データ未更新'
+        update_label = f'{prefix} / 最終成功 {updated} JST'
+        update_class = 'daytrade-update-stale'
+    elif has_partial_errors:
+        update_label = f'一部取得失敗 / {updated} JST 更新'
+        update_class = 'daytrade-update-partial'
+    else:
+        update_label = f'{updated} JST 更新'
+        update_class = ''
 
     rows = []
     for item in rankings:
@@ -52,9 +73,9 @@ def make_daytrade_ranking(path='data/daytrade-ranking.json'):
           <td class="{direction_class}">{item['direction']}</td>
           <td><span class="daytrade-verdict {verdict_class}">{item['verdict']} {item['score']}</span></td>
         </tr>''')
-    return '\n'.join(rows), updated
+    return '\n'.join(rows), update_label, update_class
 
-DAYTRADE_ROWS_HTML, DAYTRADE_UPDATED = make_daytrade_ranking()
+DAYTRADE_ROWS_HTML, DAYTRADE_UPDATE_LABEL, DAYTRADE_UPDATE_CLASS = make_daytrade_ranking()
 
 # アーカイブ一覧（reportsフォルダを自動取得）
 report_files = sorted(glob.glob('reports/*.html'), reverse=True)
@@ -284,7 +305,7 @@ html = f"""<!DOCTYPE html>
       </div>
     </div>
     <div class="panel full daytrade-panel" id="strength" style="margin-bottom:20px;">
-      <div class="panel-head"><h3>📈 4H デイトレ適性ランキング</h3><span>{DAYTRADE_UPDATED} JST 更新</span></div>
+      <div class="panel-head"><h3>📈 4H デイトレ適性ランキング</h3><span class="{DAYTRADE_UPDATE_CLASS}">{DAYTRADE_UPDATE_LABEL}</span></div>
       <p class="daytrade-lead">直近5日の日中値幅を5年平均と比較し、4時間足ATR・ADX・EMAトレンド・概算コストを総合採点。直近ADR 30pips未満は対象外。</p>
       <div class="daytrade-table-wrap"><table class="fx-table daytrade-table">
         <thead><tr><th>順位</th><th>通貨ペア</th><th>5日ADR</th><th>5年比</th><th>4H ATR</th><th>ADX</th><th>方向</th><th>判定/点</th></tr></thead>

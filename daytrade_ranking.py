@@ -244,7 +244,10 @@ def main() -> int:
             f"Only {len(rankings)} pairs succeeded; keeping the previous {OUTPUT_PATH.name}.",
             file=sys.stderr,
         )
-        return 0
+        # Preserve the last known-good JSON, but report failure to automation.
+        # Returning success here previously allowed a stale file to pass the
+        # subsequent existence-only check indefinitely.
+        return 1
 
     rankings.sort(key=lambda row: (row["eligible"], row["score"]), reverse=True)
     for rank, row in enumerate((r for r in rankings if r["eligible"]), 1):

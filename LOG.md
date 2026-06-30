@@ -329,3 +329,26 @@
   - `python generate_index.py`: OK
   - `python -m py_compile daytrade_ranking.py generate_index.py`: OK
   - `index.html` に `GBP/USD` など実ランキングが出力されることを確認
+
+## 2026-06-30 デイトレ適性ランキング未更新の再発調査 / Codex
+
+- ユーザー確認で、4Hデイトレ適性ランキングが6月24日から更新されていないと判明
+- GitHubの最新履歴を取得し、日報は6月25・26・29・30日分まで自動生成済みであることを確認
+- `origin/main` の `data/daytrade-ranking.json` と `index.html` は、ともに `2026-06-24 17:03 JST` のデータのまま
+- 定期実行全体ではなく、ランキングJSON生成ステップだけが新しい成果物を出していない状態と切り分け
+- 再発を通した原因
+  - `daytrade_ranking.py` は成功6ペア未満でも終了コード0で旧JSONを保持する
+  - `test -s` は旧JSONでも成功するため、鮮度を検証できない
+- RemoteTrigger実行ログがローカルにないため、コマンド未実行かYahoo Finance取得失敗かという直接原因は未確定
+- 対策実装
+  - 成功6ペア未満では `daytrade_ranking.py` が終了コード1を返すよう変更
+  - `generate_index.py` に日報日付と `generated_at_jst` の鮮度比較を追加
+  - 古いデータは最終成功日時を赤字表示し、2日以上なら「要確認」に格上げ
+  - ランキング取得失敗時も日報本体の公開は続行する条件分岐を `trigger_prompt.txt` に追加
+  - `test -s` を廃止し、重複していたランキング再実行を削除
+- 検証
+  - 古い6月24日JSONで「データ未更新 / 最終成功 2026-06-24 17:03 JST」表示を確認
+  - Yahoo Financeから12/12通貨ペアの再取得に成功
+  - `data/daytrade-ranking.json` を2026-06-30 10:21 JSTへ更新
+  - `python -m py_compile daytrade_ranking.py generate_index.py`: OK
+  - 再生成後の `index.html` が通常の当日更新表示へ戻ることを確認
