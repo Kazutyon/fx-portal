@@ -1,0 +1,45 @@
+name: Update daytrade ranking
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 06:40 JST on weekdays (21:40 UTC on the previous day).
+    - cron: "40 21 * * 0-4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daytrade-ranking
+  cancel-in-progress: false
+
+jobs:
+  update-ranking:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate ranking
+        run: python daytrade_ranking.py
+
+      - name: Commit updated data
+        run: |
+          if git diff --quiet -- data/daytrade-ranking.json; then
+            echo "Ranking data did not change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/daytrade-ranking.json
+          git commit -m "Update daytrade ranking"
+          git push origin main

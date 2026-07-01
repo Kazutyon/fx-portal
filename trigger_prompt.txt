@@ -94,22 +94,22 @@ https://zai.diamond.jp/category/zaifxnews
 
 ---
 
-## Step 5.5: 4Hデイトレ適性ランキングを更新（平日毎朝）
+## Step 5.5: 4Hデイトレ適性ランキングの鮮度を確認（平日毎朝）
 
-曜日に関係なく、必ず次を実行すること。
+ランキングの取得・計算は GitHub Actions
+`.github/workflows/daytrade-ranking.yml` が平日06:40 JSTに実行する。
+RemoteTrigger環境からYahoo Financeへアクセスすると403になるため、ここでは
+`daytrade_ranking.py` を実行しないこと。
+
+次を実行し、当日データが取得済みか確認する。
 
 ```bash
-if python daytrade_ranking.py; then
-  echo "Daytrade ranking updated"
-else
-  echo "WARNING: Daytrade ranking update failed; keeping the previous data"
-fi
+python3 -c "import json; print(json.load(open('data/daytrade-ranking.json', encoding='utf-8'))['generated_at_jst'])"
 ```
 
-- 5年ADR・直近5日ADR・4時間足ATR/ADX/EMA・概算コストからランキングを更新する。
-- データ取得障害時は既存の `data/daytrade-ranking.json` を保持し、`index.html` に最終成功日時つきの未更新警告を表示する。日報本体の生成・公開は継続する。
-- 直近5日ADRが30pips未満の通貨ペアは対象外とする。
-- ランキング更新失敗を無視しない。標準エラーの内容を実行ログに残し、次回実行で再試行する。
+- `generated_at_jst` が当日なら、そのJSONを使って `generate_index.py` を実行する。
+- 当日でなければ旧JSONを保持し、`generate_index.py` の未更新警告を表示したまま日報本体の生成・公開を継続する。
+- RemoteTriggerからYahoo Financeを再取得しない。
 - `test -s` による存在確認は禁止。古いJSONでも成功してしまうため、`generate_index.py` が `generated_at_jst` と `TODAY` を比較して鮮度を判定する。
 
 ---
