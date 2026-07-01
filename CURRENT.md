@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-06-30 / Codex（デイトレ適性ランキング再発防止を実装）
+最終更新: 2026-07-01 / Codex（デイトレ適性ランキングをGitHub Actionsへ分離）
 状態: active
 
 ## 現在の状態
@@ -19,15 +19,15 @@ Phase 1 完了。デザインも一通り完成。
 - FXマーケットニュース枠: GASから自動取得、2分ごと自動更新
 - 独自ドメイン: `https://auxen.jp/` 稼働中。TLS証明書発行済み、`Enforce HTTPS` 有効、HTTPからHTTPSへ301リダイレクト確認済み
 - 政策金利: 8中銀すべてを変数化済み。月曜は公式発表+複数ソースで最新値へ更新、火〜金曜は直近値を維持するよう `trigger_prompt.txt` と `generate_index.py` を統一済み
-- デイトレ適性: 2026-06-30 10:21 JSTに12通貨ペアの再取得成功。失敗時は非0終了、古いデータは最終成功日時を警告表示、2日以上は「要確認」表示。ランキング失敗時も日報本体は公開継続
+- デイトレ適性: GitHub Actionsへ分離済み。平日06:40 JSTに12通貨ペアを更新し、RemoteTriggerは06:40生成済みJSONを使って07:01の日報を作成する。2026-07-01の手動実行でJSON生成・自動コミット成功
 - アクセス解析: GoatCounter全ページ済み
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中。`trigger_prompt.txt` は generate_index.py と完全同期済み
 
 ## 次の一手
 
-1. 次回の平日朝7時RemoteTriggerで、ランキングが当日データへ自動更新されるか確認
-2. 失敗した場合はRemoteTriggerの標準エラーログからYahoo Finance取得エラーを特定
+1. 次回の平日06:40 GitHub Actions定期実行が成功するか確認
+2. 07:01 RemoteTriggerが当日ランキングJSONを使って日報を公開するか確認
 3. GoatCounter側でアクセス計測が入るか確認
 
 ## 残件・検討中

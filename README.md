@@ -36,6 +36,10 @@ fx-portal/
 RemoteTrigger `trig_01TMDRWpiSDGRCze4kYCTNor` が毎朝7時に起動し、
 FX情報をWebから収集 → HTMLファイル生成 → git push → GitHub Pages自動公開。
 
+4Hデイトレ適性ランキングは、RemoteTriggerのYahoo Financeアクセス制限を避けるため、
+GitHub Actions `.github/workflows/daytrade-ranking.yml` が平日06:40 JSTに先行更新する。
+RemoteTriggerは生成済みの `data/daytrade-ranking.json` を使って07:01の日報を公開する。
+
 ## ロードマップ
 
 1. **Phase 1（現在）**: 毎日のレポートをHTMLで自動公開

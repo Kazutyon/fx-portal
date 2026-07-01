@@ -352,3 +352,19 @@
   - `data/daytrade-ranking.json` を2026-06-30 10:21 JSTへ更新
   - `python -m py_compile daytrade_ranking.py generate_index.py`: OK
   - 再生成後の `index.html` が通常の当日更新表示へ戻ることを確認
+
+## 2026-07-01 デイトレ適性ランキングをGitHub Actionsへ分離 / Codex
+
+- RemoteTrigger 2026-07-01 07:01の実行ログから、Yahoo Financeへのアクセスが403で拒否されていたことを確認
+- ローカルPCでは同じYahoo Finance APIがHTTP 200のため、RemoteTrigger環境固有のアクセス制限と確定
+- `.github/workflows/daytrade-ranking.yml` を追加
+  - 平日06:40 JST（前日21:40 UTC）に自動実行
+  - `workflow_dispatch` による手動実行にも対応
+  - `daytrade_ranking.py` を実行し、変更時のみJSONを自動コミット
+  - GitHub標準の `GITHUB_TOKEN` を使い、個人トークンは不要
+- `trigger_prompt.txt` のStep 5.5を更新
+  - RemoteTriggerからYahoo Financeへ再取得しない
+  - GitHub Actionsが生成したJSONの鮮度確認だけを行う
+- 手動実行 `28509755331` で全工程成功（11秒）
+- GitHub Actions上でランキングJSON更新・botコミット `6598a6e` を確認
+- 最新JSONから `index.html` / `archive.html` を再生成し、当日ランキングを公開用HTMLへ反映
