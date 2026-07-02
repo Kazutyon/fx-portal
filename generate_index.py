@@ -3,20 +3,19 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ ──────────────────
-TODAY      = '2026-07-02'
-WEEKDAY    = '木'
-HERO_SUB   = '6月雇用統計（独立記念日前倒し発表）——ドル円40年ぶり高値圏で介入警戒が焦点。'
-MARKET_HOLIDAY_H3 = '米国市場が短縮取引'
-MARKET_HOLIDAY_P  = '本日は独立記念日を控え米国市場が早期クローズ。翌7/3（金）はNYSE・NASDAQ・米国債市場が完全休場（7/4土曜のため振替）'
+TODAY      = '2026-07-03'
+WEEKDAY    = '金'
+HERO_SUB   = '米雇用統計下振れでドル全面安——独立記念日振替で米国市場は完全休場、薄商いの戻り待ち。'
+MARKET_HOLIDAY_H3 = '米国市場が完全休場'
+MARKET_HOLIDAY_P  = '独立記念日（7/4土）の振替休日でNYSE・NASDAQ・米国債市場が終日休場。取引再開は7/6（月）9:30ET'
 KEY_EVENTS_ITEMS  = [
-    '17:00 🇪🇺 ユーロ圏 サービス業PMI改定値（6月）',
-    '21:30 🇺🇸 6月雇用統計 非農業部門雇用者数（独立記念日前倒し発表・予想13.5万人）',
-    '21:30 🇺🇸 6月 失業率・平均時給',
-    '21:30 🇺🇸 前週分 新規失業保険申請件数',
-    '23:00 🇺🇸 ISM非製造業景況指数（6月・要確認）',
+    '10:45 🇨🇳 中国 財新（RatingDog）サービス業PMI（6月・前回54.4）',
+    '14:00 🇮🇳 インド サービス業PMI確報値（6月）',
+    '15:45 🇫🇷 フランス 鉱工業生産指数（5月）',
+    '終日 🇺🇸 独立記念日振替休場（NYSE・NASDAQ・米国債市場、7/6まで）',
 ]
-REPORT_SUMMARY = '米雇用統計待ち、ドル円介入警戒。'
-RISK_LEVEL = 'HIGH'
+REPORT_SUMMARY = '米雇用統計下振れでドル安地合い継続。'
+RISK_LEVEL = 'MEDIUM'
 # ── 8中銀（火〜金: 既存データ引き継ぎ） ──
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（6/17FOMC・年内追加利上げ9月観測）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（6/18 7-2据え置き・次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
