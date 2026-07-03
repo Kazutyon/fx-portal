@@ -423,6 +423,14 @@
   - 検証未成立でもシャドー観測を継続し、本番日報へ影響させない
 - 本番日報生成・RemoteTriggerには未接続
 
+## 2026-07-03 経済指標シャドーActions初回実行確認 / Codex
+
+- commit `7fa87ff` をpushし、workflow_dispatchでrun `28644527327` を実行
+- Forex Factory取得、BEA取得、2ソース検証、artifact保存の全ステップが8秒で完了
+- 7月3日はBEA所管の公式発表がないため検証器はexit 1（公開不可）を返したが、`continue-on-error` によりシャドー観測は成功継続
+- `economic-calendar-shadow-2026-07-03` artifact（1,876 bytes、非公開、14日保持）を確認
+- 現行日報・GitHub Pagesへの反映はなし
+
 ## 2026-07-03 無料Forex Factoryフィードをシャドー接続 / Codex
 
 - Forex Factory配信用JSON `nfs.faireconomy.media/ff_calendar_thisweek.json` がHTTP 200、構造化JSONで取得できることを確認

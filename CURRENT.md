@@ -27,6 +27,7 @@ Phase 1 完了。デザインも一通り完成。
 - 無料第1ソース: Forex Factory週間JSONのアダプターを実装。7月3日は12イベント取得、単一ソースのため安全ゲートが `publish_ready: false` にしたことを確認
 - 無料第2ソース: 米BEA公式発表予定アダプターを実装。7月30日のGDP・Personal Income and Outlaysを21:30 JSTへ正規化するライブ取得に成功
 - シャドー運用: GitHub Actionsで平日05:15 JSTにForex Factory＋BEAを取得・検証し、14日保存の非公開artifactへ出力する構成。本番日報には未接続
+- 初回手動run `28644527327` は8秒で成功。7月3日はBEA対象指標なしのため安全ゲートが公開不可を返し、1,876 bytesの非公開artifact保存を確認
 - アクセス解析: GoatCounter全ページ済み
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中。`trigger_prompt.txt` は generate_index.py と完全同期済み
