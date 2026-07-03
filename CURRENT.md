@@ -20,6 +20,7 @@ Phase 1 完了。デザインも一通り完成。
 - 独自ドメイン: `https://auxen.jp/` 稼働中。TLS証明書発行済み、`Enforce HTTPS` 有効、HTTPからHTTPSへ301リダイレクト確認済み
 - 政策金利: 8中銀すべてを変数化済み。月曜は公式発表+複数ソースで最新値へ更新、火〜金曜は直近値を維持するよう `trigger_prompt.txt` と `generate_index.py` を統一済み
 - デイトレ適性: GitHub Actionsで平日04:30 JSTに12通貨ペアを更新。RemoteTriggerは生成済みJSONを使って07:01の日報を作成する。トップページは最新JSONも動的取得し、Actions遅延時でも更新後に表を差し替える
+- 2026-07-03 09:49 JST、公開HTML・公開JSON・動的読込スクリプトの本番反映を確認済み
 - アクセス解析: GoatCounter全ページ済み
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中。`trigger_prompt.txt` は generate_index.py と完全同期済み

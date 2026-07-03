@@ -380,3 +380,5 @@
 - `generate_index.py` と `trigger_prompt.txt` を同期し、今後の日報生成でも動的読込を維持
 - 7月3日07:43 JSTのJSONから `index.html` を再生成
 - `node --check daytrade-ranking.js`、`python -m py_compile generate_index.py daytrade_ranking.py`、`git diff --check`: OK
+- commit `a178e71` をpushし、GitHub Pages run `28630996079` のbuild・deploy成功を確認
+- 公開HTML・公開JSONとも `2026-07-03 07:43 JST`、`daytrade-ranking.js` はHTTP 200を確認

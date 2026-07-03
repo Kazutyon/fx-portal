@@ -27,7 +27,8 @@
 
 - JavaScript・Python構文検査成功
 - 7月3日07:43 JSTのJSONから `index.html` を再生成し、静的フォールバックも当日値へ更新
-- GitHub Pages公開後、公開HTMLと公開JSONの更新日時を確認する
+- GitHub Pages run `28630996079` が成功し、公開HTML・公開JSONとも7月3日07:43 JSTへ更新されたことを確認
+- `daytrade-ranking.js` がHTTP 200で配信されることを確認
 
 ## BUG-002 デイトレ適性ランキングJSONが生成されず準備中表示のまま
 
