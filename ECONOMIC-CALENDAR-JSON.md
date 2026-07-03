@@ -60,3 +60,19 @@ python economic_calendar_forexfactory.py `
 - 取得は週1回～1日1回程度の低頻度に制限する
 - 規約ページは調査環境から403のため、再配布や本番表示には未使用
 - 単独入力では `publish_ready: false`。独立した第2ソースが必要
+
+## 無料の独立第2ソース
+
+米国BEA（商務省経済分析局）の公式発表予定を次で正規化できる。
+
+```powershell
+python economic_calendar_bea.py `
+  --date 2026-07-30 `
+  --output source-bea.json
+```
+
+- 公式ページ: `https://www.bea.gov/news/schedule`
+- GDP、Personal Income and Outlays、米貿易収支などを米東部時間からJSTへ変換
+- `official: true` として公式確認済み扱い
+- BEA対象外の国・指標は確認できないため、Forex Factory全件を単純に正しいとは判定しない
+- 2ソースあっても一致または公式確認済みイベントが0件なら `publish_ready: false`

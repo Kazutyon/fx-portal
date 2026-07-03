@@ -1,0 +1,62 @@
+name: Economic calendar shadow audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 05:15 JST on weekdays (20:15 UTC on the previous day).
+    - cron: "15 20 * * 0-4"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: economic-calendar-shadow
+  cancel-in-progress: false
+
+jobs:
+  audit-calendar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Set target date in JST
+        shell: bash
+        run: echo "TARGET_DATE=$(TZ=Asia/Tokyo date +%F)" >> "$GITHUB_ENV"
+
+      - name: Fetch Forex Factory weekly feed
+        run: >-
+          python economic_calendar_forexfactory.py
+          --date "$TARGET_DATE"
+          --output "shadow-output/$TARGET_DATE-forex-factory.json"
+
+      - name: Fetch official BEA schedule
+        run: >-
+          python economic_calendar_bea.py
+          --date "$TARGET_DATE"
+          --output "shadow-output/$TARGET_DATE-bea.json"
+
+      - name: Validate independent sources
+        continue-on-error: true
+        run: >-
+          python economic_calendar_validate.py
+          --date "$TARGET_DATE"
+          --input "shadow-output/$TARGET_DATE-forex-factory.json"
+          --input "shadow-output/$TARGET_DATE-bea.json"
+          --output "shadow-output/$TARGET_DATE-validation.json"
+
+      - name: Upload shadow audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: economic-calendar-shadow-${{ env.TARGET_DATE }}
+          path: shadow-output/
+          if-no-files-found: error
+          retention-days: 14

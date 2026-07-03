@@ -25,16 +25,18 @@ Phase 1 完了。デザインも一通り完成。
 - 取得元規約確認: みんかぶは非公認スクレイピング禁止。KISS FX・外貨exも明示許諾を確認できないため自動取得を保留。Trading Economicsは旧guest APIが410のため試用キー取得後に再評価
 - シャドー検証: `economic_calendar_validate.py` を実装。ライセンス済みAPI・公式・承認済み手動JSONだけを入力し、2ソース一致、対象日、JST時刻、重要度、単一ソース警告を検証。日報には未接続
 - 無料第1ソース: Forex Factory週間JSONのアダプターを実装。7月3日は12イベント取得、単一ソースのため安全ゲートが `publish_ready: false` にしたことを確認
+- 無料第2ソース: 米BEA公式発表予定アダプターを実装。7月30日のGDP・Personal Income and Outlaysを21:30 JSTへ正規化するライブ取得に成功
+- シャドー運用: GitHub Actionsで平日05:15 JSTにForex Factory＋BEAを取得・検証し、14日保存の非公開artifactへ出力する構成。本番日報には未接続
 - アクセス解析: GoatCounter全ページ済み
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中。`trigger_prompt.txt` は generate_index.py と完全同期済み
 
 ## 次の一手
 
-1. 無料で機械取得可能な独立第2ソース（公式機関フィード優先）を調査・接続する
+1. Forex Factory＋BEAのシャドー結果を5営業日分蓄積する
 2. Forex Factoryフィードの利用条件をブラウザまたは手動で最終確認する
-3. 2ソース確保後、5営業日シャドー運用する
-4. シャドー結果を過去日報・手動閲覧した国内カレンダーと比較する
+3. 雇用統計用の無料公式確認元（BLS）を別環境またはAPIで接続する
+4. 5営業日後、シャドー結果を過去日報・手動閲覧した国内カレンダーと比較する
 4. 次回の平日04:30 GitHub Actions定期実行が07:01までに成功するか確認
 5. 07:01 RemoteTriggerと動的JSON読込の両方で当日ランキングが表示されるか確認
 6. GoatCounter側でアクセス計測が入るか確認

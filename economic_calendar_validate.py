@@ -92,16 +92,20 @@ def merge_feeds(feeds: list[dict], target_date: str) -> dict:
         warnings.append("fewer than two independent sources")
     if not any(item["importance"] == "high" for item in merged):
         warnings.append("no high-importance events")
+    confirmed_count = sum(bool(item["confirmed"]) for item in merged)
+    if confirmed_count == 0:
+        warnings.append("no events confirmed by a second source or official schedule")
 
     return {
         "date": target_date,
         "generated_at_jst": datetime.now(JST).isoformat(timespec="seconds"),
         "source_count": len(feeds),
         "event_count": len(merged),
+        "confirmed_count": confirmed_count,
         "events": merged,
         "errors": errors,
         "warnings": warnings,
-        "publish_ready": not errors and len(feeds) >= 2,
+        "publish_ready": not errors and len(feeds) >= 2 and confirmed_count > 0,
     }
 
 

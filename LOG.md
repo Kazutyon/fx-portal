@@ -412,6 +412,17 @@
 - `test_economic_calendar_validate.py` を追加し、3テストすべて成功
 - 現行日報生成・RemoteTriggerには未接続
 
+## 2026-07-03 無料2ソースの5営業日シャドー運用を開始 / Codex
+
+- 保留していたBEAアダプターのライブ取得を実行
+- 2026-07-30のGDP Advance EstimateとPersonal Income and Outlaysを21:30 JST、高重要度、公式確認済みとして正常取得
+- `.github/workflows/economic-calendar-shadow.yml` を追加
+  - 平日05:15 JSTにForex Factory週間JSONとBEA公式日程を取得
+  - 2ソース検証結果を非公開GitHub Actions artifactへ保存
+  - artifact保持期間は14日、リポジトリやGitHub Pagesへはコミットしない
+  - 検証未成立でもシャドー観測を継続し、本番日報へ影響させない
+- 本番日報生成・RemoteTriggerには未接続
+
 ## 2026-07-03 無料Forex Factoryフィードをシャドー接続 / Codex
 
 - Forex Factory配信用JSON `nfs.faireconomy.media/ff_calendar_thisweek.json` がHTTP 200、構造化JSONで取得できることを確認
@@ -422,3 +433,14 @@
 - 規約ページは調査環境から403だったため、内部シャドー検証限定。本番表示・再配布には未使用
 - BLS公式ICSはUser-Agent指定後も403のため、今回の自動第2ソースには不採用
 - 全4テスト成功。現行日報生成・RemoteTriggerには未接続
+
+## 2026-07-03 無料独立第2ソースとして米BEA公式日程を接続 / Codex
+
+- FXStreetカレンダーAPIはキーなしで401となり無料・無認証候補から除外
+- 米BEA公式発表予定ページとrobots.txtを確認。対象ページはHTTP 200で取得可能かつDisallow対象外
+- `economic_calendar_bea.py` を追加し、GDP、Personal Income and Outlays、米貿易収支等を米東部時間からJSTへ正規化
+- BEAイベントは `official: true` として公式確認済み扱いにする
+- 検証器へ `confirmed_count` を追加。2ソースあっても一致または公式確認済みイベントが0件なら `publish_ready: false`
+- BEAパーサー、ET→JST変換、安全ゲートを含む全6テスト成功
+- 外部ツール利用枠到達によりBEAアダプターのライブ実行だけ未確認。事前の公式ページHTTP 200とHTML構造確認は完了
+- 現行日報生成・RemoteTriggerには未接続
