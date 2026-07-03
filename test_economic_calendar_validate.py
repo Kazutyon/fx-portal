@@ -1,9 +1,36 @@
 import unittest
 
+from economic_calendar_forexfactory import normalize
 from economic_calendar_validate import merge_feeds
 
 
 class EconomicCalendarValidatorTests(unittest.TestCase):
+    def test_normalizes_forex_factory_jst_events_for_target_date(self):
+        result = normalize(
+            [
+                {
+                    "title": "Employment Report",
+                    "country": "USD",
+                    "date": "2026-07-03T21:30:00+09:00",
+                    "impact": "High",
+                    "forecast": "100K",
+                    "previous": "90K",
+                },
+                {
+                    "title": "Other Day",
+                    "country": "EUR",
+                    "date": "2026-07-04T10:00:00+09:00",
+                    "impact": "Low",
+                    "forecast": "",
+                    "previous": "",
+                },
+            ],
+            "2026-07-03",
+        )
+        self.assertEqual(len(result["events"]), 1)
+        self.assertEqual(result["events"][0]["time_jst"], "21:30")
+        self.assertEqual(result["events"][0]["importance"], "high")
+
     def test_confirms_event_seen_by_two_sources(self):
         event = {
             "time_jst": "21:30",

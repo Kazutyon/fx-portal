@@ -411,3 +411,14 @@
 - `ECONOMIC-CALENDAR-JSON.md` に入力仕様と公開可能判定を記録
 - `test_economic_calendar_validate.py` を追加し、3テストすべて成功
 - 現行日報生成・RemoteTriggerには未接続
+
+## 2026-07-03 無料Forex Factoryフィードをシャドー接続 / Codex
+
+- Forex Factory配信用JSON `nfs.faireconomy.media/ff_calendar_thisweek.json` がHTTP 200、構造化JSONで取得できることを確認
+- XML版も同じ配信元から取得可能で、通常ページのHTMLスクレイピングを必要としない
+- `economic_calendar_forexfactory.py` を追加し、対象日、JST時刻、通貨、重要度、予想、前回を既存JSON仕様へ正規化
+- 2026-07-03を実データ取得し12イベントを正規化。現行日報は4項目だった
+- 単一ソースだけで検証器を実行し、`source_count: 1`、`event_count: 12`、`publish_ready: false` を確認
+- 規約ページは調査環境から403だったため、内部シャドー検証限定。本番表示・再配布には未使用
+- BLS公式ICSはUser-Agent指定後も403のため、今回の自動第2ソースには不採用
+- 全4テスト成功。現行日報生成・RemoteTriggerには未接続

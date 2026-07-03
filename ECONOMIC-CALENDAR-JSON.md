@@ -45,3 +45,18 @@ python economic_calendar_validate.py `
 - 単一ソース、重要指標0件は警告
 
 現段階の `publish_ready` はシャドー検証用であり、日報へ自動反映する許可ではない。
+
+## 無料シャドーソース
+
+Forex Factoryが公開している週間JSONを次で正規化できる。
+
+```powershell
+python economic_calendar_forexfactory.py `
+  --date 2026-07-03 `
+  --output source-forexfactory.json
+```
+
+- 配信元: `https://nfs.faireconomy.media/ff_calendar_thisweek.json`
+- 取得は週1回～1日1回程度の低頻度に制限する
+- 規約ページは調査環境から403のため、再配布や本番表示には未使用
+- 単独入力では `publish_ready: false`。独立した第2ソースが必要
