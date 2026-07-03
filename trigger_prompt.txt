@@ -97,7 +97,7 @@ https://zai.diamond.jp/category/zaifxnews
 ## Step 5.5: 4Hデイトレ適性ランキングの鮮度を確認（平日毎朝）
 
 ランキングの取得・計算は GitHub Actions
-`.github/workflows/daytrade-ranking.yml` が平日06:40 JSTに実行する。
+`.github/workflows/daytrade-ranking.yml` が平日04:30 JSTに実行する。
 RemoteTrigger環境からYahoo Financeへアクセスすると403になるため、ここでは
 `daytrade_ranking.py` を実行しないこと。
 
@@ -653,6 +653,7 @@ html = f"""<!DOCTYPE html>
   setInterval(loadNews, 120000);
 }})();
 </script>
+<script src="daytrade-ranking.js"></script>
 </body>
 </html>"""
 

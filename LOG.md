@@ -368,3 +368,15 @@
 - 手動実行 `28509755331` で全工程成功（11秒）
 - GitHub Actions上でランキングJSON更新・botコミット `6598a6e` を確認
 - 最新JSONから `index.html` / `archive.html` を再生成し、当日ランキングを公開用HTMLへ反映
+
+## 2026-07-03 デイトレ適性ランキング自動更新の遅延対策 / Codex
+
+- GitHub Actions run `28626209442` を調査し、06:40予定のランキング生成が07:43 JSTまで遅延していたことを確認
+- 07:15頃の日報生成が先行したため、7月2日のランキングが静的HTMLへ埋め込まれた
+- 7月3日JSONのコミット `a9708d3` は成功したが、後続Pages run `28626221020` がdeploy失敗し、公開JSONも7月2日のままだった
+- `.github/workflows/daytrade-ranking.yml` を平日04:30 JSTへ前倒し
+- `daytrade-ranking.js` を追加し、トップページで最新JSONをキャッシュ無効取得して表と更新日時を差し替える構成へ変更
+- JSON取得失敗時は静的ランキングを残すフォールバック方式を採用
+- `generate_index.py` と `trigger_prompt.txt` を同期し、今後の日報生成でも動的読込を維持
+- 7月3日07:43 JSTのJSONから `index.html` を再生成
+- `node --check daytrade-ranking.js`、`python -m py_compile generate_index.py daytrade_ranking.py`、`git diff --check`: OK

@@ -3,8 +3,9 @@ name: Update daytrade ranking
 on:
   workflow_dispatch:
   schedule:
-    # 06:40 JST on weekdays (21:40 UTC on the previous day).
-    - cron: "40 21 * * 0-4"
+    # 04:30 JST on weekdays (19:30 UTC on the previous day).
+    # GitHub-hosted schedules can be delayed, so keep a wide buffer before the 07:01 report.
+    - cron: "30 19 * * 0-4"
 
 permissions:
   contents: write

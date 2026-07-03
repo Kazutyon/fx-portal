@@ -419,6 +419,7 @@ html = f"""<!DOCTYPE html>
   setInterval(loadNews, 120000);
 }})();
 </script>
+<script src="daytrade-ranking.js"></script>
 </body>
 </html>"""
 

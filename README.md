@@ -37,8 +37,9 @@ RemoteTrigger `trig_01TMDRWpiSDGRCze4kYCTNor` が毎朝7時に起動し、
 FX情報をWebから収集 → HTMLファイル生成 → git push → GitHub Pages自動公開。
 
 4Hデイトレ適性ランキングは、RemoteTriggerのYahoo Financeアクセス制限を避けるため、
-GitHub Actions `.github/workflows/daytrade-ranking.yml` が平日06:40 JSTに先行更新する。
+GitHub Actions `.github/workflows/daytrade-ranking.yml` が平日04:30 JSTに先行更新する。
 RemoteTriggerは生成済みの `data/daytrade-ranking.json` を使って07:01の日報を公開する。
+トップページは同JSONも動的に読み込むため、日報生成後にランキングが更新された場合も最新値へ差し替わる。
 
 ## ロードマップ
 
