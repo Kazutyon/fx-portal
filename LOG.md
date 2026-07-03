@@ -382,3 +382,11 @@
 - `node --check daytrade-ranking.js`、`python -m py_compile generate_index.py daytrade_ranking.py`、`git diff --check`: OK
 - commit `a178e71` をpushし、GitHub Pages run `28630996079` のbuild・deploy成功を確認
 - 公開HTML・公開JSONとも `2026-07-03 07:43 JST`、`daytrade-ranking.js` はHTTP 200を確認
+
+## 2026-07-03 経済指標データ取得元の方針決定 / Codex
+
+- 公開済み25営業日を確認し、経済指標の掲載漏れ、重複、別日混入が単発ではなく生成工程の問題と判断
+- 単一サイト依存をやめ、構造化API・国内2サイト照合・公式発表確認の3層構成にする方針をユーザーと合意
+- 主取得元の第一候補をTrading Economicsとし、契約前に過去25営業日で精度と網羅率を評価する
+- 取得元アダプター分離、生データ保存、日付・件数・タイムゾーン検証、取得失敗時の推測禁止を設計原則とした
+- 詳細を `DECISIONS.md` に記録
