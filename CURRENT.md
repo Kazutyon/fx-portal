@@ -22,17 +22,19 @@ Phase 1 完了。デザインも一通り完成。
 - デイトレ適性: GitHub Actionsで平日04:30 JSTに12通貨ペアを更新。RemoteTriggerは生成済みJSONを使って07:01の日報を作成する。トップページは最新JSONも動的取得し、Actions遅延時でも更新後に表を差し替える
 - 2026-07-03 09:49 JST、公開HTML・公開JSON・動的読込スクリプトの本番反映を確認済み
 - 経済指標: 過去日報に掲載漏れ・別日混入を確認。構造化API＋国内2サイト照合＋公式確認の3層構成へ移行する方針を決定（`DECISIONS.md`）
+- 取得元予備監査完了: みんかぶを暫定主系、KISS FXを要人発言・休場補完、外貨exを予備と評価。Trading Economicsは旧guest APIが410のため試用キー取得後に再評価（`ECONOMIC-CALENDAR-SOURCE-AUDIT.md`）
 - アクセス解析: GoatCounter全ページ済み
 - 法的ページ完備: about / disclaimer / privacy / terms / contact
 - RemoteTrigger: 毎朝7時（JST・平日）自動実行中。`trigger_prompt.txt` は generate_index.py と完全同期済み
 
 ## 次の一手
 
-1. 経済指標の取得元候補について継続性・利用規約・取得方式を調査する
-2. Trading Economics・国内カレンダーを公開済み25営業日で比較し、主取得元と補完元を決める
-3. 次回の平日04:30 GitHub Actions定期実行が07:01までに成功するか確認
-4. 07:01 RemoteTriggerと動的JSON読込の両方で当日ランキングが表示されるか確認
-5. GoatCounter側でアクセス計測が入るか確認
+1. みんかぶ・KISS FX・外貨exの利用規約上、自動取得と内部照合が許容されるか確認する
+2. Trading Economicsの試用キー、料金、レート制限、Web掲載ライセンスを確認する
+3. 経済指標取得・正規化・差分検出をシャドー運用として実装する
+4. 次回の平日04:30 GitHub Actions定期実行が07:01までに成功するか確認
+5. 07:01 RemoteTriggerと動的JSON読込の両方で当日ランキングが表示されるか確認
+6. GoatCounter側でアクセス計測が入るか確認
 
 ## 残件・検討中
 
