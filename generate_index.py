@@ -2,29 +2,26 @@ import glob, json, os, re
 from datetime import datetime
 from html import unescape
 
-# ── 今日のデータ ──────────────────
-TODAY      = '2026-07-03'
-WEEKDAY    = '金'
-HERO_SUB   = '米雇用統計下振れでドル全面安——独立記念日振替で米国市場は完全休場、薄商いの戻り待ち。'
-MARKET_HOLIDAY_H3 = '米国市場が完全休場'
-MARKET_HOLIDAY_P  = '独立記念日（7/4土）の振替休日でNYSE・NASDAQ・米国債市場が終日休場。取引再開は7/6（月）9:30ET'
+# ── 今日のデータ（実際の値に差し替え） ──────────────────
+TODAY      = '2026-07-06'
+WEEKDAY    = '月'
+HERO_SUB   = '米雇用統計下振れ後のドル安基調と、無警告の円買い介入警戒が綱引き。USD/JPYは161円台の攻防へ。'
+MARKET_HOLIDAY_H3 = 'なし'
+MARKET_HOLIDAY_P  = '米独立記念日（7/4・土）の振替休場は7/3（金）で終了済み。本日7/6は主要市場すべて通常営業。'
 KEY_EVENTS_ITEMS  = [
-    '10:45 🇨🇳 中国 財新（RatingDog）サービス業PMI（6月・前回54.4）',
-    '14:00 🇮🇳 インド サービス業PMI確報値（6月）',
-    '15:45 🇫🇷 フランス 鉱工業生産指数（5月）',
-    '終日 🇺🇸 独立記念日振替休場（NYSE・NASDAQ・米国債市場、7/6まで）',
+    '18:00 🇪🇺 ユーロ圏 5月小売売上高（要確認）',
+    '23:00 🇺🇸 6月ISM非製造業（サービス業）景況指数',
 ]
-REPORT_SUMMARY = '米雇用統計下振れでドル安地合い継続。'
-RISK_LEVEL = 'MEDIUM'
-# ── 8中銀（火〜金: 既存データ引き継ぎ） ──
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（6/17FOMC・年内追加利上げ9月観測）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = 'ハト派寄り（6/18 7-2据え置き・次は利下げ観測）'; BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・7月追加観測）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派転換（6/11 50bp利上げ・7月追加観測）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
-RBNZ_RATE  = '2.25%';      RBNZ_STANCE = 'タカ派寄り（5/27据え置き・利上げ票あり）'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.25%';      BOC_STANCE = '中立（6/10・5会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
-SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
+REPORT_SUMMARY = 'USD/JPY 161円台の攻防、介入警戒継続'
+RISK_LEVEL = 'LOW'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（4会合連続据え置き・SEPが年内利上げ1回に転換）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立・様子見（6/17 7-2据え置き・2名利上げ支持）'; BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派（6/11利上げ・7月据え置き濃厚、9月追加観測）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（3-5月に2会合連続利上げ・6月据え置き）'; RBA_COLOR = 'var(--red)'
+RBNZ_RATE  = '2.25%';      RBNZ_STANCE = 'ハト派・中立（5月据え置き・3会合連続維持）'; RBNZ_COLOR = 'var(--muted)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立（6/10・5会合連続据え置き、次回7/15）'; BOC_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（3月・6月据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
@@ -108,15 +105,16 @@ def make_archive_cards(files):
     cards = ''
     for i, f in enumerate(files[:12]):
         href = f.replace(os.sep, '/')
-        name = os.path.basename(f).replace('.html','')
+        name = os.path.basename(f).replace('.html','')  # 例: 2026-06-18
         try:
             import datetime
             d = datetime.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
-        except Exception:
+        except:
             label = name
         badge = '<span class="badge-live" style="font-size:9px;margin-left:6px;">最新</span>' if i == 0 else ''
+        # 最新レポートのカードは詳細を入れる
         if i == 0:
             title = HERO_SUB[:40] + '…' if len(HERO_SUB) > 40 else HERO_SUB
             sub   = f'{REPORT_SUMMARY} / Market Risk {RISK_LEVEL}'
@@ -140,7 +138,7 @@ def make_sidebar_archive(files):
             d = datetime.date.fromisoformat(name)
             wd = DAYS[d.strftime('%A')]
             label = f'{name}（{wd}）'
-        except Exception:
+        except:
             label = name
         items += f'<li><a href="{href}">{label}</a></li>\n'
     return items
