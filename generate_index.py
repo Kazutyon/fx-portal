@@ -3,17 +3,18 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-07-06'
-WEEKDAY    = '月'
-HERO_SUB   = '米雇用統計下振れ後のドル安基調と、無警告の円買い介入警戒が綱引き。USD/JPYは161円台の攻防へ。'
+TODAY      = '2026-07-07'
+WEEKDAY    = '火'
+HERO_SUB   = 'RBA政策金利発表（13:30）が本日最大の材料。無警告の円買い介入警戒が続くなか、USD/JPYは161円台前半でのレンジ商状を想定。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '米独立記念日（7/4・土）の振替休場は7/3（金）で終了済み。本日7/6は主要市場すべて通常営業。'
+MARKET_HOLIDAY_P  = '米独立記念日（7/4・土）の振替休場は7/3（金）で終了済み。本日7/7は主要市場すべて通常営業。'
 KEY_EVENTS_ITEMS  = [
-    '18:00 🇪🇺 ユーロ圏 5月小売売上高（要確認）',
-    '23:00 🇺🇸 6月ISM非製造業（サービス業）景況指数',
+    '08:30 🇯🇵 家計調査・毎月勤労統計・消費動向指数（5月分）',
+    '13:30 🇦🇺 RBA政策金利決定（4.35%据え置き観測が優勢）',
+    '21:30 🇺🇸 5月貿易収支（要確認）',
 ]
-REPORT_SUMMARY = 'USD/JPY 161円台の攻防、介入警戒継続'
-RISK_LEVEL = 'LOW'
+REPORT_SUMMARY = 'RBA金利発表、無警告介入警戒下の161円レンジ'
+RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（4会合連続据え置き・SEPが年内利上げ1回に転換）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立・様子見（6/17 7-2据え置き・2名利上げ支持）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
