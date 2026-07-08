@@ -1,0 +1,307 @@
+import glob, os, datetime
+
+DATE    = '2026-07-09'
+WEEKDAY = '木'
+
+DAYS = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
+
+report_files = sorted(glob.glob('reports/*.html'), reverse=True)
+
+def make_sidebar(files, today):
+    items = f'        <li class="active"><a href="{today}.html">{today}（{WEEKDAY}）</a></li>\n'
+    for f in files[:9]:
+        href = os.path.basename(f).replace('.html','')
+        name = href
+        try:
+            d = datetime.date.fromisoformat(name)
+            wd = DAYS[d.strftime('%A')]
+            label = f'{name}（{wd}）'
+        except Exception:
+            label = name
+        items += f'        <li><a href="{name}.html">{label}</a></li>\n'
+    return items
+
+SIDEBAR_ARCHIVE = make_sidebar(report_files, DATE)
+
+html = """<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX日報 2026-07-09（木） | AUXEN FX Portal</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){twemoji.parse(document.body,{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'});});</script>
+</head>
+<body class="report-page">
+
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 2026-07-09（木）</h1>
+  <p>米軍のイラン追加空爆と原油急伸を受けた有事のドル買いでUSD/JPYは162円30銭台まで上昇。同時刻公表のFOMC議事要旨もタカ派内容でドルを下支えし、地政学材料主導の展開を想定。</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="../assets/logo.svg" alt="AUXEN"></div>
+      <div>
+        <h1>AUXEN</h1>
+        <p>FX Research Lab</p>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="../index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="#" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報</a>
+      <a href="../archive.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>アーカイブ</a>
+      <span class="nav-section">ツール・販売</span>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター</a>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="../about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="../disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="../contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
+    </nav>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
+      <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
+      <ul class="archive-list">
+__SIDEBAR__      </ul>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+        <h2>FX日報 2026-07-09（木）<span class="badge-live">最新</span></h2>
+        <p class="sub">米軍のイラン追加空爆と原油急伸を受けた有事のドル買いでUSD/JPYは162円30銭台まで上昇。同時刻公表のFOMC議事要旨もタカ派内容でドルを下支えし、地政学材料主導の展開を想定。</p>
+      </div>
+      <div class="date-card">
+        <span>Report Date</span>
+        <strong>2026-07-09</strong>
+        <em>木曜日</em>
+      </div>
+    </header>
+
+    <div class="summary-grid" id="summary">
+      <div class="card highlight">
+        <p class="label">一言まとめ</p>
+        <h3>USD/JPY 162円台後半、有事のドル買い継続</h3>
+        <p>米軍のイラン追加空爆と制裁緩和撤回を受け原油が急伸、有事のドル買いが継続し前日NY時間には162円30銭台まで上昇。同時刻公表のFOMC議事要旨も18人中9人が年内追加利上げを想定するタカ派内容でドルを下支え。本日は21:30の米新規失業保険申請件数を除き高重要度指標が少なく、中東情勢の続報が最大の変動要因。</p>
+      </div>
+      <div class="card">
+        <p class="label">最注目通貨</p>
+        <h3>USD/JPY 🇺🇸🇯🇵</h3>
+        <p>地政学リスクとタカ派FOMCのドル買い材料が重なる。4Hデイトレ適性ランキングでも本日1位（候補・スコア50・上昇方向）</p>
+      </div>
+      <div class="card">
+        <p class="label">Market Risk</p>
+        <h3 style="color:var(--red)">HIGH</h3>
+        <p>イラン情勢の一段の悪化と162円台後半での無警告介入の双方が意識される組み合わせ</p>
+      </div>
+      <div class="card">
+        <p class="label">本日の重要指標</p>
+        <h3>4件</h3>
+        <p>FOMC議事要旨（発表済み）/ 工作機械受注 / 米新規失業保険申請件数 / 継続受給者数</p>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <div class="panel" id="points">
+        <div class="panel-head">
+          <h3>⚔️ 今日の注目ポイント</h3>
+          <span>経済指標・イベント</span>
+        </div>
+        <div class="report-body">
+          <div class="points-block">
+            <div class="block-title">🚫 本日の市場休場</div>
+            <ul class="points-list">
+              <li>なし（本日7/9は主要国市場すべて通常営業）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">📌 必見経済指標（時刻順）</div>
+            <ul class="points-list">
+              <li>03:00 🇺🇸 FOMC議事要旨（6/16-17開催分・発表済み）<span class="badge-important">★最重要</span></li>
+              <li>15:00 🇯🇵 工作機械受注（6月分・確報、要確認）</li>
+              <li>21:30 🇺🇸 新規失業保険申請件数（7/4週・前回21.5万件）<span class="badge-important">★</span></li>
+              <li>21:30 🇺🇸 失業保険継続受給者数（要確認）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">👁 その他注目点</div>
+            <ul class="points-list">
+              <li><strong>FOMC議事要旨（タカ派）</strong>：ウォーシュ新議長下の6月会合で政策金利は3.50〜3.75%に据え置かれたが、参加者18人のうち9人が年内追加利上げを想定。2026年PCEインフレ見通しの中心値は2.7%から3.6%へ上方修正され、高金利長期化観測がドルを下支え</li>
+              <li><strong>米・イラン軍事衝突の激化</strong>：ホルムズ海峡での商船攻撃への報復として米がイラン産原油の制裁緩和を撤回し追加空爆を実施。原油(WTI)は3%超上昇し一時74ドル台に乗せ、有事のドル買い・円売りの主因となった</li>
+              <li><strong>162円台での介入警戒</strong>：39年半ぶりの円安水準が続くなか、無警告の円買い介入への警戒感は根強く、上値を追う動きは抑制されやすい</li>
+              <li><strong>米10年債利回りの上昇継続</strong>：7営業日連続で上昇し1ヶ月ぶり高水準の4.56%。日米金利差の拡大観測も円売り地合いを支える</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="ranking">
+        <div class="panel-head">
+          <h3>🌏 今日の市場環境</h3>
+          <span>地合い・センチメント</span>
+        </div>
+        <div class="report-body" style="margin-bottom:20px;">
+          7/8はイラン情勢の急速な悪化が最大の材料となった。米がイラン産原油の制裁緩和を撤回し、ホルムズ海峡での商船攻撃への報復として追加空爆を実施したと伝わると、原油(WTI)が3%超急伸し一時74ドル台に乗せ、有事のドル買い・円売りが強まった。ドル円はこの流れと同時刻公表のFOMC議事要旨のタカ派内容を受けNY時間に162円30銭台まで上昇し、39年半ぶりの円安水準に接近した。本日7/9はイラン情勢の続報と162円台後半での介入警戒がせめぎ合うなか、21:30の米新規失業保険申請件数を除き高重要度指標が少なく、地政学材料主導の値動きを想定。<br><br>
+          <strong>政策金利：</strong> 米FRB 3.50〜3.75%（タカ派・FOMC議事要旨で18人中9人が年内追加利上げ想定） / 日銀 1.00%（正常化継続） / 英BOE 3.75%（中立寄り） / 欧ECB 2.25%（タカ派）
+        </div>
+
+        <div class="panel-head" style="margin-top:4px;">
+          <h3>🏆 通貨ランキング</h3>
+          <span>本日の優先順</span>
+        </div>
+        <table class="fx-table">
+          <thead>
+            <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank-badge rank-s">S</span></td>
+              <td><strong>USD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">地政学リスクとタカ派FOMCのドル買い材料が重なる本日の最有力ペア。4Hデイトレ適性ランキング1位（候補・スコア50）</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>GBP/JPY</strong><br><span style="color:var(--muted);font-size:12px;">円売り地合いの波及先。4Hランキング3位（見送り・スコア44、コスト比率に留意）</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>AUD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">資源国通貨買いと円売りが重なりやすい組み合わせ。4Hランキング6位（見送り・スコア32）</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>EUR/JPY</strong><br><span style="color:var(--muted);font-size:12px;">円売りの波及先だがADR比率は主要ペア中で低め。4Hランキング7位（見送り・スコア30）</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>GBP/USD</strong><br><span style="color:var(--muted);font-size:12px;">4Hランキング2位（スコア49）だがコスト比率2.1%で見送り判定、値幅は縮小基調</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel wide" id="review">
+        <div class="panel-head">
+          <h3>📰 前日の相場振り返り（2026-07-08）</h3>
+          <span>昨日の主要トピック</span>
+        </div>
+        <div class="report-body">
+          <div class="topic">
+            <div class="topic-title">【トピック①】米がイラン産原油の制裁緩和を撤回し追加空爆、ホルムズ海峡での商船攻撃への報復</div>
+            米はイランによるホルムズ海峡での商船攻撃を受け、イラン産原油の制裁緩和措置の撤回を発表するとともに、イランに対する一連の空爆を実施したと伝わった。トランプ大統領は「イランとの暫定停戦は終了した」と述べ、この日の夜に強力な攻撃を行う方針を示唆。原油(WTI)は3%超急伸し一時74ドル台まで上昇した。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック②】有事のドル買いと原油高でUSD/JPYが39年半ぶりの円安水準に接近、NY時間に162円30銭台</div>
+            地政学リスクの高まりを受けた有事のドル買いに加え、原油高による資源輸入国・円売り圧力も重なり、USD/JPYは東京時間の162円10銭台からNY時間には162円30銭台まで上昇した。米10年債利回りは7営業日連続で上昇し1ヶ月ぶり高水準の4.56%を付け、日米金利差の拡大観測も円売りを支えた。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック③】FOMC議事要旨がタカ派内容で公表、18人中9人が年内追加利上げを想定</div>
+            日本時間翌3:00に公表されたFOMC議事要旨では、ウォーシュ新議長下の6月会合で政策金利を3.50〜3.75%に据え置く一方、参加者18人のうち9人が年内追加利上げを想定するタカ派な内容が示された。2026年のPCEインフレ見通しの中心値は2.7%から3.6%へ上方修正され、高金利長期化観測がドルを下支えした。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック④】162円台での無警告介入への警戒感が上値を抑制</div>
+            39年半ぶりの円安水準が続くなか、市場は日本当局による無警告の円買い介入を警戒し、162円台では積極的な上値追いが抑制される値動きとなった。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック⑤】アジア株式市場はまちまち、東京・ソウルが下落</div>
+            中東情勢の緊迫化を受け、アジア株式市場は東京・ソウルで下落する一方、台北・香港では上昇するなどまちまちの展開となった。
+          </div>
+          <div class="handover">
+            <strong>本日への引継ぎ：</strong>
+            イラン情勢の続報と162円台後半での介入警戒がせめぎ合う。タカ派なFOMC議事要旨を受けたドル買い基調は継続しやすいが、無警告介入への警戒から上値は抑制されやすい。21:30の米新規失業保険申請件数を除き高重要度指標は少なく、地政学材料主導の値動きを想定。
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full" id="calendar">
+        <div class="panel-head">
+          <h3>📅 本日の経済指標カレンダー（全件）</h3>
+          <span>検索エンジン経由・複数ソース統合（要確認あり）</span>
+        </div>
+        <table class="fx-table" style="font-size:0.9em;">
+          <thead>
+            <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>03:00</strong></td><td>🇺🇸 米国</td><td><strong>FOMC議事要旨（6/16-17開催分）</strong></td><td><strong>S</strong></td><td>—</td><td>—</td></tr>
+            <tr><td>15:00</td><td>🇯🇵 日本</td><td>工作機械受注（6月分・確報）</td><td>△</td><td>（要確認）</td><td>（要確認）</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td>新規失業保険申請件数（7/4週）</td><td>○</td><td>（要確認）</td><td>21.5万件</td></tr>
+            <tr><td>21:30</td><td>🇺🇸 米国</td><td>失業保険継続受給者数</td><td>△</td><td>（要確認）</td><td>（要確認）</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。本日はKissFX・Investing.com・ForexFactory・外為どっとコム等への直接アクセスが組織のネットワークポリシーにより拒否（403）されたため、検索エンジン経由で確認できた範囲のみ掲載しています。指標の網羅性・予想値・前回値の正確性は保証できないため、発表直前に各社カレンダーで再確認してください。</p>
+      </div>
+
+    </div><!-- /content-grid -->
+
+  </main>
+</div>
+
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
+
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="../about.html">About</a>
+    <a href="../disclaimer.html">免責事項</a>
+    <a href="../privacy.html">プライバシーポリシー</a>
+    <a href="../terms.html">利用規約</a>
+    <a href="../contact.html">お問い合わせ</a>
+  </div>
+</footer>
+
+</body>
+</html>
+"""
+
+html = html.replace('__SIDEBAR__', SIDEBAR_ARCHIVE)
+
+with open(f'reports/{DATE}.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f'reports/{DATE}.html generated')
