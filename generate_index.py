@@ -3,25 +3,26 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-07-10'
-WEEKDAY    = '金'
-HERO_SUB   = 'USD/JPY162円台前半でもみ合い、方向感に乏しい一日を想定'
+TODAY      = '2026-07-13'
+WEEKDAY    = '月'
+HERO_SUB   = '火曜の米CPI発表前でUSD/JPYは162円台前半のレンジ推移。RBNZの3年ぶり利上げでNZD買いが優勢。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日7/10は主要国市場すべて通常営業'
+MARKET_HOLIDAY_P  = '本日7/13は日米欧・主要市場すべて通常営業'
 KEY_EVENTS_ITEMS  = [
-    '21:30 🇨🇦 カナダ 新規雇用者数変化（6月分）',
-    '21:30 🇨🇦 カナダ 失業率（6月分）',
+    '15:00 🇯🇵 6月 投資信託概況',
+    '19:30 🇮🇳 6月消費者物価指数（インド）',
+    '7/14(火)21:30 🇺🇸 米6月CPI（今週最大の材料）',
 ]
-REPORT_SUMMARY = 'カナダ雇用統計待ち、方向感限定的'
-RISK_LEVEL = 'MEDIUM'
+REPORT_SUMMARY = '米CPI待ち、NZD買い優勢'
+RISK_LEVEL = 'LOW'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（4会合連続据え置き・SEPが年内利上げ1回に転換）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = '中立・様子見（6/17 7-2据え置き・2名利上げ支持）'; BOE_COLOR = 'var(--muted)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/18 7-2据え置き・2名利上げ支持）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派（6/11利上げ・7月据え置き濃厚、9月追加観測）'; ECB_COLOR = 'var(--red)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派（6/11利上げ・7/23理事会は追加利上げに動かず）'; ECB_COLOR = 'var(--red)'
 RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（3-5月に2会合連続利上げ・6月据え置き）'; RBA_COLOR = 'var(--red)'
-RBNZ_RATE  = '2.25%';      RBNZ_STANCE = 'ハト派・中立（5月据え置き・3会合連続維持）'; RBNZ_COLOR = 'var(--muted)'
+RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8に3年ぶり利上げ・追加利上げの構え）'; RBNZ_COLOR = 'var(--red)'
 BOC_RATE   = '2.25%';      BOC_STANCE = '中立（6/10・5会合連続据え置き、次回7/15）'; BOC_COLOR = 'var(--muted)'
-SNB_RATE   = '0.00%';      SNB_STANCE = '中立（3月・6月据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6月据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
