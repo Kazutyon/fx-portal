@@ -3,18 +3,19 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-07-13'
-WEEKDAY    = '月'
-HERO_SUB   = '火曜の米CPI発表前でUSD/JPYは162円台前半のレンジ推移。RBNZの3年ぶり利上げでNZD買いが優勢。'
+TODAY      = '2026-07-14'
+WEEKDAY    = '火'
+HERO_SUB   = '米6月CPIとウォーシュFRB議長の初議会証言を控え、USD/JPYは162円台を挟んだレンジで神経質な値動き。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日7/13は日米欧・主要市場すべて通常営業'
+MARKET_HOLIDAY_P  = '本日7/14は日米欧・主要市場すべて通常営業（要確認範囲内で祝日情報なし）'
 KEY_EVENTS_ITEMS  = [
-    '15:00 🇯🇵 6月 投資信託概況',
-    '19:30 🇮🇳 6月消費者物価指数（インド）',
-    '7/14(火)21:30 🇺🇸 米6月CPI（今週最大の材料）',
+    '13:30 🇯🇵 5月 鉱工業生産（確報値）',
+    '18:00 🇩🇪 7月 ZEW景況感指数（要確認）',
+    '21:30 🇺🇸 米6月CPI【最重要】',
+    '23:00 🇺🇸 ウォーシュFRB議長 下院証言（要確認）',
 ]
-REPORT_SUMMARY = '米CPI待ち、NZD買い優勢'
-RISK_LEVEL = 'LOW'
+REPORT_SUMMARY = '米CPI発表待ちのレンジ'
+RISK_LEVEL = 'HIGH'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（4会合連続据え置き・SEPが年内利上げ1回に転換）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/18 7-2据え置き・2名利上げ支持）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
