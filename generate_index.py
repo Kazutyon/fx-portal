@@ -3,18 +3,18 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-07-14'
-WEEKDAY    = '火'
-HERO_SUB   = '米6月CPIとウォーシュFRB議長の初議会証言を控え、USD/JPYは162円台を挟んだレンジで神経質な値動き。'
+TODAY      = '2026-07-15'
+WEEKDAY    = '水'
+HERO_SUB   = 'BOC政策金利発表とウォーシュFRB議長・上院証言（2日目）を控え、USD/CADが本日の主役。米PPI・ベージュブックも材料。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日7/14は日米欧・主要市場すべて通常営業（要確認範囲内で祝日情報なし）'
+MARKET_HOLIDAY_P  = '本日7/15は日米欧・カナダなど主要市場すべて通常営業（次の祝日は7/20の海の日で日本市場休場予定）'
 KEY_EVENTS_ITEMS  = [
-    '13:30 🇯🇵 5月 鉱工業生産（確報値）',
-    '18:00 🇩🇪 7月 ZEW景況感指数（要確認）',
-    '21:30 🇺🇸 米6月CPI【最重要】',
-    '23:00 🇺🇸 ウォーシュFRB議長 下院証言（要確認）',
+    '08:50 🇯🇵 5月 機械受注',
+    '21:30 🇺🇸 6月 生産者物価指数（PPI）',
+    '22:45 🇨🇦 BOC政策金利発表・金融政策報告書【最重要】',
+    '23:00 🇺🇸 ウォーシュFRB議長 上院証言（要確認）',
 ]
-REPORT_SUMMARY = '米CPI発表待ちのレンジ'
+REPORT_SUMMARY = 'USD/CAD BOC据え置き公算'
 RISK_LEVEL = 'HIGH'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（4会合連続据え置き・SEPが年内利上げ1回に転換）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/18 7-2据え置き・2名利上げ支持）'; BOE_COLOR = 'var(--muted)'
