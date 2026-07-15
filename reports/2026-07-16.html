@@ -1,44 +1,15 @@
-import glob, os, datetime
-
-TODAY = '2026-07-16'
-WEEKDAY = '木'
-DAYS = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
-
-HERO_SUB = '米6月小売売上高・新規失業保険申請件数・フィラデルフィア連銀景況指数が21:30に集中。前日のPPI下振れ・ウィリアムズ総裁ハト派発言によるドル安地合いが続くか試される一日。'
-
-# ── サイドバー archive list（最新10件、今日を先頭に追加） ──
-existing = sorted(glob.glob('reports/*.html'), reverse=True)
-names = [os.path.basename(f).replace('.html', '') for f in existing]
-names = [TODAY] + [n for n in names if n != TODAY]
-names = names[:10]
-
-def label(name):
-    try:
-        d = datetime.date.fromisoformat(name)
-        return f'{name}（{DAYS[d.strftime("%A")]}）'
-    except Exception:
-        return name
-
-sidebar_items = ''
-for i, n in enumerate(names):
-    if n == TODAY:
-        sidebar_items += f'        <li class="active"><a href="{n}.html">{label(n)}</a></li>\n'
-    else:
-        sidebar_items += f'        <li><a href="{n}.html">{label(n)}</a></li>\n'
-sidebar_items = sidebar_items.rstrip('\n')
-
-html = f"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FX日報 {TODAY}（{WEEKDAY}） | AUXEN FX Portal</title>
+<title>FX日報 2026-07-16（木） | AUXEN FX Portal</title>
 <link rel="stylesheet" href="../style.css">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/logo.svg">
 <script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
-<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+<script>document.addEventListener('DOMContentLoaded',function(){twemoji.parse(document.body,{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'});});</script>
 </head>
 <body class="report-page">
 
@@ -57,8 +28,8 @@ html = f"""<!DOCTYPE html>
 
 <section class="mobile-report-hero">
   <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
-  <h1>FX日報 {TODAY}（{WEEKDAY}）</h1>
-  <p>{HERO_SUB}</p>
+  <h1>FX日報 2026-07-16（木）</h1>
+  <p>米6月小売売上高・新規失業保険申請件数・フィラデルフィア連銀景況指数が21:30に集中。前日のPPI下振れ・ウィリアムズ総裁ハト派発言によるドル安地合いが続くか試される一日。</p>
 </section>
 
 <nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
@@ -99,7 +70,16 @@ html = f"""<!DOCTYPE html>
     <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
       <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
       <ul class="archive-list">
-{sidebar_items}
+        <li class="active"><a href="2026-07-16.html">2026-07-16（木）</a></li>
+        <li><a href="2026-07-15.html">2026-07-15（水）</a></li>
+        <li><a href="2026-07-14.html">2026-07-14（火）</a></li>
+        <li><a href="2026-07-13.html">2026-07-13（月）</a></li>
+        <li><a href="2026-07-10.html">2026-07-10（金）</a></li>
+        <li><a href="2026-07-09.html">2026-07-09（木）</a></li>
+        <li><a href="2026-07-08.html">2026-07-08（水）</a></li>
+        <li><a href="2026-07-07.html">2026-07-07（火）</a></li>
+        <li><a href="2026-07-06.html">2026-07-06（月）</a></li>
+        <li><a href="2026-07-03.html">2026-07-03（金）</a></li>
       </ul>
     </div>
   </aside>
@@ -110,12 +90,12 @@ html = f"""<!DOCTYPE html>
     <header class="hero">
       <div>
         <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
-        <h2>FX日報 {TODAY}（{WEEKDAY}）<span class="badge-live">最新</span></h2>
-        <p class="sub">{HERO_SUB}</p>
+        <h2>FX日報 2026-07-16（木）<span class="badge-live">最新</span></h2>
+        <p class="sub">米6月小売売上高・新規失業保険申請件数・フィラデルフィア連銀景況指数が21:30に集中。前日のPPI下振れ・ウィリアムズ総裁ハト派発言によるドル安地合いが続くか試される一日。</p>
       </div>
       <div class="date-card">
         <span>Report Date</span>
-        <strong>{TODAY}</strong>
+        <strong>2026-07-16</strong>
         <em>木曜日</em>
       </div>
     </header>
@@ -305,8 +285,4 @@ html = f"""<!DOCTYPE html>
 </footer>
 
 </body>
-</html>"""
-
-with open(f'reports/{TODAY}.html', 'w', encoding='utf-8') as f:
-    f.write(html)
-print(f'reports/{TODAY}.html generated')
+</html>
