@@ -3,25 +3,24 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-07-17'
-WEEKDAY    = '金'
-HERO_SUB   = 'イラン情勢の軍事エスカレーションによる有事のドル買いと、半導体株安を受けた日経急落によるリスクオフの円買いが交錯。夜22:15〜23:00の米住宅着工・鉱工業生産・ミシガン大学指数まで方向感限定的か。'
-MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日7/17は日米欧・カナダなど主要市場すべて通常営業'
+TODAY      = '2026-07-20'
+WEEKDAY    = '月'
+HERO_SUB   = '海の日で東京市場休場。ホルムズ海峡の緊迫化とバスラ原油ターミナル攻撃による原油急騰で有事のドル買いが継続、週後半のECB理事会・日本CPIまで神経質な展開へ。'
+MARKET_HOLIDAY_H3 = '海の日で東京市場休場'
+MARKET_HOLIDAY_P  = '日本は「海の日」の祝日で株式・債券市場が休場。FX市場は通常通り取引継続'
 KEY_EVENTS_ITEMS  = [
-    '22:15 🇺🇸 6月 住宅着工件数',
-    '22:15 🇺🇸 6月 鉱工業生産（前月比）【重要】',
-    '23:00 🇺🇸 7月 ミシガン大学消費者信頼感指数（速報値）【重要】',
+    '10:30 🇨🇳 7月 LPR（貸出最優遇金利）【重要】',
+    '21:30 🇨🇦 6月 消費者物価指数（CPI）【重要】',
 ]
-REPORT_SUMMARY = '有事のドル買い×リスクオフ円買いで方向感限定'
+REPORT_SUMMARY = '有事のドル買い継続、東京休場で薄商い'
 RISK_LEVEL = 'HIGH'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（4会合連続据え置き・SEPが年内利上げ1回に転換）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/18 7-2据え置き・2名利上げ支持）'; BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・次回7月据え置き観測）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派（6/11利上げ・7/23理事会は追加利上げに動かず）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（3-5月に2会合連続利上げ・6月据え置き）'; RBA_COLOR = 'var(--red)'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（ウォーシュ議長「インフレ高止まり容認せず」・9月利上げ観測強）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/18 7-2据え置き・次回8/6）'; BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・次回7/30-31据え置き観測）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派（6/11利上げ・7/22-23理事会は据え置き観測）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
 RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8に3年ぶり利上げ・追加利上げの構え）'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15据え置き・6会合連続、成長下振れリスク警告）'; BOC_COLOR = 'var(--muted)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15据え置き・6会合連続）'; BOC_COLOR = 'var(--muted)'
 SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6月据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
