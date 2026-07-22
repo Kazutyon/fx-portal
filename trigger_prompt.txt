@@ -825,6 +825,6 @@ git commit -m "FX日報 YYYY-MM-DD（曜日）"
 git push origin main
 ```
 
-push が認証エラーになった場合は、メタプロンプト（このファイルを読み込む前の指示）に記載されたトークン付きURLでpushすること。
+push が認証エラーになった場合は、トークン付きURLなど別の認証情報での再試行は絶対に行わないこと。エラーメッセージ全文を明記して処理を終了し、認証設定の修正はユーザーに委ねる。
 
 完了後: `echo "✅ FX日報 YYYY-MM-DD 公開完了 https://kazutyon.github.io/fx-portal/"`
