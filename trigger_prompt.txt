@@ -48,26 +48,37 @@ https://fx.minkabu.jp/news
 
 ## Step 3: 経済指標・市場休場を取得（全件掲載）
 
-**3-1 KissFX**（アクセスできる場合のみ）
+**【最重要ルール：単独ソース禁止】**
+経済指標は必ず2つ以上の独立ソースで照合すること。KissFX単独で確定してはならない。
+最低ソースは 3-1 KissFX と 3-2 ForexFactory JSON の2本。両者で一致した指標を採用する。
+片方でしか確認できない指標も掲載してよいが、その行には必ず「（要確認）」を付す。
+
+**3-1 KissFX**（主ソース・ランク付き）
 URL: https://kissfx.com/article/fxdays{Step1のYYYYMMDD}.html
 抽出：全経済指標（時刻・国・指標名・重要度・予想・前回）
 重要度ランク：米国はSS>S>AA>A>BB>B>C、その他は◎>○>△>×
-→ 403/404/エラーの場合はスキップ
+→ 403/404/エラーの場合はスキップ（その場合は3-2を主に、要確認注記を増やす）
 
-**3-2 investing.com**（必須）
-URL: https://jp.investing.com/economic-calendar/
-抽出：本日の全指標（重要度問わず全件）
+**3-2 ForexFactory JSON フィード**（必須・独立照合ソース）
+URL: https://nfs.faireconomy.media/ff_calendar_thisweek.json
+機械可読JSON。bot対策で弾かれず安定取得できる（investing.com/HTML版の代替）。
+各イベントの `date`（例 `2026-07-23T08:15:00-04:00`）を **JST（+9:00）へ換算**して本日分を抽出する。
+米東部時間(-04:00 EDT)基準なので、JST = ET + 13時間。日付跨ぎに注意（ETの前日夜21:30 = JST当日10:30 など）。
+抽出：`country`（通貨）・`impact`（High/Medium/Low）・`title`（指標名）・`forecast`・`previous`。
+リポジトリの `economic_calendar_forexfactory.py` が本フィードの取得・JST正規化を実装済み。これを使ってよい。
 
-**3-3 ForexFactory**（補完用）
-URL: https://www.forexfactory.com/calendar
-抽出：Today's full calendar, ALL events regardless of impact level
+**3-3 investing.com / ForexFactory HTML**（ベストエフォート・取れなくても続行）
+investing.com（https://jp.investing.com/economic-calendar/）とForexFactory HTML版は
+Cloudflare系bot対策により素のHTTP取得は常時403で、実際にはほぼ取得できない。
+取得できた場合のみ第3の照合材料として使う。403でも一切問題視せず、3-1・3-2で続行する。
 
 **3-4 市場休場チェック（必須）**
 上記サイトまたは https://www.gaitame.com/markets/news/ から本日の主要市場休場情報を確認する。
 → 休場市場がある場合はStep 6のHTMLの「今日の注目ポイント」冒頭に記載する
 → 休場市場がない場合は「なし」と記載する
 
-→ 複数ソースで一致した指標を採用。KissFXランクがあれば優先使用。重要度低い指標も全て掲載すること。
+→ KissFXランクがあれば重要度表示に優先使用。重要度の低い指標も全て掲載すること。
+→ 2ソースで一致しない指標には「（要確認）」を付し、単独ソースのまま断定しないこと。
 
 ---
 
