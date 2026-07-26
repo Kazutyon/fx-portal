@@ -3,28 +3,27 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-07-24'
-WEEKDAY    = '金'
-HERO_SUB   = '前日NY市場はイラン情勢の緊迫と原油急伸を背景に「有事のドル買い」が強まり、ドル円は163.86円と39年8カ月ぶりの高値を更新した。本日は08:30の全国CPIが次回7/31日銀会合を占う最大の焦点で、仏独欧英米の製造業・非製造業PMI速報値が16時台から断続的に発表される。'
+TODAY      = '2026-07-27'
+WEEKDAY    = '月'
+HERO_SUB   = '週末にかけて米・イランの戦闘終結に向けた協議が進展し、地政学リスクプレミアムが後退。週明けオセアニア市場でドル円は163.64円を下抜け163.60円台まで反落した。今週はFOMC（7/28-29）・日銀会合（7/30-31）・BOE（7/30）と主要中銀イベントが集中する重要週。'
 MARKET_HOLIDAY_H3 = '休場市場なし'
-MARKET_HOLIDAY_P  = '本日7/24は日米欧・主要市場すべて通常営業（確認できた範囲で祝日情報なし）'
+MARKET_HOLIDAY_P  = '本日7/27は日米欧・主要市場すべて通常営業（確認できた範囲で祝日情報なし）'
 KEY_EVENTS_ITEMS  = [
-    '08:30 🇯🇵 全国消費者物価指数【除生鮮】(コアCPI) 予想+1.6%',
-    '15:00 🇬🇧 小売売上高（前月比） 予想-0.3%',
-    '16:30 🇩🇪 独製造業PMI速報値',
-    '22:45 🇺🇸 製造業・非製造業PMI速報値',
-    '23:00 🇺🇸 新築住宅販売件数 予想61.0万件',
+    '17:00 🇩🇪 IFO景況指数 予想86.0〜86.1',
+    '21:30 🇺🇸 耐久財受注 予想+1.6〜1.8%',
+    '21:30 🇺🇸 耐久財受注【除輸送用機器】 予想+0.8〜0.9%',
+    '23:30 🇺🇸 ダラス連銀製造業活動指数（要確認）',
 ]
-REPORT_SUMMARY = 'ドル全面高継続、全国CPIとPMI速報がカギ'
+REPORT_SUMMARY = '米イラン協議進展でドル円反落、FOMC・日銀控え神経質な週明け'
 RISK_LEVEL = 'MEDIUM'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（ウォーシュ議長「インフレ高止まり容認せず」・9月利上げ観測強）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/18 7-2据え置き・次回8/6）'; BOE_COLOR = 'var(--muted)'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（ウォーシュ議長「インフレなお高すぎる」・利下げ示唆文言削除・次回FOMC7/28-29）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/17据え置き・次回7/30 Super Thursday）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・次回7/30-31据え置き観測）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派（6/11利上げ・7/22-23理事会は据え置き観測）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（7/23 2会合連続据え置き・9月に追加利上げ判断持ち越し）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（2-5月に3会合連続利上げ・6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
 RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8に3年ぶり利上げ・追加利上げの構え）'; RBNZ_COLOR = 'var(--red)'
 BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15据え置き・6会合連続）'; BOC_COLOR = 'var(--muted)'
-SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6月据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（3会合連続据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
