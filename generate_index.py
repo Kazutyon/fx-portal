@@ -3,19 +3,22 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-07-29'
-WEEKDAY    = '水'
-HERO_SUB   = 'FOMC結果発表は日本時間30日未明3時に持ち越し、3.75%据え置きが市場コンセンサス。それまでは豪州Q2消費者物価指数（10:30）が最大の材料で、ドル円は163円台後半でのレンジ待ちが続く。'
-MARKET_HOLIDAY_H3 = '休場市場なし'
-MARKET_HOLIDAY_P  = '本日7/29はKissFX・ForexFactoryの休場カレンダーに該当なし。日米欧・主要市場は通常営業（確認できた範囲で祝日情報なし）'
+TODAY      = '2026-07-30'
+WEEKDAY    = '木'
+HERO_SUB   = 'FOMC据え置き（3.75%）後のドル売りを引き継ぎ、本日はBOE政策金利決定と米PCE・GDP・雇用統計が重なる最重要日。'
+MARKET_HOLIDAY_H3 = 'なし'
+MARKET_HOLIDAY_P  = '本日7/30はKissFX・ForexFactoryの休場カレンダーに該当なし。日米欧・主要市場は通常営業。'
 KEY_EVENTS_ITEMS  = [
-    '10:30 🇦🇺 豪州Q2消費者物価指数（前年比） 予想+4.0〜4.1%',
-    '17:30 🇬🇧 英住宅ローン承認件数・マネーサプライM4',
-    '23:30 🇺🇸 米週間原油在庫',
-    '27:00(30日03:00) 🇺🇸 FOMC政策金利発表 3.75%据え置き予想',
-    '27:30(30日03:30) 🇺🇸 ウォーシュFRB議長 記者会見',
+    '10:30 🇦🇺 豪住宅建設許可件数・貿易物価指数',
+    '17:00 🇩🇪 独Q2GDP速報値',
+    '18:00 🇪🇺 ユーロ圏Q2GDP速報値・失業率',
+    '20:00 🇬🇧 BOE政策金利発表・声明',
+    '21:00 🇬🇧 ベイリーBOE総裁 記者会見',
+    '21:30 🇺🇸 米新規失業保険申請件数',
+    '21:30 🇺🇸 米PCEデフレーター・コアPCE',
+    '21:30 🇺🇸 米Q2GDP速報値・個人消費',
 ]
-REPORT_SUMMARY = 'FOMC結果は本日夜間に持ち越し、豪CPIまではドル円レンジ'
+REPORT_SUMMARY = 'BOE政策金利＆米PCE・GDP・雇用統計が重なる最重要日'
 RISK_LEVEL = 'HIGH'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（ウォーシュ議長「インフレなお高すぎる」・利下げ示唆文言削除・次回FOMC7/28-29）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/17据え置き・次回7/30 Super Thursday）'; BOE_COLOR = 'var(--muted)'
