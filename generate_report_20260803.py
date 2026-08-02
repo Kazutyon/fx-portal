@@ -1,0 +1,377 @@
+# -*- coding: utf-8 -*-
+TODAY = '2026-08-03'
+WEEKDAY = '月'
+HERO_SUB = '先週後半の為替介入（要確認）を経てドル円は157円台で高止まり、本日朝も戻り売り優勢。月初第1営業日の米ISM製造業景況指数（23:00）が最大の焦点で、豪州・カナダは祝日で休場。'
+
+archive_items = [
+    ('2026-08-03', '月'),
+    ('2026-07-31', '金'),
+    ('2026-07-30', '木'),
+    ('2026-07-29', '水'),
+    ('2026-07-28', '火'),
+    ('2026-07-27', '月'),
+    ('2026-07-24', '金'),
+    ('2026-07-23', '木'),
+    ('2026-07-22', '水'),
+    ('2026-07-21', '火'),
+    ('2026-07-20', '月'),
+]
+
+def archive_li(items, current):
+    out = []
+    for name, wd in items:
+        cls = ' class="active"' if name == current else ''
+        out.append(f'        <li{cls}><a href="{name}.html">{name}（{wd}）</a></li>')
+    return '\n'.join(out)
+
+ARCHIVE_LIST_HTML = archive_li(archive_items, TODAY)
+
+html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX日報 {TODAY}（{WEEKDAY}） | AUXEN FX Portal</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+</head>
+<body class="report-page">
+
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 {TODAY}（{WEEKDAY}）</h1>
+  <p>{HERO_SUB}</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="../assets/logo.svg" alt="AUXEN"></div>
+      <div>
+        <h1>AUXEN</h1>
+        <p>FX Research Lab</p>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="../index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="#" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報</a>
+      <a href="../archive.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>アーカイブ</a>
+      <span class="nav-section">ツール・販売</span>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター</a>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="../about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="../disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="../contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
+    </nav>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
+      <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
+      <ul class="archive-list">
+{ARCHIVE_LIST_HTML}
+</ul>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+        <h2>FX日報 {TODAY}（{WEEKDAY}）<span class="badge-live">最新</span></h2>
+        <p class="sub">{HERO_SUB}</p>
+      </div>
+      <div class="date-card">
+        <span>Report Date</span>
+        <strong>{TODAY}</strong>
+        <em>月曜日</em>
+      </div>
+    </header>
+
+    <div class="summary-grid" id="summary">
+      <div class="card highlight">
+        <p class="label">一言まとめ</p>
+        <h3>先週の介入観測でドル円157円台に定着、本日は米ISM製造業景況指数が最重要</h3>
+        <p>先週後半（7/30〜31）に政府・日銀による複数回の為替介入が実施されたとみられ（要確認・当局未公式確認）、ドル円は40年ぶり高値圏の164円台から一時158.34円まで急落。週末にかけてもNY連銀が大手邦銀2行にユーロ円のレートチェックを実施したと伝わり、160円が次の介入ターゲットゾーンとして意識されている。週明け8/3早朝の東京市場では戻り売りが先行し一時157.02円まで下押しした後、157.58円まで反発する神経質な展開。金曜のFOMC（7/29）は3.50〜3.75%据え置き（9対3）、日銀（7/31）も1.00%据え置きと主要中銀イベントは通過したが、追加介入への警戒は根強い。本日は月初第1営業日で、23:00の米ISM製造業景況指数（予想53.9〜54.0）が最大の材料。豪州・カナダは祝日で休場のため流動性がやや薄くなる点にも注意（要確認）。</p>
+      </div>
+      <div class="card">
+        <p class="label">最注目通貨</p>
+        <h3>USD/JPY 🇺🇸🇯🇵</h3>
+        <p>4Hデイトレ適性ランキング1位（スコア99・最適）。先週の介入警戒を引き継ぎ157円台で方向感を探る展開。23:00のISM製造業景況指数の結果次第で変動幅拡大の可能性</p>
+      </div>
+      <div class="card">
+        <p class="label">Market Risk</p>
+        <h3 style="color:var(--gold,#c79a3b)">MEDIUM</h3>
+        <p>VIX15.99（前日比-6.44%）と落ち着いた水準だが、円クロスは先週の介入余波でADR比率が5年平均の150〜170%台まで拡大しており実現ボラティリティは高い（要確認）</p>
+      </div>
+      <div class="card">
+        <p class="label">本日の重要指標</p>
+        <h3>18件</h3>
+        <p>米ISM製造業景況指数 / 米・独・仏・英 製造業PMI確報 / スイスCPI / 独小売売上高 等（豪州・加は祝日で休場）</p>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <div class="panel" id="points">
+        <div class="panel-head">
+          <h3>⚔️ 今日の注目ポイント</h3>
+          <span>経済指標・イベント</span>
+        </div>
+        <div class="report-body">
+          <div class="points-block">
+            <div class="block-title">🚫 本日の市場休場</div>
+            <ul class="points-list">
+              <li>🇦🇺 オーストラリア（一部州の祝日）</li>
+              <li>🇨🇦 カナダ（シビックホリデー、祝日）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">📌 必見経済指標（時刻順）</div>
+            <ul class="points-list">
+              <li>15:30 🇨🇭 スイスCPI(前月比/前年比) 予想-0.1%/+0.4%（前回±0.0%/+0.5%）</li>
+              <li>17:00 🇪🇺 ユーロ圏 製造業PMI【改定値】 予想52.0（前回52.0）</li>
+              <li>22:45 🇺🇸 製造業PMI【改定値】 予想53.8（前回53.8）</li>
+              <li>23:00 🇺🇸 ISM製造業景況指数 予想53.9〜54.0（前回53.3）<span class="badge-important">★最重要</span></li>
+              <li>23:00 🇺🇸 建設支出（前月比） 予想+0.2%（前回+0.1%）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">👁 その他注目点</div>
+            <ul class="points-list">
+              <li><strong>追加介入への警戒感が継続</strong>：先週後半の介入観測（要確認）以降、当局からの公式確認はまだないが、160円が次の介入ターゲットゾーンとして市場に意識されている</li>
+              <li><strong>FOMC・日銀・BOEはいずれも通過し中銀イベントは一服</strong>：本日は月初第1営業日のISM製造業景況指数（23:00）に材料が集中</li>
+              <li><strong>豪州・カナダの祝日で市場流動性がやや薄くなる可能性</strong>：東京〜ロンドン時間の値動きがやや荒くなりやすい点に留意（要確認）</li>
+              <li><strong>4Hデイトレ適性ランキングは円クロスが上位独占</strong>：USD/JPY・EUR/JPY・GBP/JPY・AUD/JPYが上位1〜4位を占め、いずれも「下降」方向で介入警戒の地合いと整合的</li>
+              <li><strong>WTI原油は地政学リスク後退観測で大幅下落</strong>：$80.07（前日比-5.43%）。「戦争プレミアム」の剥落が背景（要確認）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="ranking">
+        <div class="panel-head">
+          <h3>🌏 今日の市場環境</h3>
+          <span>地合い・センチメント</span>
+        </div>
+        <div class="report-body" style="margin-bottom:20px;">
+          8/3（月）は、先週後半に発生したとみられる政府・日銀の為替介入（要確認）の余韻を引き継ぐ形で東京市場がスタート。ドル円は本朝一時157.02円まで売られた後157.58円まで切り返すなど、157円台で方向感を探る展開が続く。FOMC（7/29・3.50〜3.75%据え置き）・日銀（7/31・1.00%据え置き）・BOE（7/30・3.75%据え置き）と主要中銀イベントはいずれも通過し、本日は月初第1営業日の米ISM製造業景況指数（23:00）が最大の材料。豪州・カナダは祝日で休場のため、流動性がやや薄くなる点にも留意したい（要確認）。<br><br>
+          <strong>政策金利：</strong> 米FRB 3.50〜3.75%（タカ派・据え置き、7/29 9対3で3人が利上げ主張） / 日銀 1.00%（正常化継続、7/31据え置き・26年度成長率上方修正） / 英BOE 3.75%（中立寄り、7/30据え置き・split vote）
+        </div>
+
+        <div class="panel-head" style="margin-top:4px;">
+          <h3>🏆 通貨ランキング</h3>
+          <span>本日の優先順</span>
+        </div>
+        <table class="fx-table">
+          <thead>
+            <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank-badge rank-s">S</span></td>
+              <td><strong>USD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">4Hデイトレ適性ランキング1位（スコア99・最適）。先週の介入観測を経て157円台で高止まり、23:00のISM製造業景況指数を控え神経質な値動き</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-s">S</span></td>
+              <td><strong>EUR/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング2位（スコア98・最適）。ドル円同様に円買い圧力を引き継ぎ下値模索。17:00のユーロ圏製造業PMI確報が手掛かり</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-s">S</span></td>
+              <td><strong>GBP/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング3位（スコア98・最適）。前週BOE据え置き（3.75%・split vote）を消化しつつ、円主導の下降トレンド継続</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-s">S</span></td>
+              <td><strong>AUD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング4位（スコア97・最適）。本日豪州は祝日で薄商いのなか、円買い基調が上値を抑える展開</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>USD/CHF</strong><br><span style="color:var(--muted);font-size:12px;">ランキング5位（スコア70・適）。ドル全面安の流れと15:30のスイスCPIを睨む展開</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">※ 4Hデイトレ適性ランキングは本日05:27 JST時点。数値は目安であり、実際のエントリーは各自のルールで判断してください。</p>
+      </div>
+
+      <div class="panel wide" id="review">
+        <div class="panel-head">
+          <h3>📰 前週末の相場振り返り（2026-07-31〜08-02）</h3>
+          <span>週末を挟んだ主要トピック</span>
+        </div>
+        <div class="report-body">
+          <div class="topic">
+            <div class="topic-title">【トピック①】政府・日銀の為替介入とみられる動きでドル円が164円台から157円台へ急落（要確認）</div>
+            7/30のNY時間（日本時間31日未明）にドル円が急落したのに続き、週末にかけても戻りは限定的で157円台での推移が続いた。財務省・日銀からの公式コメントはないが、複数の銀行が通常より大幅に多い取引量を報告しており、市場では介入実施の観測が強い。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック②】NY連銀が大手邦銀にレートチェックを実施、160円が次の介入ターゲットゾーンに</div>
+            8/1(土)、NY連銀が少なくとも米大手銀2行に対しユーロ円のレートチェックを実施したと伝わった。米財務省も31日の円相場介入の可能性を米銀に通知したとされ、160円が次の介入警戒ラインとして市場に意識されている。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック③】FOMC（7/29）は3.50〜3.75%据え置き、9対3で3人が利上げを主張</div>
+            クリーブランド連銀ハマック総裁・ミネアポリス連銀カシュカリ総裁・ダラス連銀ローガン総裁が利上げを主張し反対票を投じた。ウォーシュ議長は会見で「据え置きは対応を怠っていることを意味しない」と述べ、インフレ抑制姿勢を堅持した。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック④】日銀（7/31）は1.00%据え置き、26年度成長率見通しを上方修正</div>
+            植田総裁は会見で「利上げペースの加速もありうる」と述べ、中東情勢や為替動向（円安・ドル高）を今後の判断材料に挙げた。正常化路線の継続姿勢を示したことも、その後の円買い地合いを支えた面がある（要確認）。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック⑤】金は反落・原油は続落、来週の米雇用統計（8/7）に関心集まる</div>
+            COMEX金は8/1にドル持ち直しと利上げ観測再燃で4,050ドル台へ反落。WTI原油も供給正常化観測などを背景に軟調に推移し、8/3時点で$80.07（前日比-5.43%）まで下落した。市場の関心は8/7発表の米雇用統計とISM関連指標に移りつつある。
+          </div>
+          <div class="handover">
+            <strong>本日（8/3月）への引継ぎ：</strong>
+            ドル円は157円台前半でスタートし、本朝は戻り売りが優勢もその後反発するなど方向感に乏しい。追加介入への警戒感が続くなか、本日は月初第1営業日の米ISM製造業景況指数（23:00）が最大の焦点。豪州・カナダは祝日で休場のため流動性がやや薄くなる点にも注意が必要（要確認）。
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full" id="calendar">
+        <div class="panel-head">
+          <h3>📅 本日の経済指標カレンダー（全件）</h3>
+          <span>KissFX × ForexFactory 2ソース照合済み（要確認あり）</span>
+        </div>
+        <table class="fx-table" style="font-size:0.9em;">
+          <thead>
+            <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>07:45</td><td>🇳🇿 NZ</td><td>住宅建設許可件数（前月比、要確認・ForexFactoryのみ）</td><td>△</td><td>—</td><td>-4.0%</td></tr>
+            <tr><td>09:30</td><td>🇯🇵 日本</td><td>製造業PMI【改定値】（要確認・ForexFactoryのみ）</td><td>△</td><td>54.7</td><td>54.7</td></tr>
+            <tr><td>10:00</td><td>🇦🇺 豪州</td><td>MI景気先行指数（前月比、要確認・ForexFactoryのみ）</td><td>△</td><td>—</td><td>-0.4%</td></tr>
+            <tr><td><strong>10:45</strong></td><td>🇨🇳 中国</td><td><strong>RatingDog製造業PMI</strong></td><td><strong>○</strong></td><td><strong>51.9〜52.0</strong></td><td>51.7</td></tr>
+            <tr><td><strong>15:00</strong></td><td>🇩🇪 独</td><td><strong>小売売上高（前月比、KissFXは-0.3%）</strong></td><td><strong>△</strong></td><td><strong>-0.4%〜-0.3%</strong></td><td>+1.1%</td></tr>
+            <tr><td><strong>15:30</strong></td><td>🇨🇭 スイス</td><td><strong>消費者物価指数（前月比/前年比、重要度は出所間で差・要確認）</strong></td><td><strong>△</strong></td><td><strong>-0.1%/+0.4%</strong></td><td>±0.0%/+0.5%</td></tr>
+            <tr><td>16:15</td><td>🇪🇺 西</td><td>製造業PMI（要確認・ForexFactoryのみ）</td><td>△</td><td>50.5</td><td>49.7</td></tr>
+            <tr><td><strong>16:30</strong></td><td>🇨🇭 スイス</td><td><strong>製造業PMI（予想は出所間で僅差）</strong></td><td><strong>△</strong></td><td><strong>54.5〜54.8</strong></td><td>54.3</td></tr>
+            <tr><td>16:45</td><td>🇪🇺 伊</td><td>製造業PMI（要確認・ForexFactoryのみ）</td><td>△</td><td>52.5</td><td>52.2</td></tr>
+            <tr><td><strong>16:50</strong></td><td>🇫🇷 仏</td><td><strong>製造業PMI【改定値】</strong></td><td><strong>△</strong></td><td><strong>50.0</strong></td><td>50.0</td></tr>
+            <tr><td><strong>16:55</strong></td><td>🇩🇪 独</td><td><strong>製造業PMI【改定値】</strong></td><td><strong>△</strong></td><td><strong>52.2</strong></td><td>52.2</td></tr>
+            <tr><td><strong>17:00</strong></td><td>🇪🇺 ユーロ圏</td><td><strong>製造業PMI【改定値】</strong></td><td><strong>○</strong></td><td><strong>52.0</strong></td><td>52.0</td></tr>
+            <tr><td><strong>17:30</strong></td><td>🇬🇧 英国</td><td><strong>製造業PMI【改定値】</strong></td><td><strong>△</strong></td><td><strong>52.8</strong></td><td>52.8</td></tr>
+            <tr><td><strong>22:45</strong></td><td>🇺🇸 米国</td><td><strong>製造業PMI【改定値】</strong></td><td><strong>B</strong></td><td><strong>53.8</strong></td><td>53.8</td></tr>
+            <tr><td><strong>23:00</strong></td><td>🇺🇸 米国</td><td><strong>ISM製造業景況指数</strong></td><td><strong>AA</strong></td><td><strong>53.9〜54.0</strong></td><td>53.3</td></tr>
+            <tr><td>23:00</td><td>🇺🇸 米国</td><td>ISM製造業価格指数（要確認・ForexFactoryのみ）</td><td>中</td><td>70.0</td><td>73.0</td></tr>
+            <tr><td><strong>23:00</strong></td><td>🇺🇸 米国</td><td><strong>建設支出（前月比）</strong></td><td><strong>B</strong></td><td><strong>+0.2%</strong></td><td>+0.1%</td></tr>
+            <tr><td>23:15</td><td>🇺🇸 米国</td><td>Omdia自動車販売台数（要確認・ForexFactoryのみ）</td><td>△</td><td>16.3M</td><td>16.5M</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。KissFX（主・ランク付き）とForexFactoryの機械可読カレンダー（ff_calendar_thisweek.json、ET→JST変換済み）の2つの独立ソースで照合済み。両ソースで一致した指標はそのまま掲載し、片方のソースにしか掲載がない指標、または両ソース間で数値・重要度に差がある指標には「（要確認）」を付しています。本日は豪州・カナダが祝日で休場（本表には含めず、注目ポイント欄に記載）。指標の網羅性は保証できないため、発表直前に各社カレンダーで再確認してください。</p>
+      </div>
+
+      <!-- ファンダメンタルズ（月曜日のみ） -->
+      <div class="panel full" id="fundamentals">
+        <div class="panel-head">
+          <h3>🏦 主要中銀ファンダメンタルズ（週次更新）</h3>
+          <span>{TODAY} 現在</span>
+        </div>
+        <table class="fx-table">
+          <thead><tr><th>中銀</th><th>通貨</th><th>政策金利</th><th>スタンス</th><th>背景・理由</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>FRB</td><td>🇺🇸 USD</td><td><strong>3.50–3.75%</strong></td>
+              <td style="color:var(--red);">タカ派・据え置き</td>
+              <td style="font-size:12px;">7/28-29のFOMCで9対3の賛成多数により据え置きを決定。クリーブランド連銀ハマック総裁・ミネアポリス連銀カシュカリ総裁・ダラス連銀ローガン総裁の3人が利上げを主張し反対。ウォーシュ議長は会見で「据え置きは対応を怠っていることを意味しない」と述べ、インフレ抑制姿勢を堅持した。次回FOMCは9月予定。</td>
+            </tr>
+            <tr>
+              <td>日銀</td><td>🇯🇵 JPY</td><td><strong>1.00%</strong></td>
+              <td style="color:var(--blue);">正常化継続</td>
+              <td style="font-size:12px;">7/30-31の金融政策決定会合で1.00%据え置きを決定。26年度成長率見通しを上方修正した一方、中東情勢や為替動向（円安・ドル高）を今後の利上げ判断の重要材料と位置付けた。植田総裁は「利上げペースの加速もありうる」と述べ物価上振れへの警戒を示した。次回会合は9月予定（要確認）。</td>
+            </tr>
+            <tr>
+              <td>ECB</td><td>🇪🇺 EUR</td><td><strong>2.25%</strong></td>
+              <td style="color:var(--red);">タカ派・据え置き</td>
+              <td style="font-size:12px;">7/23の理事会で主要政策金利を全会一致で据え置き。ラガルド総裁は一部理事から追加利上げの是非を巡る議論があったことを認めつつ、データ次第の判断姿勢を維持。市場は次回9/10会合での利上げを一部織り込みつつある。</td>
+            </tr>
+            <tr>
+              <td>BOE</td><td>🇬🇧 GBP</td><td><strong>3.75%</strong></td>
+              <td style="color:var(--muted);">中立（一部タカ派）</td>
+              <td style="font-size:12px;">7/30のSuper Thursdayで政策金利を3.75%に据え置き。3人の委員が利上げを主張する分裂した投票となった。ベイリー総裁は利上げが近いわけではないと説明しつつ、エネルギー価格などインフレの上振れリスクは残るとの見方を示した。</td>
+            </tr>
+            <tr>
+              <td>RBA</td><td>🇦🇺 AUD</td><td><strong>4.35%</strong></td>
+              <td style="color:var(--red);">タカ派</td>
+              <td style="font-size:12px;">2〜5月に3会合連続で利上げ（3.85%→4.35%）した後、6/16会合で据え置き。ブロック総裁は「一時停止であって転換ではない」と説明し追加利上げの構えを崩していない。次回会合は8/11で本日時点では材料難。エコノミストの過半数が26年中の追加利上げを予想（要確認）。</td>
+            </tr>
+            <tr>
+              <td>RBNZ</td><td>🇳🇿 NZD</td><td><strong>2.50%</strong></td>
+              <td style="color:var(--red);">タカ派転換</td>
+              <td style="font-size:12px;">7/8会合でOCRを2.25%→2.50%へ引き上げ、2023年5月以来約3年ぶりの利上げ。インフレが目標を上回る水準にあり景気は今後半年で加速する見込みとして、緩和的すぎる金利水準の是正に動いた。次回会合は8月下旬の見込み（要確認）。</td>
+            </tr>
+            <tr>
+              <td>BOC</td><td>🇨🇦 CAD</td><td><strong>2.25%</strong></td>
+              <td style="color:var(--muted);">中立</td>
+              <td style="font-size:12px;">7/15会合で6会合連続の政策金利据え置きを決定。カナダ経済は第2四半期に成長が再加速（推定+2.5%）しているとしつつ、中東情勢や米通商政策を巡る不確実性を注視する姿勢を継続。次回会合は9/2予定。</td>
+            </tr>
+            <tr>
+              <td>SNB</td><td>🇨🇭 CHF</td><td><strong>0.00%</strong></td>
+              <td style="color:var(--muted);">中立</td>
+              <td style="font-size:12px;">6/18の政策評価会合でゼロ金利政策の維持を決定。26年のインフレ見通しを+0.6%へわずかに上方修正した一方、成長見通しは据え置き。「為替市場介入への準備は一段と強まっている」と表明しスイスフラン高への警戒を維持。次回発表は9月見込み。</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ 各中銀の公式発表・複数の報道ソース（日本経済新聞・Bloomberg・CNBC・各中銀公式サイト等）で確認済み。最新情報は各中銀の公式サイトでご確認ください。</p>
+      </div>
+
+    </div><!-- /content-grid -->
+
+  </main>
+</div>
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="../about.html">About</a>
+    <a href="../disclaimer.html">免責事項</a>
+    <a href="../privacy.html">プライバシーポリシー</a>
+    <a href="../terms.html">利用規約</a>
+    <a href="../contact.html">お問い合わせ</a>
+  </div>
+</footer>
+</body>
+</html>"""
+
+with open(f'reports/{TODAY}.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f'reports/{TODAY}.html written')

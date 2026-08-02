@@ -3,31 +3,27 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-07-31'
-WEEKDAY    = '金'
-HERO_SUB   = '前日NY時間に円買い介入観測でドル円が164円台から158円台へ急落、本日は日銀会合・展望レポート・植田総裁会見が最大の焦点。'
-MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日7/31はKissFX・ForexFactoryの休場カレンダーに該当なし。日米欧・主要市場は通常営業。'
+TODAY      = '2026-08-03'
+WEEKDAY    = '月'
+HERO_SUB   = '先週後半の為替介入（要確認）を経てドル円は157円台で高止まり、本日朝も戻り売り優勢。月初第1営業日の米ISM製造業景況指数（23:00）が最大の焦点で、豪州・カナダは祝日で休場。'
+MARKET_HOLIDAY_H3 = '豪州・カナダが祝日で休場'
+MARKET_HOLIDAY_P  = '🇦🇺豪州（一部州の祝日）、🇨🇦カナダ（シビックホリデー）が休場。流動性がやや薄くなる可能性（要確認）'
 KEY_EVENTS_ITEMS  = [
-    '08:30 🇯🇵 東京都区部CPI（除生鮮）',
-    '10:30 🇨🇳 中国 製造業・非製造業PMI',
-    '11:30 🇯🇵 日銀政策金利発表・展望レポート',
-    '15:30 🇯🇵 植田日銀総裁 記者会見',
-    '18:00 🇪🇺 ユーロ圏CPI速報値',
-    '21:30 🇨🇦 加GDP（前月比）',
-    '21:30 🇺🇸 米雇用コスト指数',
-    '23:00 🇺🇸 米ミシガン消費者信頼感確報',
+    '15:30 🇨🇭 スイスCPI(前月比/前年比)',
+    '17:00 🇪🇺 ユーロ圏製造業PMI【改定値】',
+    '22:45 🇺🇸 製造業PMI【改定値】',
+    '23:00 🇺🇸 ISM製造業景況指数',
 ]
-REPORT_SUMMARY = '円買い介入観測でドル円急落、本日は日銀会合・展望レポート・総裁会見が最重要'
-RISK_LEVEL = 'HIGH'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（ウォーシュ議長「インフレなお高すぎる」・利下げ示唆文言削除・次回FOMC7/28-29）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = '中立・据え置き継続（6/17据え置き・次回7/30 Super Thursday）'; BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（6/16利上げ・次回7/30-31据え置き観測）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（7/23 2会合連続据え置き・9月に追加利上げ判断持ち越し）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（2-5月に3会合連続利上げ・6/16据え置き・追加利上げ余地）'; RBA_COLOR = 'var(--red)'
-RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8に3年ぶり利上げ・追加利上げの構え）'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15据え置き・6会合連続）'; BOC_COLOR = 'var(--muted)'
-SNB_RATE   = '0.00%';      SNB_STANCE = '中立（3会合連続据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
+REPORT_SUMMARY = 'ドル円157円台、ISM製造業に注目'
+RISK_LEVEL = 'MEDIUM'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31据え置き・成長率上方修正）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（7/23全会一致・9月利上げ観測）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・次回8/11）'; RBA_COLOR = 'var(--red)'
+RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8に約3年ぶり利上げ）'; RBNZ_COLOR = 'var(--red)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15・6会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
