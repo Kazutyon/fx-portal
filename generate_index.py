@@ -3,18 +3,19 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-03'
-WEEKDAY    = '月'
-HERO_SUB   = '先週後半の為替介入（要確認）を経てドル円は157円台で高止まり、本日朝も戻り売り優勢。月初第1営業日の米ISM製造業景況指数（23:00）が最大の焦点で、豪州・カナダは祝日で休場。'
-MARKET_HOLIDAY_H3 = '豪州・カナダが祝日で休場'
-MARKET_HOLIDAY_P  = '🇦🇺豪州（一部州の祝日）、🇨🇦カナダ（シビックホリデー）が休場。流動性がやや薄くなる可能性（要確認）'
+TODAY      = '2026-08-04'
+WEEKDAY    = '火'
+HERO_SUB   = '週明けの為替介入観測とISM製造業指数の上振れ（55.6）を経てドル円は157円台前半で推移。本日は米国の重要指標が少なく、23時のJOLTS求人が最大の焦点。'
+MARKET_HOLIDAY_H3 = '本日の休場なし'
+MARKET_HOLIDAY_P  = '主要市場に休場予定はありません（次回は8/11 日本・山の日）'
 KEY_EVENTS_ITEMS  = [
-    '15:30 🇨🇭 スイスCPI(前月比/前年比)',
-    '17:00 🇪🇺 ユーロ圏製造業PMI【改定値】',
-    '22:45 🇺🇸 製造業PMI【改定値】',
-    '23:00 🇺🇸 ISM製造業景況指数',
+    '時間未定 🇯🇵 10年利付国債入札',
+    '21:30 🇺🇸 貿易収支',
+    '21:30 🇨🇦 貿易収支',
+    '23:00 🇺🇸 JOLTS求人',
+    '23:00 🇺🇸 製造業受注指数',
 ]
-REPORT_SUMMARY = 'ドル円157円台、ISM製造業に注目'
+REPORT_SUMMARY = '介入警戒とISM上振れの綱引き、JOLTS求人に注目'
 RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
