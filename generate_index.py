@@ -3,19 +3,18 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-04'
-WEEKDAY    = '火'
-HERO_SUB   = '週明けの為替介入観測とISM製造業指数の上振れ（55.6）を経てドル円は157円台前半で推移。本日は米国の重要指標が少なく、23時のJOLTS求人が最大の焦点。'
-MARKET_HOLIDAY_H3 = '本日の休場なし'
-MARKET_HOLIDAY_P  = '主要市場に休場予定はありません（次回は8/11 日本・山の日）'
+TODAY      = '2026-08-05'
+WEEKDAY    = '水'
+HERO_SUB   = '前日の協調介入一服でドル円は158円に迫る反発。米財務長官発言で157.30円台まで下押しする場面もあり、本日はADP雇用統計とISM非製造業景況指数が焦点。'
+MARKET_HOLIDAY_H3 = 'なし'
+MARKET_HOLIDAY_P  = '本日の主要市場休場はありません（次回休場は8/11 日本・山の日）'
 KEY_EVENTS_ITEMS  = [
-    '時間未定 🇯🇵 10年利付国債入札',
-    '21:30 🇺🇸 貿易収支',
-    '21:30 🇨🇦 貿易収支',
-    '23:00 🇺🇸 JOLTS求人',
-    '23:00 🇺🇸 製造業受注指数',
+    '07:45 🇳🇿 NZ失業率',
+    '08:50 🇯🇵 BOJ議事要旨公表',
+    '21:15 🇺🇸 ADP雇用統計',
+    '23:00 🇺🇸 ISM非製造業景況指数',
 ]
-REPORT_SUMMARY = '介入警戒とISM上振れの綱引き、JOLTS求人に注目'
+REPORT_SUMMARY = '介入一服でドル円反発、ADPとISM非製造業が焦点'
 RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
