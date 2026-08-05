@@ -3,18 +3,18 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-05'
-WEEKDAY    = '水'
-HERO_SUB   = '前日の協調介入一服でドル円は158円に迫る反発。米財務長官発言で157.30円台まで下押しする場面もあり、本日はADP雇用統計とISM非製造業景況指数が焦点。'
+TODAY      = '2026-08-06'
+WEEKDAY    = '木'
+HERO_SUB   = '協調介入後の反発局面が続き、ドル円は157.75円で越週水準を維持。ADP・ISM非製造業とも予想を下回るがドル下落は限定的。カシュカリ総裁の利上げ発言と、明日の米雇用統計を控えた展開に注目。'
 MARKET_HOLIDAY_H3 = 'なし'
 MARKET_HOLIDAY_P  = '本日の主要市場休場はありません（次回休場は8/11 日本・山の日）'
 KEY_EVENTS_ITEMS  = [
-    '07:45 🇳🇿 NZ失業率',
-    '08:50 🇯🇵 BOJ議事要旨公表',
-    '21:15 🇺🇸 ADP雇用統計',
-    '23:00 🇺🇸 ISM非製造業景況指数',
+    '10:30 🇦🇺 豪貿易収支',
+    '17:30 🇬🇧 建設業PMI',
+    '21:30 🇺🇸 新規失業保険申請件数',
+    '21:30 🇺🇸 労働生産性・単位労働費用（速報値）',
 ]
-REPORT_SUMMARY = '介入一服でドル円反発、ADPとISM非製造業が焦点'
+REPORT_SUMMARY = '介入警戒下のレンジ継続、焦点は明日の米雇用統計'
 RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
