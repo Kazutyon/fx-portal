@@ -1,0 +1,312 @@
+import glob, os
+
+TODAY = '2026-08-07'
+WEEKDAY = '金'
+
+report_files = sorted(glob.glob('reports/*.html'), reverse=True)
+prior_files = [f for f in report_files if os.path.basename(f) != f'{TODAY}.html']
+sidebar_items = f'<li class="active"><a href="{TODAY}.html">{TODAY}（{WEEKDAY}）</a></li>\n'
+DAYS = {'2026-08-06':'木','2026-08-05':'水','2026-08-04':'火','2026-08-03':'月','2026-07-31':'金','2026-07-30':'木','2026-07-29':'水','2026-07-28':'火','2026-07-27':'月','2026-07-24':'金'}
+for f in prior_files[:9]:
+    name = os.path.basename(f).replace('.html','')
+    wd = DAYS.get(name, '')
+    sidebar_items += f'<li><a href="{name}.html">{name}（{wd}）</a></li>\n'
+
+HERO_SUB = '米雇用統計(NFP)・カナダ雇用統計が21:30に集中する最重要イベントデー。ドル円は157円台後半でのレンジ継続を確認。'
+
+html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX日報 {TODAY}（{WEEKDAY}） | AUXEN FX Portal</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+</head>
+<body class="report-page">
+
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 {TODAY}（{WEEKDAY}）</h1>
+  <p>{HERO_SUB}</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="../assets/logo.svg" alt="AUXEN"></div>
+      <div>
+        <h1>AUXEN</h1>
+        <p>FX Research Lab</p>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="../index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="#" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報</a>
+      <a href="../archive.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>アーカイブ</a>
+      <span class="nav-section">ツール・販売</span>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター</a>
+      <a href="#"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="../about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="../disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="../contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
+    </nav>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
+      <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
+      <ul class="archive-list">
+        {sidebar_items}</ul>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+        <h2>FX日報 {TODAY}（{WEEKDAY}）<span class="badge-live">最新</span></h2>
+        <p class="sub">{HERO_SUB}</p>
+      </div>
+      <div class="date-card">
+        <span>Report Date</span>
+        <strong>{TODAY}</strong>
+        <em>金曜日</em>
+      </div>
+    </header>
+
+    <div class="summary-grid" id="summary">
+      <div class="card highlight">
+        <p class="label">一言まとめ</p>
+        <h3>米雇用統計待ち、157円台後半のレンジ継続</h3>
+        <p>8/6（木）のドル円は157.80〜158円付近でもみ合い、前日終値157.75円からほぼ横ばいで推移した（要確認）。日米金利差を意識したドル買い戻し観測がある一方、9月の日銀会合が正常化ペース加速の分岐点として意識されはじめている（要確認）。本日8/7（金）は21:30に米雇用統計（NFP）とカナダ雇用統計が集中する最重要イベントデー。NFP予想はKissFX+8.0万人・ForexFactory+8.5万人とソース間で差異があり（要確認）、前回+5.7万人からの上振れ・下振れ幅がドル円のボラティリティを左右する。</p>
+      </div>
+      <div class="card">
+        <p class="label">最注目通貨</p>
+        <h3>USD/JPY 🇺🇸🇯🇵</h3>
+        <p>4Hデイトレ適性ランキング1位（スコア99・最適、8/6 05:42時点データ）。米雇用統計発表を控え157円台後半でのレンジ最終局面</p>
+      </div>
+      <div class="card">
+        <p class="label">Market Risk</p>
+        <h3 style="color:var(--yellow)">HIGH</h3>
+        <p>21:30に米雇用統計（NFP・失業率・平均時給）とカナダ雇用統計が同時発表。結果次第で155円の下値支持線・158.05円の200日線を巡る動きが試される</p>
+      </div>
+      <div class="card">
+        <p class="label">本日の重要指標</p>
+        <h3>21件</h3>
+        <p>米雇用統計(NFP) / 加雇用統計 / 独鉱工業生産・貿易収支 / スイスSECO消費者信頼感 等（市場休場なし）</p>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <div class="panel" id="points">
+        <div class="panel-head">
+          <h3>⚔️ 今日の注目ポイント</h3>
+          <span>経済指標・イベント</span>
+        </div>
+        <div class="report-body">
+          <div class="points-block">
+            <div class="block-title">🚫 本日の市場休場</div>
+            <ul class="points-list">
+              <li>なし（次回休場は8/11 日本・山の日）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">📌 必見経済指標（時刻順）</div>
+            <ul class="points-list">
+              <li>06:30 🇺🇸 ムサレム・セントルイス連銀総裁発言</li>
+              <li>21:30 🇨🇦 雇用統計（失業率6.5%・雇用ネット変化）<span class="badge-important">★最重要</span></li>
+              <li>21:30 🇺🇸 非農業部門雇用者数（NFP）予想+8.0万〜8.5万人（要確認・前回+5.7万人）<span class="badge-important">★最重要</span></li>
+              <li>21:30 🇺🇸 失業率 予想4.2%（前回4.2%）<span class="badge-important">★</span></li>
+              <li>21:30 🇺🇸 平均時給（前月比）予想+0.3%（前回+0.3%）<span class="badge-important">★</span></li>
+              <li>23:00 🇨🇦 Ivey購買部協会指数（要確認・予想値はForexFactoryのみ）</li>
+              <li>23:00 🇺🇸 バーキン・リッチモンド連銀総裁発言</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">👁 その他注目点</div>
+            <ul class="points-list">
+              <li><strong>NFP予想値がソース間で相違</strong>：KissFXは+8.0万人、ForexFactoryは+8.5万人と予想にばらつきがあり（要確認）、前回+5.7万人からの上振れ・下振れ幅がドル円の反応を左右する</li>
+              <li><strong>カナダ雇用統計も同時刻発表</strong>：米雇用統計と同じ21:30にカナダ雇用統計（失業率6.5%・雇用ネット変化）が重なり、USD/CAD・CAD/JPYにもボラティリティが波及しやすい</li>
+              <li><strong>ドル円は157円台後半でのレンジを維持</strong>：8/6は157.80〜158円付近で方向感の乏しい推移となり（要確認）、上値158.05円（200日線）・下値155円の介入警戒ラインが引き続き節目</li>
+              <li><strong>ホルムズ海峡を巡る米・イラン協議が原油相場に波及</strong>（要確認）：エネルギー安全保障を巡る不透明感がWTI原油・米長期金利・ドル円に影響する可能性がある</li>
+              <li><strong>9月の日銀会合が正常化ペースの分岐点として意識</strong>（要確認）：円安トレンド継続への対抗策として、日銀の追加利上げペース加速が市場で論じられ始めている</li>
+              <li><strong>4Hデイトレ適性ランキングは円クロスが上位を維持</strong>：USD/JPY・EUR/JPY・GBP/JPYが1〜3位（8/6 05:42時点データ、本日分は未更新のため参考値）</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="ranking">
+        <div class="panel-head">
+          <h3>🌏 今日の市場環境</h3>
+          <span>地合い・センチメント</span>
+        </div>
+        <div class="report-body" style="margin-bottom:20px;">
+          8/7（金）は米雇用統計（NFP）発表を控えた最重要イベントデー。前日8/6のドル円は157.80〜158円台で方向感に乏しく推移し、前日終値157.75円からほぼ横ばいで越週水準を維持した（要確認）。日米金利差を意識したドル買い戻し観測がある一方、9月の日銀会合が正常化ペース加速の分岐点として意識されはじめている（要確認）。本日は21:30にNFP・カナダ雇用統計が集中し、結果次第で155円の下値支持線、158.05円の200日線を巡る動きが試される可能性がある。
+          <br><br>
+          <strong>政策金利：</strong> 米FRB 3.50〜3.75%（タカ派・据え置き、7/29 9対3・3人が利上げ主張） / 日銀 1.00%（正常化継続、7/31据え置き・成長率上方修正） / 英BOE 3.75%（中立寄り、7/30据え置き・split vote）
+        </div>
+
+        <div class="panel-head" style="margin-top:4px;">
+          <h3>🏆 通貨ランキング</h3>
+          <span>本日の優先順</span>
+        </div>
+        <table class="fx-table">
+          <thead>
+            <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank-badge rank-s">S</span></td>
+              <td><strong>USD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング1位（スコア99・最適）。NFP結果次第で155円と158.05円（200日線）のレンジが試される</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-s">S</span></td>
+              <td><strong>EUR/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング2位（スコア99・最適）。ドル円と同様に円クロスのボラティリティ上昇に警戒</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>GBP/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング3位（スコア98・最適）。円売り主導の流れを引き継ぐ展開</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>AUD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング4位（スコア91・最適）。米雇用統計後のリスクセンチメント次第で振れやすいレンジ判定</span></td>
+              <td><span class="trend-range">→</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>USD/CHF</strong><br><span style="color:var(--muted);font-size:12px;">ランキング5位（スコア66・適）。NFP結果を受けたドル全体の動きに連動</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">※ 4Hデイトレ適性ランキングは8/6 05:42 JST時点のデータ（本日分は未更新）。数値は目安であり、実際のエントリーは各自のルールで判断してください。</p>
+      </div>
+
+      <div class="panel wide" id="review">
+        <div class="panel-head">
+          <h3>📰 前日の相場振り返り（2026-08-06）</h3>
+          <span>昨日の主要トピック</span>
+        </div>
+        <div class="report-body">
+          <div class="topic">
+            <div class="topic-title">【トピック①】ドル円は157円台後半でもみ合い、米雇用統計待ちの持ち高調整が継続</div>
+            8/6（木）のドル円は157.80〜158円付近で方向感の乏しい展開となり、前日終値157.75円からほぼ横ばいで推移した（要確認）。翌8/7（金）発表の米雇用統計を意識した持ち高調整が主体で、200日線158.05円の上値目処と155円の介入警戒ラインに挟まれたレンジが継続している。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック②】日米金利差を意識したドル買い戻しが優勢</div>
+            市場では日米金利差の拡大がドル円の上値余地を支えているとの見方が示され、ドル指数も小幅高で推移した。ユーロドルも上値の重い展開となり、「米雇用統計が予想を大きく下回らない限り上値追いは難しい」との見方が共有された。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック③】ホルムズ海峡を巡る米・イラン協議が原油相場に波及</div>
+            ホルムズ海峡の運行を巡る米・イラン間の協議が続く中、イランとオマーンの合意内容について米国との調整が不透明との報道を受けWTI原油先物が上下に振れる展開となった。エネルギー安全保障を巡る不透明感が米長期金利やドル円にも波及したとみられる（要確認）。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック④】9月の日銀会合が正常化ペースの分岐点として意識され始める</div>
+            円安トレンドの継続を受け、9月の日銀金融政策決定会合が利上げペース加速の判断材料として市場で意識され始めている。ただし単一ソースの指摘にとどまり、公式スタンスの変化は確認できていない（要確認）。
+          </div>
+          <div class="handover">
+            <strong>本日（8/7金）への引継ぎ：</strong>
+            前日のもみ合いを経て、ドル円は155円と158.05円（200日線）に挟まれたレンジを維持している。本日21:30に米雇用統計（NFP・失業率・平均時給）とカナダ雇用統計が同時発表される最重要イベントデー。NFP予想はソース間で+8.0万〜8.5万人と幅があり（要確認）、前回+5.7万人からの伸び幅とドル買い戻しの持続性が今夜以降のトレンドを左右する。
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full" id="calendar">
+        <div class="panel-head">
+          <h3>📅 本日の経済指標カレンダー（全件）</h3>
+          <span>KissFX × ForexFactory 2ソース照合済み（要確認あり）</span>
+        </div>
+        <table class="fx-table" style="font-size:0.9em;">
+          <thead>
+            <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>06:30</td><td>🇺🇸 米国</td><td>ムサレム・セントルイス連銀総裁発言</td><td>要人発言</td><td>—</td><td>—</td></tr>
+            <tr><td>08:30</td><td>🇯🇵 日本</td><td>家計調査（前年比、要確認・ForexFactoryのみ）</td><td>★</td><td>+0.8%</td><td>-0.4%</td></tr>
+            <tr><td>11:00頃</td><td>🇨🇳 中国</td><td>貿易収支（米ドル建て、KissFXとForexFactoryで概ね一致）</td><td>★★</td><td>+1,086億㌦</td><td>+1,256億㌦</td></tr>
+            <tr><td>14:00</td><td>🇯🇵 日本</td><td>景気先行指数【速報値】（前回値がソース間で差異：KissFX116.5／FF116.8、要確認）</td><td>★</td><td>116.5</td><td>116.5〜116.8</td></tr>
+            <tr><td>14:00</td><td>🇯🇵 日本</td><td>景気一致指数【速報値】（要確認・KissFXのみ）</td><td>★</td><td>118.1</td><td>117.9</td></tr>
+            <tr><td>15:00</td><td>🇬🇧 英国</td><td>ハリファックス住宅価格（前月比）</td><td>★</td><td>+0.2%</td><td>+0.2%</td></tr>
+            <tr><td>15:00</td><td>🇩🇪 独</td><td>鉱工業生産（前月比、前年比+0.1%は要確認・KissFXのみ）</td><td>★★</td><td>+0.2%</td><td>+0.9%</td></tr>
+            <tr><td>15:00</td><td>🇩🇪 独</td><td>貿易収支</td><td>★★</td><td>+172億€</td><td>+191億€</td></tr>
+            <tr><td>15:45</td><td>🇫🇷 仏</td><td>貿易収支（予想値は要確認・ForexFactoryのみ）</td><td>★</td><td>-65億€</td><td>-69.28億€</td></tr>
+            <tr><td>15:45</td><td>🇫🇷 仏</td><td>経常収支（要確認・KissFXのみ）</td><td>△</td><td>—</td><td>-1億€</td></tr>
+            <tr><td>16:00</td><td>🇨🇭 スイス</td><td>外貨準備高（要確認・ForexFactoryのみ）</td><td>△</td><td>—</td><td>759B</td></tr>
+            <tr><td>16:00</td><td>🇨🇭 スイス</td><td>SECO消費者信頼感指数（要確認・ForexFactoryのみ）</td><td>△</td><td>-34</td><td>-36</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇨🇦 加</td><td><strong>失業率</strong></td><td><strong>★★★</strong></td><td><strong>6.5%</strong></td><td>6.5%</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇨🇦 加</td><td><strong>雇用ネット変化</strong>（予想値がソース間で差異：KissFX+2.00万人／FF+1.78万人、要確認）</td><td><strong>★★★</strong></td><td><strong>+1.78万〜2.00万人</strong></td><td>+1.82万人</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td><strong>非農業部門雇用者数（NFP）</strong>（予想値がソース間で差異：KissFX+8.0万人／FF+8.5万人、要確認）</td><td><strong>★★★</strong></td><td><strong>+8.0万〜8.5万人</strong></td><td>+5.7万人</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td><strong>失業率</strong></td><td><strong>★★★</strong></td><td><strong>4.2%</strong></td><td>4.2%</td></tr>
+            <tr><td>21:30</td><td>🇺🇸 米国</td><td>製造業雇用者数（要確認・KissFXのみ）</td><td>★★</td><td>+0.3万人</td><td>+0.3万人</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td><strong>平均時給</strong>（前月比、前年比+3.5%は要確認・KissFXのみ）</td><td><strong>★★★</strong></td><td><strong>+0.3%</strong></td><td>+0.3%</td></tr>
+            <tr><td>23:00</td><td>🇨🇦 加</td><td>Ivey購買部協会指数（予想値は要確認・ForexFactoryのみ）</td><td>★★</td><td>55.4</td><td>56.2</td></tr>
+            <tr><td>23:00</td><td>🇺🇸 米国</td><td>バーキン・リッチモンド連銀総裁発言</td><td>要人発言</td><td>—</td><td>—</td></tr>
+            <tr><td>翌04:00</td><td>🇺🇸 米国</td><td>消費者信用残高（要確認・KissFXのみ）</td><td>★</td><td>+116.00億㌦</td><td>-1.82億㌦</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。KissFX（主・ランク付き）とForexFactoryの機械可読カレンダー（ff_calendar_thisweek.json、ET→JST変換済み）の2つの独立ソースで照合済み。両ソースで一致した指標はそのまま掲載し、片方のソースにしか掲載がない指標や、予想値・前回値がソース間で相違する指標には「（要確認）」を付しています。本日の主要市場休場はありません。指標の網羅性は保証できないため、発表直前に各社カレンダーで再確認してください。</p>
+      </div>
+
+    </div><!-- /content-grid -->
+
+  </main>
+</div>
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="../about.html">About</a>
+    <a href="../disclaimer.html">免責事項</a>
+    <a href="../privacy.html">プライバシーポリシー</a>
+    <a href="../terms.html">利用規約</a>
+    <a href="../contact.html">お問い合わせ</a>
+  </div>
+</footer>
+</body>
+</html>"""
+
+with open(f'reports/{TODAY}.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f'reports/{TODAY}.html generated')
