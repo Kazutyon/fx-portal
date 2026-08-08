@@ -162,6 +162,7 @@ html = f"""<!DOCTYPE html>
 <script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+<script>document.addEventListener('DOMContentLoaded',function(){{const b=document.querySelector('.mobile-menu-button'),m=document.getElementById('mobile-menu');if(!b||!m)return;b.addEventListener('click',function(){{const open=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',String(!open));m.hidden=open;document.body.classList.toggle('menu-open',!open);}});m.addEventListener('click',function(e){{if(e.target.closest('a')){{b.setAttribute('aria-expanded','false');m.hidden=true;document.body.classList.remove('menu-open');}}}});}});</script>
 </head>
 <body class="home-page">
 <header class="mobile-header">
@@ -169,9 +170,9 @@ html = f"""<!DOCTYPE html>
     <img src="assets/logo.svg" alt="AUXEN">
     <span><strong>AUXEN</strong><em>FX Research Lab</em></span>
   </a>
-  <a href="#mobile-menu" class="mobile-menu-button" aria-label="メニュー">
+  <button type="button" class="mobile-menu-button" aria-label="メニュー" aria-expanded="false" aria-controls="mobile-menu">
     <span></span><span></span><span></span>
-  </a>
+  </button>
 </header>
 
 <section class="mobile-hero">
@@ -181,12 +182,15 @@ html = f"""<!DOCTYPE html>
   <span class="mobile-update">更新: {TODAY} / 毎朝7時</span>
 </section>
 
-<nav class="mobile-quick-grid" id="mobile-menu" aria-label="スマホ用メニュー">
+<nav class="mobile-quick-grid" id="mobile-menu" aria-label="スマホ用メニュー" hidden>
   <a href="#latest-report"><span>最新日報</span><strong>今日の戦略</strong></a>
   <a href="{LATEST_PATH}#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
   <a href="{LATEST_PATH}#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
   <a href="#rates"><span>政策金利</span><strong>主要中銀</strong></a>
+  <a href="#market-news"><span>FXニュース</span><strong>最新ヘッドライン</strong></a>
+  <a href="#tools"><span>販売商品</span><strong>インジケーター</strong></a>
   <a href="archive.html"><span>アーカイブ</span><strong>過去日報</strong></a>
+  <a href="about.html"><span>About</span><strong>AUXENについて</strong></a>
   <a href="contact.html"><span>お問い合わせ</span><strong>連絡先</strong></a>
 </nav>
 
@@ -225,7 +229,8 @@ html = f"""<!DOCTYPE html>
       <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>デイトレ適性</a>
       <span class="nav-section">ツール・販売</span>
       <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター <span class="badge-soon">Soon</span></a>
-      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><line x1="9" y1="7" x2="9" y2="4"/><line x1="12" y1="7" x2="12" y2="4"/><line x1="15" y1="7" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="17"/><line x1="12" y1="20" x2="12" y2="17"/><line x1="15" y1="20" x2="15" y2="17"/><line x1="4" y1="9" x2="7" y2="9"/><line x1="4" y1="12" x2="7" y2="12"/><line x1="4" y1="15" x2="7" y2="15"/><line x1="17" y1="9" x2="20" y2="9"/><line x1="17" y1="12" x2="20" y2="12"/><line x1="17" y1="15" x2="20" y2="15"/></svg>EA <span class="badge-soon">Soon</span></a>
+      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>トレードインジケーター</a>
+      <a href="https://www.gogojungle.co.jp/users/34577/products" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v14H3z"/><path d="M7 9h10M7 13h6"/></svg>販売商品一覧</a>
       <a href="#analysis"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>チャート分析 <span class="badge-soon">Soon</span></a>
       <span class="nav-section">サイト情報</span>
       <a href="about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
@@ -313,19 +318,12 @@ html = f"""<!DOCTYPE html>
     <div class="hub-section" id="tools"><p class="hub-label">🔧 ツール・販売</p></div>
     <div class="content-grid" style="margin-bottom:20px;">
       <div class="panel">
-        <div class="panel-head"><h3>📐 MT4インジケーター</h3><span class="badge-soon">Coming Soon</span></div>
+        <div class="panel-head"><h3>📐 トレードインジケーター</h3><span class="badge-live">販売中</span></div>
         <div class="coming-soon-block">
           <div class="coming-soon-icon">🔧</div>
           <p style="color:var(--text);font-weight:600;">独自開発インジケーター</p>
           <p style="font-size:13px;">4H・15分足特化のトレンドフォロー系</p>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-head"><h3>🤖 EA（自動売買）</h3><span class="badge-soon">Coming Soon</span></div>
-        <div class="coming-soon-block">
-          <div class="coming-soon-icon">🤖</div>
-          <p style="color:var(--text);font-weight:600;">バックテスト済みEA</p>
-          <p style="font-size:13px;">USD/JPY・EUR/USD対応</p>
+          <a class="btn-primary" href="https://www.gogojungle.co.jp/users/34577/products" target="_blank" rel="noopener noreferrer">GogoJungleで商品を見る →</a>
         </div>
       </div>
     </div>
