@@ -3,19 +3,18 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-07'
-WEEKDAY    = '金'
-HERO_SUB   = '米雇用統計(NFP)・カナダ雇用統計が21:30に集中する最重要イベントデー。ドル円は157円台後半でのレンジ継続を確認。'
+TODAY      = '2026-08-10'
+WEEKDAY    = '月'
+HERO_SUB   = '米雇用統計の大幅下振れを受けドル円は156円台へ急落後157.70円台に戻す。本日は米国の重要指標発表がなく、08:50の日銀「主な意見」公表が唯一の材料。'
 MARKET_HOLIDAY_H3 = 'なし'
 MARKET_HOLIDAY_P  = '本日の主要市場休場はありません（次回休場は8/11 日本・山の日）'
 KEY_EVENTS_ITEMS  = [
-    '21:30 🇨🇦 カナダ雇用統計（失業率・雇用ネット変化）',
-    '21:30 🇺🇸 非農業部門雇用者数（NFP）',
-    '21:30 🇺🇸 失業率',
-    '21:30 🇺🇸 平均時給（前月比）',
+    '08:50 🇯🇵 日銀金融政策決定会合における主な意見の公表',
+    '08:50 🇯🇵 経常収支（要確認・ソース間差異あり）',
+    '14:00 🇯🇵 景気ウォッチャー調査（現状判断DI）',
 ]
-REPORT_SUMMARY = '米雇用統計待ち、157円台後半のレンジ継続'
-RISK_LEVEL = 'HIGH'
+REPORT_SUMMARY = 'NFPショックの余韻、157.70円のもみ合い'
+RISK_LEVEL = 'LOW'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31据え置き・成長率上方修正）'; BOJ_COLOR = 'var(--blue)'
