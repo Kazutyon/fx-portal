@@ -136,7 +136,13 @@ ls reports/ | sort -r | head -20
 
 ### 6-2: AUXENデザインでHTMLを生成
 
-**必須**: まず Bash で `cat reports/2026-06-18.html` を実行してデザインテンプレートを把握すること。その後、同じ HTML 構造で今日のレポートを Python で生成する。
+**必須**: まず Bash で `ls reports/ | sort -r | head -1` を実行して直近の日報ファイル名を取得し、`cat reports/<直近の日報>.html` でデザインテンプレートを把握すること（`2026-06-18.html` など古い日付を固定で参照しない。index.html側の改修がここに反映されず古いナビが複製され続けるバグが過去に発生したため）。その後、同じ HTML 構造で今日のレポートを Python で生成する。
+
+**side-nav の「ツール・販売」セクションは必ず index.html と一致させること**（EA導線は廃止済み・EA関連のnav項目は追加しない）:
+```html
+<span class="nav-section">ツール・販売</span>
+<a href="../index.html#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>トレードインジケーター</a>
+```
 
 使用するCSSクラス（style.cssに存在するもの）:
 .app / .sidebar / .brand / .logo / .side-nav / .nav-section / .main / .hero / .eyebrow / .sub / .date-card / .summary-grid / .card / .content-grid / .panel / .panel-head / .report-body / .topic / .topic-title / .handover / .rank-badge / .archive-list / .badge-live / .badge-important / .fx-table / .trend-up / .trend-down / .trend-range / .mobile-header / .mobile-brand / .mobile-menu-button / .mobile-report-hero / .mobile-report-jump-grid / .mobile-bottom-nav / .key-events-list
@@ -473,7 +479,6 @@ html = f"""<!DOCTYPE html>
       <a href="#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
       <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>デイトレ適性</a>
       <span class="nav-section">ツール・販売</span>
-      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター <span class="badge-soon">Soon</span></a>
       <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>トレードインジケーター</a>
       <a href="https://www.gogojungle.co.jp/users/34577/products" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v14H3z"/><path d="M7 9h10M7 13h6"/></svg>販売商品一覧</a>
       <a href="#analysis"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>チャート分析 <span class="badge-soon">Soon</span></a>
