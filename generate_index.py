@@ -3,18 +3,19 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-10'
-WEEKDAY    = '月'
-HERO_SUB   = '米雇用統計の大幅下振れを受けドル円は156円台へ急落後157.70円台に戻す。本日は米国の重要指標発表がなく、08:50の日銀「主な意見」公表が唯一の材料。'
-MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日の主要市場休場はありません（次回休場は8/11 日本・山の日）'
+TODAY      = '2026-08-11'
+WEEKDAY    = '火'
+HERO_SUB   = 'ドル円はNY市場で159.29円まで反発。日本は「山の日」で休場となる中、13:30のRBA政策金利発表を経て明日の米CPIに関心が移る。'
+MARKET_HOLIDAY_H3 = '日本（山の日）'
+MARKET_HOLIDAY_P  = '株式・債券市場等が休場。FX取引自体は行われるが実需フローが細り薄商いに注意（KissFX・ForexFactory一致）'
 KEY_EVENTS_ITEMS  = [
-    '08:50 🇯🇵 日銀金融政策決定会合における主な意見の公表',
-    '08:50 🇯🇵 経常収支（要確認・ソース間差異あり）',
-    '14:00 🇯🇵 景気ウォッチャー調査（現状判断DI）',
+    '13:30 🇦🇺 RBA政策金利発表（4.35%据え置き予想）',
+    '14:30 🇦🇺 RBA総裁記者会見',
+    '19:00 🇺🇸 NFIB中小企業楽観指数',
+    '23:00 🇺🇸 中古住宅販売件数',
 ]
-REPORT_SUMMARY = 'NFPショックの余韻、157.70円のもみ合い'
-RISK_LEVEL = 'LOW'
+REPORT_SUMMARY = 'ドル円159円台へ反発、RBA金利発表控え明日の米CPIに関心'
+RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31据え置き・成長率上方修正）'; BOJ_COLOR = 'var(--blue)'
