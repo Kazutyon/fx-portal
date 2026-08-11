@@ -3,19 +3,19 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-11'
-WEEKDAY    = '火'
-HERO_SUB   = 'ドル円はNY市場で159.29円まで反発。日本は「山の日」で休場となる中、13:30のRBA政策金利発表を経て明日の米CPIに関心が移る。'
-MARKET_HOLIDAY_H3 = '日本（山の日）'
-MARKET_HOLIDAY_P  = '株式・債券市場等が休場。FX取引自体は行われるが実需フローが細り薄商いに注意（KissFX・ForexFactory一致）'
+TODAY      = '2026-08-12'
+WEEKDAY    = '水'
+HERO_SUB   = 'ドル円はNY市場で159.28円とほぼ変わらずの水準で終値。円買い介入の効果剥落を意識しつつ160円が視野に入る中、本日21:30の米CPI発表が最大の焦点となる。'
+MARKET_HOLIDAY_H3 = 'なし'
+MARKET_HOLIDAY_P  = '本日、主要国の市場休場はなし（前日8/11は日本が「山の日」で休場だった）'
 KEY_EVENTS_ITEMS  = [
-    '13:30 🇦🇺 RBA政策金利発表（4.35%据え置き予想）',
-    '14:30 🇦🇺 RBA総裁記者会見',
-    '19:00 🇺🇸 NFIB中小企業楽観指数',
-    '23:00 🇺🇸 中古住宅販売件数',
+    '21:30 🇺🇸 米消費者物価指数（CPI）',
+    '21:30 🇺🇸 米消費者物価指数【コア】',
+    '15:00 🇩🇪 独CPI改定値',
+    '23:30 🇺🇸 米週間原油在庫',
 ]
-REPORT_SUMMARY = 'ドル円159円台へ反発、RBA金利発表控え明日の米CPIに関心'
-RISK_LEVEL = 'MEDIUM'
+REPORT_SUMMARY = '米CPI発表控え、ドル円は160円視野に介入警戒'
+RISK_LEVEL = 'HIGH'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31据え置き・成長率上方修正）'; BOJ_COLOR = 'var(--blue)'
@@ -228,7 +228,6 @@ html = f"""<!DOCTYPE html>
       <a href="#rates"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>政策金利</a>
       <a href="#strength"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>デイトレ適性</a>
       <span class="nav-section">ツール・販売</span>
-      <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>インジケーター <span class="badge-soon">Soon</span></a>
       <a href="#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>トレードインジケーター</a>
       <a href="https://www.gogojungle.co.jp/users/34577/products" target="_blank" rel="noopener noreferrer"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v14H3z"/><path d="M7 9h10M7 13h6"/></svg>販売商品一覧</a>
       <a href="#analysis"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>チャート分析 <span class="badge-soon">Soon</span></a>
