@@ -3,19 +3,20 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-12'
-WEEKDAY    = '水'
-HERO_SUB   = 'ドル円はNY市場で159.28円とほぼ変わらずの水準で終値。円買い介入の効果剥落を意識しつつ160円が視野に入る中、本日21:30の米CPI発表が最大の焦点となる。'
+TODAY      = '2026-08-13'
+WEEKDAY    = '木'
+HERO_SUB   = '米CPI通過後にドル買い戻しが優勢となり、ドル円は159.50円と7/31以来の高値を更新。本日は15:00の英GDP速報値（Q2）、21:30の米PPI・新規失業保険申請件数に関心が集まる。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日、主要国の市場休場はなし（前日8/11は日本が「山の日」で休場だった）'
+MARKET_HOLIDAY_P  = '本日、主要国の市場休場はありません。'
 KEY_EVENTS_ITEMS  = [
-    '21:30 🇺🇸 米消費者物価指数（CPI）',
-    '21:30 🇺🇸 米消費者物価指数【コア】',
-    '15:00 🇩🇪 独CPI改定値',
-    '23:30 🇺🇸 米週間原油在庫',
+    '08:50 🇯🇵 国内企業物価指数(PPI)',
+    '15:00 🇬🇧 英国GDP速報値(Q2)',
+    '21:30 🇺🇸 新規失業保険申請件数',
+    '21:30 🇺🇸 生産者物価指数(PPI)',
+    '26:00 🇺🇸 30年債入札',
 ]
-REPORT_SUMMARY = '米CPI発表控え、ドル円は160円視野に介入警戒'
-RISK_LEVEL = 'HIGH'
+REPORT_SUMMARY = '米CPI通過後にドル買い戻し優勢、本日は英GDP・米PPIに注目'
+RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31据え置き・成長率上方修正）'; BOJ_COLOR = 'var(--blue)'
