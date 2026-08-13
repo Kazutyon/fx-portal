@@ -1,148 +1,12 @@
-# -*- coding: utf-8 -*-
-import glob, os
+TODAY = '2026-08-14'
+WEEKDAY = '金'
+HERO_SUMMARY = '米PPI・新規失業保険申請件数を通過しドル円は159.50円と小幅続伸で引け。本日は21:30の米小売売上高、23:00のミシガン大学消費者信頼感指数（速報）に関心が集まる。'
 
-TODAY = '2026-08-12'
-WEEKDAY = '水'
-PREV_DATE = '2026-08-11'
-PREV_WEEKDAY = '火'
+report_files_prev = ['2026-08-13', '2026-08-12', '2026-08-11', '2026-08-10', '2026-08-07', '2026-08-06', '2026-08-05', '2026-08-04', '2026-08-03', '2026-07-31']
+DAYS = {'2026-08-13':'木','2026-08-12':'水','2026-08-11':'火','2026-08-10':'月','2026-08-07':'金','2026-08-06':'木','2026-08-05':'水','2026-08-04':'火','2026-08-03':'月','2026-07-31':'金'}
+sidebar_archive = '\n'.join(f'<li><a href="{d}.html">{d}（{DAYS[d]}）</a></li>' for d in report_files_prev)
 
-HERO_SUB = 'ドル円はNY市場で159.28円とほぼ変わらずの水準で終値。円買い介入の効果剥落を意識しつつ160円が視野に入る中、本日21:30の米CPI発表が最大の焦点となる。'
-
-SUMMARY_TITLE = '介入効果の剥落を横目に160円が視野、焦点は21:30の米CPIへ完全集中'
-SUMMARY_BODY = (
-    '8/11（火）のNY市場でドル円は159.28円（前日比ほぼ変わらず）で終値を迎えた。ADP雇用統計が半年ぶりの低水準となったことで一時売られたが、'
-    '米雇用統計後のドル円ショートポジション踏み上げから下げ渋り、中東情勢悪化を背景とした「有事のドル買い」も支えとなり159円台前半〜160円を視野に入れる水準まで戻した。'
-    '日米当局による円買い介入（7/30〜8/3の3営業日累計で12〜16兆円規模との報道、要確認）の効果は徐々に剥落しており、市場では追加介入への警戒感がくすぶる。'
-    'また日米の超長期金利が異例の急騰を見せ、海外投資家から「Japan is broken」との厳しい指摘も出るなど、財政・金融政策への不透明感が意識されている（要確認）。'
-    '13:30のRBA政策金利発表は4.35%で据え置きとなり豪ドルの反応は限定的だった。'
-    '本日8/12は21:30に米CPI発表（総合前月比+0.1%・前年比+3.4%、コア前月比+0.2%・前年比+2.5%予想）を控え、コア指数の伸びがFRBの金融政策運営に直結するとして、市場の関心はこの一点に集中している。'
-)
-
-FOCUS_PAIR = 'USD/JPY 🇺🇸🇯🇵'
-FOCUS_REASON = '21:30の米CPI発表が本日唯一の最重要イベント。160円接近で円買い介入への警戒感も残る中、結果次第で振れ幅が大きくなりやすい'
-
-RISK_LEVEL = 'HIGH'
-RISK_REASON = '21:30の米CPI発表（総合・コアとも最重要度）に加え、ドル円は160円接近で追加の円買い介入リスクがくすぶる。日米超長期金利の急騰も財政・金融政策への不透明感を高めている（要確認）'
-
-KEY_COUNT = '9件'
-KEY_COUNT_DESC = '米CPI（総合・コア）/ 独CPI改定値 / 加住宅建設許可 / 米週間原油在庫 等（本日の市場休場はなし）'
-
-MARKET_HOLIDAY_LINE = '本日、主要国の市場休場はなし（前日8/11は日本が「山の日」で休場だった）'
-
-KEY_INDICATORS_HTML = '''
-              <li>12:35 🇯🇵 10年物価連動国債入札（要確認・KissFXのみ）</li>
-              <li>15:00 🇩🇪 独消費者物価指数【改定値】前月比/前年比（KissFX・ForexFactory一致）</li>
-              <li>15:00 🇯🇵 工作機械受注（予想値がソース間で軽微な差異：KissFX前回+52.7%／FF前回+52.8%、要確認）</li>
-              <li>20:00 🇺🇸 MBA住宅ローン申請指数（要確認・KissFXのみ）</li>
-              <li>21:30 🇨🇦 住宅建設許可（KissFX・ForexFactory一致）</li>
-              <li>21:30 🇺🇸 消費者物価指数（CPI）前月比/前年比<span class="badge-important">★最重要</span></li>
-              <li>21:30 🇺🇸 消費者物価指数【コア】前月比/前年比<span class="badge-important">★最重要</span></li>
-              <li>23:30 🇺🇸 週間原油在庫（KissFX・ForexFactoryほぼ一致）</li>
-              <li>26:00 🇺🇸 10年債入札（翌日未明・要確認・KissFXのみ）</li>
-'''
-
-OTHER_POINTS_HTML = '''
-              <li><strong>本日の最大の焦点は21:30の米CPI発表</strong>：総合は前月比+0.1%・前年比+3.4%、コアは前月比+0.2%・前年比+2.5%が予想されている。コア指数の伸びがFRBの金融政策運営を占う材料として最も注視されている</li>
-              <li><strong>ドル円はNY市場で159.28円とほぼ変わらずで終値</strong>：前営業日比ほぼフラット。ADP雇用統計が半年ぶりの低水準となり一時売られたが、雇用統計後のショートポジション踏み上げから下げ渋った</li>
-              <li><strong>円買い介入の効果剥落を意識、160円が視野に</strong>：7/30〜8/3にかけて日米当局が実施したとされる円買い介入（累計12〜16兆円規模との報道、要確認）の効果が徐々に薄れ、追加介入への警戒感が市場でくすぶっている</li>
-              <li><strong>日米の超長期金利が異例の急騰</strong>：海外投資家からは「Japan is broken（日本は壊れている）」との厳しい指摘も出るほどで、財政・金融政策への不透明感が意識されている（要確認）</li>
-              <li><strong>中東情勢悪化を背景に「有事のドル買い」も支援材料</strong>：WTI原油先物の上昇を受けてドル買いが誘発された</li>
-              <li><strong>RBA政策金利は4.35%で据え置き</strong>：13:30の発表・14:30の記者会見を経ても豪ドルの反応は限定的だった</li>
-'''
-
-MARKET_ENV_HTML = (
-    '8/12（水）は前日のNY市場でドル円が159.28円（前日比ほぼ変わらず）で終値を迎えた流れを引き継いでスタート。'
-    'ADP雇用統計の弱さを吸収しつつ、円買い介入の効果剥落を意識して160円が視野に入る水準まで戻している。'
-    '日米の超長期金利の急騰を巡る不透明感がくすぶる中、本日は21:30の米CPI発表（総合・コアとも最重要度）が唯一かつ最大の焦点。'
-    '結果次第でFRBの金融政策運営観測が大きく振れる可能性があり、発表前後はボラティリティの拡大に警戒したい。<br><br>'
-    '<strong>政策金利：</strong> 米FRB 3.50〜3.75%（タカ派・据え置き、7/29 9対3・3人が利上げ主張） / 日銀 1.00%（正常化継続、円買い介入の効果剥落を意識） / 豪RBA 4.35%（8/11据え置き・反応限定的）'
-)
-
-RANKING_ROWS_HTML = '''
-            <tr>
-              <td><span class="rank-badge rank-a">A</span></td>
-              <td><strong>USD/CAD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング1位（スコア55・候補）。原油需給と加住宅建設許可を睨みつつ下降トレンド継続</span></td>
-              <td><span class="trend-down">↓</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge rank-b">B</span></td>
-              <td><strong>USD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング2位（スコア49・見送り）。適性スコアは低いが本日21:30の米CPIで振れ幅拡大の可能性、160円接近で介入警戒も</span></td>
-              <td><span class="trend-range">→</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge rank-b">B</span></td>
-              <td><strong>GBP/USD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング3位（スコア48・見送り）。ドル全面高の流れの中でも底堅さを維持し上昇基調</span></td>
-              <td><span class="trend-up">↑</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge rank-b">B</span></td>
-              <td><strong>GBP/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング4位（スコア44・見送り）。ドル円の値動きに連動しつつレンジ内推移</span></td>
-              <td><span class="trend-range">→</span></td>
-            </tr>
-            <tr>
-              <td><span class="rank-badge rank-b">B</span></td>
-              <td><strong>EUR/USD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング5位（スコア33・見送り）。独CPI改定値を消化しつつ上昇基調を維持</span></td>
-              <td><span class="trend-up">↑</span></td>
-            </tr>
-'''
-
-TOPICS_HTML = '''
-          <div class="topic">
-            <div class="topic-title">【トピック①】ドル円はNY市場で159.28円とほぼ変わらずで終値、160円が視野に</div>
-            8/11のNY市場でドル円は159.28円で終値を迎え、前営業日比でほぼフラットとなった。円買い介入（7/30〜8/3にかけて日米当局が実施したとされ、累計12〜16兆円規模との報道、要確認）の効果が徐々に薄れており、160円接近で追加介入への警戒感が市場でくすぶっている。
-          </div>
-          <div class="topic">
-            <div class="topic-title">【トピック②】ADP雇用統計が半年ぶり低水準も、雇用統計後のドル円ショート踏み上げで下げ渋り</div>
-            ADP雇用統計が半年ぶりの低水準となり、ドル円は一時売られる場面があった。しかし雇用統計後にドル円のショートポジションの踏み上げが発生し、下値を切り上げる展開となった。
-          </div>
-          <div class="topic">
-            <div class="topic-title">【トピック③】日米の超長期金利が異例の急騰、「Japan is broken」との指摘も（要確認）</div>
-            日米の超長期金利が異例の急騰を見せ、海外投資家から「Japan is broken（日本は壊れている）」との厳しい指摘も出た。日本の財政・金融政策運営への不透明感が意識されている（要確認）。
-          </div>
-          <div class="topic">
-            <div class="topic-title">【トピック④】中東情勢悪化を背景にWTI原油先物が上昇、「有事のドル買い」を誘発</div>
-            中東情勢の悪化を背景にWTI原油先物が上昇。地政学リスクの高まりが「有事のドル買い」を誘引し、ドル円の下げ渋りを後押しした。
-          </div>
-          <div class="topic">
-            <div class="topic-title">【トピック⑤】RBA政策金利は4.35%で据え置き、豪ドルの反応は限定的</div>
-            13:30のRBA政策金利発表・14:30の総裁記者会見を経ても、市場の事前予想通り4.35%据え置きとなり、豪ドルの反応は限定的だった。
-          </div>
-          <div class="handover">
-            <strong>本日（8/12水）への引継ぎ：</strong>
-            前日NY市場でのドル円終値159.28円を引き継ぎ、160円が視野に入る水準で東京・欧州時間が推移。円買い介入の効果剥落を意識した警戒感がくすぶる中、本日は21:30の米CPI発表（総合・コアとも最重要度）が唯一かつ最大の焦点。結果次第でFRBの金融政策運営観測が大きく振れる可能性があり、発表前後のボラティリティ拡大に注意が必要（要確認含む）。
-          </div>
-'''
-
-CALENDAR_ROWS_HTML = '''
-            <tr><td><strong>終日</strong></td><td>🌍 主要国</td><td>本日、主要国の市場休場はなし（前日8/11は日本が「山の日」で休場）</td><td>—</td><td>—</td><td>—</td></tr>
-            <tr><td>12:35</td><td>🇯🇵 日本</td><td>10年物価連動国債入札（要確認・KissFXのみ）</td><td>—</td><td>—</td><td>—</td></tr>
-            <tr><td>15:00</td><td>🇩🇪 独国</td><td>消費者物価指数【改定値】前月比/前年比（KissFX・ForexFactory一致）</td><td>★★</td><td>+0.8% / +2.8%</td><td>+0.8% / +2.8%</td></tr>
-            <tr><td>15:00</td><td>🇯🇵 日本</td><td>工作機械受注（予想値がソース間で軽微な差異、要確認）</td><td>★</td><td>—</td><td>+52.7%〜+52.8%</td></tr>
-            <tr><td>18:34</td><td>🇩🇪 独国</td><td>30年債入札（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>3.64%|2.9倍</td></tr>
-            <tr><td>20:00</td><td>🇺🇸 米国</td><td>MBA住宅ローン申請指数（要確認・KissFXのみ）</td><td>★★</td><td>—</td><td>-2.9%</td></tr>
-            <tr><td>21:30</td><td>🇨🇦 加国</td><td>住宅建設許可（KissFX・ForexFactory一致）</td><td>★★</td><td>+0.8%</td><td>-1.7%</td></tr>
-            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td><strong>消費者物価指数（CPI）前月比/前年比</strong>（KissFX・ForexFactory一致）</td><td><strong>★★★★★★</strong></td><td><strong>+0.1% / +3.4%</strong></td><td>-0.4% / +3.5%</td></tr>
-            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td><strong>消費者物価指数【コア】前月比/前年比</strong>（KissFX・ForexFactory一致）</td><td><strong>★★★★★★</strong></td><td><strong>+0.2% / +2.5%</strong></td><td>±0.0% / +2.6%</td></tr>
-            <tr><td>23:30</td><td>🇺🇸 米国</td><td>週間原油在庫（KissFX・ForexFactoryほぼ一致）</td><td>★★★</td><td>-1.7M〜横ばい</td><td>+247.9万〜+2.5M</td></tr>
-            <tr><td>26:00</td><td>🇺🇸 米国</td><td>10年債入札（翌日未明・要確認・KissFXのみ）</td><td>★★★★</td><td>420億ドル</td><td>—</td></tr>
-            <tr><td>27:00</td><td>🇺🇸 米国</td><td>財政収支（翌日未明・要確認・KissFXのみ）</td><td>★★</td><td>-3090億</td><td>-1203億</td></tr>
-'''
-
-report_files = sorted(glob.glob('reports/*.html'), reverse=True)
-sidebar_items = ''
-DAYS = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
-import datetime as dt
-for f in report_files[:10]:
-    name = os.path.basename(f).replace('.html', '')
-    try:
-        d = dt.date.fromisoformat(name)
-        wd = DAYS[d.strftime('%A')]
-        label = f'{name}（{wd}）'
-    except Exception:
-        label = name
-    sidebar_items += f'<li><a href="{name}.html">{label}</a></li>\n'
-
-html = f'''<!DOCTYPE html>
+html = f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -173,7 +37,7 @@ html = f'''<!DOCTYPE html>
 <section class="mobile-report-hero">
   <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
   <h1>FX日報 {TODAY}（{WEEKDAY}）</h1>
-  <p>{HERO_SUB}</p>
+  <p>{HERO_SUMMARY}</p>
 </section>
 
 <nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
@@ -213,7 +77,8 @@ html = f'''<!DOCTYPE html>
     <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
       <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
       <ul class="archive-list">
-        {sidebar_items}</ul>
+        {sidebar_archive}
+</ul>
     </div>
   </aside>
 
@@ -224,35 +89,35 @@ html = f'''<!DOCTYPE html>
       <div>
         <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
         <h2>FX日報 {TODAY}（{WEEKDAY}）<span class="badge-live">最新</span></h2>
-        <p class="sub">{HERO_SUB}</p>
+        <p class="sub">{HERO_SUMMARY}</p>
       </div>
       <div class="date-card">
         <span>Report Date</span>
         <strong>{TODAY}</strong>
-        <em>{WEEKDAY}曜日</em>
+        <em>金曜日</em>
       </div>
     </header>
 
     <div class="summary-grid" id="summary">
       <div class="card highlight">
         <p class="label">一言まとめ</p>
-        <h3>{SUMMARY_TITLE}</h3>
-        <p>{SUMMARY_BODY}</p>
+        <h3>米PPI・新規失業保険申請件数を通過後もドル円は方向感を欠き、159.50円で小幅続伸のまま引け</h3>
+        <p>8/13（木）21:30発表の米7月生産者物価指数（PPI）は市場予想を下回り、インフレ鈍化を意識してやや売りが優勢となる場面があったが、明確な方向感を与えるには至らなかった（要確認）。同時刻発表の新規失業保険申請件数は1カ月ぶりの高水準となり、労働市場減速の兆しを示した。結果としてドル円はNY市場で159.50円と前営業日終値（159.42円）から8銭程度のドル高にとどまり、小幅続伸で引けた。欧州株式市場は米・イラン交渉の膠着を背景に投資家心理が悪化し続落（要確認）。英国では経済成長指標は底堅かったものの個人消費の鈍化が示され、英中銀（BOE）の追加利上げ観測が後退する契機となった（要確認）。本日8/14（金）は21:30の米小売売上高、23:00のミシガン大学消費者信頼感指数（速報値）に関心が集まる。</p>
       </div>
       <div class="card">
         <p class="label">最注目通貨</p>
-        <h3>{FOCUS_PAIR}</h3>
-        <p>{FOCUS_REASON}</p>
+        <h3>USD/JPY 🇺🇸🇯🇵</h3>
+        <p>159円台後半での小幅続伸基調を引き継ぐ中、本日21:30の米小売売上高・23:00のミシガン大学消費者信頼感指数の結果次第で方向感が定まりやすい</p>
       </div>
       <div class="card">
         <p class="label">Market Risk</p>
-        <h3 style="color:var(--red,#c0392b)">{RISK_LEVEL}</h3>
-        <p>{RISK_REASON}</p>
+        <h3 style="color:var(--gold,#c79a3b)">MEDIUM</h3>
+        <p>21:30の米小売売上高（除自動車）と23:00のミシガン大学消費者信頼感指数（速報）が重なる。単独最重要級のイベントはないが、米指標が集中し値動きが大きくなりやすい</p>
       </div>
       <div class="card">
         <p class="label">本日の重要指標</p>
-        <h3>{KEY_COUNT}</h3>
-        <p>{KEY_COUNT_DESC}</p>
+        <h3>6件</h3>
+        <p>米小売売上高 / 米小売売上高(除自動車) / 米ミシガン大学消費者信頼感指数(速報) / 豪RBA総裁発言 / 仏CPI改定値 / 欧GDP改定値 等（本日の市場休場はなし）</p>
       </div>
     </div>
 
@@ -267,17 +132,32 @@ html = f'''<!DOCTYPE html>
           <div class="points-block">
             <div class="block-title">🚫 本日の市場休場</div>
             <ul class="points-list">
-              <li>{MARKET_HOLIDAY_LINE}</li>
+              <li>本日、主要国の市場休場はなし</li>
             </ul>
           </div>
           <div class="points-block">
             <div class="block-title">📌 必見経済指標（時刻順）</div>
-            <ul class="points-list">{KEY_INDICATORS_HTML}
+            <ul class="points-list">
+              <li>07:30 🇳🇿 製造業PMI（BusinessNZ）（KissFX・ForexFactory一致）</li>
+              <li>08:30 🇦🇺 RBA総裁ブロック(Bullock)氏発言（KissFX・ForexFactory一致）</li>
+              <li>15:45 🇫🇷 消費者物価指数改定値（前月比・前年比）（前月比はKissFX・ForexFactory一致、前年比はKissFXのみ・要確認）</li>
+              <li>18:00 🇪🇺 ユーロ圏GDP改定値（Q2、前期比・前年比）（前期比はKissFX・ForexFactory一致、前年比はKissFXのみ・要確認）</li>
+              <li>21:30 🇨🇦 卸売売上高・製造業出荷（KissFX・ForexFactory一致）</li>
+              <li>21:30 🇺🇸 小売売上高<span class="badge-important">★最重要</span>（KissFX・ForexFactory一致・重要度表記に差あり要確認）</li>
+              <li>21:30 🇺🇸 小売売上高（除自動車）<span class="badge-important">★最重要</span>（KissFX・ForexFactory一致・重要度表記に差あり要確認）</li>
+              <li>23:00 🇺🇸 ミシガン大学消費者信頼感指数【速報値】<span class="badge-important">★最重要</span>（予想・前回値がソース間で相違・要確認）</li>
+              <li>23:00 🇺🇸 企業在庫（予想値がソース間で軽微な差異・要確認）</li>
             </ul>
           </div>
           <div class="points-block">
             <div class="block-title">👁 その他注目点</div>
-            <ul class="points-list">{OTHER_POINTS_HTML}
+            <ul class="points-list">
+              <li><strong>米PPI・新規失業保険申請件数通過も方向感欠き、ドル円は159.50円で小幅続伸</strong>：PPIは市場予想を下回りやや売りが優勢な場面があったが方向感を与えず、新規失業保険申請件数は1カ月ぶりの高水準（要確認）</li>
+              <li><strong>欧州株が続落、米・イラン交渉の膠着でリスク回避</strong>：投資家心理が悪化し売却圧力が発生（要確認）</li>
+              <li><strong>英GDP統計は底堅いが個人消費鈍化、BOE利上げ観測が後退</strong>：追加利上げ観測が後退する契機に（要確認）</li>
+              <li><strong>円買い介入より継続的な金融引き締めペースが重要との指摘</strong>：日銀の散発的介入よりも引き締めペースが円回復の鍵との見方（要確認）</li>
+              <li><strong>ユーロドル、FRB利上げ見送りなら上昇シナリオが意識される</strong>：強気派が忍耐強く待つ局面との指摘（要確認）</li>
+              <li><strong>本日は21:30の米小売売上高・23:00のミシガン大学消費者信頼感指数が焦点</strong>：週末を控え、米消費動向を見極める材料として関心が集まる</li>
             </ul>
           </div>
         </div>
@@ -289,7 +169,8 @@ html = f'''<!DOCTYPE html>
           <span>地合い・センチメント</span>
         </div>
         <div class="report-body" style="margin-bottom:20px;">
-          {MARKET_ENV_HTML}
+          8/14（金）は前日NY市場でドル円が米PPI・新規失業保険申請件数を通過するも明確な方向感を欠き、159.50円で小幅続伸にとどまった流れを引き継いでスタート。欧州株の続落や英GDP統計を受けたBOE利上げ観測の後退も材料視されたが、いずれも次の方向感を決定づける材料には至っていない（要確認）。本日は21:30の米小売売上高（除自動車）、23:00のミシガン大学消費者信頼感指数（速報）が重なり、週末を控えた米消費動向の確認材料として値動きが大きくなりやすい。<br><br>
+          <strong>政策金利：</strong> 米FRB 3.50〜3.75%（タカ派・据え置き、7/29 9対3・3人が利上げ主張） / 日銀 1.00%（正常化継続、7/31据え置き） / 英BOE 3.75%（中立寄り、7/30据え置き）
         </div>
 
         <div class="panel-head" style="margin-top:4px;">
@@ -300,18 +181,63 @@ html = f'''<!DOCTYPE html>
           <thead>
             <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
           </thead>
-          <tbody>{RANKING_ROWS_HTML}
+          <tbody>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>USD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング1位（スコア47・見送り）。前日の小幅続伸基調を引き継ぎつつ、本日21:30の米小売売上高で方向感が定まりやすい</span></td>
+              <td><span class="trend-range">→</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>GBP/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング2位（スコア42・見送り）。ADX16.4で上昇トレンド継続、英GDP通過後の流れを引き継ぐ</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>GBP/USD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング3位（スコア41・見送り）。ADX36.2とトレンド強めだが方向はレンジ判定、米小売売上高の結果次第で振れやすい</span></td>
+              <td><span class="trend-range">→</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>USD/CAD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング4位（スコア36・見送り）。ADX20.8で下降トレンド継続、本日21:30の加卸売売上高・製造業出荷にも注意</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>EUR/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング5位（スコア36・見送り）。本日18:00の欧GDP改定値を控え上昇トレンド継続</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
           </tbody>
         </table>
-        <p style="font-size:11px;color:var(--muted);margin-top:10px;">※ 4Hデイトレ適性ランキングは本日05:08 JST時点のデータ。数値は目安であり、実際のエントリーは各自のルールで判断してください。</p>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">※ 4Hデイトレ適性ランキングは本日05:03 JST時点のデータ。数値は目安であり、実際のエントリーは各自のルールで判断してください。</p>
       </div>
 
       <div class="panel wide" id="review">
         <div class="panel-head">
-          <h3>📰 前日の相場振り返り（{PREV_DATE}）</h3>
+          <h3>📰 前日の相場振り返り（2026-08-13）</h3>
           <span>昨日の主要トピック</span>
         </div>
-        <div class="report-body">{TOPICS_HTML}
+        <div class="report-body">
+          <div class="topic">
+            <div class="topic-title">【トピック①】米PPI・新規失業保険申請件数を通過も方向感欠き、ドル円は159.50円で小幅続伸</div>
+            21:30発表の米7月生産者物価指数（PPI）は市場予想を下回り、インフレ鈍化を意識してやや売りが優勢となる場面があったが、明確な方向感を与えるには至らなかった（要確認）。同時刻発表の新規失業保険申請件数は1カ月ぶりの高水準となり労働市場減速の兆しを示した。結果としてドル円はNY市場で159.50円と前営業日終値（159.42円）から8銭程度のドル高にとどまり、小幅続伸で引けた。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック②】欧州株が続落、米・イラン交渉の膠着でリスク回避</div>
+            米国とイランの交渉が膠着状態にあることを背景に投資家心理が悪化し、欧州主要株式指数が続落。売却圧力がリスクセンチメントに波及した（要確認）。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック③】英GDP統計は底堅いが個人消費鈍化、BOE利上げ観測が後退</div>
+            英国の経済成長指標は底堅い内容だったが個人消費の伸びが鈍化。これを受けて英中銀（BOE）の追加利上げ観測が後退する契機となった（要確認）。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック④】円買い介入より継続的な金融引き締めペースが重要との指摘</div>
+            市場では日銀による散発的な為替介入よりも、継続的な金融引き締めペースの方が円相場の回復にとって重要との見方が示された（要確認）。
+          </div>
+          <div class="handover">
+            <strong>本日（8/14金）への引継ぎ：</strong>
+            前日NY市場でのドル円の小幅続伸（159.50円）を引き継ぎ、米PPI・新規失業保険申請件数通過後も明確な方向感は出ていない。欧州株続落や英BOE利上げ観測の後退も材料視されたが次の方向感を決定づける材料には至らず（要確認）、本日は21:30の米小売売上高・23:00のミシガン大学消費者信頼感指数（速報）の結果が焦点となる。
+          </div>
         </div>
       </div>
 
@@ -324,10 +250,33 @@ html = f'''<!DOCTYPE html>
           <thead>
             <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
           </thead>
-          <tbody>{CALENDAR_ROWS_HTML}
+          <tbody>
+            <tr><td><strong>終日</strong></td><td>🌍 主要国</td><td>本日、主要国の市場休場はなし</td><td>—</td><td>—</td><td>—</td></tr>
+            <tr><td>02:01</td><td>🇺🇸 米国</td><td>30年債入札（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>利回り5.06%/応札倍率2.4倍</td></tr>
+            <tr><td>07:00</td><td>🇺🇸 米国</td><td>グールズビーFOMC委員発言（要確認・ForexFactoryのみ）</td><td>低</td><td>要人発言</td><td>—</td></tr>
+            <tr><td>07:30</td><td>🇳🇿 NZ</td><td>製造業PMI（BusinessNZ）（KissFX・ForexFactory一致）</td><td>—</td><td>—</td><td>59.7</td></tr>
+            <tr><td>07:45</td><td>🇳🇿 NZ</td><td>入国者数（前月比）（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>-2.4%</td></tr>
+            <tr><td>08:30</td><td>🇦🇺 豪州</td><td>RBA総裁ブロック(Bullock)氏発言（KissFX・ForexFactory一致）</td><td>★★</td><td>要人発言</td><td>—</td></tr>
+            <tr><td>15:00</td><td>🇪🇺 ユーロ圏</td><td>独卸売物価指数（前月比）（要確認・ForexFactoryのみ）</td><td>低</td><td>-0.2%</td><td>-0.7%</td></tr>
+            <tr><td>15:02</td><td>🇨🇳 中国</td><td>対中直接投資（年初来・前年比）（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>-5.0%</td></tr>
+            <tr><td>15:45</td><td>🇫🇷 フランス</td><td>消費者物価指数改定値（前月比）（KissFX・ForexFactory一致）</td><td>—</td><td>+0.6%</td><td>+0.6%</td></tr>
+            <tr><td>15:45</td><td>🇫🇷 フランス</td><td>消費者物価指数改定値（前年比）（要確認・KissFXのみ）</td><td>—</td><td>+2.1%</td><td>+2.1%</td></tr>
+            <tr><td><strong>18:00</strong></td><td>🇪🇺 ユーロ圏</td><td><strong>GDP改定値（Q2、前期比）</strong>（KissFX・ForexFactory一致）</td><td><strong>—</strong></td><td><strong>+0.4%</strong></td><td>+0.4%</td></tr>
+            <tr><td>18:00</td><td>🇪🇺 ユーロ圏</td><td>GDP改定値（Q2、前年比）（要確認・KissFXのみ）</td><td>—</td><td>+1.0%</td><td>+1.0%</td></tr>
+            <tr><td>18:00</td><td>🇪🇺 ユーロ圏</td><td>雇用者数変化（改定値・前期比）（要確認・ForexFactoryのみ）</td><td>低</td><td>+0.1%</td><td>+0.1%</td></tr>
+            <tr><td>18:00</td><td>🇪🇺 ユーロ圏</td><td>貿易収支（KissFXとForexFactoryで数値が大きく相違・要確認）</td><td>—</td><td>-78億（KissFX）/-22億（FF）</td><td>-50億</td></tr>
+            <tr><td>18:03</td><td>🇨🇳 中国</td><td>マネーサプライM2（前年比）（要確認・ForexFactoryのみ）</td><td>低</td><td>+7.9%</td><td>+8.0%</td></tr>
+            <tr><td>18:03</td><td>🇨🇳 中国</td><td>新規融資（要確認・ForexFactoryのみ）</td><td>低</td><td>-500億元</td><td>1兆610億元</td></tr>
+            <tr><td>21:30</td><td>🇨🇦 カナダ</td><td>卸売売上高（KissFX・ForexFactory一致）</td><td>—</td><td>+2.7%</td><td>±0.0%</td></tr>
+            <tr><td>21:30</td><td>🇨🇦 カナダ</td><td>製造業出荷（KissFX・ForexFactory一致）</td><td>—</td><td>-0.1%</td><td>+1.3%</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td><strong>小売売上高</strong>（KissFX・ForexFactory一致・重要度表記に差あり要確認）</td><td><strong>KissFX最高／FF中</strong></td><td><strong>+0.1%</strong></td><td>+0.2%</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td><strong>小売売上高（除自動車）</strong>（KissFX・ForexFactory一致・重要度表記に差あり要確認）</td><td><strong>KissFX最高／FF中</strong></td><td><strong>+0.2%</strong></td><td>-0.2%</td></tr>
+            <tr><td><strong>23:00</strong></td><td>🇺🇸 米国</td><td><strong>ミシガン大学消費者信頼感指数【速報値】</strong>（予想・前回値がソース間で相違・要確認）</td><td><strong>KissFX最高／FF中</strong></td><td><strong>54.9（KissFX）/54.7（FF）</strong></td><td>55.2（KissFX）/54.4（FF）</td></tr>
+            <tr><td>23:00</td><td>🇺🇸 米国</td><td>企業在庫（予想値がソース間で軽微な差異・要確認）</td><td>—</td><td>+0.1%（KissFX）/+0.2%（FF）</td><td>+0.3%</td></tr>
+            <tr><td>23:00</td><td>🇺🇸 米国</td><td>ミシガン大学期待インフレ率【速報値】（要確認・ForexFactoryのみ）</td><td>中</td><td>—</td><td>4.2%</td></tr>
           </tbody>
         </table>
-        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。KissFX（主・ランク付き）とForexFactoryの機械可読カレンダー（ff_calendar_thisweek.json、ET→JST変換済み）の2つの独立ソースで照合済み。両ソースで一致した指標はそのまま掲載し、片方のソースにしか掲載がない指標、または予想値・前回値がソース間で相違する指標には「（要確認）」を付しています。本日の主要市場休場はありません。本日の最大の焦点は21:30の米CPI発表（総合・コア）です。指標の網羅性は保証できないため、発表直前に各社カレンダーで再確認してください。</p>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。KissFX（主・ランク付き）とForexFactoryの機械可読カレンダー（ff_calendar_thisweek.json、ET→JST変換済み）の2つの独立ソースで照合済み。両ソースで一致した指標はそのまま掲載し、片方のソースにしか掲載がない指標、または予想値・前回値がソース間で相違する指標には「（要確認）」を付しています。本日の主要市場休場はありません。本日の焦点は21:30の米小売売上高と23:00のミシガン大学消費者信頼感指数（速報）です。指標の網羅性は保証できないため、発表直前に各社カレンダーで再確認してください。</p>
       </div>
 
     </div><!-- /content-grid -->
@@ -351,7 +300,7 @@ html = f'''<!DOCTYPE html>
   </div>
 </footer>
 </body>
-</html>'''
+</html>"""
 
 with open(f'reports/{TODAY}.html', 'w', encoding='utf-8') as f:
     f.write(html)
