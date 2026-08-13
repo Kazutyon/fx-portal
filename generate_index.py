@@ -3,19 +3,19 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-13'
-WEEKDAY    = '木'
-HERO_SUB   = '米CPI通過後にドル買い戻しが優勢となり、ドル円は159.50円と7/31以来の高値を更新。本日は15:00の英GDP速報値（Q2）、21:30の米PPI・新規失業保険申請件数に関心が集まる。'
+TODAY      = '2026-08-14'
+WEEKDAY    = '金'
+HERO_SUB   = '米PPI・新規失業保険申請件数を通過しドル円は159.50円と小幅続伸で引け。本日は21:30の米小売売上高、23:00のミシガン大学消費者信頼感指数（速報）に関心が集まる。'
 MARKET_HOLIDAY_H3 = 'なし'
 MARKET_HOLIDAY_P  = '本日、主要国の市場休場はありません。'
 KEY_EVENTS_ITEMS  = [
-    '08:50 🇯🇵 国内企業物価指数(PPI)',
-    '15:00 🇬🇧 英国GDP速報値(Q2)',
-    '21:30 🇺🇸 新規失業保険申請件数',
-    '21:30 🇺🇸 生産者物価指数(PPI)',
-    '26:00 🇺🇸 30年債入札',
+    '08:30 🇦🇺 RBA総裁ブロック(Bullock)氏発言',
+    '15:45 🇫🇷 消費者物価指数改定値',
+    '18:00 🇪🇺 ユーロ圏GDP改定値(Q2)',
+    '21:30 🇺🇸 小売売上高／除自動車',
+    '23:00 🇺🇸 ミシガン大学消費者信頼感指数(速報)',
 ]
-REPORT_SUMMARY = '米CPI通過後にドル買い戻し優勢、本日は英GDP・米PPIに注目'
+REPORT_SUMMARY = '米PPI通過も方向感欠き、ドル円159.50円で小幅続伸'
 RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
