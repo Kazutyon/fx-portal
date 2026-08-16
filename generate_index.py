@@ -3,27 +3,27 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-14'
-WEEKDAY    = '金'
-HERO_SUB   = '米PPI・新規失業保険申請件数を通過しドル円は159.50円と小幅続伸で引け。本日は21:30の米小売売上高、23:00のミシガン大学消費者信頼感指数（速報）に関心が集まる。'
+TODAY      = '2026-08-17'
+WEEKDAY    = '月'
+HERO_SUB   = '週末にかけドル円は159.30円前後で方向感を欠くまま新週入り。本日は08:50の日本GDP速報値、21:30のカナダCPIが最重要指標として控える。'
 MARKET_HOLIDAY_H3 = 'なし'
 MARKET_HOLIDAY_P  = '本日、主要国の市場休場はありません。'
 KEY_EVENTS_ITEMS  = [
-    '08:30 🇦🇺 RBA総裁ブロック(Bullock)氏発言',
-    '15:45 🇫🇷 消費者物価指数改定値',
-    '18:00 🇪🇺 ユーロ圏GDP改定値(Q2)',
-    '21:30 🇺🇸 小売売上高／除自動車',
-    '23:00 🇺🇸 ミシガン大学消費者信頼感指数(速報)',
+    '08:50 🇯🇵 4-6月期GDP速報値(前期比/年率)',
+    '11:00 🇨🇳 鉱工業生産・小売売上高・固定資産投資（要確認・時刻相違）',
+    '21:30 🇨🇦 消費者物価指数(CPI)',
+    '21:30 🇺🇸 NY連銀製造業景気指数(Empire State)',
+    '23:00 🇺🇸 NAHB住宅市場指数',
 ]
-REPORT_SUMMARY = '米PPI通過も方向感欠き、ドル円159.50円で小幅続伸'
+REPORT_SUMMARY = 'ドル円159.30円で方向感欠く、本日は日GDP・加CPIが焦点'
 RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31据え置き・成長率上方修正）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（7/23全会一致・9月利上げ観測）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（6/16据え置き・次回8/11）'; RBA_COLOR = 'var(--red)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（7/23全会一致・預金ファシリティ金利、次回9/10）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（8/11据え置き・反応限定的）'; RBA_COLOR = 'var(--red)'
 RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8に約3年ぶり利上げ）'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15・6会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15・6会合連続据え置き、本日CPI注目）'; BOC_COLOR = 'var(--muted)'
 SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 

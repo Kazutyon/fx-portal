@@ -1,0 +1,388 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""FX日報 2026-08-17（月）生成スクリプト"""
+import glob, os
+from datetime import date
+
+TODAY = '2026-08-17'
+WEEKDAY = '月'
+
+DAYS_JA = {'Monday':'月','Tuesday':'火','Wednesday':'水','Thursday':'木','Friday':'金','Saturday':'土','Sunday':'日'}
+
+def sidebar_archive_html():
+    files = sorted(glob.glob('reports/*.html'), reverse=True)
+    items = ''
+    for f in files[:10]:
+        name = os.path.basename(f).replace('.html', '')
+        try:
+            d = date.fromisoformat(name)
+            wd = DAYS_JA[d.strftime('%A')]
+            label = f'{name}（{wd}）'
+        except Exception:
+            label = name
+        active = ' class="active"' if name == TODAY else ''
+        href = name + '.html'
+        items += f'<li{active}><a href="{href}">{label}</a></li>\n'
+    return items
+
+SIDEBAR_ARCHIVE = sidebar_archive_html()
+
+HERO_SUB = '週末にかけドル円は159.30円前後で方向感を欠くまま新週入り。本日は08:50の日本GDP速報値、21:30のカナダCPIが最重要指標として控える。'
+
+html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX日報 {TODAY}（{WEEKDAY}） | AUXEN FX Portal</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+</head>
+<body class="report-page">
+
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 {TODAY}（{WEEKDAY}）</h1>
+  <p>{HERO_SUB}</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="../assets/logo.svg" alt="AUXEN"></div>
+      <div>
+        <h1>AUXEN</h1>
+        <p>FX Research Lab</p>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="../index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="#" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報</a>
+      <a href="../archive.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>アーカイブ</a>
+      <span class="nav-section">ツール・販売</span>
+      <a href="../index.html#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>トレードインジケーター</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="../about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="../disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="../contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
+    </nav>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
+      <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
+      <ul class="archive-list">
+        {SIDEBAR_ARCHIVE}</ul>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+        <h2>FX日報 {TODAY}（{WEEKDAY}）<span class="badge-live">最新</span></h2>
+        <p class="sub">{HERO_SUB}</p>
+      </div>
+      <div class="date-card">
+        <span>Report Date</span>
+        <strong>{TODAY}</strong>
+        <em>月曜日</em>
+      </div>
+    </header>
+
+    <div class="summary-grid" id="summary">
+      <div class="card highlight">
+        <p class="label">一言まとめ</p>
+        <h3>週末にかけドル円は159.30円前後で方向感を欠くまま新週入り、金は米インフレ鈍化観測で反発</h3>
+        <p>8/14（金）21:30発表の米7月小売売上高は市場予想を下回り、ドル売り・円買いが優勢となってドル円は一時158.60円付近まで下落、159円台を割り込む場面もあったが値幅は限定的だった（要確認）。週末にかけてのNY市場では、米インフレ鈍化を意識したFRB利上げ観測の後退を背景にCOMEX金先物（9月限）が反発し前日比+9.55ドル（+0.22%）の4,429.95ドルで取引を終えた（要確認）。ユーロドルは独長期金利の上昇を手掛かりに買われ、終値1.1570ドルまで上昇。8/15（土）のNY株式市場ではダウ平均が107.58ドル安（-0.20%）で引けた一方、原油先物は1.15ドル高となった。週明け早朝のドル円は159.30円前後での小動きにとどまっている。VIXは14.25（前日比-2.60%）と落ち着いた水準、米10年債利回りは4.696%（同+0.055pt）まで上昇し、ドルインデックス（DXY）は99.63（同-0.04%）とほぼ横ばい。本日8/17（月）は08:50の日本4-6月期GDP速報値、21:30のカナダ消費者物価指数（CPI）が最重要指標として控え、週後半19日のFOMC議事要旨公表に向けた思惑も相場の背景材料となりやすい。</p>
+      </div>
+      <div class="card">
+        <p class="label">最注目通貨</p>
+        <h3>USD/CAD 🇺🇸🇨🇦</h3>
+        <p>本日21:30発表のカナダCPIが本日最大の材料。4Hデイトレ適性ランキング2位（スコア44・下降トレンド）でもあり、結果次第で方向感が出やすい</p>
+      </div>
+      <div class="card">
+        <p class="label">Market Risk</p>
+        <h3 style="color:var(--gold,#c79a3b)">MEDIUM</h3>
+        <p>08:50の日本GDP速報値と21:30のカナダCPIが重なる。米国発の単独最重要イベントはないが、JPY・CAD双方で方向感を左右しうる指標が集中する</p>
+      </div>
+      <div class="card">
+        <p class="label">本日の重要指標</p>
+        <h3>8件</h3>
+        <p>日GDP速報値(Q2) / 加消費者物価指数(CPI) / 米NY連銀製造業景気指数 / 中鉱工業生産・小売売上高等 / 米NAHB住宅市場指数 等（本日の市場休場はなし）</p>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <div class="panel" id="points">
+        <div class="panel-head">
+          <h3>⚔️ 今日の注目ポイント</h3>
+          <span>経済指標・イベント</span>
+        </div>
+        <div class="report-body">
+          <div class="points-block">
+            <div class="block-title">🚫 本日の市場休場</div>
+            <ul class="points-list">
+              <li>本日、主要国の市場休場はなし</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">📌 必見経済指標（時刻順）</div>
+            <ul class="points-list">
+              <li>07:30 🇳🇿 製造業サービス業指数（BusinessNZ）（要確認・ForexFactoryのみ）</li>
+              <li>08:01 🇬🇧 ライトムーブ住宅価格（KissFX・ForexFactory一致）</li>
+              <li>08:50 🇯🇵 4-6月期GDP速報値【前期比/年率】<span class="badge-important">★最重要</span>（前期比はKissFX・ForexFactory一致、年率はKissFXのみ・要確認）</li>
+              <li>08:50 🇯🇵 名目GDP速報値・GDPデフレーター速報値（要確認・KissFXのみ、デフレーターはFF予想値と前回値に差異あり）</li>
+              <li>11:00 🇨🇳 鉱工業生産・小売売上高・固定資産投資（発表時刻がKissFX 11:00とForexFactory換算16:00で相違・要確認）</li>
+              <li>13:30 🇯🇵 鉱工業生産【確報値】・第三次産業活動指数（KissFX・ForexFactory一致、一部予想値に軽微な差異）</li>
+              <li>21:30 🇨🇦 消費者物価指数（CPI）【前月比/前年比】<span class="badge-important">★最重要</span>（前月比はKissFX・ForexFactory一致、前年比・コア指標はKissFXまたはForexFactoryの片方のみ・要確認）</li>
+              <li>21:30 🇺🇸 NY連銀製造業景気指数（Empire State）（KissFX・ForexFactory一致・予想値に差異あり要確認）</li>
+              <li>23:00 🇺🇸 NAHB住宅市場指数（KissFX・ForexFactory一致）</li>
+              <li>29:00 🇺🇸 対米証券投資【ネット長期フロー／ネットフロー合計】（要確認・KissFXのみ）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">👁 その他注目点</div>
+            <ul class="points-list">
+              <li><strong>米小売売上高が予想外に弱く、ドル円は158.60円まで下落後159円割れ</strong>：値幅は限定的ながら円買い優勢の展開に（8/14金・要確認）</li>
+              <li><strong>NY金先物が反発、米インフレ鈍化でFRB利上げ観測が後退</strong>：COMEX9月限は+9.55ドル（+0.22%）の4,429.95ドルで取引終了（要確認）</li>
+              <li><strong>ユーロドルは独長期金利上昇を手掛かりに上昇</strong>：NY終値1.1570ドル</li>
+              <li><strong>週末のNY株式市場、ダウ平均は107.58ドル安（-0.20%）で引け</strong>：原油先物は1.15ドル高で推移</li>
+              <li><strong>今週はFOMC議事要旨（7/28-29分）が8/19に公表予定</strong>：米イラン交渉の行方・原油動向も引き続き注視材料（要確認）</li>
+              <li><strong>本日は08:50の日本GDP速報値・21:30のカナダCPIが焦点</strong>：日銀の利上げ時期観測、BOCの金融政策運営双方に影響しうる</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="ranking">
+        <div class="panel-head">
+          <h3>🌏 今日の市場環境</h3>
+          <span>地合い・センチメント</span>
+        </div>
+        <div class="report-body" style="margin-bottom:20px;">
+          8/17（月）は週末にかけてのドル円小動き（159.30円前後）を引き継いで新週がスタート。8/14の米小売売上高の弱さを受けた円買い圧力は限定的な値幅にとどまり、週明け早朝も方向感に乏しい。VIXは14.25（前日比-2.60%）と落ち着いた水準を維持し、米10年債利回りは4.696%（同+0.055pt）へ上昇、ドルインデックス（DXY）は99.63（同-0.04%）とほぼ横ばい。金（COMEX）は4,432.45ドル、WTI原油は81.61ドルで週末の底堅い流れを引き継いでいる。本日は08:50の日本GDP速報値、21:30のカナダCPIが重なり、週後半19日のFOMC議事要旨公表も意識される中、方向感が出やすい週明けとなりそうだ。<br><br>
+          <strong>政策金利：</strong> 米FRB 3.50〜3.75%（タカ派・据え置き、7/29 9対3・3人が利上げ主張） / 日銀 1.00%（正常化継続、7/31据え置き） / 加BOC 2.25%（中立、7/15据え置き）
+        </div>
+
+        <div class="panel-head" style="margin-top:4px;">
+          <h3>🏆 通貨ランキング</h3>
+          <span>本日の優先順</span>
+        </div>
+        <table class="fx-table">
+          <thead>
+            <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>GBP/USD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング1位（スコア48・見送り）。ADX39.2で上昇トレンド継続、本日は英国発の重要指標はなくドル側の材料待ち</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>USD/CAD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング2位（スコア44・見送り）。ADX27.5で下降トレンド継続、本日21:30の加CPIで方向感が定まりやすい</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>AUD/USD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング3位（スコア43・見送り）。ADX31.7で上昇トレンド継続、中国鉱工業生産・小売売上高の結果にも注意</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>EUR/USD</strong><br><span style="color:var(--muted);font-size:12px;">ランキング4位（スコア41・見送り）。ADX28.5で上昇トレンド継続、週末の独長期金利上昇を受けた底堅さを引き継ぐ</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>GBP/JPY</strong><br><span style="color:var(--muted);font-size:12px;">ランキング5位（スコア34・見送り）。ADX15.3で上昇トレンド継続も勢いはやや弱め</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">※ 4Hデイトレ適性ランキングは本日04:42 JST時点のデータ。数値は目安であり、実際のエントリーは各自のルールで判断してください。</p>
+      </div>
+
+      <div class="panel wide" id="review">
+        <div class="panel-head">
+          <h3>📰 前週末の相場振り返り（2026-08-14〜08-16）</h3>
+          <span>週末の主要トピック</span>
+        </div>
+        <div class="report-body">
+          <div class="topic">
+            <div class="topic-title">【トピック①】米小売売上高が予想外に弱く、ドル円は158.60円まで下落後159円割れ</div>
+            8/14（金）21:30発表の米7月小売売上高は市場予想を下回り、ドル売り・円買いが優勢となった。ドル円は一時158.60円付近まで下落し159円台を割り込む場面もあったが、値幅は限定的で159円台前半でのもみ合いにとどまった（要確認）。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック②】NY金先物が反発、米インフレ鈍化でFRB利上げ観測が後退</div>
+            週末にかけて米インフレ鈍化を意識したFRB利上げ観測の後退を背景に、COMEX金先物（9月限）は前日比+9.55ドル（+0.22%）の4,429.95ドルで取引を終え反発した（要確認）。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック③】ユーロドルが上昇、独長期金利の上昇が手掛かりに</div>
+            NY外国為替市場でユーロドルが買われ、終値は1.1570ドル。ドイツの長期金利上昇がユーロ買いの手掛かりとなった。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック④】週末のNY株式市場はダウ平均が小幅安、原油は上昇</div>
+            8/15（土）取引終了時点でダウ平均は107.58ドル安（-0.20%）となった一方、原油先物は1.15ドル高で推移した。
+          </div>
+          <div class="handover">
+            <strong>本日（8/17月）への引継ぎ：</strong>
+            週末にかけてのドル円小動き（159.30円前後）と円買い圧力の後退、金の反発・ユーロの底堅さを引き継いで新週入り。本日は08:50の日本GDP速報値、21:30のカナダCPIが重なり、週後半19日のFOMC議事要旨公表も意識される中、方向感が出やすい展開を想定（要確認）。
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full" id="calendar">
+        <div class="panel-head">
+          <h3>📅 本日の経済指標カレンダー（全件）</h3>
+          <span>KissFX × ForexFactory 2ソース照合済み（要確認あり）</span>
+        </div>
+        <table class="fx-table" style="font-size:0.9em;">
+          <thead>
+            <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>終日</strong></td><td>🌍 主要国</td><td>本日、主要国の市場休場はなし</td><td>—</td><td>—</td><td>—</td></tr>
+            <tr><td>07:30</td><td>🇳🇿 NZ</td><td>製造業サービス業指数（BusinessNZ）（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>50.6</td></tr>
+            <tr><td>07:45</td><td>🇳🇿 NZ</td><td>食品価格指数（前月比）（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>+0.6%</td></tr>
+            <tr><td>08:01</td><td>🇬🇧 英国</td><td>ライトムーブ住宅価格【前月比/前年比】（KissFX・ForexFactory一致）</td><td>低</td><td>—</td><td>-1.0%/-0.4%</td></tr>
+            <tr><td><strong>08:50</strong></td><td>🇯🇵 日本</td><td><strong>4-6月期GDP速報値【前期比】</strong>（KissFX・ForexFactory一致）</td><td><strong>★★★</strong></td><td><strong>+0.5%</strong></td><td>+0.5%</td></tr>
+            <tr><td>08:50</td><td>🇯🇵 日本</td><td>4-6月期GDP速報値【前期比年率】（要確認・KissFXのみ）</td><td>★★★</td><td>+2.0%</td><td>+1.8%</td></tr>
+            <tr><td>08:50</td><td>🇯🇵 日本</td><td>名目GDP速報値（要確認・KissFXのみ）</td><td>★★★</td><td>—</td><td>+0.6%</td></tr>
+            <tr><td>08:50</td><td>🇯🇵 日本</td><td>GDPデフレーター速報値（要確認・予想値FF+2.3%、前回値がKissFX+3.2%／FF+3.4%で相違）</td><td>★★★</td><td>+2.3%（FF）</td><td>+3.2%（KissFX）/+3.4%（FF）</td></tr>
+            <tr><td>10:30</td><td>🇨🇳 中国</td><td>新築住宅価格指数（前月比）（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>-0.15%</td></tr>
+            <tr><td>11:00</td><td>🇨🇳 中国</td><td>鉱工業生産（前年比）（発表時刻がKissFX 11:00／ForexFactory換算16:00で相違・要確認）</td><td>★★</td><td>+5.0%</td><td>+5.3%</td></tr>
+            <tr><td>11:00</td><td>🇨🇳 中国</td><td>小売売上高（前年比）（発表時刻がKissFX 11:00／ForexFactory換算16:00で相違・要確認）</td><td>★★</td><td>+1.5%</td><td>+1.0%</td></tr>
+            <tr><td>11:00</td><td>🇨🇳 中国</td><td>固定資産投資（年初来・前年比）（発表時刻がKissFX 11:00／ForexFactory換算16:00で相違・要確認）</td><td>★★</td><td>-6.2%</td><td>-5.7%</td></tr>
+            <tr><td>15:02</td><td>🇨🇳 中国</td><td>対中直接投資（年初来・前年比）（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>-5.0%</td></tr>
+            <tr><td>16:00</td><td>🇨🇳 中国</td><td>失業率（要確認・ForexFactoryのみ）</td><td>低</td><td>5.1%</td><td>5.0%</td></tr>
+            <tr><td>16:00</td><td>🇨🇳 中国</td><td>国家統計局（NBS）記者会見（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>—</td></tr>
+            <tr><td>13:30</td><td>🇯🇵 日本</td><td>鉱工業生産【確報値・前月比/前年比】（KissFX・ForexFactory一致）</td><td>低</td><td>—</td><td>+1.3%/+4.2%</td></tr>
+            <tr><td>13:30</td><td>🇯🇵 日本</td><td>第三次産業活動指数（前月比）（KissFX・ForexFactory一致・予想値に軽微な差異：KissFX -1.0%／FF -0.9%）</td><td>低</td><td>-1.0%〜-0.9%</td><td>+1.1%</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇨🇦 カナダ</td><td><strong>消費者物価指数（CPI）【前月比】</strong>（KissFX・ForexFactory一致）</td><td><strong>★★★</strong></td><td><strong>+0.4%</strong></td><td>-0.4%</td></tr>
+            <tr><td>21:30</td><td>🇨🇦 カナダ</td><td>消費者物価指数（CPI）【前年比】（要確認・KissFXのみ）</td><td>★★★</td><td>+2.9%</td><td>+2.8%</td></tr>
+            <tr><td>21:30</td><td>🇨🇦 カナダ</td><td>コアCPI【前月比】（要確認・ForexFactoryのみ）</td><td>低</td><td>—</td><td>+0.1%</td></tr>
+            <tr><td>21:30</td><td>🇨🇦 カナダ</td><td>中央値CPI【前年比】（要確認・ForexFactoryのみ）</td><td>★★★</td><td>+2.0%</td><td>+1.9%</td></tr>
+            <tr><td>21:30</td><td>🇨🇦 カナダ</td><td>トリム平均CPI【前年比】（要確認・ForexFactoryのみ）</td><td>★★★</td><td>+1.8%</td><td>+1.8%</td></tr>
+            <tr><td>21:30</td><td>🇨🇦 カナダ</td><td>コモンCPI【前年比】（要確認・ForexFactoryのみ）</td><td>★★</td><td>+2.5%</td><td>+2.6%</td></tr>
+            <tr><td>21:30</td><td>🇨🇦 カナダ</td><td>国際証券取扱高（KissFX・ForexFactoryほぼ一致）</td><td>低</td><td>15.0億加ドル（FF）</td><td>+79.0億（KissFX）/7.90B（FF）</td></tr>
+            <tr><td><strong>21:30</strong></td><td>🇺🇸 米国</td><td><strong>NY連銀製造業景気指数（Empire State）</strong>（KissFX・ForexFactory一致・予想値に差異：KissFX+11.5／FF+10.6・要確認）</td><td><strong>★★</strong></td><td><strong>+11.5（KissFX）/+10.6（FF）</strong></td><td>+15.6</td></tr>
+            <tr><td>23:00</td><td>🇺🇸 米国</td><td>NAHB住宅市場指数（KissFX・ForexFactory一致）</td><td>低</td><td>33</td><td>34</td></tr>
+            <tr><td>29:00</td><td>🇺🇸 米国</td><td>対米証券投資【ネット長期フロー】（翌日未明・要確認・KissFXのみ）</td><td>低</td><td>—</td><td>+2327億</td></tr>
+            <tr><td>29:00</td><td>🇺🇸 米国</td><td>対米証券投資【ネットフロー合計】（翌日未明・要確認・KissFXのみ）</td><td>低</td><td>—</td><td>+1322億</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。KissFX（主・ランク付き）とForexFactoryの機械可読カレンダー（ff_calendar_thisweek.json、ET→JST変換済み）の2つの独立ソースで照合済み。両ソースで一致した指標はそのまま掲載し、片方のソースにしか掲載がない指標、または時刻・予想値・前回値がソース間で相違する指標には「（要確認）」を付しています。中国主要指標（鉱工業生産・小売売上高・固定資産投資）はKissFXが11:00、ForexFactory換算では16:00と発表時刻の相違が大きいため要確認としています。本日の主要市場休場はありません。本日の焦点は08:50の日本GDP速報値と21:30のカナダCPIです。指標の網羅性は保証できないため、発表直前に各社カレンダーで再確認してください。</p>
+      </div>
+
+      <div class="panel full" id="fundamentals">
+        <div class="panel-head">
+          <h3>🏦 主要中銀ファンダメンタルズ（週次更新）</h3>
+          <span>{TODAY} 現在</span>
+        </div>
+        <table class="fx-table">
+          <thead><tr><th>中銀</th><th>通貨</th><th>政策金利</th><th>スタンス</th><th>背景・理由</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>FRB</td><td>🇺🇸 USD</td><td><strong>3.50–3.75%</strong></td>
+              <td style="color:var(--red);">タカ派・据え置き</td>
+              <td style="font-size:12px;">7/28-29のFOMCで9対3の賛成多数により据え置きを決定、3人の地区連銀総裁が利上げを主張し反対した。前回会合議事要旨は8/19に公表予定で、市場は次回9月FOMCでの利下げ／据え置きを巡る委員間の見解の違いを見極めようとしている（要確認）。</td>
+            </tr>
+            <tr>
+              <td>日銀</td><td>🇯🇵 JPY</td><td><strong>1.00%</strong></td>
+              <td style="color:var(--blue);">正常化継続</td>
+              <td style="font-size:12px;">7/30-31の金融政策決定会合で1.00%据え置きを決定し、26年度成長率見通しを上方修正。植田総裁は利上げペース加速の可能性に言及した。本日08:50発表の4-6月期GDP速報値が次回会合（9月予定）に向けた材料として注目される（要確認）。</td>
+            </tr>
+            <tr>
+              <td>ECB</td><td>🇪🇺 EUR</td><td><strong>2.25%</strong></td>
+              <td style="color:var(--red);">タカ派・据え置き</td>
+              <td style="font-size:12px;">7/23の理事会で預金ファシリティ金利を2.25%に据え置き（主要リファイナンス金利は2.40%）。ラガルド総裁はデータ次第の判断姿勢を維持しており、次回会合は9/10予定（ECB公式サイトで金利水準を確認済み）。</td>
+            </tr>
+            <tr>
+              <td>BOE</td><td>🇬🇧 GBP</td><td><strong>3.75%</strong></td>
+              <td style="color:var(--muted);">中立（一部タカ派）</td>
+              <td style="font-size:12px;">7/30のSuper Thursdayで政策金利を3.75%に据え置き。3人の委員が利上げを主張する分裂した投票となった。ベイリー総裁は利上げが近いわけではないとしつつ、インフレの上振れリスクは残るとの見方を示した（要確認）。</td>
+            </tr>
+            <tr>
+              <td>RBA</td><td>🇦🇺 AUD</td><td><strong>4.35%</strong></td>
+              <td style="color:var(--red);">タカ派</td>
+              <td style="font-size:12px;">8/11会合で4.35%据え置き。市場の予想通りとなり豪ドルの反応は限定的だった。四半期の金融政策報告（SMP）を伴う重要会合を通過し、次回会合まではインフレ・雇用統計の強さを背景に追加利上げ観測が残る（要確認）。</td>
+            </tr>
+            <tr>
+              <td>RBNZ</td><td>🇳🇿 NZD</td><td><strong>2.50%</strong></td>
+              <td style="color:var(--red);">タカ派転換</td>
+              <td style="font-size:12px;">7/8会合でOCRを2.25%→2.50%へ引き上げ、2023年5月以来約3年ぶりの利上げ。インフレが目標を上回る水準にあるとして緩和的すぎる金利水準の是正に動いた。次回会合は8月下旬の見込み（要確認）。</td>
+            </tr>
+            <tr>
+              <td>BOC</td><td>🇨🇦 CAD</td><td><strong>2.25%</strong></td>
+              <td style="color:var(--muted);">中立</td>
+              <td style="font-size:12px;">7/15会合で6会合連続の政策金利据え置きを決定。中東情勢や米通商政策を巡る不確実性を注視する姿勢を継続。本日21:30発表のCPIが次回会合（9/2予定）に向けた重要な判断材料となる。</td>
+            </tr>
+            <tr>
+              <td>SNB</td><td>🇨🇭 CHF</td><td><strong>0.00%</strong></td>
+              <td style="color:var(--muted);">中立</td>
+              <td style="font-size:12px;">6/18の政策評価会合でゼロ金利政策の維持を決定。「為替市場介入への準備は一段と強まっている」と表明しスイスフラン高への警戒を維持。次回発表は9月見込み。</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin:12px 0 0;">※ {TODAY}時点。各中銀の公式発表・公式サイト（ECB・FRB含む）と複数の報道ソースで確認済み。前回更新（8/10）から金利変更なし（RBAは8/11会合で据え置きを確認）。最新情報は各中銀の公式サイトでご確認ください。</p>
+      </div>
+
+    </div><!-- /content-grid -->
+
+  </main>
+</div>
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="../about.html">About</a>
+    <a href="../disclaimer.html">免責事項</a>
+    <a href="../privacy.html">プライバシーポリシー</a>
+    <a href="../terms.html">利用規約</a>
+    <a href="../contact.html">お問い合わせ</a>
+  </div>
+</footer>
+</body>
+</html>"""
+
+with open(f'reports/{TODAY}.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f'reports/{TODAY}.html generated')
