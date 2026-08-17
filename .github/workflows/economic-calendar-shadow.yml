@@ -43,6 +43,14 @@ jobs:
           --date "$TARGET_DATE"
           --output "shadow-output/$TARGET_DATE-bea.json"
 
+      - name: Fetch official FRED/BLS release calendar
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: >-
+          python economic_calendar_fred.py
+          --date "$TARGET_DATE"
+          --output "shadow-output/$TARGET_DATE-fred.json"
+
       - name: Validate independent sources
         continue-on-error: true
         run: >-
@@ -50,6 +58,7 @@ jobs:
           --date "$TARGET_DATE"
           --input "shadow-output/$TARGET_DATE-forex-factory.json"
           --input "shadow-output/$TARGET_DATE-bea.json"
+          --input "shadow-output/$TARGET_DATE-fred.json"
           --output "shadow-output/$TARGET_DATE-validation.json"
 
       - name: Upload shadow audit
