@@ -3,26 +3,24 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-19'
-WEEKDAY    = '水'
-HERO_SUB   = '前日はドル円が159.61円まで小幅続伸、中東情勢緊迫化を背景にした原油高がドルを下支え。本日は15:00の英CPIと翌3:00のFOMC議事録に注目。'
+TODAY      = '2026-08-20'
+WEEKDAY    = '木'
+HERO_SUB   = '前日NY市場でドル円は159.60円台から一時158.17円まで急落、米財務省による米国債買い戻し規模拡大の発表と米10年債利回りの低下が主因。本日は10:30の豪雇用統計と21:30の米新規失業保険申請件数・フィラデルフィア連銀景況指数に注目。'
 MARKET_HOLIDAY_H3 = 'なし'
-MARKET_HOLIDAY_P  = '本日、主要国の市場休場はなし。'
+MARKET_HOLIDAY_P  = '本日、主要国の市場休場はありません。'
 KEY_EVENTS_ITEMS  = [
-    '08:50 🇯🇵 機械受注（前月比/前年比）',
-    '10:30 🇦🇺 豪第2四半期賃金コスト指数',
-    '15:00 🇬🇧 英消費者物価指数（CPI）',
-    '15:00 🇬🇧 英消費者物価指数【コア】',
-    '16:10 🇪🇺 ラガルドECB総裁発言',
-    '23:30 🇺🇸 米週間原油在庫',
-    '翌03:00 🇺🇸 FOMC議事録公表（7/28-29開催分）',
+    '10:30 🇦🇺 豪雇用統計【失業率・新規雇用者数】',
+    '21:30 🇺🇸 米新規失業保険申請件数',
+    '21:30 🇺🇸 米フィラデルフィア連銀景況指数',
+    '23:00 🇺🇸 米景気先行指数',
+    '26:00 🇺🇸 米30年インフレ連動債(TIPS)入札',
 ]
-REPORT_SUMMARY = '英CPIとFOMC議事録に注目、ドル円は159円台後半で高止まり'
-RISK_LEVEL = 'HIGH'
+REPORT_SUMMARY = '米国債買い戻し拡大でドル安進行、本日は豪雇用統計とフィラデルフィア指数に注目'
+RISK_LEVEL = 'MEDIUM'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31据え置き・成長率上方修正）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（7/23全会一致・預金ファシリティ金利、次回9/10）'; ECB_COLOR = 'var(--red)'
+ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（7/23全会一致、次回9/10）'; ECB_COLOR = 'var(--red)'
 RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（8/11据え置き・反応限定的）'; RBA_COLOR = 'var(--red)'
 RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8に約3年ぶり利上げ）'; RBNZ_COLOR = 'var(--red)'
 BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15・6会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
