@@ -3,29 +3,27 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-21'
-WEEKDAY    = '金'
-HERO_SUB   = '前日NY市場でドル円は米10年債利回りの切り返し（4.63%台→4.70%台）を受けて159円台を回復したが、ユーロドルは1.17台に乗せドル指数は200日線を明確に下抜けるなどドル安地合い自体は継続。本日は08:30の日本全国CPIと夜間の米・欧州フラッシュPMIラッシュに注目。'
+TODAY      = '2026-08-24'
+WEEKDAY    = '月'
+HERO_SUB   = '週明け早朝のドル円は159.02円から158.56円まで下落後158.90円台まで切り返す不安定な値動き。週末の米財務省による長期国債市場介入の影響が残存する中、経済指標は少なく、今週27〜29日のジャクソンホール会合でのウォーシュFRB議長発言が最大の焦点。'
 MARKET_HOLIDAY_H3 = 'なし'
 MARKET_HOLIDAY_P  = '本日、主要国の市場休場はありません。'
 KEY_EVENTS_ITEMS  = [
-    '08:00 🇦🇺 RBAブロック総裁発言',
-    '08:30 🇯🇵 全国消費者物価指数【総合・コア】',
-    '16:30 🇩🇪 独製造業PMI【速報値】',
-    '17:00 🇪🇺 欧州製造業PMI【速報値】',
-    '17:30 🇬🇧 英製造業・非製造業PMI【速報値】',
-    '22:45 🇺🇸 米製造業・非製造業PMI【速報値】',
+    '07:45 🇳🇿 小売売上高【前期比】',
+    '21:30 🇨🇦 企業利益【前期比】',
+    '21:30 🇺🇸 シカゴ連銀全米活動指数',
+    '27:00 🇺🇸 ベッセント財務長官記者会見（イラン制裁関連）',
 ]
-REPORT_SUMMARY = '米長期金利切り返しでドル円159円台回復、本日は日本CPIと世界的PMIラッシュに注目'
-RISK_LEVEL = 'MEDIUM'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派・据え置き（7/29 9対3・3人が利上げ主張）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・split vote）'; BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31据え置き・成長率上方修正）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（7/23全会一致、次回9/10）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（8/11据え置き・反応限定的）'; RBA_COLOR = 'var(--red)'
-RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8に約3年ぶり利上げ）'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15・6会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
-SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18据え置き・為替介入警戒）'; SNB_COLOR = 'var(--muted)'
+REPORT_SUMMARY = 'ドル円が週明け不安定な値動き、経済指標は少なく今週のジャクソンホール会合が最大の焦点'
+RISK_LEVEL = 'LOW'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = '据え置き継続（8/27-29ジャクソンホール会合のウォーシュ議長発言に関心集まる）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・次回9/17）'; BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31会合8対1で据え置き、高田委員は1.25%への利上げを提案し否決）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.25%';      ECB_STANCE = '据え置き継続（預金ファシリティ金利、6/17付適用・主要リファイナンス金利は2.40%）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（8/11会合で全会一致の据え置き）'; RBA_COLOR = 'var(--red)'
+RBNZ_RATE  = '2.50%';      RBNZ_STANCE = 'タカ派転換（7/8会合で2.25%→2.50%に利上げ、約3年ぶり・次回9/2）'; RBNZ_COLOR = 'var(--red)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立（7/15会合で据え置き）'; BOC_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（6/18会合で据え置き・次回9/24）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
