@@ -2,24 +2,23 @@ import glob, json, os, re
 from datetime import datetime
 from html import unescape
 
-# ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-08-31'
-WEEKDAY    = '月'
-HERO_SUB   = '週末のジャクソンホール会合でウォーシュFRB議長がタカ派発言を行い、ドル円は5営業日続伸で160円台に乗せた。本日は英国市場がBank Holidayで休場となる中、経済指標は少なく、ベッセント財務長官の円相場への警告発言を受けた介入警戒が意識される一日となる。'
-MARKET_HOLIDAY_H3 = '英国市場が休場'
-MARKET_HOLIDAY_P  = '本日、英国（ロンドン市場）がBank Holidayのため休場です（KissFX・ForexFactoryで一致）。'
+# ── 今日のデータ(実際の値に差し替え) ──────────────────
+TODAY      = '2026-09-01'
+WEEKDAY    = '火'
+HERO_SUB   = 'ジャクソンホール後のドル高地合いが続く中、米イラン軍事衝突の再燃で原油価格が上昇。160円台の為替介入警戒とG7・G20会議での発言に注目が集まる一日。'
+MARKET_HOLIDAY_H3 = '休場市場はなし'
+MARKET_HOLIDAY_P  = '本日9/1(火)は主要市場（米・英・日・欧州・豪）すべて通常取引。前日31日の英国サマーバンクホリデーは終了。'
 KEY_EVENTS_ITEMS  = [
-    '08:50 🇯🇵 鉱工業生産【速報値・前月比】',
-    '08:50 🇯🇵 小売業販売額【前年比】',
-    '10:30 🇨🇳 製造業PMI',
-    '16:00 🇬🇧 市場休場（Bank Holiday）',
-    '21:00 🇩🇪 消費者物価指数【速報値・前月比】',
-    '23:30 🇺🇸 ダラス連銀製造業活動指数',
+    '12:35 🇯🇵 10年利付国債入札',
+    '18:00 🇪🇺 消費者物価指数【速報値】',
+    '22:05 🇺🇸 バーFRB理事の発言',
+    '23:00 🇺🇸 ISM製造業景況指数',
+    '23:00 🇺🇸 JOLTS求人件数',
 ]
-REPORT_SUMMARY = 'ジャクソンホール会合でウォーシュ議長がタカ派発言、ドル円は160円台に到達'
-RISK_LEVEL = 'MEDIUM'
+REPORT_SUMMARY = 'ドル高継続・中東情勢緊迫で神経質な一日'
+RISK_LEVEL = 'HIGH'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（ジャクソンホール会合でのウォーシュ議長発言を受け9月利上げ観測強まる）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・次回9/17・本日は英国市場休場）'; BOE_COLOR = 'var(--muted)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立寄り（7/30据え置き・次回9/17）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続（7/31会合8対1で据え置き、8/27に氷見野副総裁が9月会合での利上げ検討に言及と報道・要確認）'; BOJ_COLOR = 'var(--blue)'
 ECB_RATE   = '2.25%';      ECB_STANCE = 'タカ派・据え置き（預金ファシリティ金利、7/23の理事会で据え置き継続・主要リファイナンス金利は2.40%）'; ECB_COLOR = 'var(--red)'
 RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（8/11会合で全会一致の据え置き）'; RBA_COLOR = 'var(--red)'
