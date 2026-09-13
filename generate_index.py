@@ -2,31 +2,29 @@ import glob, json, os, re
 from datetime import datetime
 from html import unescape
 
-# ── 今日のデータ ──────────────────
-TODAY      = '2026-09-11'
-WEEKDAY    = '金'
-HERO_SUB   = (
-    '前日9/10（木）は米PPI加速とECB予想通り利上げでドル円154円台乗せ後に反落、'
-    '本日は21:30の米消費者物価指数(CPI)が最大の焦点'
-)
-MARKET_HOLIDAY_H3 = '休場市場なし'
+# ── 今日のデータ（実際の値に差し替え） ──────────────────
+TODAY      = '2026-09-14'
+WEEKDAY    = '月'
+HERO_SUB   = '米CPIコア上振れでFOMC利上げ確率85%超に上昇。ドル円は154円台から153円61銭へ反落し、今週は日米英の中銀ウィークへ。'
+MARKET_HOLIDAY_H3 = '休場なし'
 MARKET_HOLIDAY_P  = '本日、主要国の市場休場はありません。'
 KEY_EVENTS_ITEMS  = [
-    '15:00 🇬🇧 英GDP【月次】',
-    '21:30 🇺🇸 消費者物価指数(CPI)【前月比/前年比・コア】',
-    '23:00 🇪🇺 ラガルドECB総裁 発言',
-    '23:00 🇺🇸 ミシガン大学消費者信頼感指数【速報値】',
+    '13:30 🇯🇵 日本 鉱工業生産【確報値】',
+    '17:03 🇨🇳 中国 M2マネーサプライ・新規融資（目安時刻）',
+    '21:30 🇨🇦 カナダ 消費者物価指数(CPI)【全項目】',
+    '22:30 🇬🇧 英 CB景気先行指数',
+    '翌00:15 🇪🇺 ラガルドECB総裁 発言',
 ]
-REPORT_SUMMARY = '米PPI加速・ECB予想通り利上げでドル円154円台乗せ後に反落、本日は米CPIが最大の焦点'
-RISK_LEVEL = 'HIGH'
-FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（9/15-16FOMCに向け利上げ観測強まるも一部高官は慎重・要確認）'; FRB_COLOR = 'var(--red)'
-BOE_RATE   = '3.75%';      BOE_STANCE = '中立〜やや引き締め警戒（7/30据え置き・次回9/17）'; BOE_COLOR = 'var(--muted)'
-BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続・タカ派寄り（植田総裁・氷見野副総裁発言で9月利上げ観測強まる・次回9/17-18、今月1.25%程度への利上げ方針との報道あり・要確認）'; BOJ_COLOR = 'var(--blue)'
-ECB_RATE   = '2.50%';      ECB_STANCE = 'タカ派（預金ファシリティ金利、9/10理事会で0.25%利上げ実施・2.25%→2.50%、主要リファイナンス金利2.65%。中東情勢によるエネルギー高でインフレ見通し上方修正・要確認）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（8/11据え置き、トリム平均インフレ3.6%高止まりで再利上げ余地）'; RBA_COLOR = 'var(--red)'
+REPORT_SUMMARY = '米CPI上振れでFOMC観測強まる、今週は中銀ウィーク'
+RISK_LEVEL = 'MEDIUM'
+FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（8月CPIコア上振れでFOMC〈9/15-16〉利上げ確率85%超）'; FRB_COLOR = 'var(--red)'
+BOE_RATE   = '3.75%';      BOE_STANCE = '中立〜やや引き締め警戒（7/30据え置き5会合連続・次回9/17）'; BOE_COLOR = 'var(--muted)'
+BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続・タカ派寄り（9/17-18会合で1.25%へ利上げ方針と報道・要確認）'; BOJ_COLOR = 'var(--blue)'
+ECB_RATE   = '2.50%';      ECB_STANCE = 'タカ派（9/10理事会で0.25%利上げ実施・中東情勢によるインフレ高進で追加観測）'; ECB_COLOR = 'var(--red)'
+RBA_RATE   = '4.35%';      RBA_STANCE = 'タカ派（8月据え置き、トリム平均インフレ3.6%高止まりで再利上げ余地・次回9/29）'; RBA_COLOR = 'var(--red)'
 RBNZ_RATE  = '2.75%';      RBNZ_STANCE = 'タカ派（9/2会合で2.50%→2.75%へ利上げ、2会合連続）'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.25%';      BOC_STANCE = '中立だが引き締めバイアス（9/2会合で7会合連続据え置き）'; BOC_COLOR = 'var(--muted)'
-SNB_RATE   = '0.00%';      SNB_STANCE = '中立（複数会合連続で据え置き・次回9/24または9/25・要確認）'; SNB_COLOR = 'var(--muted)'
+BOC_RATE   = '2.25%';      BOC_STANCE = '中立だが引き締めバイアス（9/2会合で7会合連続据え置き・次回10/28）'; BOC_COLOR = 'var(--muted)'
+SNB_RATE   = '0.00%';      SNB_STANCE = '中立（複数会合連続据え置き・次回9/25想定）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
 KEY_EVENTS_LIST_HTML = '\n'.join(f'      <li>{item}</li>' for item in KEY_EVENTS_ITEMS)
