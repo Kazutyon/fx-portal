@@ -2,11 +2,12 @@
 # Notion FX日報 → HTML 一括生成（6/1〜6/16）
 # 使い方: python generate_reports_from_notion.py
 # テンプレート: reports/2026-06-18.html
-# データ: D:\vs_code\docs\ai-team-queue\active\fx-notion-content.md
+# データ: Z:\vs_code\docs\ai-team-queue\active\fx-notion-content.md
 
 import os, re, datetime
+from pathlib import Path
 
-CONTENT_PATH = r'D:\vs_code\docs\ai-team-queue\active\fx-notion-content.md'
+CONTENT_PATH = str(Path(__file__).resolve().parents[3] / 'docs' / 'ai-team-queue' / 'active' / 'fx-notion-content.md')
 TEMPLATE_PATH = r'reports/2026-06-18.html'
 OUTPUT_DIR = 'reports'
 

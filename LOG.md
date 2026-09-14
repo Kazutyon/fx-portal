@@ -1,5 +1,20 @@
 # LOG
 
+## 2026-09-14 シャドー実測結果のgit永続化を実装 / Claude
+
+- 背景: Codexのカバレッジ再検証（同日、下の記録）で「テストは通ったが、shadow-output/がGitHub Actions artifactの14日保持のみで消えるため、FRED追加後の実測効果を確認できない」と判明。かずさんへ確認のうえ、ワークフローでgit保存する方式を選択。
+- `.github/workflows/economic-calendar-shadow.yml` を変更。permissions を `contents: write` に変更し、既存のupload-artifactステップは残したまま、新たに shadow-output/ を shadow-history/$TARGET_DATE/ へコピーしてgit commit・pushするステップを追加（push失敗時はrebaseして3回までリトライ）。
+- これにより平日05:15 JSTの自動実行のたびに実測結果（Forex Factory・BEA・FRED各ソースJSON＋validation.json）がリポジトリに永続的に残るようになる。
+- 未完了: 実データはまだ0件（本コミット時点でワークフローは未実行）。次回以降の実行分から蓄積される。FRED対象の高重要度イベント（雇用統計・CPI・PPI・JOLTS）を含む数営業日分が溜まった時点で、捕捉率・重複・時刻適合の再検証が必要（docs/ops-workbench/follow-up-registry/FOLLOW-UP-REGISTRY.json FU-20260913-1C949F12、review_on: 2026-09-30）。
+
+## 2026-09-14 シャドー経済ニュースカバレッジを再検証 / Codex
+
+- 既存ローカル記録だけを使い、重要ニュースの捕捉、見落とし・重複、発生時刻への適合を確認した。売買、公開、外部送信、GitHub Actionsへのアクセスは行っていない。
+- 結論は「カバレッジ不適合」。10営業日の取得処理は10/10成功していた一方、高重要度の独立確認率は1/19件（約5.3%）で、FRED追加後の該当日における実測結果はローカルに残っていなかった。
+- 時刻のJST変換・対象日抽出・同一イベント統合・安全ゲートはローカルテスト10/10 PASS。ただし実際の公表時刻、取得時刻、検知時刻を突合する日別記録はない。
+- 結果: `SHADOW-NEWS-COVERAGE-VERIFICATION-20260914.md`。次の判断は、GitHub Actions実行結果を読み取る承認を得るか、今後のシャドー結果をローカル保持する方式を決めること。
+
+
 ## 2026-08-11 サイドバー「ツール・販売」ナビ不整合を修正 / Claude
 
 - かずさんから「トップと日報ページでインジケーター導線がバラバラ」と指摘を受け調査。

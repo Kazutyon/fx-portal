@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-08-17 / Claude（経済指標シャドー10営業日評価・FRED第3ソース追加）
+最終更新: 2026-09-14 / Claude（シャドー結果のgit永続化を実装）
 状態: active
 
 ## 現在の状態
@@ -19,7 +19,7 @@ Phase 1 完了。デザインも一通り完成。日々のFX日報・デイト�
 
 ## 次の一手
 
-1. 次回の雇用統計・CPI・PPI・JOLTS該当日（直近は雇用統計9/4、CPI9/11、PPI9/10、JOLTS9/1）に、FRED追加後の高重要度確認率が実際に改善するか確認する
+1. shadow-history/への実測記録の永続化をワークフローに実装済み（`.github/workflows/economic-calendar-shadow.yml`、2026-09-14）。平日05:15 JST実行のたびにshadow-output/をshadow-history/$TARGET_DATE/へコピーしてgit commit・pushする。artifactの14日保持と違い恒久的に残る。次は数営業日〜FRED対象イベント日（雇用統計・CPI・PPI・JOLTS）を跨いで実データが蓄積されるのを待ち、shadow-history/の実データで捕捉率・重複・時刻適合を再検証する（review_on: 2026-09-30、docs/ops-workbench/follow-up-registry/FOLLOW-UP-REGISTRY.json FU-20260913-1C949F12）
 2. Forex Factoryフィードの利用条件をブラウザまたは手動で最終確認する（未着手のまま）
 3. 主要指標が揃った状態で、本番日報への接続を検討する（現時点はシャドーのみ、公開判断は保留）
 

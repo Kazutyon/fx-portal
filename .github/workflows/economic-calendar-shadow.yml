@@ -7,7 +7,7 @@ on:
     - cron: "15 20 * * 0-4"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: economic-calendar-shadow
@@ -69,3 +69,31 @@ jobs:
           path: shadow-output/
           if-no-files-found: error
           retention-days: 14
+
+      - name: Persist shadow audit to repository
+        if: always()
+        shell: bash
+        run: >-
+          mkdir -p "shadow-history/$TARGET_DATE" &&
+          cp -v shadow-output/* "shadow-history/$TARGET_DATE/" 2>/dev/null || true
+
+      - name: Commit shadow history
+        if: always()
+        shell: bash
+        run: |
+          if [ -z "$(git status --porcelain shadow-history/)" ]; then
+            echo "No shadow-history changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add shadow-history/
+          git commit -m "shadow-calendar: record $TARGET_DATE audit results"
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push failed, retrying after rebase (attempt $attempt)..."
+            git pull --rebase origin main
+          done
+          git push
