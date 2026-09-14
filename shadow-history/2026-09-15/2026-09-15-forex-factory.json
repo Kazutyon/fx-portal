@@ -1,0 +1,227 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-09-15",
+  "fetched_at": "2026-09-15T08:06:56+09:00",
+  "events": [
+    {
+      "time_jst": "00:15",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "10:30",
+      "country": "CNY",
+      "name": "New Home Prices m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.18%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Fixed Asset Investment ytd/y",
+      "importance": "low",
+      "forecast": "-7.1%",
+      "previous": "-6.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Industrial Production y/y",
+      "importance": "low",
+      "forecast": "4.8%",
+      "previous": "4.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "NBS Press Conference",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Retail Sales y/y",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "5.2%",
+      "previous": "5.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "13:30",
+      "country": "JPY",
+      "name": "Tertiary Industry Activity m/m",
+      "importance": "low",
+      "forecast": "0.3%",
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German WPI m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Average Earnings Index 3m/y",
+      "importance": "medium",
+      "forecast": "3.9%",
+      "previous": "4.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Claimant Count Change",
+      "importance": "high",
+      "forecast": "8.3K",
+      "previous": "-11.0K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "5.0%",
+      "previous": "4.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:02",
+      "country": "CNY",
+      "name": "Foreign Direct Investment ytd/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-6.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:45",
+      "country": "EUR",
+      "name": "French Final CPI m/m",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Italian Trade Balance",
+      "importance": "low",
+      "forecast": "4.77B",
+      "previous": "4.23B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "German ZEW Economic Sentiment",
+      "importance": "low",
+      "forecast": "39.8",
+      "previous": "34.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "3.7B",
+      "previous": "1.8B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "ZEW Economic Sentiment",
+      "importance": "low",
+      "forecast": "39.2",
+      "previous": "31.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "12.0K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Wholesale Sales m/m",
+      "importance": "low",
+      "forecast": "-0.5%",
+      "previous": "2.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Empire State Manufacturing Index",
+      "importance": "low",
+      "forecast": "14.8",
+      "previous": "20.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:50",
+      "country": "NZD",
+      "name": "GDT Price Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
