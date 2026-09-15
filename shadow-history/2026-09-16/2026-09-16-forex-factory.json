@@ -1,0 +1,237 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-09-16",
+  "fetched_at": "2026-09-16T07:52:38+09:00",
+  "events": [
+    {
+      "time_jst": "00:39",
+      "country": "NZD",
+      "name": "GDT Price Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "05:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:04",
+      "country": "NZD",
+      "name": "Westpac Consumer Sentiment",
+      "importance": "low",
+      "forecast": null,
+      "previous": "80.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "07:45",
+      "country": "NZD",
+      "name": "Current Account",
+      "importance": "low",
+      "forecast": "-2.57B",
+      "previous": "-1.01B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Core Machinery Orders m/m",
+      "importance": "low",
+      "forecast": "-1.2%",
+      "previous": "9.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "-1.00T",
+      "previous": "-0.69T",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "MI Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "CPI y/y",
+      "importance": "high",
+      "forecast": "3.1%",
+      "previous": "2.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.6%",
+      "previous": "2.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "PPI Input m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "-1.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "PPI Output m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "RPI y/y",
+      "importance": "low",
+      "forecast": "3.5%",
+      "previous": "3.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "HPI y/y",
+      "importance": "low",
+      "forecast": "2.1%",
+      "previous": "2.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "-0.2%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:34",
+      "country": "EUR",
+      "name": "German 30-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.65|1.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:15",
+      "country": "CAD",
+      "name": "Housing Starts",
+      "importance": "low",
+      "forecast": "243K",
+      "previous": "229K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Building Permits m/m",
+      "importance": "low",
+      "forecast": "-4.7%",
+      "previous": "18.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Core Retail Sales m/m",
+      "importance": "medium",
+      "forecast": "0.5%",
+      "previous": "-0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Import Prices m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "-0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Retail Sales m/m",
+      "importance": "medium",
+      "forecast": "0.8%",
+      "previous": "-0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Business Inventories m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "NAHB Housing Market Index",
+      "importance": "low",
+      "forecast": "34",
+      "previous": "35",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Crude Oil Inventories",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.4M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

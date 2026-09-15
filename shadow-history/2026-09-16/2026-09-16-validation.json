@@ -1,0 +1,359 @@
+{
+  "date": "2026-09-16",
+  "generated_at_jst": "2026-09-16T07:52:40+09:00",
+  "source_count": 3,
+  "event_count": 23,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:39",
+      "country": "NZD",
+      "name": "GDT Price Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "05:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:04",
+      "country": "NZD",
+      "name": "Westpac Consumer Sentiment",
+      "importance": "low",
+      "forecast": null,
+      "previous": "80.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "07:45",
+      "country": "NZD",
+      "name": "Current Account",
+      "importance": "low",
+      "forecast": "-2.57B",
+      "previous": "-1.01B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Core Machinery Orders m/m",
+      "importance": "low",
+      "forecast": "-1.2%",
+      "previous": "9.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "-1.00T",
+      "previous": "-0.69T",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "MI Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "CPI y/y",
+      "importance": "high",
+      "forecast": "3.1%",
+      "previous": "2.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.6%",
+      "previous": "2.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "PPI Input m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "-1.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "PPI Output m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "RPI y/y",
+      "importance": "low",
+      "forecast": "3.5%",
+      "previous": "3.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "HPI y/y",
+      "importance": "low",
+      "forecast": "2.1%",
+      "previous": "2.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "-0.2%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:34",
+      "country": "EUR",
+      "name": "German 30-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.65|1.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:15",
+      "country": "CAD",
+      "name": "Housing Starts",
+      "importance": "low",
+      "forecast": "243K",
+      "previous": "229K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Building Permits m/m",
+      "importance": "low",
+      "forecast": "-4.7%",
+      "previous": "18.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Core Retail Sales m/m",
+      "importance": "medium",
+      "forecast": "0.5%",
+      "previous": "-0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Import Prices m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "-0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Retail Sales m/m",
+      "importance": "medium",
+      "forecast": "0.8%",
+      "previous": "-0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Business Inventories m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "NAHB Housing Market Index",
+      "importance": "low",
+      "forecast": "34",
+      "previous": "35",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Crude Oil Inventories",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.4M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:39 NZD GDT Price Index",
+    "single source: 05:30 USD API Weekly Statistical Bulletin",
+    "single source: 06:04 NZD Westpac Consumer Sentiment",
+    "single source: 07:45 NZD Current Account",
+    "single source: 08:50 JPY Core Machinery Orders m/m",
+    "single source: 08:50 JPY Trade Balance",
+    "single source: 09:30 AUD MI Leading Index m/m",
+    "single source: 15:00 GBP CPI y/y",
+    "single source: 15:00 GBP Core CPI y/y",
+    "single source: 15:00 GBP PPI Input m/m",
+    "single source: 15:00 GBP PPI Output m/m",
+    "single source: 15:00 GBP RPI y/y",
+    "single source: 17:30 GBP HPI y/y",
+    "single source: 18:00 EUR Industrial Production m/m",
+    "single source: 18:34 EUR German 30-y Bond Auction",
+    "single source: 21:15 CAD Housing Starts",
+    "single source: 21:30 CAD Building Permits m/m",
+    "single source: 21:30 USD Core Retail Sales m/m",
+    "single source: 21:30 USD Import Prices m/m",
+    "single source: 21:30 USD Retail Sales m/m",
+    "single source: 23:00 USD Business Inventories m/m",
+    "single source: 23:00 USD NAHB Housing Market Index",
+    "single source: 23:30 USD Crude Oil Inventories",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
