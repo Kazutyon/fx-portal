@@ -3,20 +3,19 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY      = '2026-09-15'
-WEEKDAY    = '火'
-HERO_SUB   = 'サウジの東西パイプライン操業停止で原油高、FOMC観測と重なりドル円は154円台へ反発。本日は英雇用統計とNY連銀製造業景気指数に注目、中銀ウィークは木・金がヤマ場。'
+TODAY      = '2026-09-16'
+WEEKDAY    = '水'
+HERO_SUB   = 'NY連銀製造業指数が急悪化も米金利上昇・原油高でドル円は155円台へ続伸。本日はFOMCの結果判明日（日本時間9/17未明3:00）、25bp利上げが市場コンセンサス。'
 MARKET_HOLIDAY_H3 = '休場市場なし'
 MARKET_HOLIDAY_P  = '本日、主要国の市場休場はありません。'
 KEY_EVENTS_ITEMS  = [
-    '11:00 🇨🇳 中国 鉱工業生産・小売売上高・固定資産投資',
-    '13:30 🇯🇵 日本 第三次産業活動指数',
-    '15:00 🇬🇧 英国 失業率・失業保険申請件数・平均賃金指数',
-    '18:00 🇩🇪🇪🇺 独・ユーロ圏 ZEW景況感指数',
-    '21:30 🇺🇸 NY連銀製造業景気指数（Empire State）',
+    '15:00 🇬🇧 英国 消費者物価指数（CPI）',
+    '21:30 🇺🇸 米国 小売売上高',
+    '翌03:00 🇺🇸 米国 FOMC政策金利・声明発表',
+    '翌03:30 🇺🇸 米国 ウォーシュFRB議長 記者会見',
 ]
-REPORT_SUMMARY = 'サウジ供給懸念とFOMC観測でドル高、本日は英雇用統計に注目'
-RISK_LEVEL = 'MEDIUM'
+REPORT_SUMMARY = 'FOMC結果判明日、25bp利上げが市場コンセンサスも据え置き観測も残る'
+RISK_LEVEL = 'HIGH'
 FRB_RATE   = '3.50–3.75%'; FRB_STANCE = 'タカ派（8月CPIコア上振れでFOMC〈9/15-16〉利上げ確率85%超）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = '中立〜やや引き締め警戒（7/30据え置き5会合連続・次回9/17）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.00%';      BOJ_STANCE = '正常化継続・タカ派寄り（9/17-18会合で1.25%へ利上げ方針と報道・要確認）'; BOJ_COLOR = 'var(--blue)'
