@@ -1,0 +1,389 @@
+{
+  "date": "2026-09-17",
+  "generated_at_jst": "2026-09-17T07:54:57+09:00",
+  "source_count": 3,
+  "event_count": 25,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "01:00",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "02:30",
+      "country": "CAD",
+      "name": "BOC Summary of Deliberations",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:00",
+      "country": "USD",
+      "name": "FOMC Economic Projections",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:00",
+      "country": "USD",
+      "name": "FOMC Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:00",
+      "country": "USD",
+      "name": "Federal Funds Rate",
+      "importance": "high",
+      "forecast": "4.00%",
+      "previous": "3.75%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:30",
+      "country": "USD",
+      "name": "FOMC Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "05:00",
+      "country": "USD",
+      "name": "TIC Long-Term Purchases",
+      "importance": "low",
+      "forecast": "146.3B",
+      "previous": "172.7B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "07:45",
+      "country": "NZD",
+      "name": "GDP q/q",
+      "importance": "high",
+      "forecast": "0.1%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "CHF",
+      "name": "SECO Economic Forecasts",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Final CPI y/y",
+      "importance": "low",
+      "forecast": "3.3%",
+      "previous": "3.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Final Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.4%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:03",
+      "country": "EUR",
+      "name": "Spanish 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.74|2.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "20:00",
+      "country": "GBP",
+      "name": "MPC Official Bank Rate Votes",
+      "importance": "high",
+      "forecast": "3-0-6",
+      "previous": "3-0-6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "20:00",
+      "country": "GBP",
+      "name": "Monetary Policy Summary",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "20:00",
+      "country": "GBP",
+      "name": "Official Bank Rate",
+      "importance": "high",
+      "forecast": "3.75%",
+      "previous": "3.75%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Foreign Securities Purchases",
+      "importance": "low",
+      "forecast": "28.64B",
+      "previous": "40.83B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "IPPI m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "RMPI m/m",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "-2.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Building Permits",
+      "importance": "low",
+      "forecast": "1.40M",
+      "previous": "1.44M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Housing Starts",
+      "importance": "low",
+      "forecast": "1.32M",
+      "previous": "1.24M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Philly Fed Manufacturing Index",
+      "importance": "medium",
+      "forecast": "31.3",
+      "previous": "47.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Unemployment Claims",
+      "importance": "medium",
+      "forecast": "207K",
+      "previous": "206K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Pending Home Sales m/m",
+      "importance": "low",
+      "forecast": "-0.2%",
+      "previous": "-2.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "AUD",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Natural Gas Storage",
+      "importance": "low",
+      "forecast": "49B",
+      "previous": "40B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 01:00 EUR German Buba President Nagel Speaks",
+    "single source: 02:30 CAD BOC Summary of Deliberations",
+    "single source: 03:00 USD FOMC Economic Projections",
+    "single source: 03:00 USD FOMC Statement",
+    "single source: 03:00 USD Federal Funds Rate",
+    "single source: 03:30 USD FOMC Press Conference",
+    "single source: 05:00 USD TIC Long-Term Purchases",
+    "single source: 07:45 NZD GDP q/q",
+    "single source: 16:00 CHF SECO Economic Forecasts",
+    "single source: 18:00 EUR Final CPI y/y",
+    "single source: 18:00 EUR Final Core CPI y/y",
+    "single source: 18:03 EUR Spanish 10-y Bond Auction",
+    "single source: 20:00 GBP MPC Official Bank Rate Votes",
+    "single source: 20:00 GBP Monetary Policy Summary",
+    "single source: 20:00 GBP Official Bank Rate",
+    "single source: 21:30 CAD Foreign Securities Purchases",
+    "single source: 21:30 CAD IPPI m/m",
+    "single source: 21:30 CAD RMPI m/m",
+    "single source: 21:30 USD Building Permits",
+    "single source: 21:30 USD Housing Starts",
+    "single source: 21:30 USD Philly Fed Manufacturing Index",
+    "single source: 21:30 USD Unemployment Claims",
+    "single source: 23:00 USD Pending Home Sales m/m",
+    "single source: 23:30 AUD CB Leading Index m/m",
+    "single source: 23:30 USD Natural Gas Storage",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
