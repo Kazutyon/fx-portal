@@ -1,0 +1,197 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-09-18",
+  "fetched_at": "2026-09-18T07:50:25+09:00",
+  "events": [
+    {
+      "time_jst": "07:45",
+      "country": "NZD",
+      "name": "FPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "07:45",
+      "country": "NZD",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "-1775M",
+      "previous": "-1949M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "GfK Consumer Confidence",
+      "importance": "low",
+      "forecast": "-16",
+      "previous": "-14",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:30",
+      "country": "AUD",
+      "name": "RBA Gov Bullock Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "National Core CPI y/y",
+      "importance": "low",
+      "forecast": "1.8%",
+      "previous": "1.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:30",
+      "country": "JPY",
+      "name": "BOJ Policy Rate",
+      "importance": "high",
+      "forecast": "<1.25%",
+      "previous": "<1.00%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:30",
+      "country": "JPY",
+      "name": "Monetary Policy Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "14:30",
+      "country": "JPY",
+      "name": "BOJ Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German PPI m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "1.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Retail Sales m/m",
+      "importance": "medium",
+      "forecast": "-0.2%",
+      "previous": "-0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:02",
+      "country": "CNY",
+      "name": "Foreign Direct Investment ytd/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-6.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Current Account",
+      "importance": "low",
+      "forecast": "30.7B",
+      "previous": "35.1B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:15",
+      "country": "EUR",
+      "name": "ECOFIN Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:15",
+      "country": "EUR",
+      "name": "Eurogroup Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:30",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "Capacity Utilization Rate",
+      "importance": "low",
+      "forecast": "76.4%",
+      "previous": "76.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.3%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

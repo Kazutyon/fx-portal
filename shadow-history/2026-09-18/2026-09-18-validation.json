@@ -1,0 +1,299 @@
+{
+  "date": "2026-09-18",
+  "generated_at_jst": "2026-09-18T07:50:26+09:00",
+  "source_count": 3,
+  "event_count": 19,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "07:45",
+      "country": "NZD",
+      "name": "FPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "07:45",
+      "country": "NZD",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "-1775M",
+      "previous": "-1949M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "GfK Consumer Confidence",
+      "importance": "low",
+      "forecast": "-16",
+      "previous": "-14",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "AUD",
+      "name": "RBA Gov Bullock Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "National Core CPI y/y",
+      "importance": "low",
+      "forecast": "1.8%",
+      "previous": "1.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:30",
+      "country": "JPY",
+      "name": "BOJ Policy Rate",
+      "importance": "high",
+      "forecast": "<1.25%",
+      "previous": "<1.00%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:30",
+      "country": "JPY",
+      "name": "Monetary Policy Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:30",
+      "country": "JPY",
+      "name": "BOJ Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German PPI m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "1.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Retail Sales m/m",
+      "importance": "medium",
+      "forecast": "-0.2%",
+      "previous": "-0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:02",
+      "country": "CNY",
+      "name": "Foreign Direct Investment ytd/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-6.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Current Account",
+      "importance": "low",
+      "forecast": "30.7B",
+      "previous": "35.1B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:15",
+      "country": "EUR",
+      "name": "ECOFIN Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:15",
+      "country": "EUR",
+      "name": "Eurogroup Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:30",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "Capacity Utilization Rate",
+      "importance": "low",
+      "forecast": "76.4%",
+      "previous": "76.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.3%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 07:45 NZD FPI m/m",
+    "single source: 07:45 NZD Trade Balance",
+    "single source: 08:01 GBP GfK Consumer Confidence",
+    "single source: 08:30 AUD RBA Gov Bullock Speaks",
+    "single source: 08:30 JPY National Core CPI y/y",
+    "single source: 11:30 JPY BOJ Policy Rate",
+    "single source: 11:30 JPY Monetary Policy Statement",
+    "single source: 14:30 JPY BOJ Press Conference",
+    "single source: 15:00 EUR German PPI m/m",
+    "single source: 15:00 GBP Retail Sales m/m",
+    "single source: 15:02 CNY Foreign Direct Investment ytd/y",
+    "single source: 17:00 EUR Current Account",
+    "single source: 19:15 EUR ECOFIN Meetings",
+    "single source: 19:15 EUR Eurogroup Meetings",
+    "single source: 19:30 EUR ECB President Lagarde Speaks",
+    "single source: 22:15 USD Capacity Utilization Rate",
+    "single source: 22:15 USD Industrial Production m/m",
+    "single source: 22:30 USD FOMC Member Bowman Speaks",
+    "single source: 23:00 USD CB Leading Index m/m",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
