@@ -1,0 +1,57 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-09-21",
+  "fetched_at": "2026-09-21T07:25:28+09:00",
+  "events": [
+    {
+      "time_jst": "08:00",
+      "country": "JPY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "Rightmove HPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-2.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "12:00",
+      "country": "NZD",
+      "name": "Credit Card Spending y/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "German Buba Monthly Report",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:30",
+      "country": "USD",
+      "name": "FOMC Member Goolsbee Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "date": "2026-09-21",
+  "generated_at_jst": "2026-09-21T07:25:29+09:00",
+  "source_count": 3,
+  "event_count": 5,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "08:00",
+      "country": "JPY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "Rightmove HPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-2.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "12:00",
+      "country": "NZD",
+      "name": "Credit Card Spending y/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "German Buba Monthly Report",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:30",
+      "country": "USD",
+      "name": "FOMC Member Goolsbee Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 08:00 JPY Bank Holiday",
+    "single source: 08:01 GBP Rightmove HPI m/m",
+    "single source: 12:00 NZD Credit Card Spending y/y",
+    "single source: 19:00 EUR German Buba Monthly Report",
+    "single source: 19:30 USD FOMC Member Goolsbee Speaks",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
