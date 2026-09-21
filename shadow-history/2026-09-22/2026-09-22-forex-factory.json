@@ -1,0 +1,147 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-09-22",
+  "fetched_at": "2026-09-22T08:15:17+09:00",
+  "events": [
+    {
+      "time_jst": "00:00",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "00:05",
+      "country": "CAD",
+      "name": "BOC Gov Macklem Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "04:00",
+      "country": "AUD",
+      "name": "RBA Assist Gov Hunter Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:00",
+      "country": "JPY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "12:10",
+      "country": "AUD",
+      "name": "RBA Gov Bullock Speaks",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Public Sector Net Borrowing",
+      "importance": "low",
+      "forecast": "15.2B",
+      "previous": "1.8B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:30",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:00",
+      "country": "GBP",
+      "name": "CBI Industrial Order Expectations",
+      "importance": "low",
+      "forecast": "-33",
+      "previous": "-25",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "20:00",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "16.3K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "EUR",
+      "name": "Consumer Confidence",
+      "importance": "low",
+      "forecast": "-16",
+      "previous": "-16",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Richmond Manufacturing Index",
+      "importance": "low",
+      "forecast": "2",
+      "previous": "4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:05",
+      "country": "USD",
+      "name": "FOMC Member Williams Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:20",
+      "country": "USD",
+      "name": "FOMC Member Jefferson Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

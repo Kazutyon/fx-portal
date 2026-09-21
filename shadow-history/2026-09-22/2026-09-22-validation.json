@@ -1,0 +1,224 @@
+{
+  "date": "2026-09-22",
+  "generated_at_jst": "2026-09-22T08:15:19+09:00",
+  "source_count": 3,
+  "event_count": 14,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:00",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "00:05",
+      "country": "CAD",
+      "name": "BOC Gov Macklem Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:00",
+      "country": "AUD",
+      "name": "RBA Assist Gov Hunter Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:00",
+      "country": "JPY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "12:10",
+      "country": "AUD",
+      "name": "RBA Gov Bullock Speaks",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Public Sector Net Borrowing",
+      "importance": "low",
+      "forecast": "15.2B",
+      "previous": "1.8B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "GBP",
+      "name": "CBI Industrial Order Expectations",
+      "importance": "low",
+      "forecast": "-33",
+      "previous": "-25",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "20:00",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "16.3K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "EUR",
+      "name": "Consumer Confidence",
+      "importance": "low",
+      "forecast": "-16",
+      "previous": "-16",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Richmond Manufacturing Index",
+      "importance": "low",
+      "forecast": "2",
+      "previous": "4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:05",
+      "country": "USD",
+      "name": "FOMC Member Williams Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:20",
+      "country": "USD",
+      "name": "FOMC Member Jefferson Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:00 EUR ECB President Lagarde Speaks",
+    "single source: 00:05 CAD BOC Gov Macklem Speaks",
+    "single source: 04:00 AUD RBA Assist Gov Hunter Speaks",
+    "single source: 08:00 JPY Bank Holiday",
+    "single source: 12:10 AUD RBA Gov Bullock Speaks",
+    "single source: 15:00 GBP Public Sector Net Borrowing",
+    "single source: 17:30 EUR German Buba President Nagel Speaks",
+    "single source: 19:00 GBP CBI Industrial Order Expectations",
+    "single source: 20:00 EUR ECB President Lagarde Speaks",
+    "single source: 21:15 USD ADP Weekly Employment Change",
+    "single source: 23:00 EUR Consumer Confidence",
+    "single source: 23:00 USD Richmond Manufacturing Index",
+    "single source: 23:05 USD FOMC Member Williams Speaks",
+    "single source: 23:20 USD FOMC Member Jefferson Speaks",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
