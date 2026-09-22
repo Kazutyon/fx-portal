@@ -17,7 +17,7 @@
 
 ### 残件
 
-- GitHub Pagesの公開ページで最終デザインが反映されたことは、この作業時点ではread-back未確認。公開反映の確認が必要な場合は、`https://auxen.jp/contact.html`を再確認する。
+- GitHub Pagesの公開ページ（`https://auxen.jp/contact.html`）で最終デザインの反映を確認済み。残件なし。
 
 ## 2026-09-14 シャドー実測結果のgit永続化を実装 / Claude
 
