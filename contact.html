@@ -55,9 +55,29 @@
             下記のフォームよりお気軽にご連絡ください。
             通常2〜3営業日以内にご返信いたします。
           </p>
-          <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSej5KTq1bYJBpqBWU28ViJ1dMioV7Wxzi-qi5T-algragwzCQ/viewform?embedded=true"
-            width="100%" height="600" frameborder="0" marginheight="0" marginwidth="0"
-            style="border-radius:12px;">読み込んでいます…</iframe>
+          <form id="contact-form" class="contact-form"
+            action="https://docs.google.com/forms/d/e/1FAIpQLSej5KTq1bYJBpqBWU28ViJ1dMioV7Wxzi-qi5T-algragwzCQ/formResponse"
+            method="post" target="contact-submit-frame">
+            <div class="contact-form-grid">
+              <label class="contact-field">
+                <span>お名前 <small>任意</small></span>
+                <input type="text" name="entry.1971665677" autocomplete="name" maxlength="80" placeholder="お名前" />
+              </label>
+              <label class="contact-field">
+                <span>メールアドレス <b>*</b></span>
+                <input type="email" name="entry.2105653678" autocomplete="email" required maxlength="160" placeholder="you@example.com" />
+              </label>
+            </div>
+            <label class="contact-field">
+              <span>お問い合わせ内容 <b>*</b></span>
+              <textarea name="entry.823438325" required maxlength="4000" rows="8" placeholder="ご質問・ご要望・不具合の内容をご記入ください"></textarea>
+            </label>
+            <div class="contact-form-footer">
+              <p id="contact-form-status" class="contact-form-status" aria-live="polite">送信内容はお問い合わせ対応のためにのみ使用します。</p>
+              <button class="contact-submit" type="submit">送信する <span aria-hidden="true">→</span></button>
+            </div>
+          </form>
+          <iframe name="contact-submit-frame" title="お問い合わせ送信処理" class="contact-submit-frame"></iframe>
         </div>
       </div>
 
@@ -105,5 +125,19 @@
     <a href="contact.html">お問い合わせ</a>
   </div>
 </footer>
+<script>
+  document.getElementById('contact-form').addEventListener('submit', function () {
+    const button = this.querySelector('button[type="submit"]');
+    const status = document.getElementById('contact-form-status');
+    button.disabled = true;
+    button.textContent = '送信中…';
+    status.textContent = '送信しています。完了まで少しお待ちください。';
+    window.setTimeout(function () {
+      button.disabled = false;
+      button.innerHTML = '送信する <span aria-hidden="true">→</span>';
+      status.textContent = '送信しました。お問い合わせありがとうございます。';
+    }, 1200);
+  });
+</script>
 </body>
 </html>
