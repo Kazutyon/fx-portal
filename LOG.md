@@ -17,7 +17,7 @@
 
 ### 残件
 
-- GitHub Pagesの公開ページ（`https://auxen.jp/contact.html`）で最終デザインの反映を確認済み。残件なし。
+- Owner確認により、GitHub Pagesの公開ページ（`https://auxen.jp/contact.html`）への最終デザイン反映を確認済み。残件なし。
 
 ## 2026-09-14 シャドー実測結果のgit永続化を実装 / Claude
 
