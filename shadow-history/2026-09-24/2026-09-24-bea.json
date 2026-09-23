@@ -1,0 +1,17 @@
+{
+  "source": "us-bea-official-schedule",
+  "date": "2026-09-24",
+  "fetched_at": "2026-09-24T07:56:13+09:00",
+  "events": [
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "U.S. International Transactions and Investment Position, 2nd Quarter 2026",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": true,
+      "source_url": "https://www.bea.gov/news/schedule"
+    }
+  ]
+}
