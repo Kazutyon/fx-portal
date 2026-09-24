@@ -1,0 +1,224 @@
+{
+  "date": "2026-09-25",
+  "generated_at_jst": "2026-09-25T08:11:47+09:00",
+  "source_count": 3,
+  "event_count": 14,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "08:01",
+      "country": "CNY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "GfK Consumer Confidence",
+      "importance": "low",
+      "forecast": "-16",
+      "previous": "-14",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:55",
+      "country": "USD",
+      "name": "President Trump Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "BOJ Core CPI y/y",
+      "importance": "low",
+      "forecast": "1.5%",
+      "previous": "1.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German GfK Consumer Climate",
+      "importance": "low",
+      "forecast": "-27.1",
+      "previous": "-26.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "M3 Money Supply y/y",
+      "importance": "low",
+      "forecast": "3.5%",
+      "previous": "3.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Private Loans y/y",
+      "importance": "low",
+      "forecast": "3.2%",
+      "previous": "3.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:15",
+      "country": "GBP",
+      "name": "BOE Gov Bailey Speaks",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:15",
+      "country": "USD",
+      "name": "FOMC Member Williams Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Core Durable Goods Orders m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Durable Goods Orders m/m",
+      "importance": "low",
+      "forecast": "-0.3%",
+      "previous": "1.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:20",
+      "country": "USD",
+      "name": "FOMC Member Schmid Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Revised UoM Consumer Sentiment",
+      "importance": "medium",
+      "forecast": "47.4",
+      "previous": "47.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Revised UoM Inflation Expectations",
+      "importance": "medium",
+      "forecast": null,
+      "previous": "4.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 08:01 CNY Bank Holiday",
+    "single source: 08:01 GBP GfK Consumer Confidence",
+    "single source: 08:55 USD President Trump Speaks",
+    "single source: 14:00 JPY BOJ Core CPI y/y",
+    "single source: 15:00 EUR German GfK Consumer Climate",
+    "single source: 17:00 EUR M3 Money Supply y/y",
+    "single source: 17:00 EUR Private Loans y/y",
+    "single source: 18:15 GBP BOE Gov Bailey Speaks",
+    "single source: 18:15 USD FOMC Member Williams Speaks",
+    "single source: 21:30 USD Core Durable Goods Orders m/m",
+    "single source: 21:30 USD Durable Goods Orders m/m",
+    "single source: 22:20 USD FOMC Member Schmid Speaks",
+    "single source: 23:00 USD Revised UoM Consumer Sentiment",
+    "single source: 23:00 USD Revised UoM Inflation Expectations",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
