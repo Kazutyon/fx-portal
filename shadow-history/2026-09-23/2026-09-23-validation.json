@@ -1,0 +1,300 @@
+{
+  "date": "2026-09-23",
+  "generated_at_jst": "2026-09-23T07:56:15+09:00",
+  "source_count": 3,
+  "event_count": 19,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "02:00",
+      "country": "USD",
+      "name": "FOMC Member Barkin Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:30",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "05:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:00",
+      "country": "AUD",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": null,
+      "previous": "52.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:00",
+      "country": "AUD",
+      "name": "Flash Services PMI",
+      "importance": "low",
+      "forecast": null,
+      "previous": "52.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:00",
+      "country": "JPY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:15",
+      "country": "EUR",
+      "name": "French Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "50.9",
+      "previous": "51.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:15",
+      "country": "EUR",
+      "name": "French Flash Services PMI",
+      "importance": "medium",
+      "forecast": "48.3",
+      "previous": "48.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:30",
+      "country": "EUR",
+      "name": "German Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "54.1",
+      "previous": "54.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:30",
+      "country": "EUR",
+      "name": "German Flash Services PMI",
+      "importance": "medium",
+      "forecast": "49.9",
+      "previous": "48.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": "52.6",
+      "previous": "52.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Flash Services PMI",
+      "importance": "low",
+      "forecast": "51.4",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "51.5",
+      "previous": "51.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "Flash Services PMI",
+      "importance": "medium",
+      "forecast": "52.0",
+      "previous": "52.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:34",
+      "country": "EUR",
+      "name": "German 30-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.90|2.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:45",
+      "country": "USD",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": "53.6",
+      "previous": "53.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:45",
+      "country": "USD",
+      "name": "Flash Services PMI",
+      "importance": "low",
+      "forecast": "55.8",
+      "previous": "56.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:05",
+      "country": "USD",
+      "name": "FOMC Member Barr Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Crude Oil Inventories",
+      "importance": "low",
+      "forecast": "-0.6M",
+      "previous": "-0.6M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 02:00 USD FOMC Member Barkin Speaks",
+    "single source: 04:30 EUR German Buba President Nagel Speaks",
+    "single source: 05:30 USD API Weekly Statistical Bulletin",
+    "single source: 08:00 AUD Flash Manufacturing PMI",
+    "single source: 08:00 AUD Flash Services PMI",
+    "single source: 08:00 JPY Bank Holiday",
+    "single source: 16:15 EUR French Flash Manufacturing PMI",
+    "single source: 16:15 EUR French Flash Services PMI",
+    "single source: 16:30 EUR German Flash Manufacturing PMI",
+    "single source: 16:30 EUR German Flash Services PMI",
+    "single source: 17:00 EUR Flash Manufacturing PMI",
+    "single source: 17:00 EUR Flash Services PMI",
+    "single source: 17:30 GBP Flash Manufacturing PMI",
+    "single source: 17:30 GBP Flash Services PMI",
+    "single source: 18:34 EUR German 30-y Bond Auction",
+    "single source: 22:45 USD Flash Manufacturing PMI",
+    "single source: 22:45 USD Flash Services PMI",
+    "single source: 23:05 USD FOMC Member Barr Speaks",
+    "single source: 23:30 USD Crude Oil Inventories",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
