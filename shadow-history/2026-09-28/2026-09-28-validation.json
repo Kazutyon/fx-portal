@@ -1,0 +1,90 @@
+{
+  "date": "2026-09-28",
+  "generated_at_jst": "2026-09-28T08:02:02+09:00",
+  "source_count": 3,
+  "event_count": 5,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Monetary Policy Meeting Minutes",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "SPPI y/y",
+      "importance": "low",
+      "forecast": "3.6%",
+      "previous": "3.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "GBP",
+      "name": "MPC Member Ramsden Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:15",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 08:50 JPY Monetary Policy Meeting Minutes",
+    "single source: 08:50 JPY SPPI y/y",
+    "single source: 19:00 GBP MPC Member Ramsden Speaks",
+    "single source: 21:15 USD FOMC Member Bowman Speaks",
+    "single source: 22:30 EUR ECB President Lagarde Speaks",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
