@@ -16,21 +16,13 @@ OpenClawでAUXEN FX日報を生成するとき、長い一括指示でコンテ�
 ## OpenClawへ渡す初回指示
 
 ```text
-FX日報のOpenClawシャドーを実行する。公開・push・本番HTMLの上書きは禁止。成果物は対象プロジェクトの shadow-output/YYYY-MM-DD-openclaw-vN/ にだけ保存する。
+工程は3つの独立したスケジュールに分ける。各工程は新規分離セッションで、対象プロジェクトの `OPENCLAW-FX-SHADOW-MANIFEST.md` と、その工程に指定された当日フォルダ内のファイルだけを読む。`AI-RULES.md`、`CURRENT.md`、`trigger_prompt.txt`、金曜日のHTML、生成スクリプト、`report_gen.py` を工程プロンプトから直接読ませない。これらを読ませるとローカルモデルのコンテキストを圧迫する。
 
-最初に AI-RULES.md、PROJECT-STRUCTURE.md、対象プロジェクトの CURRENT.md、FX-REPORT-REBUILD-SKILL.md、trigger_prompt.txt、直近金曜日のHTMLと生成スクリプト、report_gen.py、data/daytrade-ranking.json を読む。
+- Stage 1: 外部情報とランキングを調査し、`research.json` と小さな `source-*.json` だけを保存。
+- Stage 2: Stage 1のJSONだけを入力に、必要セクションを持つ `report.html`、`inputs.json`、`metadata.json` を保存。
+- Stage 3: 同じフォルダの成果物だけを機械検査し、`validation.json` と `comparison-notes.md` を保存。
 
-一度に完成品を書かず、次の工程を順番に実行する。
-
-A. 調査：前営業日のニュース3〜5本を、出来事・価格反応・原因・本日への引継ぎで整理。本日の予定は時刻・国・重要度・イベント名で整理。月曜日は市場環境、政策金利・スタンス、今週の焦点も整理。当日ランキングは生成時刻と数値を反映する。結果を research.json に保存する。
-
-B. 設計：直近金曜日のHTMLを実物テンプレートにし、summary / points / market overview / ranking / review / calendar を維持する。月曜日は fundamentals を追加する。国旗アイコンを維持する。
-
-C. 生成：report.html、inputs.json、metadata.json を専用シャドーフォルダに保存する。
-
-D. 検査：日付、5トピック、国旗、ランキング、政策金利、市場環境、カレンダー、HTMLアンカー、内部語句漏れを確認する。comparison-notes.md に金曜日との差分、不足、未確認点を書く。visual_review は実ブラウザ確認と機械検査を分けて記録する。
-
-内部処理の失敗、取得状況、OpenClaw、要確認、再確認依頼は公開本文に書かない。未確認の数値は創作せず、比較ノート側に残す。最後に validation.json を保存し、本番公開品質かどうかを明示する。
+公開・push・本番HTMLの上書きは禁止。未確認値は創作せず、公開本文に内部処理や取得状況を書かない。
 ```
 
 ## 分割の理由
