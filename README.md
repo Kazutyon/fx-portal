@@ -15,6 +15,7 @@
 fx-portal/
 ├── index.html          # 最新レポートへのリダイレクト
 ├── style.css           # サイト全体のスタイル
+├── FX-REPORT-REBUILD-SKILL.md # 金曜日品質で日報を再構築する手順
 └── reports/
     └── YYYY-MM-DD.html # 日付別レポート
 ```
