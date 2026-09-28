@@ -1,0 +1,407 @@
+# -*- coding: utf-8 -*-
+"""FX日報 2026-09-28（月）生成スクリプト"""
+
+TODAY = '2026-09-28'
+WEEKDAY = '月'
+
+HERO_TITLE_SUB = (
+    '前週9/25（金）は日米財務相の電話会談を受けて円安是正への警戒が強まり、ドル円は157円77銭から156円94銭まで下落した。'
+    '原油安と米長期金利の低下もドル売りを促し、ユーロドルは1.1411ドルまで上昇、ポンドドルは1.3229ドルで引けた。'
+    '本日9/28（月）は08:50の日銀議事要旨を皮切りに、ラムズデン英MPC委員、ボウマンFRB理事、ラガルドECB総裁らの発言が続く。'
+    '月末・四半期末を控え、円買いの継続性と米金利の方向が週初の焦点となる。'
+)
+
+SUMMARY_HEADLINE = (
+    '日米財務相会談を受け円買いが強まりドル円は157円割れ。原油安・米金利低下でドル売りが進むなか、'
+    '本日は日銀議事要旨とFRB・ECB要人発言に注目'
+)
+
+SUMMARY_BODY = (
+    '9/25（金）のニューヨーク為替市場では、日米財務相の電話会談で円の過小評価への認識が共有されたとの報道を受け、円買いが強まった。'
+    'ドル円は157円77銭から156円94銭まで下落し、当局の円安是正姿勢が週末の主要材料となった。'
+    'また米・イラン協議進展への思惑で原油が下落し、米長期金利も低下。金利差を意識したドル買いが一服した。'
+    '米8月耐久財受注速報値は前月比0.0％と予想のマイナス0.3％を上回ったが、輸送用機器を除く数値は0.3％にとどまり、'
+    '強い指標だけで米金利を押し上げる展開にはならなかった。ユーロドルは1.1385ドルから1.1411ドルへ戻し、'
+    'ポンドドルは1.3262ドルから1.3229ドルへ反落した。'
+    '本日9/28（月）は08:50の日銀議事要旨、19:00のラムズデン英MPC委員、21:15のボウマンFRB理事、23:00のラガルドECB総裁発言が予定される。'
+)
+
+TOP_PAIR_BODY = (
+    'ドル円は前週末に156円94銭まで下落し、日米の為替認識と日銀議事要旨が週初の方向を決める主要材料となる。'
+    '157円台を回復して定着できるか、円買いが継続して156円台を試すかが最初の分岐点だ。'
+    '本日は08:50の日銀議事要旨に加え、21:15のボウマンFRB理事、23:00のラガルドECB総裁発言が予定されている。'
+    '4時間足の当日ランキングでもUSD/JPYはスコア66で1位、判定は「適」、ADX26.6、5日ADR/5年ADRは105.1％だった。'
+    '米金利が反発すればドル円の戻りを支え、金利低下が続けば円買い・ドル売りが優勢になりやすい。'
+)
+
+RISK_LEVEL = 'HIGH'
+RISK_BODY = (
+    '日米財務相会談を受けた円安是正への警戒に加え、日銀議事要旨とFRB・ECB要人発言が重なる。'
+    '9月末・四半期末の実需フローも加わるため、ドル円は157円を挟んで値幅が出やすい。'
+    '米金利が反発すればドル円の戻り、低下すれば円買いが強まりやすく、材料の方向が交錯することがリスク要因となる。'
+)
+
+KEY_EVENTS_COUNT = '7件'
+KEY_EVENTS_SUMMARY = (
+    '日銀議事要旨(08:50) / ラムズデン英MPC委員(19:00) / ボウマンFRB理事(21:15) / '
+    'ラガルドECB総裁(23:00) / クックFRB理事(29日02:25) / バーキン総裁(02:30)'
+)
+
+MARKET_OVERVIEW = (
+    '前週末は日米財務相会談を受けた円買いと、原油安・米長期金利低下によるドル売りが同時に進んだ。'
+    'ドル円は157円77銭から156円94銭へ下落し、ユーロドルは1.1411ドルまで上昇。ポンドドルは1.3229ドルで引けた。'
+    '米8月耐久財受注速報値は前月比0.0％と予想を上回ったが、輸送用機器を除く数値は0.3％にとどまり、景気の底堅さだけで金利上昇を強める内容ではなかった。'
+    '本日は日銀議事要旨、英米要人発言、ラガルドECB総裁発言が重なり、金利の方向を通じて円・ドル・ユーロの強弱が変わりやすい。'
+    '<br><br><strong>政策金利：</strong> FRB 3.75〜4.00％、日銀 1.25％、BOE 3.75％。日米金利差はなおドル円の支えだが、日銀の正常化観測と米金利低下が重なると円買いが強まりやすい。'
+    '<br><br><strong>今週の焦点：</strong> 9月30日の月末・四半期末、29日の豪州中銀会合、米国の消費者信頼感・JOLTS・ADP、10月2日の米雇用統計。'
+)
+
+RANKING_ROWS = [
+    (1, 'USD/JPY', 'rank-a', 'A', 'スコア66・適。ADX26.6、ADR比105.1％、方向はレンジ。08:50の日銀議事要旨と157円台の攻防を優先', 'trend-range', '→'),
+    (2, 'AUD/JPY', 'rank-b', 'B', 'スコア64・候補。ADX29.5、ADR比89.6％、方向は下降。豪州中銀会合を翌日に控える', 'trend-down', '↓'),
+    (3, 'AUD/USD', 'rank-b', 'B', 'スコア58・候補。ADX44.0、ADR比70.2％、方向は下降。29日の豪州中銀会合を意識', 'trend-down', '↓'),
+    (4, 'GBP/JPY', 'rank-b', 'B', 'スコア58・候補。ADX25.9、ADR比85.4％、方向は下降。19:00のラムズデン発言に注目', 'trend-down', '↓'),
+    (5, 'EUR/USD', 'rank-b', 'B', 'スコア57・候補。ADX39.1、ADR比66.4％、方向は下降。23:00のラガルド発言が材料', 'trend-down', '↓'),
+]
+
+RANKING_ROWS_HTML = '\n'.join(f'''            <tr>
+              <td><span class="rank-badge {badge_class}">{letter}</span></td>
+              <td><strong>{pair}</strong><br><span style="color:var(--muted);font-size:12px;">{desc}</span></td>
+              <td><span class="{trend_class}">{arrow}</span></td>
+            </tr>''' for rank, pair, badge_class, letter, desc, trend_class, arrow in RANKING_ROWS)
+
+RANKING_NOTE = (
+    '※ 2026/9/28 07:25 JST時点の4時間足ランキング。スコア・ADX・ADR比は候補選定の補助指標であり、'
+    '重要イベント前後はスプレッド拡大と急変に注意する。'
+)
+
+TOPICS = [
+    (
+        '日米財務相会談を受け円買い、ドル円は157円割れ',
+        '日米財務相の電話会談で円の過小評価への認識が共有されたとの報道を受け、円買いが強まった。ドル円は157円77銭から156円94銭まで下落し、'
+        '当局の円安是正姿勢が週末の主要材料となった。',
+    ),
+    (
+        '原油安と米長期金利低下でドル売り',
+        '米・イラン協議進展への思惑で原油が下落し、米長期金利も低下。金利差を意識したドル買いが一服し、'
+        'ドル円の下落とユーロドルの反発につながった。',
+    ),
+    (
+        'ユーロは底堅く、ポンドは上値の重い展開',
+        'ユーロドルは1.1385ドルまで下落した後、1.1411ドルまで戻した。米金利低下によるドル売りがユーロを支えた一方、'
+        'ポンドドルは1.3262ドルから1.3229ドルへ反落し、英国の財政運営への警戒が重しとなった。',
+    ),
+    (
+        '米耐久財受注は予想を上回ったが、金利上昇にはつながらず',
+        '米8月耐久財受注速報値は前月比0.0％と予想のマイナス0.3％を上回ったが、輸送用機器を除く数値は0.3％にとどまった。'
+        '景気の底堅さと金利低下が交錯し、ドルは上値を伸ばしにくかった。',
+    ),
+    (
+        '今週は月末・四半期末と米雇用統計を控える',
+        '9月30日の月末・四半期末を控え、週前半は実需フローによる振れが出やすい。29日の豪州中銀会合、'
+        '米国の消費者信頼感・JOLTS・ADP、10月2日の雇用統計へ材料が移るため、週初は日銀議事要旨と要人発言で形成される金利の方向が重要になる。',
+    ),
+]
+
+TOPICS_HTML = '\n'.join(f'''          <div class="topic">
+            <div class="topic-title">【トピック{i+1}】{title}</div>
+            {body}
+          </div>''' for i, (title, body) in enumerate(TOPICS))
+
+HANDOVER = (
+    '本日（9/28月）への引継ぎ：前週末は日米財務相会談を受けた円買いと、原油安・米金利低下によるドル売りが進んだ。'
+    'ドル円は156円94銭、ユーロドルは1.1411ドルで引けている。本日は08:50の日銀議事要旨、19:00のラムズデン英MPC委員、'
+    '21:15のボウマンFRB理事、23:00のラガルドECB総裁発言を順に確認する。月末・四半期末フローが加わるため、'
+    'ドル円の157円台回復が定着するか、円買いが継続するかが週初の分岐点となる。'
+)
+
+POINTS_EVENTS = [
+    '08:50 🇯🇵 日本 日銀・金融政策決定会合議事要旨',
+    '08:50 🇯🇵 日本 企業向けサービス価格指数（8月）',
+    '19:00 🇬🇧 英国 ラムズデン英MPC委員 発言',
+    '21:15 🇺🇸 米国 ボウマンFRB理事 発言',
+    '23:00 🇪🇺 ユーロ圏 ラガルドECB総裁 発言',
+    '29日02:25 🇺🇸 米国 クックFRB理事 発言',
+    '29日02:30 🇺🇸 米国 バーキン・リッチモンド連銀総裁 発言',
+]
+POINTS_EVENTS_HTML = '\n'.join(f'              <li>{e}</li>' for e in POINTS_EVENTS)
+
+OTHER_POINTS = [
+    (
+        'ドル円は157円を挟む攻防、日米の為替認識が下値を左右',
+        '前週末は日米財務相会談を受けて156円94銭まで下落。157円台を回復して定着できるか、'
+        '円安是正姿勢への警戒が続いて156円台を再び試すかが週初の分岐点となる。',
+    ),
+    (
+        '日銀議事要旨が週初の円相場を左右',
+        '08:50に7月30・31日開催分の議事要旨が公表される。政策正常化に対する委員の姿勢や、'
+        '物価・賃金への見方が確認されれば、日銀の追加対応を巡る円の反応につながりやすい。',
+    ),
+    (
+        '夜はFRB・ECB要人発言が集中',
+        '21:15のボウマンFRB理事、23:00のラガルドECB総裁に続き、29日未明にはクックFRB理事とバーキン総裁が発言する。'
+        '米金利と欧州通貨の方向が同時に動く時間帯となる。',
+    ),
+    (
+        '月末・四半期末を控え実需フローに注意',
+        '9月30日の月末・四半期末を控え、週前半は企業・投資家のポジション調整が入りやすい。'
+        '29日の豪州中銀会合、10月2日の米雇用統計へ向けて、週初の金利形成が後続材料の土台となる。',
+    ),
+]
+OTHER_POINTS_HTML = '\n'.join(f'''              <li><strong>{title}</strong>：{body}</li>''' for title, body in OTHER_POINTS)
+
+# ── 経済指標カレンダー（主要7件） ──
+CAL_ROWS = [
+    ('08:50', '🇯🇵 日', '日銀・金融政策決定会合議事要旨（7月30・31日分）', '高', '—', '—'),
+    ('08:50', '🇯🇵 日', '企業向けサービス価格指数（8月）', '低', '3.6%', '3.6%'),
+    ('19:00', '🇬🇧 英', 'ラムズデン英MPC委員 発言', '中', '要人発言', '—'),
+    ('21:15', '🇺🇸 米', 'ボウマンFRB理事 発言', '高', '要人発言', '—'),
+    ('23:00', '🇪🇺 欧', 'ラガルドECB総裁 発言', '高', '要人発言', '—'),
+    ('29日02:25', '🇺🇸 米', 'クックFRB理事 発言', '中', '要人発言', '—'),
+    ('29日02:30', '🇺🇸 米', 'バーキン・リッチモンド連銀総裁 発言', '中', '要人発言', '—'),
+]
+
+CAL_ROWS_HTML = '\n'.join(
+    f'            <tr><td>{time}</td><td>{country}</td><td>{name}</td><td>{importance}</td><td>{forecast}</td><td>{previous}</td></tr>'
+    for time, country, name, importance, forecast, previous in CAL_ROWS
+)
+
+archive_entries = [
+    ('2026-09-25.html', '2026-09-25（金）'),
+    ('2026-09-24.html', '2026-09-24（木）'),
+    ('2026-09-22.html', '2026-09-22（火）'),
+    ('2026-09-21.html', '2026-09-21（月）'),
+    ('2026-09-18.html', '2026-09-18（金）'),
+    ('2026-09-17.html', '2026-09-17（木）'),
+    ('2026-09-16.html', '2026-09-16（水）'),
+    ('2026-09-15.html', '2026-09-15（火）'),
+    ('2026-09-14.html', '2026-09-14（月）'),
+    ('2026-09-11.html', '2026-09-11（金）'),
+    ('2026-09-10.html', '2026-09-10（木）'),
+]
+SIDEBAR_ARCHIVE_HTML = '\n'.join(f'<li><a href="{href}">{label}</a></li>' for href, label in archive_entries)
+
+html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX日報 {TODAY}（{WEEKDAY}） | AUXEN FX Portal</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+</head>
+<body class="report-page">
+
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 {TODAY}（{WEEKDAY}）</h1>
+  <p>{HERO_TITLE_SUB}</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="../assets/logo.svg" alt="AUXEN"></div>
+      <div>
+        <h1>AUXEN</h1>
+        <p>FX Research Lab</p>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="../index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="#" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報</a>
+      <a href="../archive.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>アーカイブ</a>
+      <span class="nav-section">ツール・販売</span>
+      <a href="../index.html#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>トレードインジケーター</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="../about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="../disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="../contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
+    </nav>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
+      <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
+      <ul class="archive-list">
+{SIDEBAR_ARCHIVE_HTML}
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+        <h2>FX日報 {TODAY}（{WEEKDAY}）<span class="badge-live">最新</span></h2>
+        <p class="sub">{HERO_TITLE_SUB}</p>
+      </div>
+      <div class="date-card">
+        <span>Report Date</span>
+        <strong>{TODAY}</strong>
+        <em>月曜日</em>
+      </div>
+    </header>
+
+    <div class="summary-grid" id="summary">
+      <div class="card highlight">
+        <p class="label">一言まとめ</p>
+        <h3>{SUMMARY_HEADLINE}</h3>
+        <p>{SUMMARY_BODY}</p>
+      </div>
+      <div class="card">
+        <p class="label">最注目通貨</p>
+        <h3>USD/JPY 🇺🇸🇯🇵</h3>
+        <p>{TOP_PAIR_BODY}</p>
+      </div>
+      <div class="card">
+        <p class="label">Market Risk</p>
+        <h3 style="color:var(--red,#c0392b)">{RISK_LEVEL}</h3>
+        <p>{RISK_BODY}</p>
+      </div>
+      <div class="card">
+        <p class="label">本日の重要指標</p>
+        <h3>{KEY_EVENTS_COUNT}</h3>
+        <p>{KEY_EVENTS_SUMMARY}</p>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <div class="panel" id="points">
+        <div class="panel-head">
+          <h3>⚔️ 今日の注目ポイント</h3>
+          <span>経済指標・イベント</span>
+        </div>
+        <div class="report-body">
+          <div class="points-block">
+            <div class="block-title">🚫 本日の市場休場</div>
+            <ul class="points-list">
+              <li>主要市場の休場予定なし</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">📌 必見経済指標（時刻順）</div>
+            <ul class="points-list">
+{POINTS_EVENTS_HTML}
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">👁 その他注目点</div>
+            <ul class="points-list">
+{OTHER_POINTS_HTML}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="ranking">
+        <div class="panel-head">
+          <h3>🌏 今日の市場環境</h3>
+          <span>地合い・センチメント</span>
+        </div>
+        <div class="report-body" style="margin-bottom:20px;">
+          {MARKET_OVERVIEW}
+          </div>
+
+        <div class="panel-head" style="margin-top:4px;">
+          <h3>🏆 通貨ランキング</h3>
+          <span>本日の優先順</span>
+        </div>
+        <table class="fx-table">
+          <thead>
+            <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
+          </thead>
+          <tbody>
+{RANKING_ROWS_HTML}
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">{RANKING_NOTE}</p>
+      </div>
+
+      <div class="panel wide" id="review">
+        <div class="panel-head">
+          <h3>📰 前営業日の相場振り返り（2026-09-25）</h3>
+          <span>前日の主要トピック</span>
+        </div>
+        <div class="report-body">
+{TOPICS_HTML}
+          <div class="handover">
+            <strong>{HANDOVER}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full" id="calendar">
+        <div class="panel-head">
+          <h3>📅 本日の経済指標カレンダー（全件）</h3>
+          <span>本日の主要予定</span>
+        </div>
+        <table class="fx-table" style="font-size:0.9em;">
+          <thead>
+            <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
+          </thead>
+          <tbody>
+{CAL_ROWS_HTML}
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻は日本時間です。</p>
+      </div>
+
+    </div><!-- /content-grid -->
+
+  </main>
+</div>
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="../about.html">About</a>
+    <a href="../disclaimer.html">免責事項</a>
+    <a href="../privacy.html">プライバシーポリシー</a>
+    <a href="../terms.html">利用規約</a>
+    <a href="../contact.html">お問い合わせ</a>
+  </div>
+</footer>
+</body>
+</html>
+"""
+
+with open(f'reports/{TODAY}.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f'reports/{TODAY}.html generated')
