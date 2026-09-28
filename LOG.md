@@ -1,5 +1,12 @@
 # LOG
 
+## 2026-09-28 OpenClaw向け分割型FXシャドーを再実行 / Codex
+
+- 新規セッションのローカル `qwen3.6:27b` を使い、調査→設計→生成→検査の4工程で9/28分を再実行した。
+- 本番ファイル・Git履歴・公開処理には触れず、`shadow-output/2026-09-28-openclaw-v2/` に `research.json`、`report.html`、`validation.json`、`comparison-notes.md` などを保存。
+- 機械検査は `PASS_WITH_NOTES`。5トピック、8通貨の国旗、ランキング、政策金利、カレンダー、HTML構造はPASS。カレンダー時刻差、政策金利の公式再照合、実ブラウザ画面確認が残るため、本番公開品質とは扱わない。
+- 再実行用の指示と完了条件を `OPENCLAW-FX-SHADOW-RUNBOOK.md` に固定した。
+
 ## 2026-09-28 金曜日品質の日報再構築手順を文書化 / Codex
 
 - `FX-REPORT-REBUILD-SKILL.md` を追加。金曜日の実物HTML・生成スクリプト・`trigger_prompt.txt`・当日ランキングを基準に、調査・生成・公開前検査を分離する手順を記録した。
