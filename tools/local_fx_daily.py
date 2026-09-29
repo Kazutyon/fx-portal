@@ -495,6 +495,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         "files": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in
                   [Path(__file__), Path(news.__file__), Path(claude_sources.__file__),
                    ROOT / "tools" / "local_fx_grounding.py", ROOT / "tools" / "local_fx_hierarchy.py",
+                   ROOT / "tools" / "local_fx_extract_summary.py",
                    ROOT / "tools" / "claude_mirror_shadow.json"]}})
     try:
         if os.environ.get("COMPUTERNAME", "").upper() != "GALLERIA":

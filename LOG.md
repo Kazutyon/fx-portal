@@ -1,5 +1,12 @@
 # LOG
 
+## 2026-09-29 ID選別型の段階圧縮 / Codex（実装・隔離試験中）
+
+- 少数実機: 前回失敗のleaf022と同じ原6材料をID選別に渡し、2推論stop・QC PASS。原値/型を保持、一般解説の追加なし。`probe/hierarchy/extractive-leaf-probe.json`を独立読み戻し。最初のprobeはtools作業dirから相対入力pathを誤りFileNotFound（推論前）になったため、`d.ROOT`絶対pathで再実行。小試験を全日報合格にしない。Qwen実ロードcontext65,536確認、全材料版を開始。
+
+- Owner承認により、中間で新しい文を書かせず、原fact IDだけを選別・グループ化する`local_fx_extract_summary.py`（keep）を追加。日付/数字/予想実績/本文はプログラムが原値を保持。葉は3.5KB/最大6fact、全ID保持。親は最大3子、保持最大8fact/3.5KB、省略IDも証拠へ保存。全元ID訪問は全重要材料保持の保証ではない。選別欠落QCと独立読解は継続する。
+- 階層flagのみ新方式へ接続、旧抽象要約と失敗履歴を保持。80オフライン回帰PASS（ID/追加文章拒否/予算/原値/型/訪問/省略manifest/修正1回停止）。今日の新run`2026-09-29-extractive-retry`はevidence、15保存記事/元入力/hash一致のキャッシュを再利用、過去のstatus/全文/合格はコピーしない。モデル・通常thinking・cron・本番・公開・push・他PC・サービス変更なし。試験と内容評価はこれから。
+
 ## 2026-09-29 段階要約ツリーの隔離試験 / Codex（未完・不合格）
 
 - 最終試験17:31:44.624〜17:34:15.396はleaf000〜021通過後、leaf022が原資料にない指標/FRB一般解説を修正後も追加しFAILED。201採用材料/計画42葉だが、最新は全体要約/ニュース/編集/全文なし。過去の42葉PASSや古いnodeファイルを最新合格にしない。独立INCOMPLETE_REJECTED、`independent-review.json`保存、試験Python残存なし。新規推論42（古いcache/history除外）、最大input5,921 bytes/prompt1,706、全stop。73オフライン回帰/py_compile/diff check PASSは実機品質とは別。実ロードQwen context65,536再確認。全文がないため公開版/金曜との全品質比較は未実施。次は中間要約の原入力選別/圧縮/再配置化、自由分析は執筆工程へ分離する。市場テーマは固定しない。

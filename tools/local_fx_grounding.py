@@ -730,7 +730,7 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
         import local_fx_hierarchy as hierarchy
         full_material = editorial_facts(calendar, ranking, facts, [])
         news.save(out / "shared-material.json", {"facts": full_material, "lifecycle": "evidence"})
-        tree = hierarchy.build(api, out, full_material, target, date_facts(target))
+        tree = hierarchy.build(api, out, full_material, target, date_facts(target), extractive=True)
         global_overview = hierarchy.overview(tree)
     prior = [x for x in facts if x["event_scope"] == "previous" and x["claim_gate_accepted"]]
     plan_schema = news.schema({"topics": {"type": "array", "minItems": 3, "maxItems": 5,
