@@ -10,6 +10,13 @@ import local_fx_daily as daily
 
 
 class DailyTests(unittest.TestCase):
+    def test_large_evidence_is_split_without_loss(self):
+        records = [{"source_id": i, "fact": "材料" * 90, "quote": "根拠" * 70} for i in range(40)]
+        batches = daily.evidence_batches(records)
+        self.assertGreater(len(batches), 1)
+        self.assertEqual([item for group in batches for item in group], records)
+        self.assertTrue(all(len(json.dumps(group, ensure_ascii=False).encode()) <= 12000 for group in batches))
+
     def test_case_shiller_year_and_month_are_not_merged(self):
         self.assertEqual(daily.event_code("S&P/CS Composite-20 HPI y/y"), "case-shiller-yy")
         self.assertEqual(daily.event_code("S＆P/ケース・シラー住宅価格指数 [前年比]"), "case-shiller-yy")

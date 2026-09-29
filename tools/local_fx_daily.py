@@ -306,6 +306,58 @@ def source_chunks(text: str) -> list[str]:
     return chunks
 
 
+def evidence_batches(records: list[dict], byte_limit: int = 12000) -> list[list[dict]]:
+    """Pack grounded fact/quote pairs without ever merging all article bodies."""
+    batches, current = [], []
+    for record in records:
+        candidate = [*current, record]
+        if len(json.dumps(candidate, ensure_ascii=False).encode()) > byte_limit:
+            if not current:
+                raise ValueError("one evidence record exceeds its stage budget")
+            batches.append(current)
+            current = [record]
+        else:
+            current = candidate
+    if current:
+        batches.append(current)
+    return batches
+
+
+def write_bounded_topic(i, title, ids, sources, claims, task, out):
+    records = [{"source_id": x, "source_title": sources[x]["title"],
+                "published_at": sources[x]["published_at"], **claim}
+               for x in ids for claim in claims[x]["claims"]]
+    batches = evidence_batches(records)
+    draft = None
+    for part, evidence in enumerate(batches):
+        draft = infer_cached(out, f"topic-{i:02}-batch-{part:02}-write", task +
+            " 今回は根拠資料の1分割だけを読む。既存段落があれば重複させず統合し、最終段落の長さを維持。"
+            "quoteは原文の抜粋。今回の根拠と既存段落にない新情報を足さない。前日の振り返りと当日昼の情報を区別。",
+            {"topic": title, "evidence": evidence, "existing_draft": draft}, news.COPY_SCHEMA)
+    reviews = []
+    for part, evidence in enumerate(batches):
+        review_task = (
+            "最終段落を今回の根拠分割と照合。今回の根拠に対応する事実/数字/通貨/時間帯/因果に矛盾があればFAIL。"
+            "他の根拠分割が支える記述は今回だけで否定しない。予想を結果へ変えたらFAIL。"
+            "この検査は部分照合であり全事実の裏付けを保証しない。PASS/FAILと具体的理由。"
+        )
+        data = {"evidence": evidence, "draft": draft}
+        qc = infer_cached(out, f"topic-{i:02}-batch-{part:02}-review", review_task, data, news.QC_SCHEMA)
+        if qc["verdict"] != "PASS":
+            draft = infer_cached(out, f"topic-{i:02}-batch-{part:02}-repair", task + " 指摘に対応する箇所だけを修正。他の段落材料を追加しない。",
+                                 {**data, "review": qc}, news.COPY_SCHEMA)
+        reviews.append(qc)
+    # A later repair could invalidate an earlier check. Recheck the final draft.
+    if any(q["verdict"] != "PASS" for q in reviews):
+        reviews = [infer_cached(out, f"topic-{i:02}-batch-{p:02}-final-review", review_task,
+                    {"evidence": evidence, "draft": draft}, news.QC_SCHEMA) for p, evidence in enumerate(batches)]
+    news.save(out / "stages" / f"topic-{i:02}-bounded-review.json",
+              {"batches": len(batches), "reviews": reviews, "full_semantic_validation": False})
+    qc = {"verdict": "PASS" if all(q["verdict"] == "PASS" for q in reviews) else "FAIL",
+          "reason": "bounded fact/quote partial reviews; independent full-content review required"}
+    return draft, qc
+
+
 def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path) -> dict:
     claims = []
     for i, source in enumerate(sources):
@@ -352,15 +404,7 @@ def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path)
             "掲載時刻と出来事の時刻は別。資料がロンドン時間と言う発言をNY時間に移さない。不明な時間帯は書かない。"
             "claim_idsは入力claimsの各source_idを返す。見出しtitleは具体的な出来事。bodyは段落。"
         )
-        data = {"topic": topic["title"], "sources": [claims[x] for x in ids],
-                "original_materials": [{"source_id": x, "text": sources[x]["text"]} for x in ids]}
-        draft = infer_cached(out, f"topic-{i:02}-write", task, data, news.COPY_SCHEMA)
-        review_task = "見出しと段落の全ての事実・数字・因果・出来事の時間帯が原資料で裏付けられるかだけ検査。併記された指標を為替の原因にしたらFAIL。掲載がNYでも出来事がロンドンの発言ならNYに変えたらFAIL。NY市場日の表現は掲載日のJSTと異なる場合がある。余計な根拠や勝手な修正をせずPASS/FAILと理由を返す。"
-        review_data = {"sources": [sources[x] for x in ids], "draft": draft}
-        qc = infer_cached(out, f"topic-{i:02}-review", review_task, review_data, news.QC_SCHEMA)
-        if qc["verdict"] != "PASS":
-            draft = infer_cached(out, f"topic-{i:02}-repair", task + " 指摘箇所を修正。", {**data, "draft": draft, "review": qc}, news.COPY_SCHEMA)
-            qc = infer_cached(out, f"topic-{i:02}-review-repair", review_task, {**review_data, "draft": draft}, news.QC_SCHEMA)
+        draft, qc = write_bounded_topic(i, topic["title"], ids, sources, claims, task, out)
         if re.search(FORBIDDEN, draft["title"] + draft["body"], re.I):
             raise ValueError("internal status leaked into paragraph")
         topics.append({**draft, "source_ids": ids, "review": qc})
