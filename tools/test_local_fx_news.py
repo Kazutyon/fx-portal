@@ -42,6 +42,19 @@ class PilotRegressionTests(unittest.TestCase):
             self.assertEqual(request["options"]["num_ctx"], 65536)
             self.assertNotIn("tools", request)
 
+    def test_think_off_trial_preserves_model_context_and_output_limit(self):
+        for think_off in [False, True]:
+            with self.subTest(think_off=think_off), tempfile.TemporaryDirectory() as folder:
+                out = Path(folder)
+                response = io.BytesIO(json.dumps(self.result('{"verdict":"PASS","reason":"test"}')).encode())
+                with patch.object(pilot, "FORCE_THINK_OFF", think_off), patch.object(pilot.urllib.request, "urlopen", return_value=response):
+                    pilot.infer("test-write", "test", {}, pilot.QC_SCHEMA, out)
+                request = json.loads((out / "test-write.request.json").read_text(encoding="utf-8"))
+                self.assertEqual(request["model"], pilot.MODEL)
+                self.assertEqual(request["options"]["num_ctx"], 65536)
+                self.assertEqual(request["options"]["num_predict"], 6144)
+                self.assertEqual(request["think"], not think_off)
+
     def test_visible_publication_time_controls_cutoff(self):
         page = '''<script type="application/ld+json">{
         "@type":"NewsArticle","headline":"test", "datePublished":"2026-09-29T06:55:00+09:00"

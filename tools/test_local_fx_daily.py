@@ -17,6 +17,30 @@ class DailyTests(unittest.TestCase):
         self.assertEqual([item for group in batches for item in group], records)
         self.assertTrue(all(len(json.dumps(group, ensure_ascii=False).encode()) <= 12000 for group in batches))
 
+    def test_selected_topic_review_sees_all_selected_sources(self):
+        sources = [{"title": "source a", "published_at": "2026-09-29T06:00:00+09:00"},
+                   {"title": "source b", "published_at": "2026-09-29T06:10:00+09:00"}]
+        claims = [{"claims": [{"kind": "event", "fact": "first fact", "quote": "first original quote"}]},
+                  {"claims": [{"kind": "event", "fact": "second fact", "quote": "second original quote"}]}]
+        values = [{"selected": [{"source_id": 0, "claim_index": 0}, {"source_id": 1, "claim_index": 0}]},
+                  {"title": "topic", "body": "copy", "claim_ids": [0, 1]},
+                  {"verdict": "PASS", "reason": "mock"}]
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder)
+            with patch.object(daily, "load", return_value={"date_jst": "2026-09-29"}), patch.object(daily, "infer_cached", side_effect=values) as infer:
+                draft, review = daily.write_bounded_topic(0, "topic", [0, 1], sources, claims, "write", out)
+            self.assertEqual(draft["body"], "copy")
+            self.assertEqual(review["verdict"], "PASS")
+            review_data = infer.call_args_list[-1].args[3]
+            self.assertEqual({x["source_id"] for x in review_data["evidence"]}, {0, 1})
+
+    def test_invalid_selected_reference_stops_before_writing(self):
+        sources = [{"title": "a", "published_at": "2026-09-29T06:00:00+09:00"}]
+        claims = [{"claims": [{"kind": "event", "fact": "fact", "quote": "quote"}]}]
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "load", return_value={"date_jst": "2026-09-29"}), patch.object(daily, "infer_cached", return_value={"selected": [{"source_id": 99, "claim_index": 0}]}):
+            with self.assertRaisesRegex(ValueError, "invalid claim reference"):
+                daily.write_bounded_topic(0, "topic", [0], sources, claims, "write", Path(folder))
+
     def test_case_shiller_year_and_month_are_not_merged(self):
         self.assertEqual(daily.event_code("S&P/CS Composite-20 HPI y/y"), "case-shiller-yy")
         self.assertEqual(daily.event_code("S＆P/ケース・シラー住宅価格指数 [前年比]"), "case-shiller-yy")

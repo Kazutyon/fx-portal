@@ -261,7 +261,7 @@ def collect_calendar(target: date, out: Path) -> dict:
 
 
 def infer_cached(out: Path, label: str, task: str, data, schema: dict) -> dict:
-    fingerprint = hashlib.sha256(json.dumps(["qwen-stage-budget-v2", task, data, schema], ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    fingerprint = hashlib.sha256(json.dumps(["qwen-stage-budget-v3", task, data, schema, news.FORCE_THINK_OFF], ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     artifact = out / "stages" / f"{label}.json"
     if artifact.exists():
         cached = load(artifact)
@@ -324,37 +324,49 @@ def evidence_batches(records: list[dict], byte_limit: int = 12000) -> list[list[
 
 
 def write_bounded_topic(i, title, ids, sources, claims, task, out):
-    records = [{"source_id": x, "source_title": sources[x]["title"],
-                "published_at": sources[x]["published_at"], **claim}
-               for x in ids for claim in claims[x]["claims"]]
+    records = [{"source_id": x, "claim_index": k, "published_at": sources[x]["published_at"],
+                "kind": claim["kind"], "fact": claim["fact"]}
+               for x in ids for k, claim in enumerate(claims[x]["claims"])]
     batches = evidence_batches(records)
-    draft = None
-    for part, evidence in enumerate(batches):
-        draft = infer_cached(out, f"topic-{i:02}-batch-{part:02}-write", task +
-            " 今回は根拠資料の1分割だけを読む。既存段落があれば重複させず統合し、最終段落の長さを維持。"
-            "quoteは原文の抜粋。今回の根拠と既存段落にない新情報を足さない。前日の振り返りと当日昼の情報を区別。",
-            {"topic": title, "evidence": evidence, "existing_draft": draft}, news.COPY_SCHEMA)
-    reviews = []
-    for part, evidence in enumerate(batches):
-        review_task = (
-            "最終段落を今回の根拠分割と照合。今回の根拠に対応する事実/数字/通貨/時間帯/因果に矛盾があればFAIL。"
-            "他の根拠分割が支える記述は今回だけで否定しない。予想を結果へ変えたらFAIL。"
-            "この検査は部分照合であり全事実の裏付けを保証しない。PASS/FAILと具体的理由。"
-        )
-        data = {"evidence": evidence, "draft": draft}
-        qc = infer_cached(out, f"topic-{i:02}-batch-{part:02}-review", review_task, data, news.QC_SCHEMA)
-        if qc["verdict"] != "PASS":
-            draft = infer_cached(out, f"topic-{i:02}-batch-{part:02}-repair", task + " 指摘に対応する箇所だけを修正。他の段落材料を追加しない。",
-                                 {**data, "review": qc}, news.COPY_SCHEMA)
-        reviews.append(qc)
-    # A later repair could invalidate an earlier check. Recheck the final draft.
-    if any(q["verdict"] != "PASS" for q in reviews):
-        reviews = [infer_cached(out, f"topic-{i:02}-batch-{p:02}-final-review", review_task,
-                    {"evidence": evidence, "draft": draft}, news.QC_SCHEMA) for p, evidence in enumerate(batches)]
+    selection_schema = news.schema({"selected": {"type": "array", "minItems": 0, "maxItems": 4,
+        "items": news.schema({"source_id": {"type": "integer"}, "claim_index": {"type": "integer"}})}})
+    selected = []
+    for part, facts in enumerate(batches):
+        chosen = infer_cached(out, f"topic-{i:02}-evidence-{part:02}-plan",
+            "指定トピックに直結する重要な事実だけ最大4件選ぶ。重複価格・テクニカル売買戦略・別通貨の羅列は選ばない。"
+            "前営業日の日報材料を優先し、本日午前や昼の出来事を前日の事実にしない。対象外しかなければ空配列。"
+            "source_idとclaim_indexの組は入力から正確に選ぶ。",
+            {"topic": title, "date_jst": load(out / "calendar.json")["date_jst"], "facts": facts}, selection_schema)["selected"]
+        allowed = {(r["source_id"], r["claim_index"]) for r in facts}
+        for ref in chosen:
+            key = (ref["source_id"], ref["claim_index"])
+            if key not in allowed:
+                raise ValueError("topic evidence selector returned an invalid claim reference")
+            if key not in selected:
+                selected.append(key)
+    if not selected:
+        raise ValueError("topic has no selected grounded evidence")
+    evidence = [{"source_id": x, "claim_index": k, "source_title": sources[x]["title"],
+                 "published_at": sources[x]["published_at"], **claims[x]["claims"][k]} for x, k in selected]
+    if len(json.dumps(evidence, ensure_ascii=False).encode()) > 16000:
+        raise ValueError("selected topic evidence exceeds its bounded synthesis budget")
+    write_task = task + " 全資料ではなく選別されたfact/quoteだけを使う。引用にない新情報を追加しない。前日と本日を区別。"
+    data = {"topic": title, "evidence": evidence}
+    draft = infer_cached(out, f"topic-{i:02}-selected-write", write_task, data, news.COPY_SCHEMA)
+    review_task = (
+        "段落と見出しの全ての事実/数字/通貨/時点/因果を、選別されたfactと原文quoteに照合。"
+        "裏付けのない数字や因果、予想の結果への変更、前日と本日を混同した記述はFAIL。"
+        "原文quoteの意味をfactより優先する。PASS/FAILと具体的理由。"
+    )
+    review_data = {**data, "draft": draft}
+    qc = infer_cached(out, f"topic-{i:02}-selected-review", review_task, review_data, news.QC_SCHEMA)
+    if qc["verdict"] != "PASS":
+        draft = infer_cached(out, f"topic-{i:02}-selected-repair", write_task + " 指摘箇所を修正。",
+                             {**review_data, "review": qc}, news.COPY_SCHEMA)
+        qc = infer_cached(out, f"topic-{i:02}-selected-review-repair", review_task, {**data, "draft": draft}, news.QC_SCHEMA)
     news.save(out / "stages" / f"topic-{i:02}-bounded-review.json",
-              {"batches": len(batches), "reviews": reviews, "full_semantic_validation": False})
-    qc = {"verdict": "PASS" if all(q["verdict"] == "PASS" for q in reviews) else "FAIL",
-          "reason": "bounded fact/quote partial reviews; independent full-content review required"}
+              {"selection_batches": len(batches), "selected": [list(key) for key in selected], "review": qc,
+               "full_semantic_validation": False, "review_scope": "selected original quotes, independent full-source QC required"})
     return draft, qc
 
 
@@ -563,6 +575,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
     status = {"status": "RUNNING", "date_jst": target.isoformat(), "model": news.MODEL,
               "publish_ready": False, "started_at": datetime.now(JST).isoformat(), "scope": "full daily shadow"}
     status["mode"] = "render_existing_no_llm" if render_existing else "prepare_only" if prepare_only else "generate"
+    status["think_off_experiment"] = news.FORCE_THINK_OFF
     news.save(out / "status.json", status)
     news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
     news.save(out / "runner-version.json", {"started_at": status["started_at"],
@@ -631,7 +644,9 @@ def main() -> int:
     parser.add_argument("--run-dir", type=Path)
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--render-existing", action="store_true", help="rebuild presentation from the same dated retained text; no LLM calls")
+    parser.add_argument("--think-off-experiment", action="store_true", help="explicit isolated Qwen experiment; never selected by cron or after failure automatically")
     args = parser.parse_args()
+    news.FORCE_THINK_OFF = args.think_off_experiment
     out = args.run_dir or ROOT / "shadow-output" / f"{args.date}-local-daily"
     out = out.resolve()
     if not out.is_relative_to((ROOT / "shadow-output").resolve()):

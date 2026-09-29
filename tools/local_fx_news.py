@@ -25,6 +25,7 @@ MODEL = "qwen3.6:27b"
 OLLAMA = "http://127.0.0.1:11434"
 INDEX = "https://fx.minkabu.jp/news"
 MAX_INPUT_BYTES = 24000
+FORCE_THINK_OFF = False  # Explicit one-run experiment only; never an automatic fallback.
 
 
 def save(path: Path, value: object) -> None:
@@ -166,7 +167,7 @@ def infer(stage: str, task: str, data: object, output_schema: dict, out: Path) -
     small_structured_stage = "extract" in stage or "plan" in stage
     body = {
         "model": MODEL, "messages": messages, "format": output_schema,
-        "stream": False, "think": not small_structured_stage, "keep_alive": "10m",
+        "stream": False, "think": not small_structured_stage and not FORCE_THINK_OFF, "keep_alive": "10m",
         "options": {"num_ctx": 65536, "num_predict": 2048 if small_structured_stage else 6144, "temperature": 0.1},
     }
     save(out / f"{stage}.request.json", body)
