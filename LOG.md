@@ -7,6 +7,7 @@
 - 保持ファイル: `tools/local_fx_claude_sources.py`（取得アダプター）、設定JSON、`CLAUDE-MIRROR-SHADOW-SETTINGS.md`（正本）。いずれもkeep、廃止時に記録後退避。取得証拠は今後の実行時だけ日付別shadow-outputへ保存。
 - 月曜補足は未実装のまま明示FAILED。カレンダー一致行のみ表示と本文の品質不合格も残る。Claudeと同じ取得方針は、同等品質・全曜日完走の証明ではない。
 - 検証: 静的差分確認のみ。Ownerの実行禁止によりジョブ/LLM/取得/試験/compile/previewを実行していない。追加したテストも未実行。旧版PASSをこの改訂へ流用しない。中央台帳の既存委譲entry注記も未試験へ更新。
+- Git: 設定・コードのローカルcommit `f374b8b`、中央台帳注記 `453e9ed`。`git diff --check` は差分形式上の問題なし、プロジェクトcommit後のstatusはclean。公開しない指示に従いpushなし。次の実作業は許可された時間帯の初回取得/生成検証と、月曜補足実装・内容品質の検収。
 
 ## 2026-09-29 全日報シャドー完走・今日のAUXEN公開日報との比較 / Codex
 
