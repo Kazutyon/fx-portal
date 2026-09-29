@@ -19,7 +19,9 @@ class HierarchyTests(unittest.TestCase):
         if "review" in label:
             return {"verdict": "PASS", "reason": "offline fixture, not model quality"}
         ids = [x.get("fact_id", x.get("node_id")) for x in data["inputs"]]
-        return {"units": [{"text": "前日の材料群。予想と実績は区別。"}], "routes": {ref: 0 for ref in ids}}
+        is_leaf = "fact_id" in data["inputs"][0]
+        return {"units": [{"text": "前日の材料群。予想と実績は区別。"}],
+                "routes": {ref: 0 if is_leaf else [0] for ref in ids}}
 
     def test_tree_visits_every_fact_and_preserves_original_without_mutation(self):
         facts = self.facts(60)
@@ -87,6 +89,41 @@ class HierarchyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=wrong_country):
             with self.assertRaisesRegex(ValueError, "Iran replaced by Italy"):
                 hierarchy.build(daily, Path(folder), [fact], date(2026, 9, 29), {})
+
+    def test_entity_spelling_constraint_comes_from_input_not_fixed_theme(self):
+        for fact, expected in [("米国とイランの交渉", True), ("本日の会合予定", False)]:
+            with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=self.inference) as infer:
+                hierarchy.build(daily, Path(folder), [{"fact_id": "N0", "fact": fact}], date(2026, 9, 29), {})
+                data = infer.call_args_list[0].args[3]
+                self.assertEqual("entity_spelling_rules" in data, expected)
+                if expected:
+                    self.assertIn("米伊", data["entity_spelling_rules"]["イラン"])
+
+    def test_one_child_summary_can_support_multiple_parent_units(self):
+        children = [{"node_id": "child-a", "units": ["前日の円高。", "本日の会合予定。"]},
+                    {"node_id": "child-b", "units": ["円の背景。"]}]
+        def fanout(out, label, task, data, schema):
+            if "review" in label:
+                return {"verdict": "PASS", "reason": "fixture"}
+            return {"units": [{"text": "前日の円高と背景。"}, {"text": "本日の会合予定。"}],
+                    "routes": {"child-a": [0, 1], "child-b": [0]}}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=fanout):
+            summary = hierarchy.summarize(daily, Path(folder), "merge", children, date(2026, 9, 29), {}, False)
+            self.assertEqual(summary["units"][0]["refs"], ["child-a", "child-b"])
+            self.assertEqual(summary["units"][1]["refs"], ["child-a"])
+
+    def test_semantic_review_receives_reference_local_support(self):
+        facts = self.facts(2)
+        def two_units(out, label, task, data, schema):
+            if "review" in label:
+                self.assertIn("別unitの入力で補完しない", task)
+                checks = data["reference_checks"]
+                self.assertEqual(checks[0]["supporting_input_ids"], [facts[0]["fact_id"]])
+                self.assertEqual(checks[1]["supporting_input_ids"], [facts[1]["fact_id"]])
+                return {"verdict": "PASS", "reason": "fixture only"}
+            return {"units": [{"text": "材料0"}, {"text": "材料1"}], "routes": {"N0": 0, "N1": 1}}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=two_units):
+            hierarchy.build(daily, Path(folder), facts, date(2026, 9, 29), {})
 
 
 if __name__ == "__main__":
