@@ -18,10 +18,19 @@ class ExtractiveTests(unittest.TestCase):
 
     def inference(self, out, label, task, data, schema):
         if "review" in label:
-            return {"verdict": "PASS", "reason": "fixture only"}
+            return {"verdict": "PASS", "reason": "fixture only", "required_fact_ids": []}
         facts = data["facts"]
         cap = len(facts) if "leaf" in label else min(selection.CAP, len(facts))
+        if "fact_ids" in schema["properties"]:
+            self.assertEqual(schema["properties"]["fact_ids"]["maxItems"], selection.CAP)
+            return {"fact_ids": [x["fact_id"] for x in facts[:cap]]}
         return {"groups": [{"fact_ids": [x["fact_id"] for x in facts[:cap]]}]}
+
+    def test_parent_schema_caps_one_array_and_copies_only_original_facts(self):
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=self.inference):
+            value = selection.summarize(daily, Path(folder), "parent", self.facts(12), {}, False)
+            self.assertEqual(len(value["retained_facts"]), selection.CAP)
+            self.assertEqual(len(value["units"]), 4)
 
     def test_dates_names_numbers_and_types_are_copied_not_written(self):
         pool = self.facts()
@@ -64,6 +73,30 @@ class ExtractiveTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "major opposite"):
                 selection.summarize(daily, Path(folder), "leaf", self.facts(), {}, True)
             self.assertEqual(sum(c.args[1].endswith("-repair") for c in infer.call_args_list), 1)
+
+    def test_qc_cannot_require_unknown_material_or_already_retained_id(self):
+        for required in [["UNKNOWN"], ["F0"], []]:
+            def invalid(out, label, task, data, schema):
+                if "review" in label:
+                    return {"verdict": "FAIL", "reason": "unsupported demands", "required_fact_ids": required}
+                return self.inference(out, label, task, data, schema)
+            with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=invalid):
+                with self.assertRaisesRegex(ValueError, "invalid omission QC"):
+                    selection.summarize(daily, Path(folder), "leaf", self.facts(), {}, True)
+
+    def test_real_missing_id_is_mandatory_on_reconstruction(self):
+        def omit(out, label, task, data, schema):
+            if label.endswith("-review-0"):
+                return {"verdict": "FAIL", "reason": "later market observation lost", "required_fact_ids": ["F2"]}
+            if "review" in label:
+                return {"verdict": "PASS", "reason": "fixture", "required_fact_ids": []}
+            if label.endswith("-repair"):
+                self.assertEqual(data["required_fact_ids"], ["F2"])
+                return {"fact_ids": ["F0", "F2"]}
+            return {"fact_ids": ["F0"]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=omit):
+            value = selection.summarize(daily, Path(folder), "parent", self.facts(), {}, False)
+            self.assertEqual([x["fact_id"] for x in value["retained_facts"]], ["F0", "F2"])
 
     def test_no_prose_can_pass_even_when_self_review_would_pass(self):
         def prose(out, label, task, data, schema):
