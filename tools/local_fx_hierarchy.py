@@ -1,0 +1,158 @@
+"""keep: experimental bounded summary tree, not a publishing/cron entrypoint.
+
+Nodes, review results and coverage manifests are evidence in the parent run.
+Original facts remain authoritative; summaries only guide editorial decisions.
+"""
+from __future__ import annotations
+
+import json
+
+import local_fx_news as news
+
+
+def compact_fact(fact):
+    return {k: fact[k] for k in ("fact_id", "fact", "event_date", "event_scope",
+            "market_session", "pairs", "record_type") if k in fact}
+
+
+def refs_schema(ids, maximum):
+    return {"type": "array", "items": {"type": "string", "enum": ids},
+            "minItems": 1, "maxItems": maximum, "uniqueItems": True}
+
+
+def summarize(api, out, label, inputs, target, dates, leaf):
+    ids = [x["fact_id"] if leaf else x["node_id"] for x in inputs]
+    schema = news.schema({"units": {"type": "array", "minItems": 1, "maxItems": 4,
+        "items": news.schema({"text": {"type": "string", "maxLength": 260},
+                              "refs": refs_schema(ids, len(ids))})}})
+    data = {"date_facts": dates, "inputs": inputs}
+    task = ("全入力を読んで、相場全体を後で理解するための要約を最大4単位にまとめる。各単位260文字以内。"
+            "同じ出来事は統合し、違う日付/市場/通貨/予想/実績は混ぜない。入力の全IDを少なくとも1単位のrefsに含める。"
+            "些細な値動きは一群にまとめてよいが、異なる主要材料・反対材料・条件は消さない。"
+            "日付/数値/予定と実績/出典の見通しを保持。資料にない因果や結果は作らない。"
+            "テーマは固定せず、今回の入力に合わせる。何が起きたかと、分からないことを区別する。"
+            "これは内部要約であって記事ではない。元資料に戻るためのrefsを付ける。")
+    value = api.infer_cached(out, label, task, data, schema)
+    for attempt in range(2):
+        refs = {r for u in value["units"] for r in u["refs"]}
+        valid = refs == set(ids) and all(u["refs"] and len(u["text"]) <= 260 for u in value["units"])
+        review = api.infer_cached(out, label + f"-review-{attempt}",
+            "入力と要約だけを照合。異なる日時/予想/実績/通貨を混ぜた、新しい因果/結果を加えた、"
+            "独立した主要材料を消した場合FAIL。枝葉や重複の圧縮は許容。予定紹介を実施済みと誤認しない。"
+            "主要な異論や条件が残るかも確認。理由は具体的に。",
+            {**data, "summary": value}, news.QC_SCHEMA)
+        if not valid:
+            review = {"verdict": "FAIL", "reason": "summary refs must cover every input ID without unknown IDs"}
+        if review["verdict"] == "PASS":
+            break
+        if attempt == 0:
+            value = api.infer_cached(out, label + "-repair", task + " 指摘のみ修正。",
+                                     {**data, "rejected": value, "review": review}, schema)
+    news.save(out / "hierarchy" / f"{label}.json", {"inputs": inputs, "summary": value, "review": review})
+    if review["verdict"] != "PASS":
+        raise ValueError(f"{label}: summary review failed: {review['reason']}")
+    return value
+
+
+def build(api, out, material, target, dates):
+    if not material or len({x["fact_id"] for x in material}) != len(material):
+        raise ValueError("hierarchy requires nonempty unique original fact IDs")
+    nodes = []
+    # Every accepted fact is visited. No topic/role-specific preselection.
+    for i, batch in enumerate(api.evidence_batches([compact_fact(x) for x in material], 4500)):
+        label = f"hierarchy-leaf-{i:03}"
+        value = summarize(api, out, label, batch, target, dates, True)
+        nodes.append({"node_id": label, "units": value["units"],
+                      "covered_fact_ids": [x["fact_id"] for x in batch], "children": []})
+    all_nodes = list(nodes)
+    level = 0
+    while len(nodes) > 1:
+        next_nodes = []
+        for i in range(0, len(nodes), 3):
+            children = nodes[i:i + 3]
+            if len(children) == 1:
+                next_nodes.append(children[0])
+                continue
+            label = f"hierarchy-merge-{level:02}-{i // 3:03}"
+            # At most three child summaries, never concatenate all originals.
+            inputs = [{"node_id": n["node_id"], "units": [u["text"] for u in n["units"]]} for n in children]
+            value = summarize(api, out, label, inputs, target, dates, False)
+            node = {"node_id": label, "units": value["units"],
+                    "covered_fact_ids": list(dict.fromkeys(r for n in children for r in n["covered_fact_ids"])),
+                    "children": [n["node_id"] for n in children]}
+            next_nodes.append(node)
+            all_nodes.append(node)
+        nodes = next_nodes
+        level += 1
+    result = {"root": nodes[0], "nodes": all_nodes, "original_count": len(material),
+              "lifecycle": "evidence", "rule": "coverage IDs mean visited, not all details retained or verified against original articles"}
+    news.save(out / "hierarchy.json", result)
+    return result
+
+
+def overview(tree):
+    return {"synopsis": [x["text"] for x in tree["root"]["units"]],
+            "rule": "要約は全体構成の手掛かりだけ。記事の事実は別途渡すfact/quoteから照合。要約だけから事実を追加しない"}
+
+
+def allocate(api, out, key, material, target, dates, tree, purpose):
+    candidates = []
+    context = overview(tree)
+    leaves = [n for n in tree["nodes"] if not n["children"]]
+    selected_nodes = []
+    for i, batch in enumerate(api.evidence_batches([
+            {"node_id": n["node_id"], "units": [u["text"] for u in n["units"]]} for n in leaves], 7500)):
+        schema = news.schema({"node_ids": {**refs_schema([n["node_id"] for n in batch], 4), "minItems": 0}})
+        ids = api.infer_cached(out, f"hierarchy-{key}-branches-{i}",
+            "全体像と欄の役割から、原資料へ戻る必要のある枝を最大4つ選ぶ。IDは入力のみ。"
+            "同じ値動きの重複より、必要な背景/予定/反対材料を優先。該当なしは空。",
+            {"date_facts": dates, "overview": context, "role": purpose, "branches": batch}, schema)["node_ids"]
+        if not set(ids) <= {n["node_id"] for n in batch}:
+            raise ValueError("hierarchical branch selection returned unknown node")
+        selected_nodes.extend(ids)
+    branch_ids = {r for n in leaves if n["node_id"] in selected_nodes for r in n["covered_fact_ids"]}
+    branch_material = [x for x in material if x["fact_id"] in branch_ids]
+    for i, batch in enumerate(api.evidence_batches([compact_fact(x) for x in branch_material], 4500)):
+        schema = news.schema({"fact_ids": {**refs_schema([x["fact_id"] for x in batch], 6), "minItems": 0}})
+        ids = api.infer_cached(out, f"hierarchy-{key}-scan-{i:03}",
+            "全体像を踏まえ、この欄の役割に必要な根拠を最大6件選ぶ。該当なしは空。"
+            "前日背景と本日予定の組、反対材料を残す。全テーマを毎欄に詰め込まない。IDはこのbatchだけ。",
+            {"date_facts": dates, "overview": context, "role": purpose, "facts": batch}, schema)["fact_ids"]
+        if not set(ids) <= {x["fact_id"] for x in batch}:
+            raise ValueError("hierarchical allocation returned unknown original ID")
+        candidates.extend(x for x in ids if x not in candidates)
+    by_id = {x["fact_id"]: x for x in material}
+    # Reduce candidate summaries, not original bodies. Retain no hardcoded market anchors.
+    for round_no in range(6):
+        pool = [compact_fact(by_id[x]) for x in candidates]
+        if len(json.dumps(pool, ensure_ascii=False).encode()) <= 9500:
+            batches = [pool]
+        else:
+            batches = api.evidence_batches(pool, 4500)
+        selected = []
+        for i, batch in enumerate(batches):
+            if not batch:
+                continue
+            cap = 10 if len(batches) == 1 else 4
+            schema = news.schema({"fact_ids": refs_schema([x["fact_id"] for x in batch], cap)})
+            ids = api.infer_cached(out, f"hierarchy-{key}-select-{round_no}-{i}",
+                f"全体像と欄の役割から最終根拠を最大{cap}件選ぶ。実際の変化/背景/当日条件を必要に応じ組にする。"
+                "同じ話を省き、異なる重要材料や反対材料を優先度に応じ保持。テーマを固定しない。入力IDだけ。",
+                {"date_facts": dates, "overview": context, "role": purpose, "facts": batch}, schema)["fact_ids"]
+            if not set(ids) <= {x["fact_id"] for x in batch}:
+                raise ValueError("hierarchical reduction returned unknown original ID")
+            selected.extend(x for x in ids if x not in selected)
+        candidates = selected
+        if len(batches) == 1:
+            break
+    else:
+        raise ValueError("hierarchical allocation did not converge")
+    if not candidates:
+        raise ValueError(f"{key}: no grounded evidence after hierarchical allocation")
+    evidence = [by_id[x] for x in candidates]
+    compact = [{k: v for k, v in x.items() if k not in {"source_context", "source_url", "source_title"}} for x in evidence]
+    if len(json.dumps(compact, ensure_ascii=False).encode()) > 16000:
+        raise ValueError("hierarchical evidence exceeds writer budget; do not truncate facts")
+    news.save(out / "hierarchy" / f"allocation-{key}.json",
+              {"selected_nodes": selected_nodes, "fact_ids": candidates, "overview": context})
+    return evidence

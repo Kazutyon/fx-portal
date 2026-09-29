@@ -365,9 +365,10 @@ def evidence_batches(records: list[dict], byte_limit: int = 12000) -> list[list[
     return batches
 
 
-def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path, topic_probe: int = 0) -> dict:
+def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path, topic_probe: int = 0,
+                  hierarchical: bool = False) -> dict:
     import local_fx_grounding as grounding
-    return grounding.make_sections(sys.modules[__name__], sources, calendar, ranking, out, topic_probe)
+    return grounding.make_sections(sys.modules[__name__], sources, calendar, ranking, out, topic_probe, hierarchical)
 
 
 def esc(text):
@@ -478,7 +479,7 @@ def comparison(target: date, report: str, out: Path) -> dict:
 
 
 def execute(target: date, out: Path, prepare_only: bool, render_existing: bool = False, topic_probe: int = 0,
-            supplement_news: bool = False) -> dict:
+            supplement_news: bool = False, hierarchical: bool = False) -> dict:
     previous_status = out / "status.json"
     if previous_status.exists():
         previous = load(previous_status)
@@ -487,12 +488,14 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
               "publish_ready": False, "started_at": datetime.now(JST).isoformat(), "scope": "full daily shadow"}
     status["mode"] = "render_existing_no_llm" if render_existing else "prepare_only" if prepare_only else "generate"
     status["think_off_experiment"] = news.FORCE_THINK_OFF
+    status["hierarchical_experiment"] = hierarchical
     news.save(out / "status.json", status)
     news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
     news.save(out / "runner-version.json", {"started_at": status["started_at"],
         "files": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in
                   [Path(__file__), Path(news.__file__), Path(claude_sources.__file__),
-                   ROOT / "tools" / "local_fx_grounding.py", ROOT / "tools" / "claude_mirror_shadow.json"]}})
+                   ROOT / "tools" / "local_fx_grounding.py", ROOT / "tools" / "local_fx_hierarchy.py",
+                   ROOT / "tools" / "claude_mirror_shadow.json"]}})
     try:
         if os.environ.get("COMPUTERNAME", "").upper() != "GALLERIA":
             raise ValueError("wrong host")
@@ -529,7 +532,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         if prepare_only:
             status["status"] = "PREPARED"
         else:
-            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out, topic_probe)
+            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out, topic_probe, hierarchical)
             if topic_probe:
                 status.update(status="TOPIC_PROBE_COMPLETE_REVIEW_PENDING", probe_topics=len(sections["topics"]),
                               quality="pending", publish_ready=False)
@@ -580,6 +583,7 @@ def main() -> int:
     parser.add_argument("--think-off-experiment", action="store_true", help="explicit isolated Qwen experiment; never selected by cron or after failure automatically")
     parser.add_argument("--topic-probe", type=int, choices=[1, 2], default=0, help="generate and review only the first one/two topics; no editorial or report")
     parser.add_argument("--supplement-news", action="store_true", help="isolated extra preceding-session collection; no scheduler change")
+    parser.add_argument("--hierarchical-experiment", action="store_true", help="isolated summary-tree trial; no scheduler/default change")
     args = parser.parse_args()
     news.FORCE_THINK_OFF = args.think_off_experiment
     out = args.run_dir or ROOT / "shadow-output" / f"{args.date}-local-daily"
@@ -600,7 +604,8 @@ def main() -> int:
             print("FAIL: another FX shadow runner holds the execution lock", flush=True)
             return 1
         try:
-            status = execute(args.date, out, args.prepare_only, args.render_existing, args.topic_probe, args.supplement_news)
+            status = execute(args.date, out, args.prepare_only, args.render_existing, args.topic_probe,
+                             args.supplement_news, args.hierarchical_experiment)
         finally:
             lock.seek(0)
             msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)

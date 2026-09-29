@@ -275,7 +275,7 @@ def review_copy(api, out, label, copy, evidence, target):
                      "reason": " / ".join(x["reason"] for x in verdicts)})
 
 
-def author(api, out, label, purpose, evidence, target, length):
+def author(api, out, label, purpose, evidence, target, length, overview=None):
     if not evidence:
         raise ValueError(f"{label}: no eligible grounded facts")
     # Writers receive typed facts and quotations; reviewers additionally get
@@ -284,6 +284,8 @@ def author(api, out, label, purpose, evidence, target, length):
     compact = [{k: v for k, v in x.items() if k not in {"source_context", "source_url", "source_title"}}
                for x in evidence]
     data = {"date_facts": date_facts(target), "facts": compact}
+    if overview:
+        data["global_overview"] = overview
     relations = []
     tomorrow = target + timedelta(days=1)
     for fact in evidence:
@@ -583,7 +585,7 @@ def shared_role_evidence(api, out, key, material, target, topics=None):
     return [by_id[x] for x in selected]
 
 
-def review_editorial_quality(api, out, key, draft, evidence, peers, target):
+def review_editorial_quality(api, out, key, draft, evidence, peers, target, overview=None):
     # Distinct from source correctness: missing analysis/duplication cannot be
     # certified by a quote-existence PASS. A failed quality review is retained.
     return api.infer_cached(out, f"editorial-quality-{key}",
@@ -597,22 +599,25 @@ def review_editorial_quality(api, out, key, draft, evidence, peers, target):
         {"role": ROLE_PURPOSES[key], "date_facts": date_facts(target),
          "draft": {"title": draft["title"], "body": draft["body"]},
          "available_facts": [{"fact_id": x["fact_id"], "fact": x["fact"]} for x in evidence],
+         "global_overview": overview or {},
+         "scope_rule": "全体像は構成の参考。欄の役割に不要なテーマや未取得材料を必須にしない。要約だけを事実根拠にしない",
          "other_sections": {k: v["body"][:420] for k, v in peers.items() if k != key}}, news.QC_SCHEMA)
 
 
-def improve_editorial(api, out, key, purpose, evidence, peers, target, length):
+def improve_editorial(api, out, key, purpose, evidence, peers, target, length, overview=None):
     """Keep a source-PASS original if OPTIONAL quality repair corrupts facts.
 
     This is a REJECTED shadow artifact, not a passing substitute or model
     fallback. Initial author/source failures still propagate and stop the run.
     """
-    draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length)
-    quality = review_editorial_quality(api, out, key, draft, evidence, peers, target)
+    extra = {"overview": overview} if overview else {}
+    draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length, **extra)
+    quality = review_editorial_quality(api, out, key, draft, evidence, peers, target, **extra)
     if quality["verdict"] == "FAIL":
         news.save(out / "stages" / f"editorial-quality-{key}-first-rejected.json", {"draft": draft, "quality": quality})
         try:
             improved = author(api, out, f"grounded-editorial-{key}-quality-repair",
-                purpose + "。編集指摘を改善: " + quality["reason"], evidence, target, length)
+                purpose + "。編集指摘を改善: " + quality["reason"], evidence, target, length, **extra)
         except ValueError as error:
             if "original-context review failed after one repair" not in str(error):
                 raise
@@ -625,7 +630,7 @@ def improve_editorial(api, out, key, purpose, evidence, peers, target, length):
                  "action": "retained source-PASS original for REJECTED shadow only", "publish_ready": False})
         else:
             draft = improved
-            quality = review_editorial_quality(api, out, key, draft, evidence, peers, target)
+            quality = review_editorial_quality(api, out, key, draft, evidence, peers, target, **extra)
     draft["quality_review"] = quality
     return draft
 
@@ -674,9 +679,17 @@ def news_candidates(api, out, prior, target):
     raise ValueError("news catalog did not converge within input budget")
 
 
-def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
+def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchical=False):
     target = date.fromisoformat(calendar["date_jst"])
     facts = extract(api, sources, target, out)
+    tree = None
+    global_overview = None
+    if hierarchical:
+        import local_fx_hierarchy as hierarchy
+        full_material = editorial_facts(calendar, ranking, facts, [])
+        news.save(out / "shared-material.json", {"facts": full_material, "lifecycle": "evidence"})
+        tree = hierarchy.build(api, out, full_material, target, date_facts(target))
+        global_overview = hierarchy.overview(tree)
     prior = [x for x in facts if x["event_scope"] == "previous" and x["claim_gate_accepted"]]
     plan_schema = news.schema({"topics": {"type": "array", "minItems": 3, "maxItems": 5,
         "items": news.schema({"title": news.STRING, "fact_ids": {"type": "array", "items": news.STRING, "minItems": 1, "maxItems": 6}})}})
@@ -685,7 +698,7 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
         "通貨別の羅列ではなく出来事単位。相場反応と理由のある具体的材料を優先。同じ材料を反復しない。"
         "介入発言とNYの戻しは一つの話題へまとめる。ドル円/ユーロドルの実際の値動きは落とさない。"
         "資料にない出来事は作らず、fact_idsは入力のみ。",
-        {"date_facts": date_facts(target), "facts": plan_data}, plan_schema)
+        {"date_facts": date_facts(target), "facts": plan_data, "global_overview": global_overview or {}}, plan_schema)
     topics = []
     for i, topic in enumerate(plan["topics"][:topic_probe or 5]):
         if any(x not in {f["fact_id"] for f in prior} for x in topic["fact_ids"]):
@@ -693,7 +706,7 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
         evidence = [x for x in prior if x["fact_id"] in topic["fact_ids"]]
         draft = author(api, out, f"grounded-topic-{i:02}",
                        f'前営業日の振り返り「{topic["title"]}」。何が起き、価格がどう動き、なぜ動いたかを説明',
-                       evidence, target, "250〜450")
+                       evidence, target, "250〜450", **({"overview": global_overview} if global_overview else {}))
         draft["source_ids"] = sorted({x["source_id"] for x in evidence})
         topics.append(draft)
         news.save(out / "news.json", {"topics": topics, "publish_ready": False})
@@ -714,18 +727,21 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
     ]
     editorial = {}
     for key, purpose, length in roles:
-        evidence = shared_role_evidence(api, out, key, material, target, topics)
+        evidence = (hierarchy.allocate(api, out, key, material, target, date_facts(target), tree, purpose)
+                    if hierarchical else shared_role_evidence(api, out, key, material, target, topics))
         if key in {"hero", "headline"}:
             purpose += "。最重要材料を短く。独立した材料を無理に同じ因果へ結ばない。予定/予想と実際の反応は分ける"
         else:
             purpose += "。材料→価格/金利への作用→本日の条件を役割に合わせて整理。予定だけの羅列や他欄の言い換えにしない"
-        draft = improve_editorial(api, out, key, purpose, evidence, editorial, target, length)
+        draft = improve_editorial(api, out, key, purpose, evidence, editorial, target, length,
+                                 **({"overview": global_overview} if global_overview else {}))
         editorial[key] = draft
         news.save(out / "editorial-progress.json", editorial)
     # Recheck all fields against the FINAL peers, not merely preceding fields.
     for key, draft in editorial.items():
         evidence = [x for x in material if x["fact_id"] in draft["claim_ids"]]
-        final_review = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
+        final_review = review_editorial_quality(api, out, key, draft, evidence, editorial, target,
+                                              **({"overview": global_overview} if global_overview else {}))
         if draft.get("quality_repair_rejected"):
             draft["quality_review"] = {"verdict": "FAIL", "reason": draft["rejected_quality_repair_reason"],
                                        "final_assessment": final_review}
