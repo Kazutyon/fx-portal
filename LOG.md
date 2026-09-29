@@ -6,6 +6,7 @@
 - 独立品質判定はREJECTED。今日午前東京の157.58→157.20をNY/前日へ混同し要約にも波及、handoverが9/29を月末最終営業日の翌日と誤記、反復と具体的材料の不足、指標19/32・休場未確認が残る。RBA予想/結果の表記もriskで不統一。自己照合5/5 PASSでも採用不可。原資料の時点をquote選別で落とすことと、editorialの照合未接続が主要原因。
 - 証拠: `docs/EVIDENCE-CLAUDE-MIRROR-SHADOW-20260929.md`、thinking-OFF runの `independent-review.json` / `report.html` / `comparison.json`。通常失敗とは別に保存。Owner本人の検収を実施したという意味ではない。公開/upload/pushなし、既存cronの時刻・引数（thinking-OFFなし）を維持。明朝成功の保証なし。
 - 3モジュールpy_compile PASS、git diff --check PASS、今回のFX Pythonが残っていないことを確認。明日の読み取り確認と品質対策は `FU-20260929-4AD963FE`（review_on 9/30）へ登録。既存FRED/経済指標Actionsのフォローアップは別件として保持。中央台帳は通常未完走/隔離完走不合格/FF403へ注記更新のみ。
+- 最終保全: プロジェクト評価commit `a70fb7b`、中央台帳/フォローアップcommit `f1ce5ba`。プロジェクトstatusはclean、rootの無関係な変更は保持した。Ownerのシャドー限定指示に従いpushなし。この1回の実行・評価は終了、次の実作業は品質対策と定時結果確認。
 
 - 通常thinking試験は13:33:57に3本目で終了。topic-02-selected-writeはinput3,764 bytes/prompt1,018、eval6,144/done_reason=length。入力/64k超過ではなく思考を含む出力上限。ニュース2本だけ保存、全文なし。2本目は今日午前東京の値動きをNYとした誤記があり、自己照合PASSでも品質不合格。
 - 完走と評価のため、同じQwen・同じ資料の隔離thinking-OFF試験を明示起動 `shadow-output/2026-09-29-claude-mirror-thinkoff-1334/`。`--think-off-experiment` はこの直接試験だけで、cron引数/通常thinking/モデル/64k/24KB/6,144出力上限は変えない。自動fallbackではない。旧失敗と試験を混ぜず保存する。
