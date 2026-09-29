@@ -24,21 +24,28 @@ def refs_schema(ids, maximum):
 def summarize(api, out, label, inputs, target, dates, leaf):
     ids = [x["fact_id"] if leaf else x["node_id"] for x in inputs]
     schema = news.schema({"units": {"type": "array", "minItems": 1, "maxItems": 4,
-        "items": news.schema({"text": {"type": "string", "maxLength": 260},
-                              "refs": refs_schema(ids, len(ids))})}})
+        "items": news.schema({"text": {"type": "string", "maxLength": 260}})},
+        "routes": news.schema({ref: {"type": "integer", "minimum": 0, "maximum": 3} for ref in ids})})
     data = {"date_facts": dates, "inputs": inputs}
     task = ("全入力を読んで、相場全体を後で理解するための要約を最大4単位にまとめる。各単位260文字以内。"
-            "同じ出来事は統合し、違う日付/市場/通貨/予想/実績は混ぜない。入力の全IDを少なくとも1単位のrefsに含める。"
+            "同じ出来事は統合し、違う日付/市場/通貨/予想/実績は混ぜない。"
+            "routesの各入力IDに、その材料を整理したunitsの0始まり番号を返す。全IDを必ず振り分け、未使用番号は不可。"
             "些細な値動きは一群にまとめてよいが、異なる主要材料・反対材料・条件は消さない。"
             "日付/数値/予定と実績/出典の見通しを保持。資料にない因果や結果は作らない。"
             "テーマは固定せず、今回の入力に合わせる。何が起きたかと、分からないことを区別する。"
-            "これは内部要約であって記事ではない。元資料に戻るためのrefsを付ける。"
-            "IDはrefsだけに書きtextへ埋め込まない。outlookは出典の見通しと明記し、全体の確定事実にしない。"
+            "これは内部要約であって記事ではない。元資料に戻るためのroutesを付ける。"
+            "IDはroutesだけに書きtextへ埋め込まない。outlookは出典の見通しと明記し、全体の確定事実にしない。"
             "国名・組織名・人名は入力の表記を保ち、独自の漢字略称へ変えない。")
-    value = api.infer_cached(out, label, task, data, schema)
+    raw_value = api.infer_cached(out, label, task, data, schema)
     for attempt in range(2):
+        routes = raw_value.get("routes", {})
+        value = {"units": [{"text": u["text"], "refs": [ref for ref, slot in routes.items()
+                    if slot == i]} for i, u in enumerate(raw_value["units"])]}
         refs = {r for u in value["units"] for r in u["refs"]}
         errors = []
+        if set(routes) != set(ids) or any(type(slot) is not int or not 0 <= slot < len(value["units"])
+                                          for slot in routes.values()):
+            errors.append("routes must assign every original ID to an existing summary unit")
         if refs != set(ids):
             errors.append(f"missing input IDs: {sorted(set(ids) - refs)}; unknown IDs: {sorted(refs - set(ids))}")
         if not 1 <= len(value["units"]) <= 4:
@@ -68,7 +75,7 @@ def summarize(api, out, label, inputs, target, dates, leaf):
         if attempt == 0:
             # Fresh reconstruction from original inputs, not an erroneous
             # summary copied forward as another source of facts.
-            value = api.infer_cached(out, label + "-repair", task + " 検査指摘を守り、原入力から要約を作り直す。",
+            raw_value = api.infer_cached(out, label + "-repair", task + " 検査指摘を守り、原入力から要約を作り直す。",
                                      {**data, "review": review}, schema)
     news.save(out / "hierarchy" / f"{label}.json", {"inputs": inputs, "summary": value, "review": review})
     if review["verdict"] != "PASS":
@@ -81,7 +88,10 @@ def build(api, out, material, target, dates):
         raise ValueError("hierarchy requires nonempty unique original fact IDs")
     nodes = []
     # Every accepted fact is visited. No topic/role-specific preselection.
-    for i, batch in enumerate(api.evidence_batches([compact_fact(x) for x in material], 4500)):
+    leaf_batches = [batch[j:j + 6]
+                    for batch in api.evidence_batches([compact_fact(x) for x in material], 4500)
+                    for j in range(0, len(batch), 6)]
+    for i, batch in enumerate(leaf_batches):
         label = f"hierarchy-leaf-{i:03}"
         value = summarize(api, out, label, batch, target, dates, True)
         nodes.append({"node_id": label, "units": value["units"],

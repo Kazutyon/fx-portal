@@ -19,7 +19,7 @@ class HierarchyTests(unittest.TestCase):
         if "review" in label:
             return {"verdict": "PASS", "reason": "offline fixture, not model quality"}
         ids = [x.get("fact_id", x.get("node_id")) for x in data["inputs"]]
-        return {"units": [{"text": "前日の材料群。予想と実績は区別。", "refs": ids}]}
+        return {"units": [{"text": "前日の材料群。予想と実績は区別。"}], "routes": {ref: 0 for ref in ids}}
 
     def test_tree_visits_every_fact_and_preserves_original_without_mutation(self):
         facts = self.facts(60)
@@ -27,6 +27,7 @@ class HierarchyTests(unittest.TestCase):
             tree = hierarchy.build(daily, Path(folder), facts, date(2026, 9, 29), {})
             self.assertEqual(set(tree["root"]["covered_fact_ids"]), {x["fact_id"] for x in facts})
             self.assertGreater(len([n for n in tree["nodes"] if n["children"]]), 1)
+            self.assertTrue(all(len(n["covered_fact_ids"]) <= 6 for n in tree["nodes"] if not n["children"]))
             for call in infer.call_args_list:
                 self.assertLess(len(__import__("json").dumps(call.args[3], ensure_ascii=False).encode()), 15000)
                 if "merge" in call.args[1]:
@@ -38,7 +39,7 @@ class HierarchyTests(unittest.TestCase):
         def missing(out, label, task, data, schema):
             if "review" in label:
                 return {"verdict": "PASS", "reason": "not enough to bypass refs"}
-            return {"units": [{"text": "要約", "refs": ["UNKNOWN"]}]}
+            return {"units": [{"text": "要約"}], "routes": {"UNKNOWN": 0}}
         with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=missing) as infer:
             with self.assertRaisesRegex(ValueError, "summary review failed"):
                 hierarchy.build(daily, Path(folder), self.facts(3), date(2026, 9, 29), {})
@@ -81,7 +82,7 @@ class HierarchyTests(unittest.TestCase):
         def wrong_country(out, label, task, data, schema):
             if "review" in label:
                 return {"verdict": "PASS", "reason": "self review misses it"}
-            return {"units": [{"text": "米伊交渉", "refs": ["N0"]}]}
+            return {"units": [{"text": "米伊交渉"}], "routes": {"N0": 0}}
         with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=wrong_country):
             with self.assertRaisesRegex(ValueError, "Iran replaced by Italy"):
                 hierarchy.build(daily, Path(folder), [fact], date(2026, 9, 29), {})
