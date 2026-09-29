@@ -124,6 +124,22 @@ def bind_claim(source, claim, index, target):
     scope = result["event_scope"]
     result["event_date"] = (previous_day(target).isoformat() if scope == "previous" else
                             target.isoformat() if scope == "current" else None)
+    # Explicit event dates outrank the model's publication-day classification.
+    # Do not date an analyst's outlook this way: its reporting date is separate
+    # from the date of a forecast event.
+    if result["record_type"] in {"actual", "forecast"}:
+        explicit = re.search(r"(\d{1,2})月(\d{1,2})日", quote_normal)
+        relative = re.search(r"明日(?:\d{1,2}月)?(\d{1,2})日", quote_normal)
+        event_day = date(target.year, int(explicit[1]), int(explicit[2])) if explicit else None
+        if relative:
+            source_tomorrow = published.date() + timedelta(days=1)
+            if source_tomorrow.day == int(relative[1]):
+                event_day = source_tomorrow
+        if event_day is not None:
+            result["event_date"] = event_day.isoformat()
+            result["event_scope"] = ("future" if event_day > target else "current" if event_day == target else
+                                     "previous" if event_day == previous_day(target) else "historical")
+            result["event_date_basis"] = "explicit original event date, not publication date"
     return result
 
 
@@ -157,11 +173,25 @@ def normalize_modes(copy, evidence):
     return copy
 
 
+def country_errors(text, evidence):
+    original = json.dumps([{k: x.get(k, "") for k in ["quote", "source_context"]} for x in evidence], ensure_ascii=False)
+    if (re.search(r"米伊|イタリア", text) and "イラン" in original
+            and not re.search(r"米伊|イタリア", original)):
+        return ["Iran replaced by Italy/米伊 without original-source support"]
+    return []
+
+
 def copy_errors(copy, evidence, target):
     allowed = {x["fact_id"]: x for x in evidence}
     errors = []
     if not copy.get("statements"):
         return ["no source-linked statements"]
+    title = unicodedata.normalize("NFKC", copy.get("title", ""))
+    errors.extend(country_errors(title, evidence))
+    if ("利上げ" in title and any(x.get("record_type") == "forecast" and "利上げ" in x.get("fact", "") for x in evidence)
+            and not re.search(r"予想|見込み|予定|なら|場合|見通し", title)
+            and not any(x.get("record_type") == "actual" and "利上げ" in x.get("fact", "") for x in evidence)):
+        errors.append("headline presents rate-hike forecast without a forecast qualifier")
     for statement_no, statement in enumerate(copy["statements"], 1):
         ids = statement["fact_ids"]
         if not ids or any(x not in allowed for x in ids):
@@ -169,6 +199,7 @@ def copy_errors(copy, evidence, target):
             continue
         text = unicodedata.normalize("NFKC", statement["text"])
         linked = [allowed[x] for x in ids]
+        errors.extend(country_errors(text, linked))
         if "NY" in text or "ニューヨーク" in text:
             if all(x.get("market_session") == "Tokyo" for x in linked):
                 errors.append("Tokyo-only facts assigned to NY")
@@ -176,11 +207,16 @@ def copy_errors(copy, evidence, target):
                 and not re.search(r"予想|見込み|予定|見通し|見方|指摘|前回|なら|場合|か[^。]{0,35}(?:確認|観察)|想定|可能性|明日", text)):
             errors.append("forecast/outlook written as realized fact")
             errors.append(f"statement {statement_no}, refs {','.join(ids)}: {text} — 予想/予定/出典の見方または明示的な条件として書く")
-        if (re.search(r"本日(?:は|が)?[^。]{0,40}最終営業日", text)
-                and not re.search(r"本日(?:は|が)?[^。]{0,40}最終営業日[^。]{0,20}明日(?:の)?前日", text)
+        if (re.search(r"本日(?:は|が)?(?:\d+月|月末|四半期末|の|・|、)*最終営業日", text)
+                and not re.search(r"本日(?:は|が)?[^。]{0,40}最終営業日[^。]{0,20}(?:明日(?:の)?)?前日", text)
                 and any(
                 "明日" in str(x) and "最後の営業日" in str(x) for x in linked)):
             errors.append("today contradicts source month-end date")
+        if (any(x.get("record_type") == "forecast" for x in linked)
+                and re.search(r"利上げ決定|利上げした|引き上げた", text)
+                and not re.search(r"予想|見込み|なら|場合|見通し", text)
+                and not any(x.get("record_type") == "actual" and "利上げ" in x.get("fact", "") for x in linked)):
+            errors.append("rate-hike outcome substituted for scheduled policy decision")
         if "观察" in text:
             errors.append("non-Japanese observation wording: replace 观察 with Japanese 観察")
     return errors
@@ -259,6 +295,7 @@ def author(api, out, label, purpose, evidence, target, length):
             "『可能性がある/かもしれない/様子見/注目したい』で終えず、何の変化を観察するかを書く。"
             "出典の総評/戦略/レッドラインは誰の見方かを示し、市場全体の確定事実にしない。"
             "発表予定・市場予想の紹介はreported_forecast（例『市場予想は25bp利上げ』）、実施済みとは書かない。"
+            "会合は『政策金利決定/発表』であって『利上げ決定』ではない。利上げは予想/条件と本文・title双方に明示。"
             "価格の数字を別ペアへ移さない。資料にない価格目標や因果を作らない。"
             "本文にfact ID・出典管理・内部状況・要確認・再確認を書かない。")
     draft = normalize_modes(api.infer_cached(out, f"{label}-write", task, data, COPY), evidence)
@@ -406,7 +443,7 @@ def editorial_facts(calendar, ranking, facts, topics):
     # A topic is one consumer, never the master list. Keep accepted unused
     # facts available to every editorial role, with their dates/types intact.
     material = [x for x in facts if x.get("claim_gate_accepted") and
-                x.get("event_scope") in {"previous", "current", "historical"}]
+                x.get("event_scope") in {"previous", "current", "historical", "future"}]
     for i, event in enumerate(calendar["events"]):
         if not event["confirmed"]:
             continue
@@ -488,6 +525,8 @@ def shared_role_evidence(api, out, key, material, target, topics=None):
     remaining = 8 - len(anchor_ids)
     schema = news.schema({"fact_ids": {"type": "array", "items": news.STRING, "maxItems": 8}})
     for i, batch in enumerate(api.evidence_batches(catalog, 9000)):
+        batch_schema = json.loads(json.dumps(schema))
+        batch_schema["properties"]["fact_ids"]["items"] = {"type": "string", "enum": [x["fact_id"] for x in batch]}
         choice = api.infer_cached(out, f"shared-{key}-scan-{i:02}",
             "これは執筆ではなく材料選別だけ。roleを実現する重要事実を最大8件選ぶ。"
             "ニュース本文に未採用の事実も同等に評価する。価格だけでなく発言/金利/背景/予定を残す。"
@@ -495,7 +534,7 @@ def shared_role_evidence(api, out, key, material, target, topics=None):
             "本日の条件分析に必要な前日背景と当日予定を組で残す。該当材料のないbatchのみ空配列。IDは入力限定。",
             {"role": ROLE_PURPOSES[key], "date_facts": date_facts(target), "facts": batch,
              "already_fixed_fact_ids": anchor_ids,
-             "rule": "必須の前日材料/当日予定は別に保持。追加の重要材料を選ぶ。過去背景だけで主材料を置き換えない"}, schema)["fact_ids"]
+             "rule": "必須の前日材料/当日予定は別に保持。追加の重要材料を選ぶ。過去背景だけで主材料を置き換えない"}, batch_schema)["fact_ids"]
         allowed = {x["fact_id"] for x in batch}
         if not set(choice) <= allowed:
             raise ValueError("shared role scan returned invalid fact ID")
@@ -509,11 +548,13 @@ def shared_role_evidence(api, out, key, material, target, topics=None):
         for round_no in range(5):
             reduced = []
             for i, batch in enumerate(api.evidence_batches(pool, 9000)):
+                batch_schema = json.loads(json.dumps(reduce_schema))
+                batch_schema["properties"]["fact_ids"]["items"] = {"type": "string", "enum": [x["fact_id"] for x in batch]}
                 choice = api.infer_cached(out, f"shared-{key}-reduce-{round_no}-{i}",
                     f"roleの必須根拠とは別に、追加を最大{remaining}件へ絞る。日時を保ち、出来事/背景/当日予定の組を優先。"
                     "ニュース以外の具体的材料を落とさず、同じ話の重複を除く。入力IDのみ。",
                     {"role": ROLE_PURPOSES[key], "facts": batch,
-                     "fixed_facts": [x for x in catalog if x["fact_id"] in anchor_ids]}, reduce_schema)["fact_ids"]
+                     "fixed_facts": [x for x in catalog if x["fact_id"] in anchor_ids]}, batch_schema)["fact_ids"]
                 if not set(choice) <= {x["fact_id"] for x in batch}:
                     raise ValueError("shared role reduction returned invalid fact ID")
                 reduced.extend(x for x in choice if x not in reduced)
@@ -665,7 +706,10 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
     editorial = {}
     for key, purpose, length in roles:
         evidence = shared_role_evidence(api, out, key, material, target, topics)
-        purpose += "。材料→価格/金利への作用→本日の条件を役割に合わせて整理。予定だけの羅列や他欄の言い換えにしない"
+        if key in {"hero", "headline"}:
+            purpose += "。最重要材料を短く。独立した材料を無理に同じ因果へ結ばない。予定/予想と実際の反応は分ける"
+        else:
+            purpose += "。材料→価格/金利への作用→本日の条件を役割に合わせて整理。予定だけの羅列や他欄の言い換えにしない"
         draft = improve_editorial(api, out, key, purpose, evidence, editorial, target, length)
         editorial[key] = draft
         news.save(out / "editorial-progress.json", editorial)

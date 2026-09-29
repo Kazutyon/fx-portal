@@ -10,6 +10,61 @@ import local_fx_daily as daily
 
 
 class DailyTests(unittest.TestCase):
+    def test_iran_cannot_be_abbreviated_as_italy_in_body_or_title(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "N0", "record_type": "actual", "quote": "米国とイランの交渉には隔たりがある。"}]
+        copy = {"title": "米伊交渉", "statements": [{"text": "米伊交渉の隔たりは大きい。", "fact_ids": ["N0"], "mode": "fact"}]}
+        errors = grounding.copy_errors(copy, facts, date(2026, 9, 29))
+        self.assertEqual(errors.count("Iran replaced by Italy/米伊 without original-source support"), 2)
+        copy["title"] = "米国とイランの交渉"
+        copy["statements"][0]["text"] = "米国とイランの交渉の隔たりは大きい。"
+        self.assertEqual(grounding.copy_errors(copy, facts, date(2026, 9, 29)), [])
+        self.assertEqual(grounding.country_errors("米伊交渉", [{"quote": "米国とイタリア、イラン情勢を協議。"}]), [])
+
+    def test_shared_selector_schema_restricts_ids_to_current_batch(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "N0", "fact": "前日の変化", "record_type": "actual", "event_scope": "previous"},
+                 {"fact_id": "N1", "fact": "追加背景", "record_type": "actual", "event_scope": "previous"}]
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", return_value={"fact_ids": ["N1"]}) as infer:
+            grounding.shared_role_evidence(daily, Path(folder), "hero", facts, date(2026, 9, 29), [{"claim_ids": ["N0"]}])
+            for call in infer.call_args_list:
+                allowed = call.args[4]["properties"]["fact_ids"]["items"]["enum"]
+                self.assertEqual(set(allowed), {x["fact_id"] for x in call.args[3]["facts"]})
+
+    def test_original_explicit_tomorrow_date_overrides_current_day_classification(self):
+        import local_fx_grounding as grounding
+        quote = "明日30日が9月月末での最後の営業日(月末・四半期末)のため、月末要因に注意したい局面。"
+        source = {"source_id": 12, "title": "本日の材料", "source_url": "https://test.example",
+                  "published_at": "2026-09-29T06:49:00+09:00", "text": quote}
+        bound = grounding.bind_claim(source, {"kind": "event", "fact": "9月30日が最後の営業日。", "quote": quote,
+            "event_scope": "current", "market_session": "unspecified", "pairs": [], "record_type": "actual"}, 0, date(2026, 9, 29))
+        self.assertEqual(bound["event_date"], "2026-09-30")
+        self.assertEqual(bound["event_scope"], "future")
+        bound["claim_gate_accepted"] = True
+        material = grounding.editorial_facts({"events": [], "day_themes": "", "source_urls": []},
+            {"rankings": []}, [bound], [])
+        self.assertEqual(material[0]["fact_id"], bound["fact_id"])
+
+    def test_mixed_date_and_schedule_cannot_hide_rate_hike_outcome(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "D1", "record_type": "actual", "fact": "明日は月末日"},
+                 {"fact_id": "C0", "record_type": "forecast", "fact": "RBA政策金利発表。利上げ予想"}]
+        copy = {"title": "RBA利上げ", "statements": [{"text": "明日の月末を控え、RBAの利上げ決定と声明を注視する。",
+            "fact_ids": ["D1", "C0"], "mode": "conditional"}]}
+        errors = grounding.copy_errors(copy, facts, date(2026, 9, 29))
+        self.assertIn("rate-hike outcome substituted for scheduled policy decision", errors)
+        self.assertIn("headline presents rate-hike forecast without a forecast qualifier", errors)
+        copy["title"] = "RBA利上げ予想"
+        copy["statements"][0]["text"] = "明日の月末を控え、RBA政策金利発表と声明を観察する。"
+        self.assertEqual(grounding.copy_errors(copy, facts, date(2026, 9, 29)), [])
+
+    def test_tomorrow_month_end_embedded_in_today_clause_is_not_today_assertion(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "月末", "statements": [{"text": "本日は明日が月末最終営業日となるため調整要因に留意する。",
+            "fact_ids": ["D1"], "mode": "conditional"}]}
+        self.assertEqual(grounding.copy_errors(copy, [{"fact_id": "D1", "record_type": "actual",
+            "fact": "明日9月30日が最後の営業日"}], date(2026, 9, 29)), [])
+
     def test_source_review_distinguishes_observation_from_asserted_causality(self):
         import local_fx_grounding as grounding
         copy = {"title": "観察", "statements": [{"text": "予定される発言後、ドルの反応が変わるか観察する。",
