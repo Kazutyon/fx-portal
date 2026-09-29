@@ -84,15 +84,24 @@ def bind_claim(source, claim, index, target):
         mentioned = date(target.year, int(dated[1]), int(dated[2]))
         if mentioned < previous_day(target):
             result["event_scope"] = "historical"
-    elif re.search(r"先週(?:前半|後半|発表|は)|週前半|週末25日", temporal_text):
+    elif re.search(r"先週(?:前半|後半|末|発表|は)|週前半|週末25日", temporal_text):
         result["event_scope"] = "historical"
     at = source["text"].find(claim["quote"])
     before_quote = source["text"][max(0, at - 140):at]
+    analytic_context = source["text"][max(0, at - 450):at]
+    if re.search(r"総評|基本戦略|想定レンジ", analytic_context):
+        result["record_type"] = "outlook"
+        result["kind"] = "outlook"
     if re.search(r"先週最大のテーマ[^。]*。[\s]*$", before_quote):
         # A later undated analysis subsection can still describe last week's
         # trigger; a preceding '9/28〜足元' heading is not a blanket timestamp.
         result["event_scope"] = "historical"
     published = datetime.fromisoformat(source["published_at"]).astimezone(news.JST)
+    if result["record_type"] == "outlook" and published.date() < target:
+        # Date the source's reported view, not a future event or this report.
+        # Yesterday's '本日/今朝' is never silently promoted to today.
+        result["event_scope"] = "previous" if published.date() == previous_day(target) else "historical"
+        result["event_date_basis"] = "outlook reported at original publication, not a fresh current-day view"
     morning_ny = (published.date() == target and published.hour < 7
                   and bool(re.search(r"NY為替概況", unicodedata.normalize("NFKC", source["title"]))))
     if (morning_ny and result["event_scope"] == "current" and result["record_type"] == "actual"
@@ -157,8 +166,8 @@ def copy_errors(copy, evidence, target):
         if "NY" in text or "ニューヨーク" in text:
             if all(x.get("market_session") == "Tokyo" for x in linked):
                 errors.append("Tokyo-only facts assigned to NY")
-        if (statement["mode"] == "fact" and all(x.get("record_type") in {"forecast", "outlook"} for x in linked)
-                and not re.search(r"予想|見込み|予定|見通し|との見方|との指摘|前回", text)):
+        if (all(x.get("record_type") in {"forecast", "outlook"} for x in linked)
+                and not re.search(r"予想|見込み|予定|見通し|見方|指摘|前回|なら|場合|かを(?:確認|観察)|想定", text)):
             errors.append("forecast/outlook written as realized fact")
         if re.search(r"本日.{0,40}最終営業日(?:の)?翌日", text) and any(
                 "明日" in str(x) and "最後の営業日" in str(x) for x in linked):
@@ -184,8 +193,12 @@ def review_copy(api, out, label, copy, evidence, target):
             "outlookのevent_date_basisは見方が記録された時点であり、将来イベントの実施日ではない。"
             "本文が予想・見込み・予定を紹介している場合、『利上げになる見込み』等は実施済み断定ではない。"
             "将来の予定/予想を紹介する文にif条件は不要。予想と明示しただけの文を創作としてFAILにしない。"
-            "日付はdate_factsと照合。条件付き分析は資料の材料に基づく条件/観察項目なら許容するが、"
-            "未出典のニュース・価格目標・因果の創作は禁止。段落内に根拠のない事実が一つでもあればFAIL。理由は具体的に。")
+            "日付はdate_factsと照合。条件付き分析の観察項目は、出典に同一の文章があることを要求しない。"
+            "資料で述べられた材料と反応の結びつきを本日の確認条件として使うのは許容。"
+            "ただし予測を必然の結果と断定、新しい原因/機序/価格目標/予定/実現済み事実を付け加えるのは禁止。"
+            "『金利とドル買いがともに弱まるかを確認』のような観察と、『金利が下がるから必ず円高』を区別。"
+            "原文の想定レンジ/総評/基本戦略は出典の見方で、市場全体の事実として断定しない。"
+            "異なる取引時間帯の原因を特定価格の原因へ混ぜない。根拠のない事実が一つでもあればFAIL。理由は具体的に。")
     if len(json.dumps(data, ensure_ascii=False).encode()) <= 19000:
         return api.infer_cached(out, label, task, data, news.QC_SCHEMA)
     # Review individual source-linked statements, never drop contexts to fit.
@@ -213,6 +226,8 @@ def author(api, out, label, purpose, evidence, target, length):
             "使用する根拠は入力に限る。event_date/market_session/pairs/record_typeを守る。"
             "『きょう』をNYと固定変換しない。historicalは前日の出来事にしない。"
             "forecastは予想、outlookは出典の見方と明示。自分の当日分析はconditionalで条件と観察項目を示す。"
+            "分析は確認できる条件と観察項目を具体化する。相場が必ずその方向になるとは断定しない。"
+            "出典の総評/戦略/レッドラインは誰の見方かを示し、市場全体の確定事実にしない。"
             "発表予定・市場予想の紹介はreported_forecast（例『市場予想は25bp利上げ』）、実施済みとは書かない。"
             "価格の数字を別ペアへ移さない。資料にない価格目標や因果を作らない。"
             "本文にfact ID・出典管理・内部状況・要確認・再確認を書かない。")
@@ -246,7 +261,10 @@ def extract(api, sources, target, out):
                 "日付のない先週の振り返りを前日扱いにしない。"
                 "market_sessionは原文の市場、分からなければunspecified。pairsは当該事実の対象だけUSD/JPY等で返す。"
                 "実績actual・予想forecast・出典の見通しoutlookを区別。factは日付/市場/ペアを省略せず日本語1文。"
-                "発言・価格反応・原因・条件付き見通しを拾い、同時発生を因果にしない。",
+                "発言・価格反応・原因・条件付き見通しを拾い、同時発生を因果にしない。" +
+                ("先週末はhistorical。前営業日掲載の『本日/今朝』は掲載日であり本日ではない。"
+                 "outlookは出典の見方が記録された時点で、将来予定の実施日と混同しない。"
+                 if datetime.fromisoformat(source["published_at"]).astimezone(news.JST).date() < target else ""),
                 {"date_facts": date_facts(target), "published_at": source["published_at"],
                  "source_title": source["title"], "article_opening": source["text"][:240],
                  "nearby_heading": context_for(source, text)["nearby_heading"], "text": text}, CLAIMS)
@@ -299,13 +317,18 @@ def extract(api, sources, target, out):
         if missing_pairs:
             core_schema = json.loads(json.dumps(CLAIMS))
             core_schema["properties"]["claims"]["minItems"] = 1
+            core_text = source["text"]
+            if len(core_text.encode()) > 12000:
+                matching = [next((text for text in api.source_chunks(core_text)
+                    if literal_names[p] in text), "") for p in missing_pairs]
+                core_text = "\n".join(dict.fromkeys(matching))
             extra = api.infer_cached(out, f'source-{source["source_id"]:02}-core-pairs-extract',
                 "USD/JPYはドル円、EUR/USDはユーロドル。指定missing_pairsの実際の値動きを1〜3件抽出。"
                 "『振幅』『推移』『下げ止まり』も実際の動き。別ペアや将来の価格目標は不可。"
                 "quoteは完全一致20〜180文字、event_scope/market_session/record_typeは原文を守る。"
                 "JST朝のNY概況は前営業日のNY。資料に記述がないペアは抽出せず空配列。",
                 {"date_facts": date_facts(target), "missing_pairs": missing_pairs,
-                 "source_title": source["title"], "published_at": source["published_at"], "text": source["text"]}, core_schema)
+                 "source_title": source["title"], "published_at": source["published_at"], "text": core_text}, core_schema)
             for claim in extra["claims"]:
                 if claim["record_type"] != "actual" or not set(claim["pairs"]) & set(missing_pairs):
                     continue

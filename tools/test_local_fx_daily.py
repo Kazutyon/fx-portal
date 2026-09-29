@@ -10,6 +10,55 @@ import local_fx_daily as daily
 
 
 class DailyTests(unittest.TestCase):
+    def test_analyst_general_assessment_is_not_actual_market_fact(self):
+        import local_fx_grounding as grounding
+        quote = "市場はドル円の160円を絶対防衛線と意識しており、上値追いは危険な状態となっている。"
+        source = {"source_id": 6, "title": "まとめと見通し", "source_url": "https://test.example",
+                  "published_at": "2026-09-29T12:50:00+09:00", "text": "総評。原油と介入の見方。" + quote}
+        bound = grounding.bind_claim(source, {"kind": "event", "fact": quote, "quote": quote,
+            "event_scope": "current", "market_session": "unspecified", "pairs": ["USD/JPY"],
+            "record_type": "actual"}, 0, date(2026, 9, 29))
+        self.assertEqual(bound["record_type"], "outlook")
+
+    def test_auxiliary_conditional_label_does_not_hide_forecast_assertion(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "RBA", "statements": [{"text": "RBAが利上げした。",
+                "fact_ids": ["C0"], "mode": "conditional"}]}
+        self.assertIn("forecast/outlook written as realized fact", grounding.copy_errors(
+            copy, [{"fact_id": "C0", "record_type": "forecast"}], date(2026, 9, 29)))
+
+    def test_zai_main_contents_article_is_read_without_sidebar_or_ads(self):
+        page = '''<script type="application/ld+json">{"@type":"Article","headline":"本日の相場解説","datePublished":"2026-09-29T06:49:00+09:00"}</script>
+        2026年09月29日(火)06:49公開<div id="main-contents"><p>本日は米金利動向と政策発言が重要。''' + "主要材料を確認。" * 10 + '''</p>
+        <p class="prcolumn-t">広告</p><div class="article-hitsuji-chart">チャート広告</div></div>
+        <div id="sub-contents">別日の関連記事</div>'''
+        article = daily.claude_sources.article("https://zai.diamond.jp/articles/-/1", page)
+        self.assertIn("米金利", article["text"])
+        self.assertNotIn("広告", article["text"])
+        self.assertNotIn("別日の関連記事", article["text"])
+        self.assertEqual(article["published_at"], "2026-09-29T06:49:00+09:00")
+
+    def test_previous_published_outlook_is_not_current_view(self):
+        import local_fx_grounding as grounding
+        quote = "ユーロドルは上値の重さが続き、目先はサポートとなる1.1350前後を意識する流れが予想される。"
+        source = {"source_id": 11, "title": "本日の見通し", "source_url": "https://example.test",
+                  "published_at": "2026-09-28T08:00:00+09:00", "text": quote}
+        bound = grounding.bind_claim(source, {"kind": "outlook", "fact": quote, "quote": quote,
+            "event_scope": "current", "market_session": "unspecified", "pairs": ["EUR/USD"],
+            "record_type": "outlook"}, 0, date(2026, 9, 29))
+        self.assertEqual(bound["event_date"], "2026-09-28")
+        self.assertEqual(bound["event_scope"], "previous")
+
+    def test_last_weekend_cannot_be_previous_monday_actual(self):
+        import local_fx_grounding as grounding
+        quote = "先週末、日米当局による円安けん制を受け、ドル円は一時156円台まで下落した。"
+        source = {"source_id": 11, "title": "本日の見通し", "source_url": "https://example.test",
+                  "published_at": "2026-09-28T08:00:00+09:00", "text": quote}
+        bound = grounding.bind_claim(source, {"kind": "event", "fact": quote, "quote": quote,
+            "event_scope": "previous", "market_session": "unspecified", "pairs": ["USD/JPY"],
+            "record_type": "actual"}, 0, date(2026, 9, 29))
+        self.assertEqual(bound["event_scope"], "historical")
+
     def test_editorial_pool_keeps_accepted_fact_not_selected_for_news(self):
         import local_fx_grounding as grounding
         facts = [{"fact_id": "N0-0", "claim_gate_accepted": True, "event_scope": "previous"},

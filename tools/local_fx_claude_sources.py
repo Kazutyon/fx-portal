@@ -24,12 +24,14 @@ INDEXES = [
 
 class ArticleBody(HTMLParser):
     """Capture article/entry-content only; never feed whole navigation to Qwen."""
-    def __init__(self):
+    def __init__(self, include_main_contents=False):
         super().__init__(convert_charrefs=True)
         self.depth = 0
         self.capture_depth = None
         self.parts = []
         self.blocked = 0
+        self.include_main_contents = include_main_contents
+        self.suppressed_depths = []
 
     def handle_starttag(self, tag, attrs):
         if tag in {"br", "hr", "img", "meta", "link", "input", "source", "wbr"}:
@@ -39,10 +41,13 @@ class ArticleBody(HTMLParser):
         if self.capture_depth is None and (
             "entry-content" in attrs.get("class", "").split()
             or attrs.get("itemprop") == "articleBody"
+            or (self.include_main_contents and attrs.get("id") == "main-contents")
         ):
             self.capture_depth = self.depth
         if tag in {"script", "style", "nav"}:
             self.blocked += 1
+        if re.search(r"(?:^|\s)(?:prcolumn-|article-hitsuji-chart|centraltanshifx)", attrs.get("class", "")):
+            self.suppressed_depths.append(self.depth)
 
     def handle_endtag(self, tag):
         if tag in {"br", "hr", "img", "meta", "link", "input", "source", "wbr"}:
@@ -51,10 +56,12 @@ class ArticleBody(HTMLParser):
             self.blocked = max(0, self.blocked - 1)
         if self.depth == self.capture_depth:
             self.capture_depth = None
+        if self.depth in self.suppressed_depths:
+            self.suppressed_depths.remove(self.depth)
         self.depth = max(0, self.depth - 1)
 
     def handle_data(self, data):
-        if self.capture_depth is not None and not self.blocked:
+        if self.capture_depth is not None and not self.blocked and not self.suppressed_depths:
             self.parts.append(data)
 
 
@@ -87,15 +94,22 @@ def article(url, page):
     if urlparse(url).hostname == "zai.diamond.jp":
         body = re.search(r"<!--\s*記事本文\s*-->(.*?)<!--\s*記事本文\s*-->", page, re.S)
         visible = re.search(r"(\d{4})年(\d{2})月(\d{2})日\([^)]*\)(\d{2}):(\d{2})公開", page)
-        if not body or not visible:
+        if not visible:
             raise ValueError("Zai body/publication marker missing")
         published = datetime(*(int(x) for x in visible.groups()), tzinfo=news.JST)
-        text = news.plain(re.sub(r"<script\b.*?</script>|<style\b.*?</style>", "", body[1], flags=re.S))
+        if body:
+            text = news.plain(re.sub(r"<script\b.*?</script>|<style\b.*?</style>", "", body[1], flags=re.S))
+        else:
+            parser = ArticleBody(include_main_contents=True)
+            parser.feed(page)
+            text = re.sub(r"\s+", " ", " ".join(parser.parts)).strip()
     else:
         parser = ArticleBody()
         parser.feed(page)
         text = re.sub(r"\s+", " ", " ".join(parser.parts)).strip()
-    if len(text) < 80 or len(text.encode("utf-8")) > 12000:
+    # Articles are extracted in <=650-character stages; don't confuse a whole
+    # article storage budget with an individual prompt's 24KB budget.
+    if len(text) < 80 or len(text.encode("utf-8")) > 32000:
         raise ValueError("article body missing or exceeds per-article budget")
     return {"source_url": url, "title": html.unescape(meta["headline"]),
             "published_at": published.astimezone(news.JST).isoformat(),
@@ -236,4 +250,42 @@ def supplement_previous(target, out, snapshot, sources):
     news.save(marker, {"lifecycle": "evidence", "indexes": stats, "rejected": rejected,
         "total_sources": len(sources), "new_publication_cutoff": cutoff.isoformat(),
         "original_inputs_may_include_afternoon_articles": True, "baseline_used_as_generation_input": False})
+    return sources
+
+
+def recover_article_formats(target, out, snapshot, sources):
+    """Recover previously saved format failures; no forbidden HTTP retries."""
+    marker = out / "source-format-supplement-review.json"
+    if marker.exists():
+        return json.loads((out / "source-bundle.json").read_text(encoding="utf-8"))["sources"]
+    previous = target - timedelta(days=1)
+    while previous.weekday() >= 5:
+        previous -= timedelta(days=1)
+    start = datetime.combine(previous, time(), news.JST)
+    finish = datetime.combine(target, time(7), news.JST)
+    review = json.loads((out / "supplement-review.json").read_text(encoding="utf-8"))
+    sources, results = list(sources), []
+    for item in review["rejected"]:
+        if not re.search(r"body/publication marker missing|body missing or exceeds", item["reason"]):
+            continue
+        url = item["url"]
+        path = out / "sources" / f'live-article-{hashlib.sha256(url.encode()).hexdigest()[:16]}.json'
+        if not path.exists() or len(sources) >= 24:
+            continue
+        try:
+            value = article(url, snapshot(out, path.stem, url))
+            if not start <= datetime.fromisoformat(value["published_at"]) <= finish:
+                raise ValueError("outside preceding-session/morning publication window")
+            if value["sha256"] in {x["sha256"] for x in sources}:
+                continue
+            value["source_id"] = len(sources)
+            sources.append(value)
+            results.append({"url": url, "accepted_source_id": value["source_id"], "text_chars": len(value["text"])})
+        except (ValueError, KeyError) as error:
+            results.append({"url": url, "rejected": str(error)})
+    bundle = json.loads((out / "source-bundle.json").read_text(encoding="utf-8"))
+    bundle["sources"] = sources
+    news.save(out / "source-bundle.json", bundle)
+    news.save(marker, {"lifecycle": "evidence", "results": results, "total_sources": len(sources),
+                      "network_refusal_retried": False, "calendar_rows_not_confirmed_from_same_author": True})
     return sources

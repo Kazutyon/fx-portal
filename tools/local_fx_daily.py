@@ -508,6 +508,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
             if not mirror_enabled() or render_existing:
                 raise ValueError("supplement requires isolated mirror generation, not render-only")
             sources = claude_sources.supplement_previous(target, out, snapshot, sources)
+            sources = claude_sources.recover_article_formats(target, out, snapshot, sources)
         calendar = collect_calendar(target, out)
         policy_path = out / "policy.json"
         if not policy_path.exists() and mirror_enabled():
