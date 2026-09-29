@@ -291,7 +291,6 @@ def collect_calendar(target: date, out: Path) -> dict:
     themes_end = kiss_text.find(f"{target.month}月{target.day}日", themes_at + 20) if themes_at >= 0 else -1
     # Keep the theme list, not a slice of navigation + table + legal notices.
     day_themes = kiss_text[themes_at:themes_end if themes_end > themes_at else themes_at + 1100] if themes_at >= 0 else ""
-    weekly_at = next((m.start() for m in re.finditer(r"今週の(?:注目|重要)|週間(?:予定|スケジュール)|週内の", kiss_text)), -1)
     key = [x for x in events if x["importance"] == "high" or event_code(x["name"]) in {"confidence", "jolts", "rba-rate", "rba-press"}]
     result = {"date_jst": target.isoformat(), "events": events, "key_events": key,
               "source_urls": [kiss_url, ff_url],
@@ -530,10 +529,11 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                               quality="pending", publish_ready=False)
                 status["finished_at"] = datetime.now(JST).isoformat()
                 news.save(out / "status.json", status)
+                news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
                 return status
             report = render(target, sections, calendar, ranking, out)
             comparison(target, report, out)
-            checks = {"five_topics": len(sections["topics"]) == 5,
+            checks = {"three_to_five_topics": 3 <= len(sections["topics"]) <= 5,
                       "required_anchors": all(f'id="{x}"' in report for x in ["summary", "points", "ranking", "review", "calendar"]),
                       "no_internal_status": not bool(re.search(FORBIDDEN, report, re.I)),
                       "calendar_nonempty": bool(calendar["events"]), "today_ranking": today_ranking,

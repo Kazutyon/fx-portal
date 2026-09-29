@@ -47,6 +47,16 @@ class DailyTests(unittest.TestCase):
                  "event_scope": "previous", "market_session": "unspecified", "pairs": ["MXN/JPY"], "record_type": "actual"}
         self.assertEqual(grounding.bind_claim(source, claim, 0, date(2026, 9, 29))["event_scope"], "historical")
 
+    def test_last_week_theme_prefix_overrides_stale_heading(self):
+        import local_fx_grounding as grounding
+        quote = "トランプ大統領の懸念表明により、ドル円の160円ラインが市場に強烈に意識された。"
+        source = {"source_id": 5, "title": "メキシコペソ円", "source_url": "https://test.example/5",
+                  "published_at": "2026-09-29T13:05:00+09:00",
+                  "text": "■ 値動き（9月28日〜足元） 日本・米国側：先週最大のテーマは円安牽制である。" + quote}
+        claim = {"kind": "event", "fact": quote, "quote": quote, "event_scope": "previous",
+                 "market_session": "unspecified", "pairs": ["USD/JPY"], "record_type": "actual"}
+        self.assertEqual(grounding.bind_claim(source, claim, 0, date(2026, 9, 29))["event_scope"], "historical")
+
     def test_opening_cannot_be_reextracted_as_chunk_quote(self):
         import local_fx_grounding as grounding
         quote = "ロンドン時間には三村財務官の発言に敏感に反応し、円高が強まった。"
@@ -59,6 +69,16 @@ class DailyTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "previous-session facts insufficient"):
                 grounding.extract(daily, [source], date(2026, 9, 29), Path(folder))
             self.assertEqual(infer.call_count, 1)
+
+    def test_us_country_cannot_be_added_to_unlabelled_mexican_release(self):
+        import local_fx_grounding as grounding
+        quote = "今週の主な指標 09/28 21:00 貿易収支 （8月） 結果 6.054億ドル 予想 15.3億ドル 前回 -8.475億ドル"
+        source = {"source_id": 5, "title": "メキシコペソ円のまとめ", "source_url": "https://test.example/5",
+                  "published_at": "2026-09-29T13:05:00+09:00", "text": "メキシコペソ円は下落。" + quote}
+        claim = {"kind": "event", "fact": "米国の8月貿易収支は6.054億ドルとなった。", "quote": quote,
+                 "event_scope": "previous", "market_session": "unspecified", "pairs": [], "record_type": "actual"}
+        with self.assertRaisesRegex(ValueError, "country.*not grounded"):
+            grounding.bind_claim(source, claim, 0, date(2026, 9, 29))
 
     def test_invalid_fact_id_is_rejected_before_model_review(self):
         import local_fx_grounding as grounding
@@ -82,6 +102,28 @@ class DailyTests(unittest.TestCase):
         copy = {"title": "本日", "statements": [{"text": "本日は最終営業日翌日。",
                 "fact_ids": ["D0"], "mode": "conditional"}]}
         self.assertIn("today contradicts source month-end date", grounding.copy_errors(copy, facts, date(2026, 9, 29)))
+
+    def test_forecast_mode_normalization_does_not_change_text(self):
+        import local_fx_grounding as grounding
+        text = "本日13:30にRBA政策金利が25bp利上げされ4.60%になる見込み。"
+        copy = {"title": "本日", "statements": [{"text": text, "fact_ids": ["C3"], "mode": "conditional"}]}
+        normalized = grounding.normalize_modes(copy, [{"fact_id": "C3", "record_type": "forecast"}])
+        self.assertEqual(normalized["statements"][0]["mode"], "reported_forecast")
+        self.assertEqual(normalized["statements"][0]["text"], text)
+
+    def test_short_ny_price_quote_keeps_context_and_previous_session(self):
+        import local_fx_grounding as grounding
+        quote = "ユーロドルは１．１３ドル台で振幅。"
+        source = {"source_id": 4, "title": "ドル円＝ＮＹ為替概況", "source_url": "https://test.example/4",
+                  "published_at": "2026-09-29T05:50:00+09:00",
+                  "text": "きょうのＮＹ為替市場。" + quote + "下げ止まってはいるものの買い戻す気配はない。"}
+        claim = {"kind": "price", "fact": quote, "quote": quote, "event_scope": "current",
+                 "market_session": "NY", "pairs": ["EUR/USD"], "record_type": "actual"}
+        bound = grounding.bind_claim(source, claim, 0, date(2026, 9, 29))
+        self.assertEqual(bound["event_date"], "2026-09-28")
+        self.assertGreaterEqual(len(bound["quote"]), 20)
+        self.assertIn(bound["quote"], source["text"])
+        self.assertEqual(bound["fact"], quote)
 
     def test_rounding_compatibility_is_not_a_blanket_tolerance(self):
         self.assertEqual(daily.numeric_agreement("7228千件", "7.23M"), "rounding-compatible")
@@ -111,6 +153,7 @@ class DailyTests(unittest.TestCase):
             data = infer.call_args.args[3]
             self.assertEqual(data["original_evidence"][0]["source_context"], fact["source_context"])
             self.assertEqual(data["date_facts"]["previous_session_date"], "2026-09-28")
+            self.assertNotIn("mode", data["draft"]["statements"][0])
 
     def test_author_does_not_accept_failed_repair(self):
         import local_fx_grounding as grounding
