@@ -57,7 +57,10 @@ def load(path: Path):
 def snapshot(out: Path, label: str, url: str) -> str:
     path = out / "sources" / f"{label}.json"
     if path.exists():
-        return load(path)["body"]
+        value = load(path)
+        if value["url"] != url or hashlib.sha256(value["body"].encode()).hexdigest() != value["sha256"]:
+            raise ValueError(f"cached {label} URL/hash mismatch")
+        return value["body"]
     try:
         body = fetch(url)
     except Exception as error:
@@ -119,7 +122,7 @@ def parse_kiss(page: str, target: date) -> list[dict]:
         values = [news.plain(body) for _, body in cells[rank_i + 1:]]
         hour, minute = map(int, current_time.split(":"))
         when = datetime.combine(target, daytime(), JST) + timedelta(hours=hour, minutes=minute)
-        grade = "high" if ("bg-orange" in row or "bg-yellow" in row or "icon-aa" in row) else "medium" if "icon-bb" in row else "low"
+        grade = "high" if ("bg-orange" in row or "icon-aa" in row) else "medium" if ("icon-bb" in row or "icon-maru2" in row) else "low"
         events.append({"time_jst": current_time, "datetime_jst": when.isoformat(), "country": country,
                        "name": name, "importance": grade, "forecast": values[0] if len(values) >= 2 else "—",
                        "previous": values[1] if len(values) >= 2 else "—", "source": "kissfx"})
@@ -229,6 +232,7 @@ def infer_cached(out: Path, label: str, task: str, data, schema: dict) -> dict:
     if artifact.exists():
         cached = load(artifact)
         if cached["input_sha256"] == fingerprint:
+            print(f"STAGE {label} CACHE", flush=True)
             return cached["value"]
     previous_request = out / "stages" / f"{label}.request.json"
     if previous_request.exists():
@@ -243,9 +247,11 @@ def infer_cached(out: Path, label: str, task: str, data, schema: dict) -> dict:
             history["artifact"] = load(artifact)
         news.save(out / "stages" / "history" / f"{label}-{previous_hash[:16]}.json", history)
     news.save(out / "progress.json", {"stage": label, "state": "RUNNING", "at": datetime.now(JST).isoformat()})
+    print(f"STAGE {label} RUNNING", flush=True)
     value = news.infer(label, task, data, schema, out / "stages")
     news.save(artifact, {"input_sha256": fingerprint, "value": value})
     news.save(out / "progress.json", {"stage": label, "state": "DONE", "at": datetime.now(JST).isoformat()})
+    print(f"STAGE {label} DONE", flush=True)
     return value
 
 
@@ -374,7 +380,11 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
     while previous.weekday() >= 5:
         previous -= timedelta(days=1)
     weekday = "月火水木金土日"[target.weekday()]
-    events = calendar["events"]
+    # Do not turn unresolved/single-source rows into reader-facing "recheck" prose.
+    # Retain all rows and disagreements in calendar.json/validation.json instead.
+    events = [x for x in calendar["events"] if x["confirmed"]]
+    if not events:
+        raise ValueError("no confirmed calendar events for reader copy")
     key = calendar["key_events"]
     topics_html = "\n".join(f'<div class="topic"><h4 class="topic-title">{i+1}. {esc(t["title"])}</h4><p>{esc(t["body"])}</p></div>' for i, t in enumerate(sections["topics"]))
     ranks = []
@@ -384,7 +394,8 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
         flags = "".join(FLAGS.get(c, "") for c in r["pair"].split("/"))
         desc = f'第{r["rank"]}位・スコア{r["score"]}・{r["verdict"]} / ADX {r["adx_h4"]} / ADR比 {r["adr_ratio_pct"]}% / {r["direction"]}'
         ranks.append(f'<tr><td><span class="rank-badge rank-{grade.lower()}">{grade}</span></td><td><strong>{esc(r["pair"])} {flags}</strong><br><span style="color:var(--muted);font-size:12px;">{esc(desc)}</span></td><td><span class="{trend[0]}">{trend[1]}</span></td></tr>')
-    archive = sorted((ROOT / "reports").glob("*.html"), reverse=True)[:15]
+    archive = sorted((p for p in (ROOT / "reports").glob("*.html")
+                      if re.fullmatch(r"\d{4}-\d{2}-\d{2}", p.stem) and p.stem < target.isoformat()), reverse=True)[:15]
     ctx = {"TODAY": target.isoformat(), "WEEKDAY": weekday, "HERO_TITLE_SUB": esc(sections["hero"]),
            "SUMMARY_HEADLINE": esc(sections["headline"]), "SUMMARY_BODY": esc(sections["summary"]),
            "TOP_PAIR_BODY": esc(sections["focus_body"]), "RISK_LEVEL": esc(sections["risk_level"]),
@@ -406,8 +417,12 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
         else:
             raise ValueError("template contains unsupported expression")
     report = "".join(parts)
+    report = report.replace("本日の経済指標カレンダー（全件）", "本日の経済指標カレンダー（主要予定）")
     report = report.replace("<em>金曜日</em>", f"<em>{weekday}曜日</em>")
-    report = report.replace("2026-09-24", previous.isoformat())
+    report = report.replace("前日の相場振り返り（2026-09-24）", f"前日の相場振り返り（{previous.isoformat()}）")
+    risk_color = {"HIGH": "var(--red,#c0392b)", "MEDIUM": "var(--gold,#c9a84c)", "LOW": "var(--cyan,#22d3ee)"}[sections["risk_level"]]
+    report = report.replace(f'<h3 style="color:var(--red,#c0392b)">{esc(sections["risk_level"])}</h3>',
+                            f'<h3 style="color:{risk_color}">{esc(sections["risk_level"])}</h3>')
     pair = sections["focus_pair"]
     report = report.replace("USD/JPY 🇺🇸🇯🇵</h3>", f'{esc(pair)} {"".join(FLAGS.get(c, "") for c in pair.split("/"))}</h3>')
     agenda = "本日の主要予定：" + " / ".join(f'{x["time_jst"]} {x["name"]}' for x in key[:3])
@@ -447,8 +462,10 @@ def comparison(target: date, report: str, out: Path) -> dict:
         return value
     (out / "baseline.html").write_text(baseline.replace('href="../', 'href="../../').replace('src="../', 'src="../../'), encoding="utf-8")
     def stats(text):
+        calendar_section = re.search(r'id="calendar".*?<table[^>]*>(.*?)</table>', text, flags=re.S)
+        calendar_rows = len(re.findall(r'<tr\b', calendar_section[1])) - 1 if calendar_section else 0
         return {"visible_chars": len(news.plain(re.sub(r'<script.*?</script>|<style.*?</style>', '', text, flags=re.S))),
-                "topics": len(re.findall(r'class="topic"', text)), "calendar_rows": len(re.findall(r'<tr>', text)),
+                "topics": len(re.findall(r'class="topic"', text)), "calendar_rows": max(0, calendar_rows),
                 "flags": len(re.findall(r'[\U0001F1E6-\U0001F1FF]{2}', text)),
                 "anchors": {x: f'id="{x}"' in text for x in ["summary", "points", "ranking", "review", "calendar"]}}
     result = {"comparison_url": url, "baseline": stats(baseline), "shadow": stats(report),
@@ -457,13 +474,14 @@ def comparison(target: date, report: str, out: Path) -> dict:
     return result
 
 
-def execute(target: date, out: Path, prepare_only: bool) -> dict:
+def execute(target: date, out: Path, prepare_only: bool, render_existing: bool = False) -> dict:
     previous_status = out / "status.json"
     if previous_status.exists():
         previous = load(previous_status)
         news.save(out / "status-history" / (re.sub(r"[^0-9A-Za-z]", "-", previous["started_at"]) + ".json"), previous)
     status = {"status": "RUNNING", "date_jst": target.isoformat(), "model": news.MODEL,
               "publish_ready": False, "started_at": datetime.now(JST).isoformat(), "scope": "full daily shadow"}
+    status["mode"] = "render_existing_no_llm" if render_existing else "prepare_only" if prepare_only else "generate"
     news.save(out / "status.json", status)
     news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
     news.save(out / "runner-version.json", {"started_at": status["started_at"],
@@ -478,6 +496,9 @@ def execute(target: date, out: Path, prepare_only: bool) -> dict:
                 news.save(out / name, load(path))
         sources = collect_news(target, out)
         calendar = collect_calendar(target, out)
+        policy_path = out / "policy.json"
+        if not policy_path.exists() or load(policy_path).get("date_jst") != target.isoformat():
+            raise ValueError("dated official policy input is required before generation")
         ranking = json.loads(snapshot(out, "ranking", "https://auxen.jp/data/daytrade-ranking.json"))
         if datetime.fromisoformat(ranking["generated_at_jst"]).astimezone(JST).date() != target:
             raise ValueError("ranking is not from the report day")
@@ -487,7 +508,7 @@ def execute(target: date, out: Path, prepare_only: bool) -> dict:
         if prepare_only:
             status["status"] = "PREPARED"
         else:
-            sections = make_sections(sources, calendar, ranking, out)
+            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out)
             report = render(target, sections, calendar, ranking, out)
             comparison(target, report, out)
             checks = {"five_topics": len(sections["topics"]) == 5,
@@ -498,6 +519,7 @@ def execute(target: date, out: Path, prepare_only: bool) -> dict:
             quality = {"checks": checks, "calendar_conflicts": calendar["conflicts"],
                        "single_source_calendar_rows": [x for x in calendar["events"] if not x["confirmed"]],
                        "human_review": "pending", "publish_ready": False,
+                       "displayed_calendar_rows": sum(bool(x["confirmed"]) for x in calendar["events"]),
                        "ranking_after_0700": datetime.fromisoformat(ranking["generated_at_jst"]) > datetime.combine(target, daytime(7), JST)}
             news.save(out / "validation.json", quality)
             if not all(value for key, value in checks.items() if key != "topic_source_reviews"):
@@ -517,6 +539,7 @@ def main() -> int:
     parser.add_argument("--date", type=date.fromisoformat, default=datetime.now(JST).date())
     parser.add_argument("--run-dir", type=Path)
     parser.add_argument("--prepare-only", action="store_true")
+    parser.add_argument("--render-existing", action="store_true", help="rebuild presentation from the same dated retained text; no LLM calls")
     args = parser.parse_args()
     out = args.run_dir or ROOT / "shadow-output" / f"{args.date}-local-daily"
     out = out.resolve()
@@ -536,7 +559,7 @@ def main() -> int:
             print("FAIL: another FX shadow runner holds the execution lock", flush=True)
             return 1
         try:
-            status = execute(args.date, out, args.prepare_only)
+            status = execute(args.date, out, args.prepare_only, args.render_existing)
         finally:
             lock.seek(0)
             msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)

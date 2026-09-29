@@ -5,21 +5,16 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-09-29 / Codex（ローカル日報の設計・実機試験）
+最終更新: 2026-09-29 / Codex（ローカル日報の内容検収後）
 状態: active
 
 ## 現在の状態
 
-Phase 1 完了。デザインも一通り完成。日々のFX日報・デイトレ適性ランキングは自動運用中（詳細はLOG.md）。
-
-- GitHub Pages 稼働中: https://kazutyon.github.io/fx-portal/（独自ドメイン `https://auxen.jp/` も稼働）
-- 経済指標シャドー検証: Forex Factory（週間JSON）＋BEA（米GDP・貿易収支等）＋FRED Release Dates API（米雇用統計・CPI・PPI・JOLTS）の3ソース構成。GitHub Actionsで平日05:15 JSTに自動実行、結果は非公開artifact（14日保持）のみで本番日報には未接続
-- 2026-08-03〜08-14の10営業日評価: Actions成功率10/10、高重要度確認率は改善前で1/19件（約5.3%）、`publish_ready`誤判定は0件（安全ゲート自体は正しく機能）。原因はBEAの狭いカバー範囲だったため、FREDを追加（詳細はLOG.md 2026-08-17）
-- BLS公式サイト直接取得は規約上不採用（全ページ403、bot禁止ポリシー明記）。FRED APIキーは`ebisan444@gmail.com`で登録済み、値はGitHub Actions Secrets `FRED_API_KEY` にのみ保存
+ローカルQwen日報の本番採用は保留。内容品質と正規日次入力の接続が未解決。既存の経済指標シャドーも本番日報には未接続。
 
 ## 次の一手
 
-0. ローカルQwen日報: 毎朝の正規ニュース/カレンダー入力元を接続する必要がある。取得元監査で禁止/保留されたサイトを自動取得しない。日付別入力なしでは07:00実行器がFAILEDになるため、毎朝全自動の完成とは扱わない。今日9/29の全日報内容検収と公開日報との比較が進行中。月曜の公式金利・センチメント補足、主要市場休場の検証も残る。本番採用は未承認。
+0. ローカルQwen日報: 正規ニュース/カレンダー/公式金利の日次入力元を接続する。禁止/保留サイトを自動取得しない。日付別入力なしでは07:00実行器がFAILEDになるため、毎朝全自動とは扱わない。品質対策は通貨ペア別の数値束縛、予想/結果/前回の型分離、出来事別の重複除去、全欄の原資料照合と指示文漏れ検査。月曜の公式金利・センチメント補足、主要市場休場の検証も残る。9/29の完走実測と不合格理由は `docs/EVIDENCE-LOCAL-FX-DAILY-20260929.md`。
 
 1. shadow-history/への実測記録の永続化をワークフローに実装済み（`.github/workflows/economic-calendar-shadow.yml`、2026-09-14）。平日05:15 JST実行のたびにshadow-output/をshadow-history/$TARGET_DATE/へコピーしてgit commit・pushする。artifactの14日保持と違い恒久的に残る。次は数営業日〜FRED対象イベント日（雇用統計・CPI・PPI・JOLTS）を跨いで実データが蓄積されるのを待ち、shadow-history/の実データで捕捉率・重複・時刻適合を再検証する（review_on: 2026-09-30、docs/ops-workbench/follow-up-registry/FOLLOW-UP-REGISTRY.json FU-20260913-1C949F12）
 2. Forex Factoryフィードの利用条件をブラウザまたは手動で最終確認する（未着手のまま）
