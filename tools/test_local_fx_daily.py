@@ -10,6 +10,72 @@ import local_fx_daily as daily
 
 
 class DailyTests(unittest.TestCase):
+    def test_editorial_pool_keeps_accepted_fact_not_selected_for_news(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "N0-0", "claim_gate_accepted": True, "event_scope": "previous"},
+                 {"fact_id": "N0-1", "claim_gate_accepted": True, "event_scope": "previous"},
+                 {"fact_id": "N0-2", "claim_gate_accepted": False, "event_scope": "previous"},
+                 {"fact_id": "N0-3", "claim_gate_accepted": True, "event_scope": "unknown"}]
+        result = grounding.editorial_facts({"events": [], "day_themes": ""}, {"rankings": []},
+                                           facts, [{"claim_ids": ["N0-0"]}])
+        self.assertEqual([x["fact_id"] for x in result], ["N0-0", "N0-1"])
+
+    def test_shared_selection_scans_every_batch_and_loads_originals_by_id(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": f"N{i}", "fact": "材料" * 800, "record_type": "actual",
+                  "event_scope": "previous", "quote": "原文", "source_context": {"full": "文脈"}}
+                 for i in range(4)]
+        def choose(out, label, task, data, schema):
+            self.assertNotIn("quote", data["facts"][0])
+            return {"fact_ids": [data["facts"][-1]["fact_id"]]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=choose) as infer:
+            selected = grounding.shared_role_evidence(daily, Path(folder), "market", facts, date(2026, 9, 29))
+            self.assertGreater(infer.call_count, 1)
+            self.assertIn(facts[-1], selected)
+            self.assertTrue(all("source_context" in x for x in selected))
+
+    def test_shared_selection_rejects_invalid_ids(self):
+        import local_fx_grounding as grounding
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", return_value={"fact_ids": ["invalid"]}):
+            with self.assertRaisesRegex(ValueError, "invalid fact ID"):
+                grounding.shared_role_evidence(daily, Path(folder), "market",
+                    [{"fact_id": "N0", "fact": "金利", "record_type": "actual"}], date(2026, 9, 29))
+
+    def test_editorial_quality_failure_is_not_source_pass(self):
+        import local_fx_grounding as grounding
+        draft = {"title": "引継ぎ", "body": "13時半にRBA。", "review": {"verdict": "PASS"}}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached",
+                return_value={"verdict": "FAIL", "reason": "予定のみで判断条件がない"}):
+            result = grounding.review_editorial_quality(daily, Path(folder), "handover", draft, [], {}, date(2026, 9, 29))
+            self.assertEqual(result["verdict"], "FAIL")
+            self.assertEqual(draft["review"]["verdict"], "PASS")
+
+    def test_material_coverage_failure_keeps_unused_evidence(self):
+        import local_fx_grounding as grounding
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached",
+                return_value={"verdict": "FAIL", "reason": "主要金利材料が未使用"}):
+            result = grounding.material_coverage(daily, Path(folder),
+                [{"fact_id": "N0", "fact": "米金利上昇", "event_scope": "previous"}], [], {}, date(2026, 9, 29))
+            self.assertEqual(result["verdict"], "FAIL")
+            self.assertEqual(result["unused_fact_ids"], ["N0"])
+
+    def test_supplement_preserves_ids_and_excludes_today_afternoon(self):
+        import hashlib
+        adapter = daily.claude_sources
+        sources = [{"source_id": 0, "source_url": "https://fx.minkabu.jp/news/1", "sha256": "original"}]
+        index = '<a href="/news/2">米金利</a><a href="/news/3">東京市場</a>'
+        def article(url, body):
+            return {"source_url": url, "published_at": "2026-09-29T05:00:00+09:00" if url.endswith("2")
+                    else "2026-09-29T12:00:00+09:00", "sha256": hashlib.sha256(url.encode()).hexdigest()}
+        with tempfile.TemporaryDirectory() as folder, patch.object(adapter, "INDEXES", [adapter.INDEXES[1]]), \
+                patch.object(adapter, "article", side_effect=article):
+            out = Path(folder)
+            daily.news.save(out / "source-bundle.json", {"sources": sources, "date_jst": "2026-09-29"})
+            result = adapter.supplement_previous(date(2026, 9, 29), out,
+                lambda out, label, url: index if url.endswith("/news") else "body", sources)
+            self.assertEqual([x["source_id"] for x in result], [0, 1])
+            self.assertTrue(result[1]["source_url"].endswith("2"))
+
     def test_large_evidence_is_split_without_loss(self):
         records = [{"source_id": i, "fact": "材料" * 90, "quote": "根拠" * 70} for i in range(40)]
         batches = daily.evidence_batches(records)

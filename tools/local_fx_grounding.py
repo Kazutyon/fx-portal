@@ -350,8 +350,10 @@ def pick(api, out, label, topic, candidates, target, max_facts=5):
 
 
 def editorial_facts(calendar, ranking, facts, topics):
-    used = {x for t in topics for x in t["claim_ids"]}
-    material = [x for x in facts if x["fact_id"] in used]
+    # A topic is one consumer, never the master list. Keep accepted unused
+    # facts available to every editorial role, with their dates/types intact.
+    material = [x for x in facts if x.get("claim_gate_accepted") and
+                x.get("event_scope") in {"previous", "current", "historical"}]
     for i, event in enumerate(calendar["events"]):
         if not event["confirmed"]:
             continue
@@ -410,13 +412,131 @@ def role_evidence(key, material, topics):
     return list({x["fact_id"]: x for x in chosen}.values())
 
 
+ROLE_PURPOSES = {
+    "hero": "前日の最大の変化と本日の最重要材料。短い導入",
+    "headline": "本日を特徴づける最重要材料。一言",
+    "summary": "前日の主要出来事の全体像。円・ドル・欧州政策/米金利等の異なる材料を関連づける",
+    "market": "市場環境。金利/政策/地政学/フローの対立と本日の方向判断条件。振り返りの再列挙ではない",
+    "handover": "本日への引継ぎ。アジア/欧州/NYごとに予定→結果/発言の何を見る→どの通貨の判断が変わるか",
+    "focus": "ランキングと当日の実際の材料を結び、一通貨ペアの条件付き観察を説明",
+    "risk": "主要リスク。政策/指標/介入/金利/フローの変化でどの判断が崩れるかを説明",
+    "points": "本文以外の具体的焦点。週間予定と月末フロー等。ニュースの反復を避ける",
+}
+
+
+def shared_role_evidence(api, out, key, material, target):
+    # Catalogs contain facts only; original quotations are loaded by selected
+    # IDs for authoring/review. Every batch is visited, no first-N truncation.
+    catalog = [{k: x[k] for k in ["fact_id", "fact", "record_type", "event_scope"] if k in x}
+               for x in material]
+    selected = []
+    schema = news.schema({"fact_ids": {"type": "array", "items": news.STRING, "maxItems": 8}})
+    for i, batch in enumerate(api.evidence_batches(catalog, 9000)):
+        choice = api.infer_cached(out, f"shared-{key}-scan-{i:02}",
+            "これは執筆ではなく材料選別だけ。roleを実現する重要事実を最大8件選ぶ。"
+            "ニュース本文に未採用の事実も同等に評価する。価格だけでなく発言/金利/背景/予定を残す。"
+            "同一出来事の重複は省く。historicalは過去の背景であり前日の出来事ではない。"
+            "本日の条件分析に必要な前日背景と当日予定を組で残す。該当材料のないbatchのみ空配列。IDは入力限定。",
+            {"role": ROLE_PURPOSES[key], "date_facts": date_facts(target), "facts": batch}, schema)["fact_ids"]
+        allowed = {x["fact_id"] for x in batch}
+        if not set(choice) <= allowed:
+            raise ValueError("shared role scan returned invalid fact ID")
+        selected.extend(x for x in choice if x not in selected)
+    if len(selected) > 8:
+        pool = [x for x in catalog if x["fact_id"] in selected]
+        # Progressive bounded reduction, without merging original articles.
+        for round_no in range(5):
+            reduced = []
+            for i, batch in enumerate(api.evidence_batches(pool, 9000)):
+                choice = api.infer_cached(out, f"shared-{key}-reduce-{round_no}-{i}",
+                    "roleに必要な最大8根拠へ絞る。日時を保ち、出来事/背景/当日予定の組を優先。"
+                    "ニュース以外の具体的材料を落とさず、同じ話の重複を除く。入力IDのみ。",
+                    {"role": ROLE_PURPOSES[key], "facts": batch}, schema)["fact_ids"]
+                if not set(choice) <= {x["fact_id"] for x in batch}:
+                    raise ValueError("shared role reduction returned invalid fact ID")
+                reduced.extend(x for x in choice if x not in reduced)
+            pool = [x for x in pool if x["fact_id"] in reduced]
+            if len(pool) <= 8:
+                break
+        if len(pool) > 8:
+            raise ValueError("shared role evidence reduction did not converge")
+        selected = [x["fact_id"] for x in pool]
+    if not selected:
+        raise ValueError(f"{key}: shared material selection empty")
+    by_id = {x["fact_id"]: x for x in material}
+    news.save(out / "stages" / f"shared-{key}-allocation.json",
+              {"candidate_count": len(catalog), "fact_ids": selected, "scope": "all accepted shared facts"})
+    return [by_id[x] for x in selected]
+
+
+def review_editorial_quality(api, out, key, draft, evidence, peers, target):
+    # Distinct from source correctness: missing analysis/duplication cannot be
+    # certified by a quote-existence PASS. A failed quality review is retained.
+    return api.infer_cached(out, f"editorial-quality-{key}",
+        "記事の編集品質だけを厳しく評価。原文一致だけでPASSにしない。"
+        "roleを実現しているか、重要材料を具体的に扱ったか、他欄と同じ事実の羅列になっていないかを検査。"
+        "summaryは相場全体の整理、marketは相反する材料と方向判断条件、handoverは予定の一覧ではなく"
+        "何の変化でどの通貨の判断が変わるか、focus/riskは条件と観察点が必要。"
+        "既存事実からの条件付き分析は許容、価格目標/ニュース/実現済み結果の創作は不可。"
+        "hero/headlineは短文なので分析を無理に要求しない。予定・背景の共通言及自体は反復違反ではない。"
+        "同じ内容を言い換えるだけ、一般論だけ、材料はあるのに要点を落とす場合はFAIL。具体的理由を返す。",
+        {"role": ROLE_PURPOSES[key], "date_facts": date_facts(target),
+         "draft": {"title": draft["title"], "body": draft["body"]},
+         "available_facts": [{"fact_id": x["fact_id"], "fact": x["fact"]} for x in evidence],
+         "other_sections": {k: v["body"][:420] for k, v in peers.items() if k != key}}, news.QC_SCHEMA)
+
+
+def material_coverage(api, out, material, topics, editorial, target):
+    catalog = [{"fact_id": x["fact_id"], "fact": x["fact"], "event_scope": x.get("event_scope", "current")}
+               for x in material]
+    used = {x for t in topics for x in t["claim_ids"]}
+    used.update(x for v in editorial.values() for x in v["claim_ids"])
+    reviews = []
+    for i, batch in enumerate(api.evidence_batches(catalog, 9000)):
+        reviews.append(api.infer_cached(out, f"material-coverage-{i:02}",
+            "材料網羅だけを検査。記事未使用の事実に、本日/前日の主要な政策発言/米金利/相場反応/重要予定が"
+            "残っていないか。全事実使用は不要、historical/重複/枝葉は除外。"
+            "同じ主題が別IDで既に使われたなら欠落にしない。採用記事にない新しい主要材料があればFAIL。"
+            "日付の違う出来事を同一視しない。不足は原資料のfact_idと内容を具体的に返す。",
+            {"date_facts": date_facts(target), "facts": batch, "used_fact_ids": sorted(used & {x["fact_id"] for x in batch}),
+             "covered_topics": [x["title"] for x in topics],
+             "covered_facts": [x["fact"] for x in material if x["fact_id"] in used][:35]}, news.QC_SCHEMA))
+    result = {"verdict": "PASS" if all(x["verdict"] == "PASS" for x in reviews) else "FAIL",
+              "reviews": reviews, "available_facts": len(material), "used_facts": len(used),
+              "unused_fact_ids": [x["fact_id"] for x in material if x["fact_id"] not in used]}
+    news.save(out / "material-coverage.json", result)
+    return result
+
+
+def news_candidates(api, out, prior, target):
+    fields = ["fact_id", "kind", "fact", "event_date", "market_session", "pairs", "record_type"]
+    pool = [{k: x[k] for k in fields} for x in prior]
+    schema = news.schema({"fact_ids": {"type": "array", "items": news.STRING, "maxItems": 6}})
+    for round_no in range(6):
+        if len(json.dumps(pool, ensure_ascii=False).encode()) <= 17000:
+            return pool
+        chosen = []
+        for i, batch in enumerate(api.evidence_batches(pool, 8500)):
+            ids = api.infer_cached(out, f"news-catalog-{round_no}-{i}",
+                "主要出来事の計画用に最大6根拠選別。異なる政策/金利/介入/地政学材料と価格反応・理由の組を優先。"
+                "同じクロス円値動きの羅列で枠を埋めない。USD/JPYとEUR/USDの実際の反応も残す。入力IDのみ。",
+                {"date_facts": date_facts(target), "facts": batch}, schema)["fact_ids"]
+            if not set(ids) <= {x["fact_id"] for x in batch}:
+                raise ValueError("news catalog returned invalid ID")
+            chosen.extend(x for x in ids if x not in chosen)
+        pool = [x for x in pool if x["fact_id"] in chosen]
+        if not pool:
+            raise ValueError("news catalog selection empty")
+    raise ValueError("news catalog did not converge within input budget")
+
+
 def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
     target = date.fromisoformat(calendar["date_jst"])
     facts = extract(api, sources, target, out)
     prior = [x for x in facts if x["event_scope"] == "previous" and x["claim_gate_accepted"]]
     plan_schema = news.schema({"topics": {"type": "array", "minItems": 3, "maxItems": 5,
         "items": news.schema({"title": news.STRING, "fact_ids": {"type": "array", "items": news.STRING, "minItems": 1, "maxItems": 6}})}})
-    plan_data = [{k: x[k] for k in ["fact_id", "kind", "fact", "event_date", "market_session", "pairs", "record_type"]} for x in prior]
+    plan_data = news_candidates(api, out, prior, target)
     plan = api.infer_cached(out, "grounded-news-plan", "前営業日の主要出来事を3〜5件、重要順で選ぶ。"
         "通貨別の羅列ではなく出来事単位。相場反応と理由のある具体的材料を優先。同じ材料を反復しない。"
         "介入発言とNYの戻しは一つの話題へまとめる。ドル円/ユーロドルの実際の値動きは落とさない。"
@@ -436,6 +556,8 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
     if topic_probe:
         return {"topics": topics, "probe_only": True}
     material = editorial_facts(calendar, ranking, facts, topics)
+    news.save(out / "shared-material.json", {"facts": material, "lifecycle": "evidence",
+        "rule": "accepted source facts are retained regardless of news-topic selection; dates/types unchanged"})
     roles = [
         ("hero", "冒頭。前日の最大の変化と本日の焦点を2点だけ", "120〜200"),
         ("headline", "一言まとめ。最重要材料だけで45文字以内の短文", "30〜45"),
@@ -448,9 +570,23 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
     ]
     editorial = {}
     for key, purpose, length in roles:
-        evidence = role_evidence(key, material, topics)
-        editorial[key] = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length)
+        evidence = shared_role_evidence(api, out, key, material, target)
+        purpose += "。材料→価格/金利への作用→本日の条件を役割に合わせて整理。予定だけの羅列や他欄の言い換えにしない"
+        draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length)
+        quality = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
+        if quality["verdict"] == "FAIL":
+            news.save(out / "stages" / f"editorial-quality-{key}-first-rejected.json", {"draft": draft, "quality": quality})
+            draft = author(api, out, f"grounded-editorial-{key}-quality-repair",
+                purpose + "。編集指摘を改善: " + quality["reason"], evidence, target, length)
+            quality = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
+        draft["quality_review"] = quality
+        editorial[key] = draft
         news.save(out / "editorial-progress.json", editorial)
+    # Recheck all fields against the FINAL peers, not merely preceding fields.
+    for key, draft in editorial.items():
+        evidence = [x for x in material if x["fact_id"] in draft["claim_ids"]]
+        draft["quality_review"] = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
+    coverage = material_coverage(api, out, material, topics, editorial, target)
     # Pair/risk classifications are small independent decisions over already
     # verified text, never a chance to rewrite prose or numbers.
     labels = api.infer_cached(out, "grounded-focus-label-plan",
@@ -463,6 +599,7 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
     result = {"topics": topics, **{k: editorial[k]["body"] for k in ["hero", "headline", "summary", "market", "handover"]},
               **labels, "focus_body": editorial["focus"]["body"], "risk_body": editorial["risk"]["body"],
               "points": [{"title": f"焦点{i+1}", "body": x["text"]} for i, x in enumerate(editorial["points"]["statements"])],
-              "editorial_reviews": {k: x["review"] for k, x in editorial.items()}, "grounded_editorial": editorial}
+              "editorial_reviews": {k: x["review"] for k, x in editorial.items()}, "grounded_editorial": editorial,
+              "editorial_quality_reviews": {k: x["quality_review"] for k, x in editorial.items()}, "material_coverage": coverage}
     news.save(out / "sections.json", result)
     return result

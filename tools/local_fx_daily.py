@@ -105,7 +105,7 @@ def collect_news(target: date, out: Path) -> list[dict]:
     if bundle.get("date_jst") != target.isoformat():
         raise ValueError("news bundle has wrong date")
     sources = bundle["sources"]
-    if not 5 <= len(sources) <= 12 or len({s["source_url"] for s in sources}) != len(sources):
+    if not 5 <= len(sources) <= 24 or len({s["source_url"] for s in sources}) != len(sources):
         raise ValueError("news source count/uniqueness gate failed")
     cutoff = datetime.combine(target, daytime(7), JST)
     if bundle.get("acquisition_mode") == "claude-mirror":
@@ -477,7 +477,8 @@ def comparison(target: date, report: str, out: Path) -> dict:
     return result
 
 
-def execute(target: date, out: Path, prepare_only: bool, render_existing: bool = False, topic_probe: int = 0) -> dict:
+def execute(target: date, out: Path, prepare_only: bool, render_existing: bool = False, topic_probe: int = 0,
+            supplement_news: bool = False) -> dict:
     previous_status = out / "status.json"
     if previous_status.exists():
         previous = load(previous_status)
@@ -503,6 +504,10 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
             if path.exists():
                 news.save(out / name, load(path))
         sources = collect_news(target, out)
+        if supplement_news:
+            if not mirror_enabled() or render_existing:
+                raise ValueError("supplement requires isolated mirror generation, not render-only")
+            sources = claude_sources.supplement_previous(target, out, snapshot, sources)
         calendar = collect_calendar(target, out)
         policy_path = out / "policy.json"
         if not policy_path.exists() and mirror_enabled():
@@ -540,6 +545,9 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                       "topic_source_reviews": all(t["review"]["verdict"] == "PASS" for t in sections["topics"]),
                       "editorial_source_reviews": len(sections.get("editorial_reviews", {})) == 8 and all(
                           r["verdict"] == "PASS" for r in sections.get("editorial_reviews", {}).values()),
+                      "editorial_quality": len(sections.get("editorial_quality_reviews", {})) == 8 and all(
+                          r["verdict"] == "PASS" for r in sections.get("editorial_quality_reviews", {}).values()),
+                      "material_coverage": sections.get("material_coverage", {}).get("verdict") == "PASS",
                       "calendar_coverage_complete": all(x["confirmed"] for x in calendar["events"])}
             quality = {"checks": checks, "calendar_conflicts": calendar["conflicts"],
                        "single_source_calendar_rows": [x for x in calendar["events"] if not x["confirmed"]],
@@ -547,10 +555,12 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                        "displayed_calendar_rows": sum(bool(x["confirmed"]) for x in calendar["events"]),
                        "ranking_after_0700": datetime.fromisoformat(ranking["generated_at_jst"]) > datetime.combine(target, daytime(7), JST)}
             news.save(out / "validation.json", quality)
-            if not all(value for key, value in checks.items() if key not in {"today_ranking", "calendar_coverage_complete"}):
+            if not all(value for key, value in checks.items() if key not in {
+                    "today_ranking", "calendar_coverage_complete", "editorial_quality", "material_coverage"}):
                 raise ValueError("structure or source-review gate failed")
             status.update(status="SHADOW_COMPLETE_REVIEW_PENDING", report=str(out / "report.html"),
-                          quality="pending" if checks["calendar_coverage_complete"] else "REJECTED_INCOMPLETE_CALENDAR",
+                          quality="pending" if all(checks[x] for x in ["calendar_coverage_complete", "editorial_quality", "material_coverage"])
+                          else "REJECTED_QUALITY_GAPS",
                           news_sources=len(sources), calendar_rows=len(calendar["events"]))
     except Exception as error:
         status.update(status="FAILED", error=f"{type(error).__name__}: {error}")
@@ -568,6 +578,7 @@ def main() -> int:
     parser.add_argument("--render-existing", action="store_true", help="rebuild presentation from the same dated retained text; no LLM calls")
     parser.add_argument("--think-off-experiment", action="store_true", help="explicit isolated Qwen experiment; never selected by cron or after failure automatically")
     parser.add_argument("--topic-probe", type=int, choices=[1, 2], default=0, help="generate and review only the first one/two topics; no editorial or report")
+    parser.add_argument("--supplement-news", action="store_true", help="isolated extra preceding-session collection; no scheduler change")
     args = parser.parse_args()
     news.FORCE_THINK_OFF = args.think_off_experiment
     out = args.run_dir or ROOT / "shadow-output" / f"{args.date}-local-daily"
@@ -588,7 +599,7 @@ def main() -> int:
             print("FAIL: another FX shadow runner holds the execution lock", flush=True)
             return 1
         try:
-            status = execute(args.date, out, args.prepare_only, args.render_existing, args.topic_probe)
+            status = execute(args.date, out, args.prepare_only, args.render_existing, args.topic_probe, args.supplement_news)
         finally:
             lock.seek(0)
             msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)

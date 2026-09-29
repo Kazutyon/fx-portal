@@ -177,3 +177,63 @@ def inherit_policy(target, out, snapshot):
     news.save(out / "policy.json", {"date_jst": target.isoformat(), "rates": rates,
               "source_as_of_jst": as_of[1], "method": "weekday published-index inheritance, not fresh official verification",
               "lifecycle": "evidence"})
+
+
+def supplement_previous(target, out, snapshot, sources):
+    """Isolated bounded acquisition from the original public indexes only.
+
+    Preserve existing IDs; append up to six previous-session articles per
+    domain. Do not read the published report or bypass a refused request.
+    """
+    marker = out / "supplement-review.json"
+    if marker.exists():
+        bundle = json.loads((out / "source-bundle.json").read_text(encoding="utf-8"))
+        return bundle["sources"]
+    cutoff = datetime.combine(target, time(7), news.JST)
+    previous = target - timedelta(days=1)
+    while previous.weekday() >= 5:
+        previous -= timedelta(days=1)
+    start = datetime.combine(previous, time(), news.JST)
+    sources = list(sources)
+    seen = {x["source_url"] for x in sources}
+    rejected, stats = [], []
+    for label, index, pattern in INDEXES:
+        page = snapshot(out, f"{label}-live-index", index)
+        links = []
+        for href, markup in re.findall(r'<a\b[^>]*href=["\x27]([^"\x27]+)["\x27][^>]*>(.*?)</a>', page, re.S):
+            url = urljoin(index, html.unescape(href)).split("#")[0]
+            title = news.plain(markup)
+            if (url in seen or urlparse(url).hostname != urlparse(index).hostname
+                    or not re.fullmatch(pattern, urlparse(url).path) or not title
+                    or re.search(r"四本値|ピボット|トレンド一覧", title)):
+                continue
+            seen.add(url)
+            links.append((url, title))
+        links.sort(key=lambda x: 0 if re.search(r"外国為替市場概況|[ＮN][ＹY]為替|金利|利回り|ラガルド|発言|原油|オプション", x[1]) else 1)
+        added = 0
+        for url, title in links[:24]:
+            if len(sources) >= 24:
+                break
+            try:
+                body = snapshot(out, f"live-article-{hashlib.sha256(url.encode()).hexdigest()[:16]}", url)
+                value = article(url, body)
+                if not start <= datetime.fromisoformat(value["published_at"]) <= cutoff:
+                    raise ValueError("not in preceding-session / morning-07 publication window")
+                if value["sha256"] in {x["sha256"] for x in sources}:
+                    continue
+                value["source_id"] = len(sources)
+                sources.append(value)
+                added += 1
+                if added == 6:
+                    break
+            except (OSError, ValueError, KeyError) as error:
+                rejected.append({"url": url, "reason": str(error)})
+        stats.append({"index": index, "candidate_links": len(links), "added": added})
+    bundle = json.loads((out / "source-bundle.json").read_text(encoding="utf-8"))
+    bundle["sources"] = sources
+    bundle["supplemented_at_jst"] = datetime.now(news.JST).isoformat()
+    news.save(out / "source-bundle.json", bundle)
+    news.save(marker, {"lifecycle": "evidence", "indexes": stats, "rejected": rejected,
+        "total_sources": len(sources), "new_publication_cutoff": cutoff.isoformat(),
+        "original_inputs_may_include_afternoon_articles": True, "baseline_used_as_generation_input": False})
+    return sources
