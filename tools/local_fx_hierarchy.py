@@ -27,7 +27,9 @@ def summarize(api, out, label, inputs, target, dates, leaf):
     if not leaf:
         slot_schema = {"type": "array", "items": slot_schema, "minItems": 1, "maxItems": 4, "uniqueItems": True}
     schema = news.schema({"units": {"type": "array", "minItems": 1, "maxItems": 4,
-        "items": news.schema({"text": {"type": "string", "maxLength": 260}})},
+        # Do not constrain decoding inside a sentence. Check length AFTER
+        # generation and reconstruct once; never cut source facts mid-sentence.
+        "items": news.schema({"text": {"type": "string"}})},
         "routes": news.schema({ref: slot_schema for ref in ids})})
     data = {"date_facts": dates, "inputs": inputs}
     source_text = " ".join(x["fact"] if leaf else " ".join(x["units"]) for x in inputs)
@@ -45,7 +47,10 @@ def summarize(api, out, label, inputs, target, dates, leaf):
             "IDはroutesだけに書きtextへ埋め込まない。outlookは出典の見通しと明記し、全体の確定事実にしない。"
             "国名・組織名・人名は入力の表記を保ち、独自の漢字略称へ変えない。")
     if not leaf:
-        task += " 子要約には複数の論点がある。親の複数unitsへ対応してよいので、routesには番号の配列を返す。全unitsを少なくとも1子の内容に対応させる。"
+        task += (" 子要約には複数の論点がある。親の複数unitsへ対応してよいので、routesには番号の配列を返す。"
+                 "全unitsを少なくとも1子の内容に対応させる。"
+                 "例: 子Aに論点XとYがあり、親unit0にX、unit1にYを記述した場合、Aのroutesは[0,1]。"
+                 "子の最初の論点だけを対応させず、親text中の全事実の出所を番号配列へ含める。")
     raw_value = api.infer_cached(out, label, task, data, schema)
     for attempt in range(2):
         routes = raw_value.get("routes", {})
@@ -100,6 +105,8 @@ def summarize(api, out, label, inputs, target, dates, leaf):
                 "textは入力のfact/子要約の文を短くして結合するだけ。情報が少なければ短文でよい。"
                 "『入力には記述がない』『不明』『未確認』『東京の記述はない』など、資料の不足についての説明文は書かない。"
                 "NYだけの入力ならNYの事実だけで終える。元factにない市場名/欠落理由/但し書きを追加しない。"
+                "参照欠落なら、textの内容を支持する入力IDをroutesでそのunitへ必ず対応させる。"
+                "情報量が多ければ内容を省略せず4単位へ分け、単位の最後は必ず意味の完結した文で終える。"
                 "例: 入力『対象日にA発表予定』『対象日にB講演予定』なら『対象日にA発表とB講演が予定される。』で終える。"
                 "入力にない意味づけを後ろへ付けない。",
                                      {**data, "review": review}, schema)

@@ -99,6 +99,16 @@ class HierarchyTests(unittest.TestCase):
                 if expected:
                     self.assertIn("米伊", data["entity_spelling_rules"]["イラン"])
 
+    def test_length_budget_is_checked_after_generation_not_forced_mid_sentence(self):
+        def oversized(out, label, task, data, schema):
+            if "review" in label:
+                return {"verdict": "PASS", "reason": "not sufficient"}
+            self.assertNotIn("maxLength", schema["properties"]["units"]["items"]["properties"]["text"])
+            return {"units": [{"text": "文" * 261}], "routes": {"N0": 0}}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=oversized):
+            with self.assertRaisesRegex(ValueError, "exceeds 260"):
+                hierarchy.build(daily, Path(folder), self.facts(1), date(2026, 9, 29), {})
+
     def test_one_child_summary_can_support_multiple_parent_units(self):
         children = [{"node_id": "child-a", "units": ["前日の円高。", "本日の会合予定。"]},
                     {"node_id": "child-b", "units": ["円の背景。"]}]
@@ -124,6 +134,19 @@ class HierarchyTests(unittest.TestCase):
             return {"units": [{"text": "材料0"}, {"text": "材料1"}], "routes": {"N0": 0, "N1": 1}}
         with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=two_units):
             hierarchy.build(daily, Path(folder), facts, date(2026, 9, 29), {})
+
+    def test_calendar_fact_never_pairs_next_date_with_business_day_25_hour(self):
+        import local_fx_grounding as grounding
+        event = {"confirmed": True, "time_jst": "25:40", "datetime_jst": "2026-09-30T01:40:00+09:00",
+                 "country": "USD", "name": "講演", "forecast": "—", "previous": "—", "sources": ["source"]}
+        result = grounding.editorial_facts({"events": [event], "day_themes": ""}, {"rankings": []}, [], [])
+        self.assertIn("2026-09-30 01:40 JST", result[0]["fact"])
+        self.assertNotIn("25:40", result[0]["fact"])
+        self.assertEqual(result[0]["event_date"], "2026-09-30")
+        self.assertEqual(result[0]["source_context"]["original_time_jst"], "25:40")
+        event["datetime_jst"] = "2026-09-29T16:40:00+00:00"
+        converted = grounding.editorial_facts({"events": [event], "day_themes": ""}, {"rankings": []}, [], [])
+        self.assertIn("2026-09-30 01:40 JST", converted[0]["fact"])
 
 
 if __name__ == "__main__":

@@ -493,11 +493,16 @@ def editorial_facts(calendar, ranking, facts, topics):
     for i, event in enumerate(calendar["events"]):
         if not event["confirmed"]:
             continue
-        text = f'{event["time_jst"]} JST {event["country"]} {event["name"]}。予想 {event["forecast"]}、前回 {event["previous"]}。'
+        event_at = datetime.fromisoformat(event["datetime_jst"])
+        if event_at.tzinfo is None:
+            raise ValueError("calendar event needs an absolute timezone-aware datetime")
+        event_at = event_at.astimezone(news.JST)
+        text = f'{event_at:%Y-%m-%d %H:%M} JST {event["country"]} {event["name"]}。予想 {event["forecast"]}、前回 {event["previous"]}。'
         material.append({"fact_id": f"C{i}", "fact": text, "quote": text,
-            "event_date": event["datetime_jst"][:10], "event_scope": "current", "market_session": "unspecified",
+            "event_date": event_at.date().isoformat(), "event_scope": "current", "market_session": "unspecified",
             "record_type": "forecast", "pairs": [], "source_context": {"source_urls": event["sources"],
-                "notice": "確認済みの発表予定。予想は結果ではない。24時以降は翌日早朝。"}})
+                "notice": "確認済みの発表予定。予想は結果ではない。fact/quoteは絶対JST日時へ正規化済み。",
+                "original_time_jst": event["time_jst"], "original_datetime_jst": event["datetime_jst"]}})
     # Keep full day / weekly themes as original snippets, not summaries of model prose.
     for prefix, text in [("D", calendar["day_themes"]), ("W", calendar.get("weekly_themes", ""))]:
         if text:
