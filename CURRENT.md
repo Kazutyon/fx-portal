@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-09-29 / Codex（シャドー実測・独立評価、不合格）
+最終更新: 2026-09-29 / Codex（原因調査・段階別対策案、未実装）
 状態: active
 
 ## 現在の状態
@@ -14,7 +14,7 @@
 
 ## 次の一手
 
-0. ローカルQwen日報: 原資料のペア/出来事時点/数値/予想・結果を束縛し、前日振り返りと当日更新を分離、全editorial欄を原資料照合する。FF403/外為の記事接続、指標全件照合/丸め差、休場確認、月曜補足も未解決。既存朝07:00ジョブは通常thinkingのまま、OFFは明示CLIの隔離試験だけ。明朝の自動成功は未確認。18テストPASSとモデル自己照合5/5 PASSを品質合格にしない。現行設定の正本は `CLAUDE-MIRROR-SHADOW-SETTINGS.md`。
+0. ローカルQwen日報: NY固定の誤指示を除去し、原資料のペア/出来事時点/数値/予想・結果を束縛。前日と当日を分離した2トピック試験→全editorial照合→全日報シャドーの順で対策する（案のみ、未実装）。詳しい原因/合格条件は上記証拠の追加調査節。FF403/外為接続、指標全件照合/丸め差、休場確認、月曜補足も未解決。既存07:00ジョブは通常thinkingのまま、OFFは隔離試験だけ。明朝成功は未確認。18テストPASS/自己照合PASSを品質合格にしない。設定正本は `CLAUDE-MIRROR-SHADOW-SETTINGS.md`。
 
 1. shadow-history/への実測記録の永続化をワークフローに実装済み（`.github/workflows/economic-calendar-shadow.yml`、2026-09-14）。平日05:15 JST実行のたびにshadow-output/をshadow-history/$TARGET_DATE/へコピーしてgit commit・pushする。artifactの14日保持と違い恒久的に残る。次は数営業日〜FRED対象イベント日（雇用統計・CPI・PPI・JOLTS）を跨いで実データが蓄積されるのを待ち、shadow-history/の実データで捕捉率・重複・時刻適合を再検証する（review_on: 2026-09-30、docs/ops-workbench/follow-up-registry/FOLLOW-UP-REGISTRY.json FU-20260913-1C949F12）
 2. Forex Factoryフィードの利用条件をブラウザまたは手動で最終確認する（未着手のまま）
