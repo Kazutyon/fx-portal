@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-09-14 / Claude（シャドー結果のgit永続化を実装）
+最終更新: 2026-09-29 / Codex（ローカル日報の設計・実機試験）
 状態: active
 
 ## 現在の状態
@@ -18,6 +18,8 @@ Phase 1 完了。デザインも一通り完成。日々のFX日報・デイト�
 - BLS公式サイト直接取得は規約上不採用（全ページ403、bot禁止ポリシー明記）。FRED APIキーは`ebisan444@gmail.com`で登録済み、値はGitHub Actions Secrets `FRED_API_KEY` にのみ保存
 
 ## 次の一手
+
+0. ローカルQwen日報: `OPENCLAW-FX-SPLIT-DESIGN.md` を現行設計とする。ニュース工程の試験器 `tools/local_fx_news.py` はシャドーのみ。複数取得元・当日カレンダー照合・市場環境/金利・金曜テンプレートへの組込み・全日報検収・既存07:00ジョブ接続が未完了。07:00ジョブは旧Stage1Aの固定日付指示のままで、全日報の自動化完成とは扱わない。本番採用は未承認。
 
 1. shadow-history/への実測記録の永続化をワークフローに実装済み（`.github/workflows/economic-calendar-shadow.yml`、2026-09-14）。平日05:15 JST実行のたびにshadow-output/をshadow-history/$TARGET_DATE/へコピーしてgit commit・pushする。artifactの14日保持と違い恒久的に残る。次は数営業日〜FRED対象イベント日（雇用統計・CPI・PPI・JOLTS）を跨いで実データが蓄積されるのを待ち、shadow-history/の実データで捕捉率・重複・時刻適合を再検証する（review_on: 2026-09-30、docs/ops-workbench/follow-up-registry/FOLLOW-UP-REGISTRY.json FU-20260913-1C949F12）
 2. Forex Factoryフィードの利用条件をブラウザまたは手動で最終確認する（未着手のまま）
