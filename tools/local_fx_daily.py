@@ -227,7 +227,7 @@ def weekly_schedule(text: str, target: date) -> str:
     return " ".join(dict.fromkeys(blocks))
 
 
-def collect_calendar(target: date, out: Path) -> dict:
+def collect_calendar(target: date, out: Path, allow_single_source: bool = False) -> dict:
     staged = out / "calendar.input.json"
     if staged.exists():
         value = load(staged)
@@ -238,7 +238,19 @@ def collect_calendar(target: date, out: Path) -> dict:
     kiss_url = f"https://kissfx.com/article/fxdays{target.strftime('%Y%m%d')}.html"
     kiss = snapshot(out, "kissfx", kiss_url)
     ff_url = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
-    raw = json.loads(snapshot(out, "forexfactory", ff_url))
+    ff_available = True
+    try:
+        raw = json.loads(snapshot(out, "forexfactory", ff_url))
+    except ValueError as error:
+        if not allow_single_source or not re.search(r"HTTP(?: Error)? (?:403|429)\b", str(error)):
+            raise
+        # Shadow observation may inspect real KissFX material without FF.
+        # Never fabricate corroboration or copy another day's FF snapshot.
+        news.save(out / "calendar-source-error.json", {
+            "source": ff_url, "error": str(error), "date_jst": target.isoformat(),
+            "lifecycle": "evidence", "action": "unconfirmed single-source shadow only"})
+        raw = []
+        ff_available = False
     start = datetime.combine(target, daytime(), JST)
     finish = start + timedelta(days=1, hours=7)
     ff = []
@@ -293,7 +305,7 @@ def collect_calendar(target: date, out: Path) -> dict:
     day_themes = kiss_text[themes_at:themes_end if themes_end > themes_at else themes_at + 1100] if themes_at >= 0 else ""
     key = [x for x in events if x["importance"] == "high" or event_code(x["name"]) in {"confidence", "jolts", "rba-rate", "rba-press"}]
     result = {"date_jst": target.isoformat(), "events": events, "key_events": key,
-              "source_urls": [kiss_url, ff_url],
+              "source_urls": [kiss_url] + ([ff_url] if ff_available else []),
               "conflicts": conflicts, "holiday_text": "",
               "day_themes": day_themes,
               "weekly_themes": weekly_schedule(kiss_text, target),
@@ -366,9 +378,9 @@ def evidence_batches(records: list[dict], byte_limit: int = 12000) -> list[list[
 
 
 def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path, topic_probe: int = 0,
-                  hierarchical: bool = False) -> dict:
+                  hierarchical: bool = False, observational: bool = False) -> dict:
     import local_fx_grounding as grounding
-    return grounding.make_sections(sys.modules[__name__], sources, calendar, ranking, out, topic_probe, hierarchical)
+    return grounding.make_sections(sys.modules[__name__], sources, calendar, ranking, out, topic_probe, hierarchical, observational)
 
 
 def esc(text):
@@ -479,7 +491,7 @@ def comparison(target: date, report: str, out: Path) -> dict:
 
 
 def execute(target: date, out: Path, prepare_only: bool, render_existing: bool = False, topic_probe: int = 0,
-            supplement_news: bool = False, hierarchical: bool = False) -> dict:
+            supplement_news: bool = False, hierarchical: bool = False, observational: bool = False) -> dict:
     previous_status = out / "status.json"
     if previous_status.exists():
         previous = load(previous_status)
@@ -489,6 +501,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
     status["mode"] = "render_existing_no_llm" if render_existing else "prepare_only" if prepare_only else "generate"
     status["think_off_experiment"] = news.FORCE_THINK_OFF
     status["hierarchical_experiment"] = hierarchical
+    status["observation_shadow"] = observational
     news.save(out / "status.json", status)
     news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
     news.save(out / "runner-version.json", {"started_at": status["started_at"],
@@ -496,6 +509,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                   [Path(__file__), Path(news.__file__), Path(claude_sources.__file__),
                    ROOT / "tools" / "local_fx_grounding.py", ROOT / "tools" / "local_fx_hierarchy.py",
                    ROOT / "tools" / "local_fx_extract_summary.py",
+                   ROOT / "tools" / "local_fx_summary_observation.py",
                    ROOT / "tools" / "claude_mirror_shadow.json"]}})
     try:
         if os.environ.get("COMPUTERNAME", "").upper() != "GALLERIA":
@@ -513,7 +527,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                 raise ValueError("supplement requires isolated mirror generation, not render-only")
             sources = claude_sources.supplement_previous(target, out, snapshot, sources)
             sources = claude_sources.recover_article_formats(target, out, snapshot, sources)
-        calendar = collect_calendar(target, out)
+        calendar = collect_calendar(target, out, allow_single_source=observational)
         policy_path = out / "policy.json"
         if not policy_path.exists() and mirror_enabled():
             claude_sources.inherit_policy(target, out, snapshot)
@@ -533,7 +547,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         if prepare_only:
             status["status"] = "PREPARED"
         else:
-            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out, topic_probe, hierarchical)
+            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out, topic_probe, hierarchical, observational)
             if topic_probe:
                 status.update(status="TOPIC_PROBE_COMPLETE_REVIEW_PENDING", probe_topics=len(sections["topics"]),
                               quality="pending", publish_ready=False)
@@ -585,7 +599,10 @@ def main() -> int:
     parser.add_argument("--topic-probe", type=int, choices=[1, 2], default=0, help="generate and review only the first one/two topics; no editorial or report")
     parser.add_argument("--supplement-news", action="store_true", help="isolated extra preceding-session collection; no scheduler change")
     parser.add_argument("--hierarchical-experiment", action="store_true", help="isolated summary-tree trial; no scheduler/default change")
+    parser.add_argument("--observation-shadow", action="store_true", help="bounded free summaries; advisory intermediate/quality review; never publish")
     args = parser.parse_args()
+    if args.observation_shadow:
+        args.hierarchical_experiment = True
     news.FORCE_THINK_OFF = args.think_off_experiment
     out = args.run_dir or ROOT / "shadow-output" / f"{args.date}-local-daily"
     out = out.resolve()
@@ -606,7 +623,7 @@ def main() -> int:
             return 1
         try:
             status = execute(args.date, out, args.prepare_only, args.render_existing, args.topic_probe,
-                             args.supplement_news, args.hierarchical_experiment)
+                             args.supplement_news, args.hierarchical_experiment, args.observation_shadow)
         finally:
             lock.seek(0)
             msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)

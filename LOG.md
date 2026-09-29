@@ -1,5 +1,12 @@
 # LOG
 
+## 2026-09-29 縛りを減らした観測版を既存07時cronへ / Codex
+
+- Owner「明日自動」「数日みて微調整」により`--observation-shadow`を追加。自由な中間要約、小入力/最大3子統合、重要度はQwen判断。中間内容QCはFAILも保存するだけ、強制保持ID/内容修正/内容ゲート停止なし。編集品質による自動書換えもなし。最終原資料照合と形式/容量/ホスト/モデル/公開禁止は維持。旧ID型/自由要約の失敗は保全。
+- 既存GALLERIA cron 886af487へ追加flagのみ接続、全体timeout2400→5400秒。同じ平日07時/AsiaTokyo/agent/delivery none/無出力240秒、同Qwen64k/通常thinking。local gateway、PC名、enabled/triggersEnabled、次回9/30 07:00 JSTを実CLIで読戻し。中央service noteは変更前に更新、新Task/他PC/サービス操作/モデル切替/公開/pushなし。今日は起動/取得/実推論せず。
+- 観測版だけFFの403/429拒否時に実在KissFX資料を単一ソース未照合として継続。hash不整合/JSON破損はこの例外では継続しない。確認済みの偽装や旧FF/公開本文転用なし、未照合行は表へ表示せず網羅不足は残る。通常経路の停止規則は不変。
+- 90オフライン回帰/py_compile/diff check PASS（実機品質合格ではない）。テストfixtureのimportance欠落を検出して補正。読み取りcwd指定ミスは絶対pathで訂正。設定前後はevidence runへ、keepコード/回帰と設定/DECISIONS/CURRENT/証拠doc/FUを更新。9/30〜10/2の3営業日で同設計を観測、内容の都度チューニングはしない。通常thinking上限/ソース不足/月曜などの未解決と定時完走未証明は維持。
+
 ## 2026-09-29 ID選別型の段階圧縮 / Codex（未完・不合格）
 
 - 最終試験18:03:01.549〜18:05:26.044は39葉/201原材料と最初の13親がPASS（葉/cache再利用）、次段merge-01-000でFAILED。中間原値の書換えは保存packet照合で0件だが、ペソの似た売り見通し5件が枠を占め、支えとなる材料/主要価格が落ちた。直前2つのQCは既保持IDも必須要求して不正QCとして棄却、必須集合に加算されていない点も記録。最後の有効QCもFAIL。全体要約/ニュース/全文HTMLなし、独立INCOMPLETE_REJECTED、公開版/金曜との全文比較未実施。84回帰/compile/diff check PASSは生成品質合格ではない。

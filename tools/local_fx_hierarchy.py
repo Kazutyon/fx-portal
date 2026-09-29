@@ -116,20 +116,25 @@ def summarize(api, out, label, inputs, target, dates, leaf):
     return value
 
 
-def build(api, out, material, target, dates, extractive=False):
+def build(api, out, material, target, dates, extractive=False, observational=False):
     if not material or len({x["fact_id"] for x in material}) != len(material):
         raise ValueError("hierarchy requires nonempty unique original fact IDs")
     nodes = []
     # Every accepted fact is visited. No topic/role-specific preselection.
     if extractive:
         import local_fx_extract_summary as selection
+    if observational:
+        if extractive:
+            raise ValueError("choose one summary method")
+        import local_fx_summary_observation as observation
     leaf_batches = [batch[j:j + 6]
                     for batch in api.evidence_batches([compact_fact(x) for x in material],
                                                      selection.LEAF_BUDGET if extractive else 4500)
                     for j in range(0, len(batch), 6)]
     for i, batch in enumerate(leaf_batches):
         label = f"hierarchy-leaf-{i:03}"
-        value = (selection.summarize(api, out, label, batch, dates, True) if extractive else
+        value = (observation.summarize(api, out, label, batch, dates, True) if observational else
+                 selection.summarize(api, out, label, batch, dates, True) if extractive else
                  summarize(api, out, label, batch, target, dates, True))
         nodes.append({"node_id": label, "units": value["units"],
                       "covered_fact_ids": [x["fact_id"] for x in batch], "children": [],
@@ -150,7 +155,8 @@ def build(api, out, material, target, dates, extractive=False):
                 value = selection.summarize(api, out, label, list(by_id.values()), dates, False)
             else:
                 inputs = [{"node_id": n["node_id"], "units": [u["text"] for u in n["units"]]} for n in children]
-                value = summarize(api, out, label, inputs, target, dates, False)
+                value = (observation.summarize(api, out, label, inputs, dates, False) if observational else
+                         summarize(api, out, label, inputs, target, dates, False))
             node = {"node_id": label, "units": value["units"],
                     "covered_fact_ids": list(dict.fromkeys(r for n in children for r in n["covered_fact_ids"])),
                     "children": [n["node_id"] for n in children],
@@ -161,7 +167,8 @@ def build(api, out, material, target, dates, extractive=False):
         nodes = next_nodes
         level += 1
     result = {"root": nodes[0], "nodes": all_nodes, "original_count": len(material),
-              "method": selection.METHOD if extractive else "abstractive-v1",
+              "method": observation.METHOD if observational else selection.METHOD if extractive else "abstractive-v1",
+              "content_reviews_advisory": observational,
               "lifecycle": "evidence", "rule": "coverage IDs mean visited, not all details retained or verified against original articles"}
     news.save(out / "hierarchy.json", result)
     return result

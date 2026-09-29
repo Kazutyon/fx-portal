@@ -310,7 +310,7 @@ def review_copy(api, out, label, copy, evidence, target):
                      "reason": " / ".join(x["reason"] for x in verdicts)})
 
 
-def author(api, out, label, purpose, evidence, target, length, overview=None):
+def author(api, out, label, purpose, evidence, target, length, overview=None, observational=False):
     if not evidence:
         raise ValueError(f"{label}: no eligible grounded facts")
     # Writers receive typed facts and quotations; reviewers additionally get
@@ -344,6 +344,11 @@ def author(api, out, label, purpose, evidence, target, length, overview=None):
             "価格の数字を別ペアへ移さない。資料にない価格目標や因果を作らない。"
             "上昇/下落の方向や回数を、高値/安値という価格水準へ言い換えない。述語の意味を保持する。"
             "本文にfact ID・出典管理・内部状況・要確認・再確認を書かない。")
+    if observational:
+        task = (f"FX日報の{purpose}を書く。分量は{length}文字を目安に、内容は資料に応じて判断する。"
+                "titleは短い日本語見出し。statementsに本文と対応するfact_idsを付ける。"
+                "入力の事実・日付・数値・市場・予想と実績を守る。分析は条件付きとし、"
+                "資料にない事実/価格/実現済み結果は作らない。内部処理や管理IDは本文に書かない。")
     draft = normalize_modes(api.infer_cached(out, f"{label}-write", task, data, COPY), evidence)
     qc = review_copy(api, out, f"{label}-review", draft, evidence, target)
     if qc["verdict"] != "PASS":
@@ -646,16 +651,17 @@ def review_editorial_quality(api, out, key, draft, evidence, peers, target, over
          "other_sections": {k: v["body"][:420] for k, v in peers.items() if k != key}}, news.QC_SCHEMA)
 
 
-def improve_editorial(api, out, key, purpose, evidence, peers, target, length, overview=None):
+def improve_editorial(api, out, key, purpose, evidence, peers, target, length, overview=None, observational=False):
     """Keep a source-PASS original if OPTIONAL quality repair corrupts facts.
 
     This is a REJECTED shadow artifact, not a passing substitute or model
     fallback. Initial author/source failures still propagate and stop the run.
     """
     extra = {"overview": overview} if overview else {}
-    draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length, **extra)
+    draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length,
+                   observational=observational, **extra)
     quality = review_editorial_quality(api, out, key, draft, evidence, peers, target, **extra)
-    if quality["verdict"] == "FAIL":
+    if quality["verdict"] == "FAIL" and not observational:
         news.save(out / "stages" / f"editorial-quality-{key}-first-rejected.json", {"draft": draft, "quality": quality})
         try:
             improved = author(api, out, f"grounded-editorial-{key}-quality-repair",
@@ -699,7 +705,7 @@ def material_coverage(api, out, material, topics, editorial, target):
     return result
 
 
-def news_candidates(api, out, prior, target):
+def news_candidates(api, out, prior, target, observational=False):
     fields = ["fact_id", "kind", "fact", "event_date", "market_session", "pairs", "record_type"]
     pool = [{k: x[k] for k in fields} for x in prior]
     schema = news.schema({"fact_ids": {"type": "array", "items": news.STRING, "maxItems": 6}})
@@ -708,9 +714,11 @@ def news_candidates(api, out, prior, target):
             return pool
         chosen = []
         for i, batch in enumerate(api.evidence_batches(pool, 8500)):
-            ids = api.infer_cached(out, f"news-catalog-{round_no}-{i}",
-                "主要出来事の計画用に最大6根拠選別。異なる政策/金利/介入/地政学材料と価格反応・理由の組を優先。"
-                "同じクロス円値動きの羅列で枠を埋めない。USD/JPYとEUR/USDの実際の反応も残す。入力IDのみ。",
+            task = ("日報の話題を考えるため、資料から重要な根拠を最大6件選ぶ。入力IDのみ。"
+                    if observational else
+                    "主要出来事の計画用に最大6根拠選別。異なる政策/金利/介入/地政学材料と価格反応・理由の組を優先。"
+                    "同じクロス円値動きの羅列で枠を埋めない。USD/JPYとEUR/USDの実際の反応も残す。入力IDのみ。")
+            ids = api.infer_cached(out, f"news-catalog-{round_no}-{i}", task,
                 {"date_facts": date_facts(target), "facts": batch}, schema)["fact_ids"]
             if not set(ids) <= {x["fact_id"] for x in batch}:
                 raise ValueError("news catalog returned invalid ID")
@@ -721,7 +729,7 @@ def news_candidates(api, out, prior, target):
     raise ValueError("news catalog did not converge within input budget")
 
 
-def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchical=False):
+def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchical=False, observational=False):
     target = date.fromisoformat(calendar["date_jst"])
     facts = extract(api, sources, target, out)
     tree = None
@@ -730,12 +738,13 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
         import local_fx_hierarchy as hierarchy
         full_material = editorial_facts(calendar, ranking, facts, [])
         news.save(out / "shared-material.json", {"facts": full_material, "lifecycle": "evidence"})
-        tree = hierarchy.build(api, out, full_material, target, date_facts(target), extractive=True)
+        tree = hierarchy.build(api, out, full_material, target, date_facts(target),
+                               extractive=not observational, observational=observational)
         global_overview = hierarchy.overview(tree)
     prior = [x for x in facts if x["event_scope"] == "previous" and x["claim_gate_accepted"]]
     plan_schema = news.schema({"topics": {"type": "array", "minItems": 3, "maxItems": 5,
         "items": news.schema({"title": news.STRING, "fact_ids": {"type": "array", "items": news.STRING, "minItems": 1, "maxItems": 6}})}})
-    plan_data = news_candidates(api, out, prior, target)
+    plan_data = news_candidates(api, out, prior, target, observational=observational)
     plan_task = "前営業日の主要出来事を3〜5件、重要順で選ぶ。"
     if hierarchical:
         plan_task += "全体像を踏まえ、当日の相場を特徴づける異なる出来事と反応・背景を選ぶ。テーマ/通貨を固定しない。入力の前営業日factだけを根拠にする。"
@@ -754,7 +763,8 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
         evidence = [x for x in prior if x["fact_id"] in topic["fact_ids"]]
         draft = author(api, out, f"grounded-topic-{i:02}",
                        f'前営業日の振り返り「{topic["title"]}」。何が起き、価格がどう動き、なぜ動いたかを説明',
-                       evidence, target, "250〜450", **({"overview": global_overview} if global_overview else {}))
+                       evidence, target, "250〜450", observational=observational,
+                       **({"overview": global_overview} if global_overview else {}))
         draft["source_ids"] = sorted({x["source_id"] for x in evidence})
         topics.append(draft)
         news.save(out / "news.json", {"topics": topics, "publish_ready": False})
@@ -773,15 +783,23 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
         ("risk", "市場リスク。介入警戒/政策発表/指標のうち最重要リスクの条件と影響を説明。発表前は予想・予定と明記", "200〜300"),
         ("points", "その他注目点。月末要因/週後半の指標など本文ニュースと重複しない具体的焦点を3点、各1文", "200〜350"),
     ]
+    if observational:
+        labels = {"hero": "冒頭", "headline": "一言まとめ", "summary": "前日の振り返り全体の整理",
+                  "market": "市場環境", "handover": "本日の引継ぎ", "focus": "ランキング候補から選ぶ注目通貨",
+                  "risk": "市場リスク", "points": "その他注目点"}
+        roles = [(key, labels[key], length) for key, _, length in roles]
     editorial = {}
     for key, purpose, length in roles:
         evidence = (hierarchy.allocate(api, out, key, material, target, date_facts(target), tree, purpose)
                     if hierarchical else shared_role_evidence(api, out, key, material, target, topics))
-        if key in {"hero", "headline"}:
+        if observational:
+            pass  # Do not impose today's story or a mandatory causal pattern.
+        elif key in {"hero", "headline"}:
             purpose += "。最重要材料を短く。独立した材料を無理に同じ因果へ結ばない。予定/予想と実際の反応は分ける"
         else:
             purpose += "。材料→価格/金利への作用→本日の条件を役割に合わせて整理。予定だけの羅列や他欄の言い換えにしない"
         draft = improve_editorial(api, out, key, purpose, evidence, editorial, target, length,
+                                 observational=observational,
                                  **({"overview": global_overview} if global_overview else {}))
         editorial[key] = draft
         news.save(out / "editorial-progress.json", editorial)

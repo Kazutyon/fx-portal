@@ -9,6 +9,6 @@
   "num_ctx": 65536,
   "publish": false,
   "model_fallback": false,
-  "verification": "2026-09-29: 18 regression tests PASS; default thinking incomplete at output limit; explicit think-off trial complete but independent quality REJECTED; live FF 403 and Gaitame zero articles; scheduled run unverified",
+  "verification": "2026-09-29: 90 offline regression tests PASS; existing GALLERIA cron connected to observation-shadow and next 2026-09-30 07:00 JST read back; no live generation in this setup. Default thinking unchanged, output-limit/completion/quality still unproven; intermediate content QC advisory only, final source checks and no publication retained. Observe several days before content tuning.",
   "monday_rate_sentiment_refresh": "not implemented; explicit failure rather than fabrication"
 }

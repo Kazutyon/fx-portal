@@ -1,5 +1,7 @@
 # OpenClaw FX日報シャドー実行設計
 
+> 現行9/29夕方: Owner「縛りを減らす/明日自動/数日観測」により、既存GALLERIA平日07時cronは`tools/local_fx_daily.py --observation-shadow`へ接続。次回9/30 07:00 JSTを読み戻し。Qwen/64k/通常thinking、公開なし。中間評価は記録のみ、最終原資料照合は維持。今日は起動しない。9/30〜10/2の結果を見てから微調整。正本は`CLAUDE-MIRROR-SHADOW-SETTINGS.md`、証拠は`docs/EVIDENCE-FX-OBSERVATION-SETUP-20260929.md`。以下の無flag例/未接続/停止指示は当時の履歴で、現行cron引数ではない。
+
 > 9/29午後: Owner再承認で実測済み。通常thinkingは未完走、明示OFF隔離試験だけ完走・品質不合格。証拠 `docs/EVIDENCE-CLAUDE-MIRROR-SHADOW-20260929.md`。現在「待機中/未実行」ではない。定時成功は未確認で、FF403・外為0・内容誤りが残る。OFFを通常cronへ追加していない。
 
 > 2026-09-29最新: Owner指示でClaude同取得元へ変更。正本は `CLAUDE-MIRROR-SHADOW-SETTINGS.md`。この改訂で起動・収集・生成・試験は一切行っていない。以下の手動実行例は現在実行しない。日付別入力がない当日は自動アダプターへ進む設定、月曜補足は未実装でFAILED。本文の旧「未接続」「遮断」は変更前の記録。
