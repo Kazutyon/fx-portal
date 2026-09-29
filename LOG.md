@@ -1,5 +1,13 @@
 # LOG
 
+## 2026-09-29 Claude同取得元への設定変更のみ / Codex
+
+- Owner指示「Claude Codeと同じ」「実行はしない」に従い、GALLERIA既存シャドーだけ変更。3ニュースサイト+KissFX/FF、火〜金の公開index政策金利表継承、古いランキングの時点表示を接続。ライブ入力の締切は取得開始で、厳密07:00バックテストとしない。
+- 内部遮断例外は `tools/claude_mirror_shadow.json`。運営者許諾を確認したと偽らない。旧予備監査は保存。拒否回避、publish、push、モデル変更なし。本番Claude、他PC、サービス、スケジュールを変更せず、新規タスクも作らない。
+- 保持ファイル: `tools/local_fx_claude_sources.py`（取得アダプター）、設定JSON、`CLAUDE-MIRROR-SHADOW-SETTINGS.md`（正本）。いずれもkeep、廃止時に記録後退避。取得証拠は今後の実行時だけ日付別shadow-outputへ保存。
+- 月曜補足は未実装のまま明示FAILED。カレンダー一致行のみ表示と本文の品質不合格も残る。Claudeと同じ取得方針は、同等品質・全曜日完走の証明ではない。
+- 検証: 静的差分確認のみ。Ownerの実行禁止によりジョブ/LLM/取得/試験/compile/previewを実行していない。追加したテストも未実行。旧版PASSをこの改訂へ流用しない。中央台帳の既存委譲entry注記も未試験へ更新。
+
 ## 2026-09-29 全日報シャドー完走・今日のAUXEN公開日報との比較 / Codex
 
 - Ownerの指示は今日の全日報をローカルQwenで終了し、今日の公開済み `https://auxen.jp/reports/2026-09-29.html` と比較すること。GALLERIAだけ、Qwen固定、シャドー限定。他PC、本番RemoteTrigger、公開HTML、pushは変更していない。

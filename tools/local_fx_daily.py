@@ -16,16 +16,18 @@ import re
 import sys
 import time
 import urllib.request
+from urllib.error import HTTPError
 from decimal import Decimal
 from datetime import date, datetime, time as daytime, timedelta
 from pathlib import Path
 from urllib.parse import urlparse
 
 import local_fx_news as news
+import local_fx_claude_sources as claude_sources
 
 ROOT, JST = news.ROOT, news.JST
 HOSTS = {"fx.minkabu.jp", "zai.diamond.jp", "kissfx.com", "nfs.faireconomy.media",
-         "auxen.jp", "www.rba.gov.au"}
+         "auxen.jp", "www.rba.gov.au", "www.gaitame.com"}
 FLAGS = {"JPY": "🇯🇵", "USD": "🇺🇸", "EUR": "🇪🇺", "GBP": "🇬🇧", "AUD": "🇦🇺",
          "NZD": "🇳🇿", "CAD": "🇨🇦", "CHF": "🇨🇭"}
 COUNTRIES = {"日": "JPY", "米": "USD", "欧": "EUR", "独": "EUR", "仏": "EUR", "西": "EUR",
@@ -33,15 +35,37 @@ COUNTRIES = {"日": "JPY", "米": "USD", "欧": "EUR", "独": "EUR", "仏": "EUR
 FORBIDDEN = r"要確認|再確認|取得失敗|OpenClaw|NO_REPLY|シャドー|データ取得"
 
 
+def mirror_enabled() -> bool:
+    config = load(ROOT / "tools" / "claude_mirror_shadow.json")
+    return (config.get("acquisition_mode") == "claude-mirror"
+            and config.get("internal_source_policy_exception") is True
+            and config.get("publish") is False
+            and config.get("model") == news.MODEL
+            and config.get("num_ctx") == 65536
+            and config.get("model_fallback") is False)
+
+
 def fetch(url: str) -> str:
     if urlparse(url).hostname not in HOSTS:
         raise ValueError("source is outside allowlist")
-    if urlparse(url).hostname in {"fx.minkabu.jp", "kissfx.com"}:
+    if urlparse(url).hostname in {"fx.minkabu.jp", "kissfx.com"} and not mirror_enabled():
         raise ValueError("automatic acquisition is not approved; provide a dated local input snapshot (ECONOMIC-CALENDAR-SOURCE-AUDIT.md)")
     # Use urllib's transparent default client identification, not a custom agent
     # string rejected by RBA's public site. No browser impersonation or proxy.
     request = urllib.request.Request(url)
-    with urllib.request.urlopen(request, timeout=25) as response:
+    try:
+        response = urllib.request.urlopen(request, timeout=25)
+    except HTTPError as error:
+        # One bounded FF backoff, as in Claude's run; never bypass a refusal.
+        if error.code != 429 or urlparse(url).hostname != "nfs.faireconomy.media":
+            raise
+        retry_after = error.headers.get("Retry-After", "20")
+        if not retry_after.isdigit() or int(retry_after) > 30:
+            raise
+        error.close()
+        time.sleep(max(1, int(retry_after)))
+        response = urllib.request.urlopen(request, timeout=25)
+    with response:
         if urlparse(response.url).hostname not in HOSTS:
             raise ValueError("redirect outside allowlist")
         raw = response.read(1000001)
@@ -62,6 +86,7 @@ def snapshot(out: Path, label: str, url: str) -> str:
             raise ValueError(f"cached {label} URL/hash mismatch")
         return value["body"]
     try:
+        print(f"SOURCE {label} FETCH", flush=True)
         body = fetch(url)
     except Exception as error:
         raise ValueError(f"{label} ({url}): {error}") from error
@@ -73,7 +98,9 @@ def snapshot(out: Path, label: str, url: str) -> str:
 def collect_news(target: date, out: Path) -> list[dict]:
     bundle_path = out / "source-bundle.json"
     if not bundle_path.exists():
-        raise ValueError("dated local news input bundle is required; automatic Minkabu scraping is not adopted")
+        if not mirror_enabled():
+            raise ValueError("dated local news input bundle is required")
+        claude_sources.collect(target, out, snapshot)
     bundle = load(bundle_path)
     if bundle.get("date_jst") != target.isoformat():
         raise ValueError("news bundle has wrong date")
@@ -81,6 +108,10 @@ def collect_news(target: date, out: Path) -> list[dict]:
     if not 5 <= len(sources) <= 12 or len({s["source_url"] for s in sources}) != len(sources):
         raise ValueError("news source count/uniqueness gate failed")
     cutoff = datetime.combine(target, daytime(7), JST)
+    if bundle.get("acquisition_mode") == "claude-mirror":
+        cutoff = datetime.fromisoformat(bundle["as_of_jst"])
+        if cutoff.tzinfo is None or cutoff.astimezone(JST).date() != target or cutoff > datetime.now(JST):
+            raise ValueError("invalid live news acquisition cutoff")
     for i, source in enumerate(sources):
         if source["source_id"] != i or datetime.fromisoformat(source["published_at"]) > cutoff:
             raise ValueError("news source ID/cutoff gate failed")
@@ -213,15 +244,18 @@ def collect_calendar(target: date, out: Path) -> dict:
         if i not in matched_ff:
             events.append({**event, "sources": [ff_url], "confirmed": False})
     events.sort(key=lambda x: (x["time_jst"], x["country"], x["name"]))
-    rba_calendar = snapshot(out, "rba-calendar", "https://www.rba.gov.au/schedules-events/calendar/")
-    rba_rate = snapshot(out, "rba-rate", "https://www.rba.gov.au/cash-rate-target-overview.html")
+    # Claude's weekday flow uses KissFX + FF, not mandatory RBA web requests.
+    kiss_text = news.plain(re.sub(r"<script\b.*?</script>|<style\b.*?</style>", "", kiss, flags=re.S))
+    themes_at = kiss_text.find("その他、注目点")
+    day_themes = kiss_text[themes_at:themes_at + 2200] if themes_at >= 0 else ""
+    weekly_at = next((m.start() for m in re.finditer(r"今週の(?:注目|重要)|週間(?:予定|スケジュール)|週内の", kiss_text)), -1)
     key = [x for x in events if x["importance"] == "high" or event_code(x["name"]) in {"confidence", "jolts", "rba-rate", "rba-press"}]
     result = {"date_jst": target.isoformat(), "events": events, "key_events": key,
-              "source_urls": [kiss_url, ff_url, "https://www.rba.gov.au/schedules-events/calendar/"],
+              "source_urls": [kiss_url, ff_url],
               "conflicts": conflicts, "holiday_text": "",
-              "day_themes": news.plain(kiss)[news.plain(kiss).find("その他、注目点"):][:2200],
-              "rba_official_excerpt": news.plain(rba_rate)[-7000:],
-              "rba_schedule_excerpt": news.plain(rba_calendar)[-18000:]}
+              "day_themes": day_themes,
+              "weekly_themes": kiss_text[weekly_at:weekly_at + 1800] if weekly_at >= 0 else "",
+              "rba_official_excerpt": "", "rba_schedule_excerpt": ""}
     news.save(out / "calendar.json", result)
     return result
 
@@ -335,7 +369,8 @@ def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path)
     key_events = [{k: x[k] for k in ["time_jst", "country", "name", "forecast", "previous"]} for x in calendar["key_events"]]
     editorial = {}
     editorial_data = {"date_jst": calendar["date_jst"], "topics": short_topics,
-                      "calendar": key_events, "day_themes": calendar["day_themes"][:1600]}
+                      "calendar": key_events, "day_themes": calendar["day_themes"][:2200],
+                      "weekly_themes": calendar.get("weekly_themes", "")[:1800]}
     for key, purpose, length in [
         ("hero", "日報冒頭の前営業日の振り返りと本日の焦点", "200〜350"),
         ("headline", "サマリーの具体的な見出し", "80〜140"),
@@ -348,7 +383,8 @@ def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path)
             "資料の具体的な材料と時刻を整理。当日分析は条件と理由を具体化し、事実と区別する。"
             "資料にない金利や出来事、指標結果を創作しない。内部事情・取得状況・要確認・再確認は禁止。"
         ), editorial_data, news.schema({"body": news.STRING}))["body"]
-    focus_data = {"topics": short_topics, "calendar": key_events, "ranking": ranking["rankings"][:5]}
+    focus_data = {"topics": short_topics, "calendar": key_events,
+                  "ranking": [{k: v for k, v in item.items() if k != "symbol"} for item in ranking["rankings"][:5]]}
     common = "当日分析は条件付きの見方として説明。数字は入力のまま。資料にない価格予想・金利・出来事、内部事情・要確認・再確認は禁止。"
     focus = infer_cached(out, "focus-pair", common +
         "最注目通貨focus_pairと理由focus_body(200〜350文字)だけ書く。ランキングは変更せず材料の強さも考慮して選ぶ。",
@@ -440,7 +476,8 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
         policy = load(policy_path)
         if policy["date_jst"] != target.isoformat():
             raise ValueError("dated policy input mismatch")
-        policy_html = '<p style="margin-top:16px"><strong>政策金利：</strong>' + " / ".join(
+        policy_as_of = policy.get("source_as_of_jst", policy["date_jst"])
+        policy_html = f'<p style="margin-top:16px"><strong>政策金利（{esc(policy_as_of)}時点）：</strong>' + " / ".join(
             f'<a href="{esc(r["source_url"])}" target="_blank" rel="noopener noreferrer">{FLAGS.get(r["currency"], "")} {esc(r["bank"])} {esc(r["rate"])}</a>'
             for r in policy["rates"]) + '</p>'
         report = report.replace(esc(sections["market"]), esc(sections["market"]) + policy_html)
@@ -485,10 +522,13 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
     news.save(out / "status.json", status)
     news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
     news.save(out / "runner-version.json", {"started_at": status["started_at"],
-        "files": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__), Path(news.__file__)]}})
+        "files": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in
+                  [Path(__file__), Path(news.__file__), Path(claude_sources.__file__), ROOT / "tools" / "claude_mirror_shadow.json"]}})
     try:
         if os.environ.get("COMPUTERNAME", "").upper() != "GALLERIA":
             raise ValueError("wrong host")
+        if mirror_enabled() and target.weekday() == 0:
+            raise ValueError("Monday Claude rate/sentiment refresh remains unimplemented")
         input_dir = ROOT / "shadow-input" / target.isoformat()
         for name in ["source-bundle.json", "calendar.input.json", "policy.json"]:
             path = input_dir / name
@@ -497,14 +537,21 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         sources = collect_news(target, out)
         calendar = collect_calendar(target, out)
         policy_path = out / "policy.json"
+        if not policy_path.exists() and mirror_enabled():
+            claude_sources.inherit_policy(target, out, snapshot)
         if not policy_path.exists() or load(policy_path).get("date_jst") != target.isoformat():
             raise ValueError("dated official policy input is required before generation")
         ranking = json.loads(snapshot(out, "ranking", "https://auxen.jp/data/daytrade-ranking.json"))
-        if datetime.fromisoformat(ranking["generated_at_jst"]).astimezone(JST).date() != target:
+        ranking_at = datetime.fromisoformat(ranking["generated_at_jst"])
+        if ranking_at.tzinfo is None or ranking_at > datetime.now(JST) or ranking_at.astimezone(JST).date() > target:
+            raise ValueError("ranking timestamp is invalid or from the future")
+        today_ranking = ranking_at.astimezone(JST).date() == target
+        if not today_ranking and not mirror_enabled():
             raise ValueError("ranking is not from the report day")
         if len(ranking["rankings"]) < 5:
             raise ValueError("ranking contains fewer than five pairs")
-        news.save(out / "market.json", {"ranking": ranking, "source_url": "https://auxen.jp/data/daytrade-ranking.json"})
+        news.save(out / "market.json", {"ranking": ranking, "source_url": "https://auxen.jp/data/daytrade-ranking.json",
+                                       "today_ranking": today_ranking, "ranking_stale": not today_ranking})
         if prepare_only:
             status["status"] = "PREPARED"
         else:
@@ -514,7 +561,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
             checks = {"five_topics": len(sections["topics"]) == 5,
                       "required_anchors": all(f'id="{x}"' in report for x in ["summary", "points", "ranking", "review", "calendar"]),
                       "no_internal_status": not bool(re.search(FORBIDDEN, report, re.I)),
-                      "calendar_nonempty": bool(calendar["events"]), "today_ranking": True,
+                      "calendar_nonempty": bool(calendar["events"]), "today_ranking": today_ranking,
                       "topic_source_reviews": all(t["review"]["verdict"] == "PASS" for t in sections["topics"])}
             quality = {"checks": checks, "calendar_conflicts": calendar["conflicts"],
                        "single_source_calendar_rows": [x for x in calendar["events"] if not x["confirmed"]],
@@ -522,7 +569,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                        "displayed_calendar_rows": sum(bool(x["confirmed"]) for x in calendar["events"]),
                        "ranking_after_0700": datetime.fromisoformat(ranking["generated_at_jst"]) > datetime.combine(target, daytime(7), JST)}
             news.save(out / "validation.json", quality)
-            if not all(value for key, value in checks.items() if key != "topic_source_reviews"):
+            if not all(value for key, value in checks.items() if key not in {"topic_source_reviews", "today_ranking"}):
                 raise ValueError("structural gate failed")
             status.update(status="SHADOW_COMPLETE_REVIEW_PENDING", report=str(out / "report.html"),
                           quality="pending", news_sources=len(sources), calendar_rows=len(calendar["events"]))

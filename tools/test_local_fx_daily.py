@@ -51,10 +51,26 @@ class DailyTests(unittest.TestCase):
         self.assertGreater(len(chunks), 1)
 
     def test_unapproved_automatic_sources_fail_without_request(self):
-        with patch.object(daily.urllib.request, "urlopen", side_effect=AssertionError("network forbidden")):
+        with patch.object(daily, "mirror_enabled", return_value=False), patch.object(daily.urllib.request, "urlopen", side_effect=AssertionError("network forbidden")):
             for url in ["https://fx.minkabu.jp/news", "https://kissfx.com/article/test.html"]:
                 with self.assertRaisesRegex(ValueError, "not approved"):
                     daily.fetch(url)
+
+    def test_policy_inheritance_preserves_original_date_and_ignores_stance(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder)
+            currencies = ["USD", "GBP", "JPY", "EUR", "AUD", "NZD", "CAD", "CHF"]
+            rows = ''.join(f'<tr><td>{c} bank</td><td>{c}</td><td><strong>1.25%</strong></td><td>要確認</td></tr>' for c in currencies)
+            page = '<h3>主要中銀 政策金利</h3><span>2026-09-25 現在</span><table>' + rows + '</table>'
+            daily.claude_sources.inherit_policy(date(2026, 9, 29), out, lambda *args: page)
+            policy = daily.load(out / "policy.json")
+            self.assertEqual(policy["source_as_of_jst"], "2026-09-25")
+            self.assertEqual(len(policy["rates"]), 8)
+            self.assertNotIn("要確認", json.dumps(policy))
+
+    def test_monday_does_not_fake_inherited_policy_refresh(self):
+        with self.assertRaisesRegex(ValueError, "Monday"):
+            daily.claude_sources.inherit_policy(date(2026, 10, 5), Path("unused"), lambda *args: self.fail("unexpected request"))
 
     def test_cache_is_invalidated_when_prompt_changes(self):
         with tempfile.TemporaryDirectory() as folder:

@@ -1,0 +1,14 @@
+{
+  "lifecycle": "keep",
+  "acquisition_mode": "claude-mirror",
+  "owner_directed_on": "2026-09-29",
+  "scope": "GALLERIA existing FX shadow only",
+  "internal_source_policy_exception": true,
+  "source_operator_permission_verified": false,
+  "model": "qwen3.6:27b",
+  "num_ctx": 65536,
+  "publish": false,
+  "model_fallback": false,
+  "verification": "configuration-only; no execution or tests this revision",
+  "monday_rate_sentiment_refresh": "not implemented; explicit failure rather than fabrication"
+}
