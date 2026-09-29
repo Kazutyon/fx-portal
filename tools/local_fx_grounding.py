@@ -235,6 +235,9 @@ def copy_errors(copy, evidence, target):
         text = unicodedata.normalize("NFKC", statement["text"])
         linked = [allowed[x] for x in ids]
         errors.extend(country_errors(text, linked))
+        if (re.search(r"下方(?:修正|改定)[^。]*予想を下回", text)
+                and not re.search(r"前回(?:値|分)|前月(?:値|分)|前期(?:値|分)|前値", text)):
+            errors.append("below-forecast result described as a downward revision")
         if "NY" in text or "ニューヨーク" in text:
             if all(x.get("market_session") == "Tokyo" for x in linked):
                 errors.append("Tokyo-only facts assigned to NY")
@@ -319,7 +322,7 @@ def author(api, out, label, purpose, evidence, target, length, overview=None, ob
     compact = [{k: v for k, v in x.items() if k not in {"source_context", "source_url", "source_title"}}
                for x in evidence]
     data = {"date_facts": date_facts(target), "facts": compact}
-    if overview:
+    if overview and not observational:
         data["global_overview"] = overview
     relations = []
     tomorrow = target + timedelta(days=1)
@@ -347,12 +350,17 @@ def author(api, out, label, purpose, evidence, target, length, overview=None, ob
     if observational:
         task = (f"FX日報の{purpose}を書く。分量は{length}文字を目安に、内容は資料に応じて判断する。"
                 "titleは短い日本語見出し。statementsに本文と対応するfact_idsを付ける。"
-                "入力の事実・日付・数値・市場・予想と実績を守る。分析は条件付きとし、"
-                "資料にない事実/価格/実現済み結果は作らない。内部処理や管理IDは本文に書かない。")
+                "各statementの事実・価格・因果は、そのstatementのfact_idsのfact/quoteで支える。"
+                "値動きや理由の根拠がなければ無理に書かず、ある材料だけで説明する。"
+                "入力の事実・日付・数値・市場・予想と実績を守る。予想下振れを下方修正と呼ばない。"
+                "分析は条件付きとし、資料にない事実/価格/実現済み結果は作らない。"
+                "内部処理や管理IDは本文に書かない。")
     draft = normalize_modes(api.infer_cached(out, f"{label}-write", task, data, COPY), evidence)
     qc = review_copy(api, out, f"{label}-review", draft, evidence, target)
     if qc["verdict"] != "PASS":
-        draft = normalize_modes(api.infer_cached(out, f"{label}-repair", task + " 指摘された誤りだけ修正。",
+        repair_task = (task + " 根拠のない文や句は削除し、残す主張を対応するfact_idsだけから書き直す。"
+                       if observational else task + " 指摘された誤りだけ修正。")
+        draft = normalize_modes(api.infer_cached(out, f"{label}-repair", repair_task,
                                  {**data, "rejected_draft": draft, "review": qc}, COPY), evidence)
         qc = review_copy(api, out, f"{label}-review-repair", draft, evidence, target)
     news.save(out / "stages" / f"{label}-grounded-review.json", {"draft": draft, "review": qc})
@@ -761,8 +769,11 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
         if any(x not in {f["fact_id"] for f in prior} for x in topic["fact_ids"]):
             raise ValueError("news plan selected non-previous or invalid fact")
         evidence = [x for x in prior if x["fact_id"] in topic["fact_ids"]]
+        topic_purpose = (f'前営業日の振り返り「{topic["title"]}」。出来事を説明し、根拠があれば値動きや背景も説明'
+                         if observational else
+                         f'前営業日の振り返り「{topic["title"]}」。何が起き、価格がどう動き、なぜ動いたかを説明')
         draft = author(api, out, f"grounded-topic-{i:02}",
-                       f'前営業日の振り返り「{topic["title"]}」。何が起き、価格がどう動き、なぜ動いたかを説明',
+                       topic_purpose,
                        evidence, target, "250〜450", observational=observational,
                        **({"overview": global_overview} if global_overview else {}))
         draft["source_ids"] = sorted({x["source_id"] for x in evidence})

@@ -79,6 +79,58 @@ class ObservationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "403"):
                 daily.collect_calendar(date(2026, 9, 30), Path(folder) / "strict")
 
+    def test_observation_writer_receives_only_topic_facts_not_global_overview(self):
+        fact = {"fact_id": "N1-6", "fact": "住宅価格指数は予想を上回った。",
+                "quote": "住宅価格指数：+0.3（予想+0.1）", "record_type": "actual"}
+        draft = {"title": "住宅指標", "statements": [
+            {"text": "住宅価格指数は予想を上回った。", "fact_ids": ["N1-6"], "mode": "fact"}]}
+        calls = []
+
+        def infer(out, label, task, data, schema):
+            calls.append((label, task, data))
+            return draft
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=infer), patch.object(
+                grounding, "review_copy", return_value={"verdict": "PASS", "reason": "supported"}):
+            grounding.author(daily, Path(folder), "topic", "指標の振り返り", [fact],
+                             date(2026, 9, 30), "250", overview={"synopsis": ["別記事のFRB観測"]},
+                             observational=True)
+        self.assertEqual(len(calls), 1)
+        self.assertNotIn("global_overview", calls[0][2])
+        self.assertEqual([x["fact_id"] for x in calls[0][2]["facts"]], ["N1-6"])
+        self.assertIn("値動きや理由の根拠がなければ無理に書かず", calls[0][1])
+
+    def test_observation_repair_rebuilds_from_same_facts_and_still_fails_closed(self):
+        fact = {"fact_id": "N1-6", "fact": "住宅価格指数は予想を上回った。",
+                "quote": "住宅価格指数：+0.3（予想+0.1）", "record_type": "actual"}
+        draft = {"title": "誤った解釈", "statements": [
+            {"text": "FRBが追加利上げした。", "fact_ids": ["N1-6"], "mode": "fact"}]}
+        calls = []
+
+        def infer(out, label, task, data, schema):
+            calls.append((label, task, data))
+            return draft
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=infer), patch.object(
+                grounding, "review_copy", return_value={"verdict": "FAIL", "reason": "unsupported"}):
+            with self.assertRaisesRegex(ValueError, "original-context review failed"):
+                grounding.author(daily, Path(folder), "topic", "指標の振り返り", [fact],
+                                 date(2026, 9, 30), "250", overview={"synopsis": ["別記事のFRB観測"]},
+                                 observational=True)
+        self.assertEqual([x[0] for x in calls], ["topic-write", "topic-repair"])
+        self.assertNotIn("global_overview", calls[1][2])
+        self.assertIn("根拠のない文や句は削除", calls[1][1])
+
+    def test_below_forecast_is_not_downward_revision(self):
+        fact = {"fact_id": "N1-8", "record_type": "actual", "quote": "指数81.9（予想89.0、前回88.6←89.4）"}
+        wrong = {"title": "指標", "statements": [{"text": "景気指標は下方修正となり、予想を下回った。",
+                 "fact_ids": ["N1-8"], "mode": "fact"}]}
+        errors = grounding.copy_errors(wrong, [fact], date(2026, 9, 30))
+        self.assertIn("below-forecast result described as a downward revision", errors)
+        wrong["statements"][0]["text"] = "景気指標は予想を下回った。"
+        self.assertNotIn("below-forecast result described as a downward revision",
+                         grounding.copy_errors(wrong, [fact], date(2026, 9, 30)))
+
 
 if __name__ == "__main__":
     unittest.main()
