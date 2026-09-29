@@ -10,6 +10,27 @@ import local_fx_daily as daily
 
 
 class DailyTests(unittest.TestCase):
+    def test_named_policy_event_as_today_focus_is_not_realized_outcome(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "C0", "record_type": "forecast", "fact": "RBA政策金利と声明発表予定。"}]
+        copy = {"title": "本日の焦点", "statements": [{"text": "本日注目すべきは、豪州RBAの政策金利決定と声明発表である。",
+            "fact_ids": ["C0"], "mode": "conditional"}]}
+        self.assertEqual(grounding.copy_errors(copy, facts, date(2026, 9, 29)), [])
+        copy["statements"][0]["text"] = "利上げしたRBAが焦点。"
+        self.assertIn("forecast/outlook written as realized fact", grounding.copy_errors(copy, facts, date(2026, 9, 29)))
+
+    def test_deterministic_failure_does_not_hide_semantic_errors_from_one_repair(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "市場", "statements": [{"text": "本日は四半期末の最終営業日である。高値推移。",
+            "fact_ids": ["D1"], "mode": "fact"}]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached",
+                return_value={"verdict": "FAIL", "reason": "high-price level not in original"}) as infer:
+            result = grounding.review_copy(daily, Path(folder), "review", copy,
+                [{"fact_id": "D1", "record_type": "actual", "fact": "明日9月30日が最後の営業日"}], date(2026, 9, 29))
+            self.assertEqual(infer.call_count, 1)
+            self.assertIn("today contradicts source month-end date", result["reason"])
+            self.assertIn("high-price level not in original", result["reason"])
+
     def test_iran_cannot_be_abbreviated_as_italy_in_body_or_title(self):
         import local_fx_grounding as grounding
         facts = [{"fact_id": "N0", "record_type": "actual", "quote": "米国とイランの交渉には隔たりがある。"}]

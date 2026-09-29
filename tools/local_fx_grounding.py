@@ -203,7 +203,10 @@ def copy_errors(copy, evidence, target):
         if "NY" in text or "ニューヨーク" in text:
             if all(x.get("market_session") == "Tokyo" for x in linked):
                 errors.append("Tokyo-only facts assigned to NY")
+        future_focus = bool(re.search(r"本日注目すべきは|(?:本日|今日|明日)の焦点は|(?:を注視する|に注目する|が焦点)[。.]?$", text))
+        realized_assertion = bool(re.search(r"利上げした|引き上げた|発表された|公表された|実施された|決定された|となった", text))
         if (all(x.get("record_type") in {"forecast", "outlook"} for x in linked)
+                and not (future_focus and not realized_assertion)
                 and not re.search(r"予想|見込み|予定|見通し|見方|指摘|前回|なら|場合|か[^。]{0,35}(?:確認|観察)|想定|可能性|明日", text)):
             errors.append("forecast/outlook written as realized fact")
             errors.append(f"statement {statement_no}, refs {','.join(ids)}: {text} — 予想/予定/出典の見方または明示的な条件として書く")
@@ -226,7 +229,7 @@ def review_copy(api, out, label, copy, evidence, target):
     errors = copy_errors(copy, evidence, target)
     if "editorial-headline" in label and sum(len(x["text"]) for x in copy["statements"]) > 60:
         errors.append("headline exceeds the compact one-line card budget (60 characters)")
-    if errors:
+    if any(x in errors for x in ["no source-linked statements", "invalid or absent fact reference"]):
         return {"verdict": "FAIL", "reason": "; ".join(errors)}
     used = set(x for s in copy["statements"] for x in s["fact_ids"])
     originals = [x for x in evidence if x["fact_id"] in used]
@@ -253,8 +256,13 @@ def review_copy(api, out, label, copy, evidence, target):
             "『金利とドル買いがともに弱まるかを確認』のような観察と、『金利が下がるから必ず円高』を区別。"
             "原文の想定レンジ/総評/基本戦略は出典の見方で、市場全体の事実として断定しない。"
             "異なる取引時間帯の原因を特定価格の原因へ混ぜない。根拠のない事実が一つでもあればFAIL。理由は具体的に。")
+    def combined(review):
+        # Deterministic date/country/length failures do not hide other semantic
+        # errors from the ONE repair. Invalid references still stop immediately.
+        reasons = errors + ([review["reason"]] if review["verdict"] != "PASS" else [])
+        return {"verdict": "FAIL", "reason": "; ".join(reasons)} if reasons else review
     if len(json.dumps(data, ensure_ascii=False).encode()) <= 19000:
-        return api.infer_cached(out, label, task, data, news.QC_SCHEMA)
+        return combined(api.infer_cached(out, label, task, data, news.QC_SCHEMA))
     # Review individual source-linked statements, never drop contexts to fit.
     verdicts = []
     for i, statement in enumerate(review_draft["statements"]):
@@ -263,8 +271,8 @@ def review_copy(api, out, label, copy, evidence, target):
                "draft": {"title": copy["title"], "statements": [statement]},
                "observation_vs_assertion_rule": observation_rule}
         verdicts.append(api.infer_cached(out, f"{label}-{i:02}", task, one, news.QC_SCHEMA))
-    return {"verdict": "PASS" if all(x["verdict"] == "PASS" for x in verdicts) else "FAIL",
-            "reason": " / ".join(x["reason"] for x in verdicts)}
+    return combined({"verdict": "PASS" if all(x["verdict"] == "PASS" for x in verdicts) else "FAIL",
+                     "reason": " / ".join(x["reason"] for x in verdicts)})
 
 
 def author(api, out, label, purpose, evidence, target, length):
@@ -297,6 +305,7 @@ def author(api, out, label, purpose, evidence, target, length):
             "発表予定・市場予想の紹介はreported_forecast（例『市場予想は25bp利上げ』）、実施済みとは書かない。"
             "会合は『政策金利決定/発表』であって『利上げ決定』ではない。利上げは予想/条件と本文・title双方に明示。"
             "価格の数字を別ペアへ移さない。資料にない価格目標や因果を作らない。"
+            "上昇/下落の方向や回数を、高値/安値という価格水準へ言い換えない。述語の意味を保持する。"
             "本文にfact ID・出典管理・内部状況・要確認・再確認を書かない。")
     draft = normalize_modes(api.infer_cached(out, f"{label}-write", task, data, COPY), evidence)
     qc = review_copy(api, out, f"{label}-review", draft, evidence, target)
