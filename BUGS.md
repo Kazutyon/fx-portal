@@ -1,5 +1,11 @@
 # BUGS.md — fx-portal
 
+## BUG-007 小入力でもthinkingが出力上限6,144を消費して日報未完走
+
+検知: 2026-09-29 13:33:57。通常thinkingのtopic-02-selected-writeはinput3,764 bytes/prompt1,018に対しeval6,144、done_reason=length。64k入力超過と誤診しない。未完了応答を完成稿として保存しないガードは機能した。
+
+隔離対照試験: 同じQwen/64k/24KB/出力上限を維持し、明示 `--think-off-experiment` の別runだけthink=false。全49推論stop、全日報4分14秒で完走したが内容は不合格。通常cronはthinkingのまま。OFFは自動fallback/採用済み設定ではない。次は本文文脈/日付の束縛と全欄照合を直し、thinkingの要否・出力予算を品質と実測で判断する。証拠 `docs/EVIDENCE-CLAUDE-MIRROR-SHADOW-20260929.md`。
+
 ## BUG-006 抽出を分割しても執筆で複数全文を再結合し24KBを超過
 
 検知: 2026-09-29 13:17:48、実行 `2026-09-29-claude-mirror-1314`。topic-00-writeが6資料の全文と全claimsをまとめて渡し、24KBガードで停止。モデルの64k超過ではなく執筆入力設計の不備。

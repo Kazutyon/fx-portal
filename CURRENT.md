@@ -5,21 +5,23 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-09-29 / Codex（Owner再承認、13時台シャドー生成中）
+最終更新: 2026-09-29 / Codex（シャドー実測・独立評価、不合格）
 状態: active
 
 ## 現在の状態
 
-ローカルQwen日報の本番採用は保留。Owner再承認で `shadow-output/2026-09-29-claude-mirror-1314/` を実行中。FF403は当日保存済み資料を明記して試験継続、執筆24KB超過を追加分割して再開（BUG-006）。この試験の完成/品質はまだ未判定。自動取得、月曜補足、内容品質は未解決。
+ローカルQwen日報の本番採用は保留。通常thinkingは出力6,144上限で未完走。隔離thinking-OFFは全日報を4分14秒で生成したが、Codex独立評価は不合格。FFライブ403・外為0件、時点混同・月末日付誤り・カレンダー不足が残る。`docs/EVIDENCE-CLAUDE-MIRROR-SHADOW-20260929.md` が最新証拠。
 
 ## 次の一手
 
-0. ローカルQwen日報: `tools/claude_mirror_shadow.json` と `CLAUDE-MIRROR-SHADOW-SETTINGS.md` が現行設定。Owner指示で内部取得制限をシャドーに限定して変更し、Claudeの3ニュースサイト・KissFX/FF・平日の政策金利表継承・旧ランキングの時点表示に合わせた。既存平日07:00ジョブの入口は変更しない。改訂後は未実行・未試験、明朝成功は未確認。月曜の公式金利/センチメント補足は明示FAILED。品質対策（ペア/数値束縛、予想と結果の分離、全欄原資料照合、重複/指示文漏れ検査）、休場検証が残る。9/29旧版の品質不合格は `docs/EVIDENCE-LOCAL-FX-DAILY-20260929.md`。
+0. ローカルQwen日報: 原資料のペア/出来事時点/数値/予想・結果を束縛し、前日振り返りと当日更新を分離、全editorial欄を原資料照合する。FF403/外為の記事接続、指標全件照合/丸め差、休場確認、月曜補足も未解決。既存朝07:00ジョブは通常thinkingのまま、OFFは明示CLIの隔離試験だけ。明朝の自動成功は未確認。18テストPASSとモデル自己照合5/5 PASSを品質合格にしない。現行設定の正本は `CLAUDE-MIRROR-SHADOW-SETTINGS.md`。
 
 1. shadow-history/への実測記録の永続化をワークフローに実装済み（`.github/workflows/economic-calendar-shadow.yml`、2026-09-14）。平日05:15 JST実行のたびにshadow-output/をshadow-history/$TARGET_DATE/へコピーしてgit commit・pushする。artifactの14日保持と違い恒久的に残る。次は数営業日〜FRED対象イベント日（雇用統計・CPI・PPI・JOLTS）を跨いで実データが蓄積されるのを待ち、shadow-history/の実データで捕捉率・重複・時刻適合を再検証する（review_on: 2026-09-30、docs/ops-workbench/follow-up-registry/FOLLOW-UP-REGISTRY.json FU-20260913-1C949F12）
 2. Forex Factoryフィードの利用条件をブラウザまたは手動で最終確認する（未着手のまま）
 3. 主要指標が揃った状態で、本番日報への接続を検討する（現時点はシャドーのみ、公開判断は保留）
 
 ## 残件・検討中
+
+- ローカル日報の9/30定時結果と品質対策はフォローアップ正本 `FU-20260929-4AD963FE`（既存の経済指標Actions/FRED検証とは別）。
 
 - 特定商取引法ページ: インジ・EA販売前に追加

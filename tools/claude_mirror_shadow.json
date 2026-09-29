@@ -9,6 +9,6 @@
   "num_ctx": 65536,
   "publish": false,
   "model_fallback": false,
-  "verification": "configuration-only; no execution or tests this revision",
+  "verification": "2026-09-29: 18 regression tests PASS; default thinking incomplete at output limit; explicit think-off trial complete but independent quality REJECTED; live FF 403 and Gaitame zero articles; scheduled run unverified",
   "monday_rate_sentiment_refresh": "not implemented; explicit failure rather than fabrication"
 }
