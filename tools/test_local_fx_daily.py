@@ -17,29 +17,109 @@ class DailyTests(unittest.TestCase):
         self.assertEqual([item for group in batches for item in group], records)
         self.assertTrue(all(len(json.dumps(group, ensure_ascii=False).encode()) <= 12000 for group in batches))
 
-    def test_selected_topic_review_sees_all_selected_sources(self):
-        sources = [{"title": "source a", "published_at": "2026-09-29T06:00:00+09:00"},
-                   {"title": "source b", "published_at": "2026-09-29T06:10:00+09:00"}]
-        claims = [{"claims": [{"kind": "event", "fact": "first fact", "quote": "first original quote"}]},
-                  {"claims": [{"kind": "event", "fact": "second fact", "quote": "second original quote"}]}]
-        values = [{"selected": [{"source_id": 0, "claim_index": 0}, {"source_id": 1, "claim_index": 0}]},
-                  {"title": "topic", "body": "copy", "claim_ids": [0, 1]},
-                  {"verdict": "PASS", "reason": "mock"}]
-        with tempfile.TemporaryDirectory() as folder:
-            out = Path(folder)
-            with patch.object(daily, "load", return_value={"date_jst": "2026-09-29"}), patch.object(daily, "infer_cached", side_effect=values) as infer:
-                draft, review = daily.write_bounded_topic(0, "topic", [0, 1], sources, claims, "write", out)
-            self.assertEqual(draft["body"], "copy")
-            self.assertEqual(review["verdict"], "PASS")
-            review_data = infer.call_args_list[-1].args[3]
-            self.assertEqual({x["source_id"] for x in review_data["evidence"]}, {0, 1})
+    def test_quote_context_keeps_tokyo_opening_after_selection(self):
+        import local_fx_grounding as grounding
+        source = {"source_id": 0, "title": "東京市場", "source_url": "https://test.example/0",
+                  "published_at": "2026-09-29T12:59:00+09:00",
+                  "text": "29日午前の東京市場でドル・円は反落。米長期金利と原油相場の下げ渋りによるドルの買戻しで一時157円58銭まで上昇。"}
+        claim = {"kind": "cause", "fact": "金利と原油が下げ渋りドル買戻し。",
+                 "quote": "米長期金利と原油相場の下げ渋りによるドルの買戻しで一時157円58銭まで上昇。",
+                 "event_scope": "previous", "market_session": "NY", "pairs": ["USD/JPY"], "record_type": "actual"}
+        bound = grounding.bind_claim(source, claim, 0, date(2026, 9, 29))
+        self.assertEqual(bound["event_scope"], "current")
+        self.assertEqual(bound["market_session"], "Tokyo")
+        self.assertIn("29日午前の東京市場", bound["source_context"]["article_opening"])
+        self.assertEqual(bound["event_date"], "2026-09-29")
 
-    def test_invalid_selected_reference_stops_before_writing(self):
-        sources = [{"title": "a", "published_at": "2026-09-29T06:00:00+09:00"}]
-        claims = [{"claims": [{"kind": "event", "fact": "fact", "quote": "quote"}]}]
-        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "load", return_value={"date_jst": "2026-09-29"}), patch.object(daily, "infer_cached", return_value={"selected": [{"source_id": 99, "claim_index": 0}]}):
-            with self.assertRaisesRegex(ValueError, "invalid claim reference"):
-                daily.write_bounded_topic(0, "topic", [0], sources, claims, "write", Path(folder))
+    def test_tokyo_only_statement_cannot_claim_ny(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "N0-0", "market_session": "Tokyo", "record_type": "actual"}]
+        copy = {"title": "値動き", "statements": [{"text": "NY時間に157.58円へ上昇。",
+                "fact_ids": ["N0-0"], "mode": "fact"}]}
+        self.assertIn("Tokyo-only facts assigned to NY", grounding.copy_errors(copy, facts, date(2026, 9, 29)))
+
+    def test_last_week_is_not_previous_day(self):
+        import local_fx_grounding as grounding
+        quote = "先週前半、メキシコペソ円は原油高騰や高金利魅力を受け、9.40円台で推移していた。"
+        source = {"source_id": 5, "title": "週のまとめ", "source_url": "https://test.example/5",
+                  "published_at": "2026-09-29T13:05:00+09:00", "text": quote}
+        claim = {"kind": "price", "fact": quote, "quote": quote,
+                 "event_scope": "previous", "market_session": "unspecified", "pairs": ["MXN/JPY"], "record_type": "actual"}
+        self.assertEqual(grounding.bind_claim(source, claim, 0, date(2026, 9, 29))["event_scope"], "historical")
+
+    def test_opening_cannot_be_reextracted_as_chunk_quote(self):
+        import local_fx_grounding as grounding
+        quote = "ロンドン時間には三村財務官の発言に敏感に反応し、円高が強まった。"
+        chunk = "一方で、英国では初の予算発表が消費者心理を冷やすとアナリストが指摘した。"
+        source = {"source_id": 4, "title": "NY概況", "source_url": "https://test.example/4",
+                  "published_at": "2026-09-29T05:50:00+09:00", "text": quote + chunk}
+        claim = {"kind": "event", "fact": quote, "quote": quote,
+                 "event_scope": "previous", "market_session": "London", "pairs": ["USD/JPY"], "record_type": "actual"}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "source_chunks", return_value=[chunk]), patch.object(daily, "infer_cached", return_value={"claims": [claim]}) as infer:
+            with self.assertRaisesRegex(ValueError, "previous-session facts insufficient"):
+                grounding.extract(daily, [source], date(2026, 9, 29), Path(folder))
+            self.assertEqual(infer.call_count, 1)
+
+    def test_invalid_fact_id_is_rejected_before_model_review(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "test", "statements": [{"text": "test", "fact_ids": ["nonexistent"], "mode": "fact"}]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=AssertionError("must not call model")):
+            qc = grounding.review_copy(daily, Path(folder), "review", copy, [], date(2026, 9, 29))
+            self.assertEqual(qc["verdict"], "FAIL")
+
+    def test_forecast_cannot_be_reported_as_realized_fact(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "C0", "record_type": "forecast"}]
+        copy = {"title": "RBA", "statements": [{"text": "RBAが利上げした。",
+                "fact_ids": ["C0"], "mode": "fact"}]}
+        self.assertIn("forecast/outlook written as realized fact", grounding.copy_errors(copy, facts, date(2026, 9, 29)))
+        copy["statements"][0]["text"] = "13:30にRBA政策金利発表予定。予想は25bp利上げ。"
+        self.assertEqual(grounding.copy_errors(copy, facts, date(2026, 9, 29)), [])
+
+    def test_month_end_day_error_is_rejected(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "D0", "fact": "明日9月30日が最後の営業日", "record_type": "outlook"}]
+        copy = {"title": "本日", "statements": [{"text": "本日は最終営業日翌日。",
+                "fact_ids": ["D0"], "mode": "conditional"}]}
+        self.assertIn("today contradicts source month-end date", grounding.copy_errors(copy, facts, date(2026, 9, 29)))
+
+    def test_rounding_compatibility_is_not_a_blanket_tolerance(self):
+        self.assertEqual(daily.numeric_agreement("7228千件", "7.23M"), "rounding-compatible")
+        self.assertEqual(daily.numeric_agreement("7271千件", "7.27M"), "rounding-compatible")
+        self.assertEqual(daily.numeric_agreement("56.1千件", "56K"), "rounding-compatible")
+        self.assertEqual(daily.numeric_agreement("89.1", "89.2"), "conflict")
+        self.assertEqual(daily.numeric_agreement("7.23M", "7.24M"), "conflict")
+
+    def test_weekly_schedule_keeps_dates_not_navigation(self):
+        text = "▼ 9月28日(月) 昨日の予定 ▼ 9月29日(火) RBA ▼ 9月30日(水) ADP雇用統計 ▼ 10月1日(木) ISM製造業 ▼ 10月2日(金) 雇用統計 通知機能付きアプリ ★ 今週の為替相場の焦点 リンク広告"
+        weekly = daily.weekly_schedule(text, date(2026, 9, 29))
+        self.assertIn("9月30日(水) ADP", weekly)
+        self.assertIn("10月1日(木) ISM", weekly)
+        self.assertNotIn("9月28日", weekly)
+        self.assertNotIn("アプリ", weekly)
+        self.assertNotIn("広告", weekly)
+
+    def test_reviewer_receives_original_context_not_only_generated_fact(self):
+        import local_fx_grounding as grounding
+        fact = {"fact_id": "N4-0", "record_type": "actual", "market_session": "London",
+                "quote": "ロンドン時間には三村財務官の発言に敏感に反応し、円高が強まった。",
+                "source_context": {"article_opening": "きょうのNY、ロンドンの下げを取り戻した"}}
+        copy = {"title": "三村発言", "statements": [{"text": "ロンドンで発言に反応。",
+                "fact_ids": ["N4-0"], "mode": "fact"}]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", return_value={"verdict": "PASS", "reason": "mock"}) as infer:
+            grounding.review_copy(daily, Path(folder), "review", copy, [fact], date(2026, 9, 29))
+            data = infer.call_args.args[3]
+            self.assertEqual(data["original_evidence"][0]["source_context"], fact["source_context"])
+            self.assertEqual(data["date_facts"]["previous_session_date"], "2026-09-28")
+
+    def test_author_does_not_accept_failed_repair(self):
+        import local_fx_grounding as grounding
+        fact = {"fact_id": "N4-0", "record_type": "actual"}
+        copy = {"title": "test", "statements": [{"text": "test", "fact_ids": ["N4-0"], "mode": "fact"}]}
+        values = [copy, {"verdict": "FAIL", "reason": "bad"}, copy, {"verdict": "FAIL", "reason": "still bad"}]
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=values):
+            with self.assertRaisesRegex(ValueError, "after one repair"):
+                grounding.author(daily, Path(folder), "topic", "test", [fact], date(2026, 9, 29), "10")
 
     def test_case_shiller_year_and_month_are_not_merged(self):
         self.assertEqual(daily.event_code("S&P/CS Composite-20 HPI y/y"), "case-shiller-yy")

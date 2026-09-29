@@ -5,16 +5,16 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-09-29 / Codex（原因調査・段階別対策案、未実装）
+最終更新: 2026-09-29 / Codex（根拠保持の修正・シャドー再試験中）
 状態: active
 
 ## 現在の状態
 
-ローカルQwen日報の本番採用は保留。通常thinkingは出力6,144上限で未完走。隔離thinking-OFFは全日報を4分14秒で生成したが、Codex独立評価は不合格。FFライブ403・外為0件、時点混同・月末日付誤り・カレンダー不足が残る。`docs/EVIDENCE-CLAUDE-MIRROR-SHADOW-20260929.md` が最新証拠。
+ローカルQwen日報の本番採用は保留。時点/型/引用周辺の保持と全欄照合を修正し `shadow-output/2026-09-29-grounded-retry/` で少数トピックから再試験中。まだ品質合格・全文完走は未確認。旧通常thinking未完走/隔離OFF不合格の履歴は `docs/EVIDENCE-CLAUDE-MIRROR-SHADOW-20260929.md` に保持。
 
 ## 次の一手
 
-0. ローカルQwen日報: NY固定の誤指示を除去し、原資料のペア/出来事時点/数値/予想・結果を束縛。前日と当日を分離した2トピック試験→全editorial照合→全日報シャドーの順で対策する（案のみ、未実装）。詳しい原因/合格条件は上記証拠の追加調査節。FF403/外為接続、指標全件照合/丸め差、休場確認、月曜補足も未解決。既存07:00ジョブは通常thinkingのまま、OFFは隔離試験だけ。明朝成功は未確認。18テストPASS/自己照合PASSを品質合格にしない。設定正本は `CLAUDE-MIRROR-SHADOW-SETTINGS.md`。
+0. ローカルQwen日報: 改訂版で2トピックを確認→全editorial照合→全日報シャドー→今日公開版と独立比較。抽出の冒頭再利用/先週混入もゲートで落とす。FF403/外為接続、全指標/休場確認、月曜補足は未解決。既存07:00ジョブは通常thinkingのまま、OFFは隔離試験だけ。明朝成功は未確認。27テストPASS/自己照合PASSを品質合格にしない。設定正本は `CLAUDE-MIRROR-SHADOW-SETTINGS.md`。
 
 1. shadow-history/への実測記録の永続化をワークフローに実装済み（`.github/workflows/economic-calendar-shadow.yml`、2026-09-14）。平日05:15 JST実行のたびにshadow-output/をshadow-history/$TARGET_DATE/へコピーしてgit commit・pushする。artifactの14日保持と違い恒久的に残る。次は数営業日〜FRED対象イベント日（雇用統計・CPI・PPI・JOLTS）を跨いで実データが蓄積されるのを待ち、shadow-history/の実データで捕捉率・重複・時刻適合を再検証する（review_on: 2026-09-30、docs/ops-workbench/follow-up-registry/FOLLOW-UP-REGISTRY.json FU-20260913-1C949F12）
 2. Forex Factoryフィードの利用条件をブラウザまたは手動で最終確認する（未着手のまま）

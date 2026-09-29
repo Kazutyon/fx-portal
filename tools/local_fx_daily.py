@@ -189,6 +189,44 @@ def numeric_value(text: str):
     return Decimal(value) * multiplier
 
 
+def numeric_resolution(text: str):
+    found = re.findall(r"([+-]?\d+(?:\.\d+)?)(%|千件|万件|億|[KMB])?", text.replace(",", ""))
+    if not found:
+        return None
+    value, unit = found[-1]
+    multiplier = {"千件": 1000, "万件": 10000, "億": 100000000,
+                  "K": 1000, "M": 1000000, "B": 1000000000}.get(unit, 1)
+    decimals = len(value.split(".")[1]) if "." in value else 0
+    return Decimal(multiplier) / Decimal(10) ** decimals
+
+
+def numeric_agreement(left: str, right: str) -> str:
+    a, b = numeric_value(left), numeric_value(right)
+    if a is None or b is None:
+        return "missing"
+    if a == b:
+        return "exact"
+    ra, rb = numeric_resolution(left), numeric_resolution(right)
+    # Only treat a coarser display as compatible with a finer value. Two
+    # different values at the same precision are a real unresolved difference.
+    coarse, fine, resolution = (a, b, ra) if ra > rb else (b, a, rb)
+    if ra != rb and coarse - resolution / 2 <= fine < coarse + resolution / 2:
+        return "rounding-compatible"
+    return "conflict"
+
+
+def weekly_schedule(text: str, target: date) -> str:
+    blocks = []
+    pattern = r"▼\s*(\d{1,2})月(\d{1,2})日\([月火水木金土日]\)(.*?)(?=▼\s*\d{1,2}月\d{1,2}日|通知機能|★\s*今週|$)"
+    for match in re.finditer(pattern, text, re.S):
+        month, day = int(match[1]), int(match[2])
+        year = target.year + (1 if target.month == 12 and month == 1 else 0)
+        at = date(year, month, day)
+        if target <= at < target + timedelta(days=7):
+            blocks.append(match[0].strip())
+    return " ".join(dict.fromkeys(blocks))
+
+
 def collect_calendar(target: date, out: Path) -> dict:
     staged = out / "calendar.input.json"
     if staged.exists():
@@ -230,12 +268,15 @@ def collect_calendar(target: date, out: Path) -> dict:
                 event["importance"] = "high"
             for field in ["forecast", "previous"]:
                 left, right = numeric_value(event[field]), numeric_value(other[field])
-                if left is not None and right is not None and left != right:
+                agreement = numeric_agreement(event[field], other[field])
+                if agreement == "conflict":
                     conflicts.append({"type": "numeric", "time_jst": event["time_jst"],
                                       "name": event["name"], "field": field,
                                       "kissfx": event[field], "forexfactory": other[field]})
                     # Disagreement belongs in evidence, never a "recheck" note in copy.
                     event[field] = "—"
+                elif agreement == "rounding-compatible":
+                    event.setdefault("rounding_evidence", []).append({"field": field, "kissfx": event[field], "forexfactory": other[field]})
                 elif left is None and right is not None:
                     event[field] = other[field]
         if candidates and not exact:
@@ -247,14 +288,16 @@ def collect_calendar(target: date, out: Path) -> dict:
     # Claude's weekday flow uses KissFX + FF, not mandatory RBA web requests.
     kiss_text = news.plain(re.sub(r"<script\b.*?</script>|<style\b.*?</style>", "", kiss, flags=re.S))
     themes_at = kiss_text.find("その他、注目点")
-    day_themes = kiss_text[themes_at:themes_at + 2200] if themes_at >= 0 else ""
+    themes_end = kiss_text.find(f"{target.month}月{target.day}日", themes_at + 20) if themes_at >= 0 else -1
+    # Keep the theme list, not a slice of navigation + table + legal notices.
+    day_themes = kiss_text[themes_at:themes_end if themes_end > themes_at else themes_at + 1100] if themes_at >= 0 else ""
     weekly_at = next((m.start() for m in re.finditer(r"今週の(?:注目|重要)|週間(?:予定|スケジュール)|週内の", kiss_text)), -1)
     key = [x for x in events if x["importance"] == "high" or event_code(x["name"]) in {"confidence", "jolts", "rba-rate", "rba-press"}]
     result = {"date_jst": target.isoformat(), "events": events, "key_events": key,
               "source_urls": [kiss_url, ff_url],
               "conflicts": conflicts, "holiday_text": "",
               "day_themes": day_themes,
-              "weekly_themes": kiss_text[weekly_at:weekly_at + 1800] if weekly_at >= 0 else "",
+              "weekly_themes": weekly_schedule(kiss_text, target),
               "rba_official_excerpt": "", "rba_schedule_excerpt": ""}
     news.save(out / "calendar.json", result)
     return result
@@ -323,141 +366,9 @@ def evidence_batches(records: list[dict], byte_limit: int = 12000) -> list[list[
     return batches
 
 
-def write_bounded_topic(i, title, ids, sources, claims, task, out):
-    records = [{"source_id": x, "claim_index": k, "published_at": sources[x]["published_at"],
-                "kind": claim["kind"], "fact": claim["fact"]}
-               for x in ids for k, claim in enumerate(claims[x]["claims"])]
-    batches = evidence_batches(records)
-    selection_schema = news.schema({"selected": {"type": "array", "minItems": 0, "maxItems": 4,
-        "items": news.schema({"source_id": {"type": "integer"}, "claim_index": {"type": "integer"}})}})
-    selected = []
-    for part, facts in enumerate(batches):
-        chosen = infer_cached(out, f"topic-{i:02}-evidence-{part:02}-plan",
-            "指定トピックに直結する重要な事実だけ最大4件選ぶ。重複価格・テクニカル売買戦略・別通貨の羅列は選ばない。"
-            "前営業日の日報材料を優先し、本日午前や昼の出来事を前日の事実にしない。対象外しかなければ空配列。"
-            "source_idとclaim_indexの組は入力から正確に選ぶ。",
-            {"topic": title, "date_jst": load(out / "calendar.json")["date_jst"], "facts": facts}, selection_schema)["selected"]
-        allowed = {(r["source_id"], r["claim_index"]) for r in facts}
-        for ref in chosen:
-            key = (ref["source_id"], ref["claim_index"])
-            if key not in allowed:
-                raise ValueError("topic evidence selector returned an invalid claim reference")
-            if key not in selected:
-                selected.append(key)
-    if not selected:
-        raise ValueError("topic has no selected grounded evidence")
-    evidence = [{"source_id": x, "claim_index": k, "source_title": sources[x]["title"],
-                 "published_at": sources[x]["published_at"], **claims[x]["claims"][k]} for x, k in selected]
-    if len(json.dumps(evidence, ensure_ascii=False).encode()) > 16000:
-        raise ValueError("selected topic evidence exceeds its bounded synthesis budget")
-    write_task = task + " 全資料ではなく選別されたfact/quoteだけを使う。引用にない新情報を追加しない。前日と本日を区別。"
-    data = {"topic": title, "evidence": evidence}
-    draft = infer_cached(out, f"topic-{i:02}-selected-write", write_task, data, news.COPY_SCHEMA)
-    review_task = (
-        "段落と見出しの全ての事実/数字/通貨/時点/因果を、選別されたfactと原文quoteに照合。"
-        "裏付けのない数字や因果、予想の結果への変更、前日と本日を混同した記述はFAIL。"
-        "原文quoteの意味をfactより優先する。PASS/FAILと具体的理由。"
-    )
-    review_data = {**data, "draft": draft}
-    qc = infer_cached(out, f"topic-{i:02}-selected-review", review_task, review_data, news.QC_SCHEMA)
-    if qc["verdict"] != "PASS":
-        draft = infer_cached(out, f"topic-{i:02}-selected-repair", write_task + " 指摘箇所を修正。",
-                             {**review_data, "review": qc}, news.COPY_SCHEMA)
-        qc = infer_cached(out, f"topic-{i:02}-selected-review-repair", review_task, {**data, "draft": draft}, news.QC_SCHEMA)
-    news.save(out / "stages" / f"topic-{i:02}-bounded-review.json",
-              {"selection_batches": len(batches), "selected": [list(key) for key in selected], "review": qc,
-               "full_semantic_validation": False, "review_scope": "selected original quotes, independent full-source QC required"})
-    return draft, qc
-
-
-def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path) -> dict:
-    claims = []
-    for i, source in enumerate(sources):
-        extracted = []
-        for part, text in enumerate(source_chunks(source["text"])):
-            extracted.extend(infer_cached(out, f"source-{i:02}-part-{part:02}-extract", (
-                "この資料の重要な相場材料の事実を2〜6件抽出。価格だけでなく、発言内容・時刻/取引時間帯・原因・条件付き見通しも落とさない。"
-                "factは日本語1文、quoteは本文から完全一致する20〜160文字。kindはevent/price/cause/outlook。"
-                "実際の価格反応の因果だけcause。予想はoutlook。資料にない因果を補わない。短すぎる引用は禁止。"
-            ), {"source_title": source["title"], "source_id": i, "text": text}, news.CLAIM_SCHEMA)["claims"])
-        accepted = [c for c in extracted if c["quote"] in source["text"] and 20 <= len(c["quote"]) <= 160]
-        rejected = [c for c in extracted if c not in accepted]
-        news.save(out / "stages" / f"source-{i:02}-quote-gate.json", {"accepted": accepted, "rejected": rejected})
-        if len(accepted) < 2:
-            corrected = infer_cached(out, f"source-{i:02}-extract-repair",
-                "根拠引用が本文と完全一致する20〜160文字の事実を2〜6件だけ返す。短すぎる引用や変形した引用は不可。価格と予想を区別。",
-                {"source": source, "rejected": rejected}, news.CLAIM_SCHEMA)["claims"]
-            accepted = [c for c in corrected if c["quote"] in source["text"] and 20 <= len(c["quote"]) <= 160]
-        if len(accepted) < 2:
-            raise ValueError(f"source {i} has fewer than two grounded claims after repair")
-        extracted = accepted
-        claims.append({"source_id": i, "source_title": source["title"], "claims": extracted})
-        news.save(out / "claims.json", claims)
-    plan_schema = news.schema({"topics": {"type": "array", "minItems": 5, "maxItems": 5,
-        "items": news.schema({"title": news.STRING, "source_ids": {"type": "array", "items": {"type": "integer"}, "minItems": 1}})}})
-    plan_data = [{"source_id": c["source_id"], "source_title": c["source_title"],
-                  "facts": [{"kind": x["kind"], "fact": x["fact"]} for x in c["claims"]]} for c in claims]
-    plan = infer_cached(out, "news-plan", (
-        "前営業日の相場振り返りの5トピックを選ぶ。通貨ペアごとの羅列ではなく出来事単位。"
-        "最重要の材料を優先し、ドル円とユーロドルの動き、その背景の中銀発言や金利・原油・地政学を落とさない。"
-        "同じ金利/原油の説明を複数トピックに反復しない。景気指標は実際の価格反応を伴う材料より優先度を下げてよい。"
-        "同一資料の別の出来事を別トピックに使ってよい。資料にない出来事は選ばない。source_idsは与えた資料番号のみ。"
-    ), plan_data, plan_schema)
-    topics = []
-    for i, topic in enumerate(plan["topics"]):
-        ids = topic["source_ids"]
-        if not ids or any(type(x) is not int or x not in range(len(sources)) for x in ids):
-            raise ValueError("news plan contains invalid source IDs")
-        task = (
-            "FX日報の振り返り1トピックを日本語で書く。指定の出来事について250〜550文字を目安に、"
-            "何が起き、どの価格がどう動き、なぜそうなったかを資料の根拠の範囲で具体的に説明。"
-            "文字数不足を一般論で埋めない。同時発生を因果で結ばない。将来の見方は出典の指摘と明示。"
-            "内部事情・要確認・再確認を書かない。記事の『きょう』はNY時間と表現し暦日を推測しない。"
-            "掲載時刻と出来事の時刻は別。資料がロンドン時間と言う発言をNY時間に移さない。不明な時間帯は書かない。"
-            "claim_idsは入力claimsの各source_idを返す。見出しtitleは具体的な出来事。bodyは段落。"
-        )
-        draft, qc = write_bounded_topic(i, topic["title"], ids, sources, claims, task, out)
-        if re.search(FORBIDDEN, draft["title"] + draft["body"], re.I):
-            raise ValueError("internal status leaked into paragraph")
-        topics.append({**draft, "source_ids": ids, "review": qc})
-        news.save(out / "news.json", {"topics": topics, "publish_ready": False})
-    short_topics = [{"title": t["title"], "body": t["body"]} for t in topics]
-    key_events = [{k: x[k] for k in ["time_jst", "country", "name", "forecast", "previous"]} for x in calendar["key_events"]]
-    editorial = {}
-    editorial_data = {"date_jst": calendar["date_jst"], "topics": short_topics,
-                      "calendar": key_events, "day_themes": calendar["day_themes"][:2200],
-                      "weekly_themes": calendar.get("weekly_themes", "")[:1800]}
-    for key, purpose, length in [
-        ("hero", "日報冒頭の前営業日の振り返りと本日の焦点", "200〜350"),
-        ("headline", "サマリーの具体的な見出し", "80〜140"),
-        ("summary", "前営業日の市場全体の振り返りと本日の焦点。個別の材料と価格推移を厚く説明", "500〜800"),
-        ("market", "市場環境。原油・金利・当局発言と各通貨の関係、本日の注意条件", "400〜600"),
-        ("handover", "本日の引き継ぎ。アジア・欧州・NYの材料と見る条件", "200〜350"),
-    ]:
-        editorial[key] = infer_cached(out, f"editorial-{key}", (
-            f"FX日報の{purpose}だけを書く。日本語{length}文字目安。bodyに段落を返す。"
-            "資料の具体的な材料と時刻を整理。当日分析は条件と理由を具体化し、事実と区別する。"
-            "資料にない金利や出来事、指標結果を創作しない。内部事情・取得状況・要確認・再確認は禁止。"
-        ), editorial_data, news.schema({"body": news.STRING}))["body"]
-    focus_data = {"topics": short_topics, "calendar": key_events,
-                  "ranking": [{k: v for k, v in item.items() if k != "symbol"} for item in ranking["rankings"][:5]]}
-    common = "当日分析は条件付きの見方として説明。数字は入力のまま。資料にない価格予想・金利・出来事、内部事情・要確認・再確認は禁止。"
-    focus = infer_cached(out, "focus-pair", common +
-        "最注目通貨focus_pairと理由focus_body(200〜350文字)だけ書く。ランキングは変更せず材料の強さも考慮して選ぶ。",
-        focus_data, news.schema({"focus_pair": news.STRING, "focus_body": news.STRING}))
-    focus.update(infer_cached(out, "focus-risk", common +
-        "Market Riskのrisk_levelと具体的理由risk_body(200〜350文字)だけ書く。",
-        focus_data, news.schema({"risk_level": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]}, "risk_body": news.STRING})))
-    focus.update(infer_cached(out, "focus-points", common +
-        "その他注目点3〜5件だけ作る。時刻・数字・観察すべき変化を具体化。各bodyは100〜180文字。",
-        focus_data, news.schema({"points": {"type": "array", "minItems": 3, "maxItems": 5,
-          "items": news.schema({"title": news.STRING, "body": news.STRING})}})))
-    all_copy = json.dumps([editorial, focus], ensure_ascii=False)
-    if re.search(FORBIDDEN, all_copy, re.I):
-        raise ValueError("internal status leaked into editorial")
-    result = {"topics": topics, **editorial, **focus}
-    news.save(out / "sections.json", result)
-    return result
+def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path, topic_probe: int = 0) -> dict:
+    import local_fx_grounding as grounding
+    return grounding.make_sections(sys.modules[__name__], sources, calendar, ranking, out, topic_probe)
 
 
 def esc(text):
@@ -567,7 +478,7 @@ def comparison(target: date, report: str, out: Path) -> dict:
     return result
 
 
-def execute(target: date, out: Path, prepare_only: bool, render_existing: bool = False) -> dict:
+def execute(target: date, out: Path, prepare_only: bool, render_existing: bool = False, topic_probe: int = 0) -> dict:
     previous_status = out / "status.json"
     if previous_status.exists():
         previous = load(previous_status)
@@ -580,7 +491,8 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
     news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
     news.save(out / "runner-version.json", {"started_at": status["started_at"],
         "files": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in
-                  [Path(__file__), Path(news.__file__), Path(claude_sources.__file__), ROOT / "tools" / "claude_mirror_shadow.json"]}})
+                  [Path(__file__), Path(news.__file__), Path(claude_sources.__file__),
+                   ROOT / "tools" / "local_fx_grounding.py", ROOT / "tools" / "claude_mirror_shadow.json"]}})
     try:
         if os.environ.get("COMPUTERNAME", "").upper() != "GALLERIA":
             raise ValueError("wrong host")
@@ -612,24 +524,34 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         if prepare_only:
             status["status"] = "PREPARED"
         else:
-            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out)
+            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out, topic_probe)
+            if topic_probe:
+                status.update(status="TOPIC_PROBE_COMPLETE_REVIEW_PENDING", probe_topics=len(sections["topics"]),
+                              quality="pending", publish_ready=False)
+                status["finished_at"] = datetime.now(JST).isoformat()
+                news.save(out / "status.json", status)
+                return status
             report = render(target, sections, calendar, ranking, out)
             comparison(target, report, out)
             checks = {"five_topics": len(sections["topics"]) == 5,
                       "required_anchors": all(f'id="{x}"' in report for x in ["summary", "points", "ranking", "review", "calendar"]),
                       "no_internal_status": not bool(re.search(FORBIDDEN, report, re.I)),
                       "calendar_nonempty": bool(calendar["events"]), "today_ranking": today_ranking,
-                      "topic_source_reviews": all(t["review"]["verdict"] == "PASS" for t in sections["topics"])}
+                      "topic_source_reviews": all(t["review"]["verdict"] == "PASS" for t in sections["topics"]),
+                      "editorial_source_reviews": len(sections.get("editorial_reviews", {})) == 8 and all(
+                          r["verdict"] == "PASS" for r in sections.get("editorial_reviews", {}).values()),
+                      "calendar_coverage_complete": all(x["confirmed"] for x in calendar["events"])}
             quality = {"checks": checks, "calendar_conflicts": calendar["conflicts"],
                        "single_source_calendar_rows": [x for x in calendar["events"] if not x["confirmed"]],
                        "human_review": "pending", "publish_ready": False,
                        "displayed_calendar_rows": sum(bool(x["confirmed"]) for x in calendar["events"]),
                        "ranking_after_0700": datetime.fromisoformat(ranking["generated_at_jst"]) > datetime.combine(target, daytime(7), JST)}
             news.save(out / "validation.json", quality)
-            if not all(value for key, value in checks.items() if key not in {"topic_source_reviews", "today_ranking"}):
-                raise ValueError("structural gate failed")
+            if not all(value for key, value in checks.items() if key not in {"today_ranking", "calendar_coverage_complete"}):
+                raise ValueError("structure or source-review gate failed")
             status.update(status="SHADOW_COMPLETE_REVIEW_PENDING", report=str(out / "report.html"),
-                          quality="pending", news_sources=len(sources), calendar_rows=len(calendar["events"]))
+                          quality="pending" if checks["calendar_coverage_complete"] else "REJECTED_INCOMPLETE_CALENDAR",
+                          news_sources=len(sources), calendar_rows=len(calendar["events"]))
     except Exception as error:
         status.update(status="FAILED", error=f"{type(error).__name__}: {error}")
     status["finished_at"] = datetime.now(JST).isoformat()
@@ -645,6 +567,7 @@ def main() -> int:
     parser.add_argument("--prepare-only", action="store_true")
     parser.add_argument("--render-existing", action="store_true", help="rebuild presentation from the same dated retained text; no LLM calls")
     parser.add_argument("--think-off-experiment", action="store_true", help="explicit isolated Qwen experiment; never selected by cron or after failure automatically")
+    parser.add_argument("--topic-probe", type=int, choices=[1, 2], default=0, help="generate and review only the first one/two topics; no editorial or report")
     args = parser.parse_args()
     news.FORCE_THINK_OFF = args.think_off_experiment
     out = args.run_dir or ROOT / "shadow-output" / f"{args.date}-local-daily"
@@ -665,7 +588,7 @@ def main() -> int:
             print("FAIL: another FX shadow runner holds the execution lock", flush=True)
             return 1
         try:
-            status = execute(args.date, out, args.prepare_only, args.render_existing)
+            status = execute(args.date, out, args.prepare_only, args.render_existing, args.topic_probe)
         finally:
             lock.seek(0)
             msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
