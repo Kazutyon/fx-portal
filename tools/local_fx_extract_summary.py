@@ -9,8 +9,9 @@ import json
 
 import local_fx_news as news
 
-BUDGET = 3500  # UTF-8 bytes of retained typed facts; three children <=10.5KB.
-CAP = 8
+LEAF_BUDGET = 3500
+BUDGET = 4500  # Three parent packets <=13.5KB; no article-body reconcat.
+CAP = 12
 METHOD = "source-id-extractive-v1"
 
 
@@ -48,7 +49,7 @@ def assemble(raw, pool, leaf):
     if not leaf and len(selected) > CAP:
         raise ValueError("parent retained fact count exceeds budget")
     retained = [dict(by_id[ref]) for ref in selected]
-    if size(retained) > BUDGET:
+    if size(retained) > (LEAF_BUDGET if leaf else BUDGET):
         raise ValueError("retained original facts exceed byte budget; do not truncate")
     return {"units": units, "retained_facts": retained,
             "omitted_fact_ids": [ref for ref in by_id if ref not in selected], "method": METHOD}
@@ -78,12 +79,15 @@ def summarize(api, out, label, pool, dates, leaf):
                  f" 配列全体で最大{CAP}ID、保持factのJSON合計{BUDGET} UTF-8 bytes以内。"
                  "重複/枝葉を減らし、主要な相場変化に必要な背景/実際の反応/当日予定/反対材料を優先する。"
                  "過去の実績や将来の予想を本日実績に読み替えない。重要材料の欠落は別検査で不合格となる。")
-    data = {"date_facts": dates, "facts": pool, "retained_byte_budget": BUDGET}
+    data = {"date_facts": dates, "facts": pool, "retained_byte_budget": LEAF_BUDGET if leaf else BUDGET}
     raw = api.infer_cached(out, label, task, data, schema)
     value = None
     review = None
     mandatory = []
-    for attempt in range(2):
+    # Parent repair can reveal a second lost condition. Accumulate necessary
+    # original IDs, never replace earlier requirements or grow a conversation.
+    attempts = 2 if leaf else 3
+    for attempt in range(attempts):
         try:
             if leaf:
                 grouped = raw
@@ -127,8 +131,9 @@ def summarize(api, out, label, pool, dates, leaf):
                 mandatory = list(dict.fromkeys([*mandatory, *required]))
         if review["verdict"] == "PASS":
             break
-        if attempt == 0:
-            raw = api.infer_cached(out, label + "-repair", task +
+        if attempt + 1 < attempts:
+            repair_label = label + ("-repair" if attempt == 0 else f"-repair-{attempt + 1}")
+            raw = api.infer_cached(out, repair_label, task +
                 " 指摘を守り元の全入力からID選択をやり直す。新しい文を作ることは禁止。"
                 "required_fact_idsは必ず全て残す。代わりに重複/枝葉を選択から外す。",
                 {**data, "review": review, "required_fact_ids": mandatory}, schema)

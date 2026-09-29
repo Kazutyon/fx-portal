@@ -28,7 +28,7 @@ class ExtractiveTests(unittest.TestCase):
 
     def test_parent_schema_caps_one_array_and_copies_only_original_facts(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=self.inference):
-            value = selection.summarize(daily, Path(folder), "parent", self.facts(12), {}, False)
+            value = selection.summarize(daily, Path(folder), "parent", self.facts(16), {}, False)
             self.assertEqual(len(value["retained_facts"]), selection.CAP)
             self.assertEqual(len(value["units"]), 4)
 
@@ -97,6 +97,24 @@ class ExtractiveTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=omit):
             value = selection.summarize(daily, Path(folder), "parent", self.facts(), {}, False)
             self.assertEqual([x["fact_id"] for x in value["retained_facts"]], ["F0", "F2"])
+
+    def test_parent_accumulates_conditions_without_forgetting_first_repair(self):
+        def conditions(out, label, task, data, schema):
+            if label.endswith("review-0"):
+                return {"verdict": "FAIL", "reason": "background lost", "required_fact_ids": ["F1"]}
+            if label.endswith("review-1"):
+                return {"verdict": "FAIL", "reason": "opposite condition lost", "required_fact_ids": ["F2"]}
+            if "review" in label:
+                return {"verdict": "PASS", "reason": "fixture", "required_fact_ids": []}
+            if label.endswith("repair-2"):
+                self.assertEqual(data["required_fact_ids"], ["F1", "F2"])
+                return {"fact_ids": ["F0", "F1", "F2"]}
+            if label.endswith("repair"):
+                return {"fact_ids": ["F0", "F1"]}
+            return {"fact_ids": ["F0"]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=conditions):
+            value = selection.summarize(daily, Path(folder), "parent", self.facts(), {}, False)
+            self.assertEqual(len(value["retained_facts"]), 3)
 
     def test_no_prose_can_pass_even_when_self_review_would_pass(self):
         def prose(out, label, task, data, schema):

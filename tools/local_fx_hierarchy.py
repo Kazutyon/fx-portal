@@ -125,7 +125,7 @@ def build(api, out, material, target, dates, extractive=False):
         import local_fx_extract_summary as selection
     leaf_batches = [batch[j:j + 6]
                     for batch in api.evidence_batches([compact_fact(x) for x in material],
-                                                     selection.BUDGET if extractive else 4500)
+                                                     selection.LEAF_BUDGET if extractive else 4500)
                     for j in range(0, len(batch), 6)]
     for i, batch in enumerate(leaf_batches):
         label = f"hierarchy-leaf-{i:03}"
