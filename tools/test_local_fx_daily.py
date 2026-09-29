@@ -10,6 +10,61 @@ import local_fx_daily as daily
 
 
 class DailyTests(unittest.TestCase):
+    def test_source_review_distinguishes_observation_from_asserted_causality(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "観察", "statements": [{"text": "予定される発言後、ドルの反応が変わるか観察する。",
+            "fact_ids": ["C0"], "mode": "conditional"}]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", return_value={"verdict": "PASS", "reason": "test"}) as infer:
+            grounding.review_copy(daily, Path(folder), "review", copy,
+                [{"fact_id": "C0", "record_type": "forecast"}], date(2026, 9, 29))
+            rule = infer.call_args.args[3]["observation_vs_assertion_rule"]
+            self.assertIn("観察質問自体が出典に載っている必要はない", rule)
+            self.assertIn("機序/実績の原文支持が必要", rule)
+            self.assertNotIn("mode", infer.call_args.args[3]["draft"]["statements"][0])
+
+    def test_explicit_day_before_tomorrow_month_end_is_not_today_assertion(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "前日", "statements": [{"text": "本日は四半期末の最終営業日である明日の前日であり、発言が予定されている。",
+            "fact_ids": ["D1"], "mode": "conditional"}]}
+        self.assertEqual(grounding.copy_errors(copy, [{"fact_id": "D1", "record_type": "outlook",
+            "fact": "明日9月30日が最後の営業日"}], date(2026, 9, 29)), [])
+
+    def test_concrete_future_observation_is_not_realized_release(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "観察", "statements": [{"text": "政策発言が前日の圧力をどう変えるか、価格反応を観察する。",
+            "fact_ids": ["C0"], "mode": "conditional"}]}
+        self.assertEqual(grounding.copy_errors(copy, [{"fact_id": "C0", "record_type": "forecast"}], date(2026, 9, 29)), [])
+        copy["statements"][0]["text"] = "政策発言の反応を观察する。"
+        self.assertIn("non-Japanese observation wording: replace 观察 with Japanese 観察",
+                      grounding.copy_errors(copy, [{"fact_id": "C0", "record_type": "actual"}], date(2026, 9, 29)))
+
+    def test_optional_quality_repair_cannot_replace_source_safe_original_with_bad_fact(self):
+        import local_fx_grounding as grounding
+        original = {"title": "本日", "body": "明日は月末日。", "review": {"verdict": "PASS"}, "claim_ids": ["D1"]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(grounding, "author", side_effect=[original,
+                ValueError("original-context review failed after one repair: date error")]), \
+                patch.object(grounding, "review_editorial_quality", return_value={"verdict": "FAIL", "reason": "thin"}):
+            result = grounding.improve_editorial(daily, Path(folder), "hero", "intro", [], {}, date(2026, 9, 29), "100")
+            self.assertEqual(result["body"], "明日は月末日。")
+            self.assertEqual(result["quality_review"]["verdict"], "FAIL")
+            self.assertTrue(result["quality_repair_rejected"])
+
+    def test_initial_source_failure_is_not_hidden_by_quality_retention(self):
+        import local_fx_grounding as grounding
+        with tempfile.TemporaryDirectory() as folder, patch.object(grounding, "author",
+                side_effect=ValueError("original-context review failed after one repair: bad source")):
+            with self.assertRaisesRegex(ValueError, "bad source"):
+                grounding.improve_editorial(daily, Path(folder), "hero", "intro", [], {}, date(2026, 9, 29), "100")
+
+    def test_wrong_model_failure_during_quality_repair_still_stops_run(self):
+        import local_fx_grounding as grounding
+        original = {"title": "test", "body": "fact", "review": {"verdict": "PASS"}, "claim_ids": []}
+        with tempfile.TemporaryDirectory() as folder, patch.object(grounding, "author", side_effect=[original,
+                ValueError("wrong model or incomplete response")]), \
+                patch.object(grounding, "review_editorial_quality", return_value={"verdict": "FAIL", "reason": "thin"}):
+            with self.assertRaisesRegex(ValueError, "wrong model"):
+                grounding.improve_editorial(daily, Path(folder), "hero", "intro", [], {}, date(2026, 9, 29), "100")
+
     def test_clear_future_release_is_forecast_not_realized_result(self):
         import local_fx_grounding as grounding
         quote = "本日23時には米国の消費者信頼感指数とJOLTS求人が発表される予定となっている。"

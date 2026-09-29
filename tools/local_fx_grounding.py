@@ -173,12 +173,16 @@ def copy_errors(copy, evidence, target):
             if all(x.get("market_session") == "Tokyo" for x in linked):
                 errors.append("Tokyo-only facts assigned to NY")
         if (all(x.get("record_type") in {"forecast", "outlook"} for x in linked)
-                and not re.search(r"予想|見込み|予定|見通し|見方|指摘|前回|なら|場合|かを(?:確認|観察)|想定|可能性|明日", text)):
+                and not re.search(r"予想|見込み|予定|見通し|見方|指摘|前回|なら|場合|か[^。]{0,35}(?:確認|観察)|想定|可能性|明日", text)):
             errors.append("forecast/outlook written as realized fact")
             errors.append(f"statement {statement_no}, refs {','.join(ids)}: {text} — 予想/予定/出典の見方または明示的な条件として書く")
-        if re.search(r"本日(?:は|が)?[^。]{0,40}最終営業日", text) and any(
-                "明日" in str(x) and "最後の営業日" in str(x) for x in linked):
+        if (re.search(r"本日(?:は|が)?[^。]{0,40}最終営業日", text)
+                and not re.search(r"本日(?:は|が)?[^。]{0,40}最終営業日[^。]{0,20}明日(?:の)?前日", text)
+                and any(
+                "明日" in str(x) and "最後の営業日" in str(x) for x in linked)):
             errors.append("today contradicts source month-end date")
+        if "观察" in text:
+            errors.append("non-Japanese observation wording: replace 观察 with Japanese 観察")
     return errors
 
 
@@ -192,8 +196,15 @@ def review_copy(api, out, label, copy, evidence, target):
     originals = [x for x in evidence if x["fact_id"] in used]
     review_draft = {"title": copy["title"], "statements": [
         {"text": s["text"], "fact_ids": s["fact_ids"]} for s in copy["statements"]]}
-    data = {"date_facts": date_facts(target), "original_evidence": originals, "draft": review_draft}
-    task = ("厳格な原資料照合だけ行う。見出しと各statementの日時・取引時間帯・通貨ペア・数字・予想/実績・因果を"
+    observation_rule = (
+        "事実の断定と将来の観察質問を分離して照合。観察質問自体が出典に載っている必要はない。"
+        "例: 原文にFRB発言予定があれば『予定される発言後、ドルの反応が変わるか観察する』は観察項目であり実績/因果断定ではない。"
+        "一方『発言で必ずドル高になる』『発言でドルが上昇した』には、その機序/実績の原文支持が必要。"
+        "予定日時、対象通貨、背景の既発生事実、数値と、文中で断定する因果は必ず根拠を照合。"
+        "背景と予定を結ぶ文は両方のfact_idsを確認。観察質問の完全一致文がないことだけをFAIL理由にしない。")
+    data = {"date_facts": date_facts(target), "original_evidence": originals, "draft": review_draft,
+            "observation_vs_assertion_rule": observation_rule}
+    task = (observation_rule + "厳格な原資料照合だけ行う。見出しと各statementの日時・取引時間帯・通貨ペア・数字・予想/実績・因果を"
             "fact_idsの原文quoteとsource_contextまで戻って確認。抜粋だけで日時を決めない。"
             "前日のNYと当日東京、先週の出来事を混同したらFAIL。利上げ予想を実施済みにしたらFAIL。"
             "本日JST07時前掲載のNY為替概況の『きょうのNY』は前営業日のNY取引。東京記事には適用しない。"
@@ -213,7 +224,8 @@ def review_copy(api, out, label, copy, evidence, target):
     for i, statement in enumerate(review_draft["statements"]):
         refs = set(statement["fact_ids"])
         one = {"date_facts": date_facts(target), "original_evidence": [x for x in originals if x["fact_id"] in refs],
-               "draft": {"title": copy["title"], "statements": [statement]}}
+               "draft": {"title": copy["title"], "statements": [statement]},
+               "observation_vs_assertion_rule": observation_rule}
         verdicts.append(api.infer_cached(out, f"{label}-{i:02}", task, one, news.QC_SCHEMA))
     return {"verdict": "PASS" if all(x["verdict"] == "PASS" for x in verdicts) else "FAIL",
             "reason": " / ".join(x["reason"] for x in verdicts)}
@@ -228,8 +240,18 @@ def author(api, out, label, purpose, evidence, target, length):
     compact = [{k: v for k, v in x.items() if k not in {"source_context", "source_url", "source_title"}}
                for x in evidence]
     data = {"date_facts": date_facts(target), "facts": compact}
+    relations = []
+    tomorrow = target + timedelta(days=1)
+    for fact in evidence:
+        if re.search(rf"明日(?:{tomorrow.month}月)?{tomorrow.day}日[^。]*最後の営業日", fact.get("quote", "")):
+            relations.append({"source_fact_id": fact["fact_id"], "source_recorded_day": tomorrow.isoformat(),
+                "relation": "本日はその前日。出典の『最後の営業日』は明日を指す。本日とは書かない"})
+    if relations:
+        data["fixed_calendar_relations"] = relations
     task = (f"FX日報の{purpose}だけを書く。合計{length}文字目安だが、一般論や反復で埋めない。"
             "titleは具体的で短い見出し。statementsの各textは1〜2文、根拠fact_idsを必ず付ける。"
+            "各statementは単独で照合される。他のstatementの根拠IDは引き継がない。"
+            "前日の圧力と当日の予定を結ぶ分析文には、背景と予定の両方のfact_idsを付ける。"
             "使用する根拠は入力に限る。event_date/market_session/pairs/record_typeを守る。"
             "『きょう』をNYと固定変換しない。historicalは前日の出来事にしない。"
             "forecastは予想、outlookは出典の見方と明示。自分の当日分析はconditionalで条件と観察項目を示す。"
@@ -528,6 +550,36 @@ def review_editorial_quality(api, out, key, draft, evidence, peers, target):
          "other_sections": {k: v["body"][:420] for k, v in peers.items() if k != key}}, news.QC_SCHEMA)
 
 
+def improve_editorial(api, out, key, purpose, evidence, peers, target, length):
+    """Keep a source-PASS original if OPTIONAL quality repair corrupts facts.
+
+    This is a REJECTED shadow artifact, not a passing substitute or model
+    fallback. Initial author/source failures still propagate and stop the run.
+    """
+    draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length)
+    quality = review_editorial_quality(api, out, key, draft, evidence, peers, target)
+    if quality["verdict"] == "FAIL":
+        news.save(out / "stages" / f"editorial-quality-{key}-first-rejected.json", {"draft": draft, "quality": quality})
+        try:
+            improved = author(api, out, f"grounded-editorial-{key}-quality-repair",
+                purpose + "。編集指摘を改善: " + quality["reason"], evidence, target, length)
+        except ValueError as error:
+            if "original-context review failed after one repair" not in str(error):
+                raise
+            # Never use the failed enhancement. Keep the same run's already
+            # source-checked original, and force quality failure transparently.
+            draft["quality_repair_rejected"] = True
+            draft["rejected_quality_repair_reason"] = str(error)
+            news.save(out / "stages" / f"editorial-quality-{key}-source-rejected-repair.json",
+                {"safe_original": draft, "quality": quality, "repair_error": str(error),
+                 "action": "retained source-PASS original for REJECTED shadow only", "publish_ready": False})
+        else:
+            draft = improved
+            quality = review_editorial_quality(api, out, key, draft, evidence, peers, target)
+    draft["quality_review"] = quality
+    return draft
+
+
 def material_coverage(api, out, material, topics, editorial, target):
     catalog = [{"fact_id": x["fact_id"], "fact": x["fact"], "event_scope": x.get("event_scope", "current")}
                for x in material]
@@ -614,20 +666,18 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
     for key, purpose, length in roles:
         evidence = shared_role_evidence(api, out, key, material, target, topics)
         purpose += "。材料→価格/金利への作用→本日の条件を役割に合わせて整理。予定だけの羅列や他欄の言い換えにしない"
-        draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length)
-        quality = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
-        if quality["verdict"] == "FAIL":
-            news.save(out / "stages" / f"editorial-quality-{key}-first-rejected.json", {"draft": draft, "quality": quality})
-            draft = author(api, out, f"grounded-editorial-{key}-quality-repair",
-                purpose + "。編集指摘を改善: " + quality["reason"], evidence, target, length)
-            quality = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
-        draft["quality_review"] = quality
+        draft = improve_editorial(api, out, key, purpose, evidence, editorial, target, length)
         editorial[key] = draft
         news.save(out / "editorial-progress.json", editorial)
     # Recheck all fields against the FINAL peers, not merely preceding fields.
     for key, draft in editorial.items():
         evidence = [x for x in material if x["fact_id"] in draft["claim_ids"]]
-        draft["quality_review"] = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
+        final_review = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
+        if draft.get("quality_repair_rejected"):
+            draft["quality_review"] = {"verdict": "FAIL", "reason": draft["rejected_quality_repair_reason"],
+                                       "final_assessment": final_review}
+        else:
+            draft["quality_review"] = final_review
     coverage = material_coverage(api, out, material, topics, editorial, target)
     # Pair/risk classifications are small independent decisions over already
     # verified text, never a chance to rewrite prose or numbers.
