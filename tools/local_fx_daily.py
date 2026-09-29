@@ -32,7 +32,7 @@ FLAGS = {"JPY": "🇯🇵", "USD": "🇺🇸", "EUR": "🇪🇺", "GBP": "🇬�
          "NZD": "🇳🇿", "CAD": "🇨🇦", "CHF": "🇨🇭"}
 COUNTRIES = {"日": "JPY", "米": "USD", "欧": "EUR", "独": "EUR", "仏": "EUR", "西": "EUR",
              "英": "GBP", "豪": "AUD", "NZ": "NZD", "加": "CAD", "ス": "CHF"}
-FORBIDDEN = r"要確認|再確認|取得失敗|OpenClaw|NO_REPLY|シャドー|データ取得"
+FORBIDDEN = r"要確認|再確認|取得失敗|OpenClaw|NO_REPLY|シャドー|データ取得|入力資料|提供資料|原資料|根拠不足"
 
 
 def mirror_enabled() -> bool:

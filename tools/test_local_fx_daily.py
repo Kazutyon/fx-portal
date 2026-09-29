@@ -10,6 +10,52 @@ import local_fx_daily as daily
 
 
 class DailyTests(unittest.TestCase):
+    def test_clear_future_release_is_forecast_not_realized_result(self):
+        import local_fx_grounding as grounding
+        quote = "本日23時には米国の消費者信頼感指数とJOLTS求人が発表される予定となっている。"
+        source = {"source_id": 12, "title": "本日の相場材料", "source_url": "https://test.example",
+                  "published_at": "2026-09-29T06:49:00+09:00", "text": quote}
+        bound = grounding.bind_claim(source, {"kind": "event", "fact": "本日、米国の消費者信頼感指数とJOLTS求人が発表される。",
+            "quote": quote, "event_scope": "current", "market_session": "unspecified", "pairs": ["USD/JPY"],
+            "record_type": "actual"}, 0, date(2026, 9, 29))
+        self.assertEqual(bound["record_type"], "forecast")
+
+    def test_month_end_today_error_is_caught_even_without_next_day_word(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "月末", "statements": [{"text": "本日は四半期末の最終営業日である。",
+            "fact_ids": ["D1"], "mode": "conditional"}]}
+        errors = grounding.copy_errors(copy, [{"fact_id": "D1", "record_type": "outlook",
+            "fact": "明日9月30日が最後の営業日"}], date(2026, 9, 29))
+        self.assertIn("today contradicts source month-end date", errors)
+
+    def test_future_month_end_conditional_is_not_realized_fact(self):
+        import local_fx_grounding as grounding
+        copy = {"title": "月末", "statements": [{"text": "明日が最後の営業日となるため、本日は資金移動の変化を観察する。",
+            "fact_ids": ["D1"], "mode": "conditional"}]}
+        errors = grounding.copy_errors(copy, [{"fact_id": "D1", "record_type": "outlook",
+            "fact": "明日9月30日が最後の営業日"}], date(2026, 9, 29))
+        self.assertEqual(errors, [])
+
+    def test_old_dated_outlook_cannot_be_promoted_by_newer_publication(self):
+        import local_fx_grounding as grounding
+        quote = "9月14日、銀行は1年後のドル円予想を165円とし、足元の円高は調整にすぎないとした。"
+        source = {"source_id": 14, "title": "今週の見通し", "source_url": "https://test.example",
+                  "published_at": "2026-09-28T16:38:00+09:00", "text": quote}
+        bound = grounding.bind_claim(source, {"kind": "outlook", "fact": quote, "quote": quote,
+            "event_scope": "historical", "market_session": "unspecified", "pairs": ["USD/JPY"],
+            "record_type": "outlook"}, 0, date(2026, 9, 29))
+        self.assertEqual(bound["event_scope"], "historical")
+
+    def test_role_anchors_cannot_be_replaced_by_selector(self):
+        import local_fx_grounding as grounding
+        facts = [{"fact_id": "N0", "fact": "前日のドル円の実際の反応", "record_type": "actual", "event_scope": "previous"},
+                 {"fact_id": "N1", "fact": "古い政策金利", "record_type": "actual", "event_scope": "historical"},
+                 {"fact_id": "C0", "fact": "本日RBA政策金利発表予定", "record_type": "forecast", "event_scope": "current"}]
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", return_value={"fact_ids": ["N1"]}):
+            selected = grounding.shared_role_evidence(daily, Path(folder), "hero", facts, date(2026, 9, 29),
+                                                       [{"claim_ids": ["N0"]}])
+            self.assertEqual({x["fact_id"] for x in selected}, {"N0", "N1", "C0"})
+
     def test_analyst_general_assessment_is_not_actual_market_fact(self):
         import local_fx_grounding as grounding
         quote = "市場はドル円の160円を絶対防衛線と意識しており、上値追いは危険な状態となっている。"

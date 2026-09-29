@@ -50,6 +50,11 @@ def bind_claim(source, claim, index, target):
     if claim["quote"] not in source["text"] or not 20 <= len(claim["quote"]) <= 180:
         raise ValueError("claim quotation failed original-source gate")
     result = dict(claim)
+    if (result["record_type"] == "actual" and re.search(
+            r"予定(?:されている)?|(?:発表|公表|開催)(?:される|する)[。.]?$|行われる[。.]?$|発言がある[。.]?$|会見を行う[。.]?$",
+            result["fact"])):
+        # A scheduled release is not an already realized economic result.
+        result["record_type"] = "forecast"
     if result["record_type"] == "outlook":
         result["kind"] = "outlook"
     opening = unicodedata.normalize("NFKC", source["text"][:200])
@@ -97,7 +102,8 @@ def bind_claim(source, claim, index, target):
         # trigger; a preceding '9/28〜足元' heading is not a blanket timestamp.
         result["event_scope"] = "historical"
     published = datetime.fromisoformat(source["published_at"]).astimezone(news.JST)
-    if result["record_type"] == "outlook" and published.date() < target:
+    if (result["record_type"] == "outlook" and published.date() < target
+            and result["event_scope"] != "historical"):
         # Date the source's reported view, not a future event or this report.
         # Yesterday's '本日/今朝' is never silently promoted to today.
         result["event_scope"] = "previous" if published.date() == previous_day(target) else "historical"
@@ -156,7 +162,7 @@ def copy_errors(copy, evidence, target):
     errors = []
     if not copy.get("statements"):
         return ["no source-linked statements"]
-    for statement in copy["statements"]:
+    for statement_no, statement in enumerate(copy["statements"], 1):
         ids = statement["fact_ids"]
         if not ids or any(x not in allowed for x in ids):
             errors.append("invalid or absent fact reference")
@@ -167,9 +173,10 @@ def copy_errors(copy, evidence, target):
             if all(x.get("market_session") == "Tokyo" for x in linked):
                 errors.append("Tokyo-only facts assigned to NY")
         if (all(x.get("record_type") in {"forecast", "outlook"} for x in linked)
-                and not re.search(r"予想|見込み|予定|見通し|見方|指摘|前回|なら|場合|かを(?:確認|観察)|想定", text)):
+                and not re.search(r"予想|見込み|予定|見通し|見方|指摘|前回|なら|場合|かを(?:確認|観察)|想定|可能性|明日", text)):
             errors.append("forecast/outlook written as realized fact")
-        if re.search(r"本日.{0,40}最終営業日(?:の)?翌日", text) and any(
+            errors.append(f"statement {statement_no}, refs {','.join(ids)}: {text} — 予想/予定/出典の見方または明示的な条件として書く")
+        if re.search(r"本日(?:は|が)?[^。]{0,40}最終営業日", text) and any(
                 "明日" in str(x) and "最後の営業日" in str(x) for x in linked):
             errors.append("today contradicts source month-end date")
     return errors
@@ -227,6 +234,7 @@ def author(api, out, label, purpose, evidence, target, length):
             "『きょう』をNYと固定変換しない。historicalは前日の出来事にしない。"
             "forecastは予想、outlookは出典の見方と明示。自分の当日分析はconditionalで条件と観察項目を示す。"
             "分析は確認できる条件と観察項目を具体化する。相場が必ずその方向になるとは断定しない。"
+            "『可能性がある/かもしれない/様子見/注目したい』で終えず、何の変化を観察するかを書く。"
             "出典の総評/戦略/レッドラインは誰の見方かを示し、市場全体の確定事実にしない。"
             "発表予定・市場予想の紹介はreported_forecast（例『市場予想は25bp利上げ』）、実施済みとは書かない。"
             "価格の数字を別ペアへ移さない。資料にない価格目標や因果を作らない。"
@@ -447,12 +455,15 @@ ROLE_PURPOSES = {
 }
 
 
-def shared_role_evidence(api, out, key, material, target):
+def shared_role_evidence(api, out, key, material, target, topics=None):
     # Catalogs contain facts only; original quotations are loaded by selected
     # IDs for authoring/review. Every batch is visited, no first-N truncation.
     catalog = [{k: x[k] for k in ["fact_id", "fact", "record_type", "event_scope"] if k in x}
                for x in material]
     selected = []
+    anchors = role_evidence(key, material, topics) if topics else []
+    anchor_ids = list(dict.fromkeys(x["fact_id"] for x in anchors))[:8]
+    remaining = 8 - len(anchor_ids)
     schema = news.schema({"fact_ids": {"type": "array", "items": news.STRING, "maxItems": 8}})
     for i, batch in enumerate(api.evidence_batches(catalog, 9000)):
         choice = api.infer_cached(out, f"shared-{key}-scan-{i:02}",
@@ -460,35 +471,43 @@ def shared_role_evidence(api, out, key, material, target):
             "ニュース本文に未採用の事実も同等に評価する。価格だけでなく発言/金利/背景/予定を残す。"
             "同一出来事の重複は省く。historicalは過去の背景であり前日の出来事ではない。"
             "本日の条件分析に必要な前日背景と当日予定を組で残す。該当材料のないbatchのみ空配列。IDは入力限定。",
-            {"role": ROLE_PURPOSES[key], "date_facts": date_facts(target), "facts": batch}, schema)["fact_ids"]
+            {"role": ROLE_PURPOSES[key], "date_facts": date_facts(target), "facts": batch,
+             "already_fixed_fact_ids": anchor_ids,
+             "rule": "必須の前日材料/当日予定は別に保持。追加の重要材料を選ぶ。過去背景だけで主材料を置き換えない"}, schema)["fact_ids"]
         allowed = {x["fact_id"] for x in batch}
         if not set(choice) <= allowed:
             raise ValueError("shared role scan returned invalid fact ID")
-        selected.extend(x for x in choice if x not in selected)
-    if len(selected) > 8:
+        selected.extend(x for x in choice if x not in selected and x not in anchor_ids)
+    if remaining == 0:
+        selected = []
+    if len(selected) > remaining:
+        reduce_schema = news.schema({"fact_ids": {"type": "array", "items": news.STRING, "maxItems": remaining}})
         pool = [x for x in catalog if x["fact_id"] in selected]
         # Progressive bounded reduction, without merging original articles.
         for round_no in range(5):
             reduced = []
             for i, batch in enumerate(api.evidence_batches(pool, 9000)):
                 choice = api.infer_cached(out, f"shared-{key}-reduce-{round_no}-{i}",
-                    "roleに必要な最大8根拠へ絞る。日時を保ち、出来事/背景/当日予定の組を優先。"
+                    f"roleの必須根拠とは別に、追加を最大{remaining}件へ絞る。日時を保ち、出来事/背景/当日予定の組を優先。"
                     "ニュース以外の具体的材料を落とさず、同じ話の重複を除く。入力IDのみ。",
-                    {"role": ROLE_PURPOSES[key], "facts": batch}, schema)["fact_ids"]
+                    {"role": ROLE_PURPOSES[key], "facts": batch,
+                     "fixed_facts": [x for x in catalog if x["fact_id"] in anchor_ids]}, reduce_schema)["fact_ids"]
                 if not set(choice) <= {x["fact_id"] for x in batch}:
                     raise ValueError("shared role reduction returned invalid fact ID")
                 reduced.extend(x for x in choice if x not in reduced)
             pool = [x for x in pool if x["fact_id"] in reduced]
-            if len(pool) <= 8:
+            if len(pool) <= remaining:
                 break
-        if len(pool) > 8:
+        if len(pool) > remaining:
             raise ValueError("shared role evidence reduction did not converge")
         selected = [x["fact_id"] for x in pool]
+    selected = anchor_ids + selected
     if not selected:
         raise ValueError(f"{key}: shared material selection empty")
     by_id = {x["fact_id"]: x for x in material}
     news.save(out / "stages" / f"shared-{key}-allocation.json",
-              {"candidate_count": len(catalog), "fact_ids": selected, "scope": "all accepted shared facts"})
+              {"candidate_count": len(catalog), "fixed_fact_ids": anchor_ids,
+               "fact_ids": selected, "scope": "all accepted shared facts; role anchors cannot be dropped"})
     return [by_id[x] for x in selected]
 
 
@@ -593,7 +612,7 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0):
     ]
     editorial = {}
     for key, purpose, length in roles:
-        evidence = shared_role_evidence(api, out, key, material, target)
+        evidence = shared_role_evidence(api, out, key, material, target, topics)
         purpose += "。材料→価格/金利への作用→本日の条件を役割に合わせて整理。予定だけの羅列や他欄の言い換えにしない"
         draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length)
         quality = review_editorial_quality(api, out, key, draft, evidence, editorial, target)
