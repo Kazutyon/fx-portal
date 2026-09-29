@@ -10,6 +10,30 @@ import local_fx_daily as daily
 
 
 class DailyTests(unittest.TestCase):
+    def test_each_scheduled_event_uses_its_own_date_not_first_in_quote(self):
+        import local_fx_grounding as grounding
+        quote = "国内では、30日（水）に8月鉱工業生産、10月1日（木）に日銀短観、2日（金）に8月完全失業率が発表予定です。"
+        for fact, expected in [("2026年9月30日、8月鉱工業生産の発表予定。", date(2026, 9, 30)),
+                               ("10月1日に日銀短観が発表予定。", date(2026, 10, 1)),
+                               ("10月2日に8月完全失業率が発表予定。", date(2026, 10, 2))]:
+            actual, ambiguous = grounding.original_event_day(quote, fact, date(2026, 9, 28))
+            self.assertEqual(actual, expected)
+            self.assertFalse(ambiguous)
+            source = {"source_id": 14, "title": "今週の予定", "source_url": "https://test.example",
+                      "published_at": "2026-09-28T16:38:00+09:00", "text": quote}
+            bound = grounding.bind_claim(source, {"kind": "event", "fact": fact, "quote": quote,
+                "record_type": "forecast", "event_scope": "current", "market_session": "unspecified", "pairs": []},
+                0, date(2026, 9, 29))
+            self.assertEqual(bound["event_date"], expected.isoformat())
+            self.assertEqual(bound["event_scope"], "future")
+
+    def test_multiple_dates_without_event_association_are_not_guessed(self):
+        import local_fx_grounding as grounding
+        self.assertEqual(grounding.original_event_day("9月29日にA、9月30日にBが予定。", "その他の予定。",
+            date(2026, 9, 28)), (None, True))
+        self.assertEqual(grounding.original_event_day("過去7営業日で6日目の上昇。", "ドル上昇。",
+            date(2026, 9, 28)), (None, False))
+
     def test_named_policy_event_as_today_focus_is_not_realized_outcome(self):
         import local_fx_grounding as grounding
         facts = [{"fact_id": "C0", "record_type": "forecast", "fact": "RBA政策金利と声明発表予定。"}]

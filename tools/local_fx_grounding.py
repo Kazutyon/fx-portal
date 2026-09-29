@@ -9,6 +9,7 @@ import json
 import re
 import unicodedata
 from datetime import date, datetime, timedelta
+from difflib import SequenceMatcher
 
 import local_fx_news as news
 
@@ -37,6 +38,41 @@ def context_for(source, quote):
     heading_text = text[heading:heading + 100] if heading >= 0 else ""
     return {"article_opening": text[:200], "nearby_heading": heading_text,
             "quote_surroundings": text[max(0, at - 170):at + len(quote) + 100]}
+
+
+def original_event_day(quote, fact, published):
+    """Associate a date with its event clause, never the first date in a list.
+
+    Numeric day-only entries inherit the source/list month. Ambiguous multi-date
+    quotations return no association rather than upgrading model prose to truth.
+    """
+    markers = list(re.finditer(r"(?:(\d{1,2})月)?(\d{1,2})日(?!目|間|前|ぶり|続)", quote))
+    if not markers:
+        return None, False
+    month = published.month
+    clauses = []
+    for i, marker in enumerate(markers):
+        if marker[1]:
+            month = int(marker[1])
+        day = date(published.year, month, int(marker[2]))
+        if marker.start() >= 2 and quote[max(0, marker.start() - 4):marker.start()].endswith("明日"):
+            tomorrow = published + timedelta(days=1)
+            if tomorrow.day == int(marker[2]):
+                day = tomorrow
+        fragment = quote[marker.end():markers[i + 1].start() if i + 1 < len(markers) else len(quote)]
+        clauses.append((day, fragment))
+    if len({day for day, _ in clauses}) == 1:
+        return clauses[0][0], False
+    def content(value):
+        value = re.sub(r"\d{4}年|(?:\d{1,2}月)?\d{1,2}日", "", value)
+        return re.sub(r"発表|公表|予定|されている|行われる|行う|出てきます|です", "", value)
+    scores = [(SequenceMatcher(None, content(fact), content(fragment)).find_longest_match().size, day)
+              for day, fragment in clauses]
+    best = max(score for score, _ in scores)
+    days = {day for score, day in scores if score == best}
+    if best >= 4 and len(days) == 1:
+        return next(iter(days)), False
+    return None, True
 
 
 def bind_claim(source, claim, index, target):
@@ -128,13 +164,12 @@ def bind_claim(source, claim, index, target):
     # Do not date an analyst's outlook this way: its reporting date is separate
     # from the date of a forecast event.
     if result["record_type"] in {"actual", "forecast"}:
-        explicit = re.search(r"(\d{1,2})月(\d{1,2})日", quote_normal)
-        relative = re.search(r"明日(?:\d{1,2}月)?(\d{1,2})日", quote_normal)
-        event_day = date(target.year, int(explicit[1]), int(explicit[2])) if explicit else None
-        if relative:
-            source_tomorrow = published.date() + timedelta(days=1)
-            if source_tomorrow.day == int(relative[1]):
-                event_day = source_tomorrow
+        event_day, ambiguous = original_event_day(quote_normal,
+            unicodedata.normalize("NFKC", claim["fact"]), published.date())
+        if ambiguous:
+            result["event_date"] = None
+            result["event_scope"] = "unknown"
+            result["event_date_basis"] = "multiple original dates without an unambiguous event-clause association"
         if event_day is not None:
             result["event_date"] = event_day.isoformat()
             result["event_scope"] = ("future" if event_day > target else "current" if event_day == target else

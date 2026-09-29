@@ -75,7 +75,12 @@ def summarize(api, out, label, inputs, target, dates, leaf):
         if attempt == 0:
             # Fresh reconstruction from original inputs, not an erroneous
             # summary copied forward as another source of facts.
-            raw_value = api.infer_cached(out, label + "-repair", task + " 検査指摘を守り、原入力から要約を作り直す。",
+            raw_value = api.infer_cached(out, label + "-repair", task +
+                " 検査指摘を守り、原入力から要約を作り直す。これは圧縮工程であり、一般的な解説・"
+                "独自の注目理由・新しい予測/観察項目は追加しない。独自分析は最後の記事工程で行う。"
+                "textは入力のfact/子要約の文を短くして結合するだけ。情報が少なければ短文でよい。"
+                "例: 入力『対象日にA発表予定』『対象日にB講演予定』なら『対象日にA発表とB講演が予定される。』で終える。"
+                "入力にない意味づけを後ろへ付けない。",
                                      {**data, "review": review}, schema)
     news.save(out / "hierarchy" / f"{label}.json", {"inputs": inputs, "summary": value, "review": review})
     if review["verdict"] != "PASS":

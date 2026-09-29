@@ -48,6 +48,7 @@ class HierarchyTests(unittest.TestCase):
             self.assertIn("N0", repair.args[3]["review"]["reason"])
             self.assertIn("UNKNOWN", repair.args[3]["review"]["reason"])
             self.assertNotIn("rejected", repair.args[3])
+            self.assertIn("独自分析は最後の記事工程", repair.args[2])
 
     def test_semantic_summary_failure_is_not_ignored(self):
         def fail(out, label, task, data, schema):
