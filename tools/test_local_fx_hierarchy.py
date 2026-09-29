@@ -43,6 +43,10 @@ class HierarchyTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "summary review failed"):
                 hierarchy.build(daily, Path(folder), self.facts(3), date(2026, 9, 29), {})
             self.assertEqual(sum("repair" in c.args[1] for c in infer.call_args_list), 1)
+            repair = next(c for c in infer.call_args_list if c.args[1].endswith("-repair"))
+            self.assertIn("N0", repair.args[3]["review"]["reason"])
+            self.assertIn("UNKNOWN", repair.args[3]["review"]["reason"])
+            self.assertNotIn("rejected", repair.args[3])
 
     def test_semantic_summary_failure_is_not_ignored(self):
         def fail(out, label, task, data, schema):
@@ -71,6 +75,16 @@ class HierarchyTests(unittest.TestCase):
         for facts in [[], self.facts(1) * 2]:
             with self.assertRaisesRegex(ValueError, "unique original"):
                 hierarchy.build(daily, Path("unused"), facts, date(2026, 9, 29), {})
+
+    def test_country_corruption_is_rejected_before_merge_even_if_self_review_passes(self):
+        fact = {"fact_id": "N0", "fact": "米国とイランの交渉", "record_type": "actual"}
+        def wrong_country(out, label, task, data, schema):
+            if "review" in label:
+                return {"verdict": "PASS", "reason": "self review misses it"}
+            return {"units": [{"text": "米伊交渉", "refs": ["N0"]}]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=wrong_country):
+            with self.assertRaisesRegex(ValueError, "Iran replaced by Italy"):
+                hierarchy.build(daily, Path(folder), [fact], date(2026, 9, 29), {})
 
 
 if __name__ == "__main__":

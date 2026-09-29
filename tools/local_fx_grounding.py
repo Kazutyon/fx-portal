@@ -596,11 +596,13 @@ def review_editorial_quality(api, out, key, draft, evidence, peers, target, over
         "既存事実からの条件付き分析は許容、価格目標/ニュース/実現済み結果の創作は不可。"
         "hero/headlineは短文なので分析を無理に要求しない。予定・背景の共通言及自体は反復違反ではない。"
         "同じ内容を言い換えるだけ、一般論だけ、材料はあるのに要点を落とす場合はFAIL。具体的理由を返す。",
-        {"role": ROLE_PURPOSES[key], "date_facts": date_facts(target),
+        {"role": ("前日の主要材料・反応・対立構図を、その日の材料に応じ整理" if overview and key == "summary"
+                   else ROLE_PURPOSES[key]), "date_facts": date_facts(target),
          "draft": {"title": draft["title"], "body": draft["body"]},
          "available_facts": [{"fact_id": x["fact_id"], "fact": x["fact"]} for x in evidence],
-         "global_overview": overview or {},
-         "scope_rule": "全体像は構成の参考。欄の役割に不要なテーマや未取得材料を必須にしない。要約だけを事実根拠にしない",
+         **({"global_overview": overview,
+             "scope_rule": "全体像は構成の参考。欄の役割に不要なテーマや未取得材料を必須にしない。要約だけを事実根拠にしない"}
+            if overview else {}),
          "other_sections": {k: v["body"][:420] for k, v in peers.items() if k != key}}, news.QC_SCHEMA)
 
 
@@ -694,11 +696,17 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
     plan_schema = news.schema({"topics": {"type": "array", "minItems": 3, "maxItems": 5,
         "items": news.schema({"title": news.STRING, "fact_ids": {"type": "array", "items": news.STRING, "minItems": 1, "maxItems": 6}})}})
     plan_data = news_candidates(api, out, prior, target)
-    plan = api.infer_cached(out, "grounded-news-plan", "前営業日の主要出来事を3〜5件、重要順で選ぶ。"
+    plan_task = "前営業日の主要出来事を3〜5件、重要順で選ぶ。"
+    if hierarchical:
+        plan_task += "全体像を踏まえ、当日の相場を特徴づける異なる出来事と反応・背景を選ぶ。テーマ/通貨を固定しない。入力の前営業日factだけを根拠にする。"
+    else:
+        plan_task += (
         "通貨別の羅列ではなく出来事単位。相場反応と理由のある具体的材料を優先。同じ材料を反復しない。"
         "介入発言とNYの戻しは一つの話題へまとめる。ドル円/ユーロドルの実際の値動きは落とさない。"
-        "資料にない出来事は作らず、fact_idsは入力のみ。",
-        {"date_facts": date_facts(target), "facts": plan_data, "global_overview": global_overview or {}}, plan_schema)
+        "資料にない出来事は作らず、fact_idsは入力のみ。")
+    plan = api.infer_cached(out, "grounded-news-plan", plan_task,
+        {"date_facts": date_facts(target), "facts": plan_data,
+         **({"global_overview": global_overview} if global_overview else {})}, plan_schema)
     topics = []
     for i, topic in enumerate(plan["topics"][:topic_probe or 5]):
         if any(x not in {f["fact_id"] for f in prior} for x in topic["fact_ids"]):

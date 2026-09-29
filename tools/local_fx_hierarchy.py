@@ -6,6 +6,7 @@ Original facts remain authoritative; summaries only guide editorial decisions.
 from __future__ import annotations
 
 import json
+import re
 
 import local_fx_news as news
 
@@ -31,23 +32,44 @@ def summarize(api, out, label, inputs, target, dates, leaf):
             "些細な値動きは一群にまとめてよいが、異なる主要材料・反対材料・条件は消さない。"
             "日付/数値/予定と実績/出典の見通しを保持。資料にない因果や結果は作らない。"
             "テーマは固定せず、今回の入力に合わせる。何が起きたかと、分からないことを区別する。"
-            "これは内部要約であって記事ではない。元資料に戻るためのrefsを付ける。")
+            "これは内部要約であって記事ではない。元資料に戻るためのrefsを付ける。"
+            "IDはrefsだけに書きtextへ埋め込まない。outlookは出典の見通しと明記し、全体の確定事実にしない。"
+            "国名・組織名・人名は入力の表記を保ち、独自の漢字略称へ変えない。")
     value = api.infer_cached(out, label, task, data, schema)
     for attempt in range(2):
         refs = {r for u in value["units"] for r in u["refs"]}
-        valid = refs == set(ids) and all(u["refs"] and len(u["text"]) <= 260 for u in value["units"])
+        errors = []
+        if refs != set(ids):
+            errors.append(f"missing input IDs: {sorted(set(ids) - refs)}; unknown IDs: {sorted(refs - set(ids))}")
+        if not 1 <= len(value["units"]) <= 4:
+            errors.append("unit count must be 1..4")
+        for i, unit in enumerate(value["units"]):
+            if not unit["refs"] or len(unit["refs"]) != len(set(unit["refs"])):
+                errors.append(f"unit {i}: refs must be nonempty and unique: {unit['refs']}")
+            if len(unit["text"]) > 260:
+                errors.append(f"unit {i}: text exceeds 260 characters")
+            if re.search(r"N\d+-\d+|hierarchy-(?:leaf|merge)-", unit["text"]):
+                errors.append(f"unit {i}: IDs belong in refs, not prose")
+            # Reject known entity corruption before a summary becomes context.
+            from local_fx_grounding import country_errors
+            quoted = [{"quote": x["fact"] if leaf else " ".join(x["units"])}
+                      for x, ref in zip(inputs, ids) if ref in unit["refs"]]
+            errors.extend(f"unit {i}: {error}" for error in country_errors(unit["text"], quoted))
         review = api.infer_cached(out, label + f"-review-{attempt}",
             "入力と要約だけを照合。異なる日時/予想/実績/通貨を混ぜた、新しい因果/結果を加えた、"
             "独立した主要材料を消した場合FAIL。枝葉や重複の圧縮は許容。予定紹介を実施済みと誤認しない。"
             "主要な異論や条件が残るかも確認。理由は具体的に。",
             {**data, "summary": value}, news.QC_SCHEMA)
-        if not valid:
-            review = {"verdict": "FAIL", "reason": "summary refs must cover every input ID without unknown IDs"}
+        if errors:
+            reasons = errors + ([review["reason"]] if review["verdict"] != "PASS" else [])
+            review = {"verdict": "FAIL", "reason": "; ".join(reasons)}
         if review["verdict"] == "PASS":
             break
         if attempt == 0:
-            value = api.infer_cached(out, label + "-repair", task + " 指摘のみ修正。",
-                                     {**data, "rejected": value, "review": review}, schema)
+            # Fresh reconstruction from original inputs, not an erroneous
+            # summary copied forward as another source of facts.
+            value = api.infer_cached(out, label + "-repair", task + " 検査指摘を守り、原入力から要約を作り直す。",
+                                     {**data, "review": review}, schema)
     news.save(out / "hierarchy" / f"{label}.json", {"inputs": inputs, "summary": value, "review": review})
     if review["verdict"] != "PASS":
         raise ValueError(f"{label}: summary review failed: {review['reason']}")
