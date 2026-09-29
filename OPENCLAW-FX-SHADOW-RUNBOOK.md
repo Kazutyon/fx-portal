@@ -1,18 +1,20 @@
 # OpenClaw FX日報シャドー実行設計
 
-> 2026-09-29改訂: 現行設計は `OPENCLAW-FX-SPLIT-DESIGN.md`。以下の旧「6つの独立したスケジュール」は廃案であり、新規登録・再実行に使わない。既存07:00ジョブを変更する前に全日報の実行器と検収を完成させる。
+> 2026-09-29改訂: 現行設計は `OPENCLAW-FX-SPLIT-DESIGN.md`。以下の旧「6つの独立したスケジュール」は廃案。既存07:00ジョブは全日報実行器へ接続済み。ただし正規の日次入力元は未接続なので、全自動完成とは扱わない。
 
-## 現在の実行手順 — ニュース工程の単体試験
+## 現在の実行手順 — 全日報、シャドー限定
 
 GALLERIAで次を実行する。Qwen固定。日付の省略時はJSTの当日を使う。
 
 ```powershell
-python tools/local_fx_news.py --date 2026-09-29 --count 3
+python tools/local_fx_daily.py --date 2026-09-29
 ```
 
-これは当日07:00までに掲載されたニュースの取得→1記事ごとの事実抽出→1トピック執筆→出典照合を試す。履歴や汎用エージェント文書を推論に渡さず、Ollamaへ毎回新規メッセージを送る。OpenClawの定期起動への接続はまだ実施していない。
+日付省略時はJST当日。既存OpenClawジョブも同じ実行器を起動する。正規の `shadow-input/YYYY-MM-DD/source-bundle.json` と `calendar.input.json`、日付別の公式金利 `policy.json` を渡す。今日9/29は保存済み資料を `shadow-output/2026-09-29-local-daily/` で再開する。入力がない日はFAILED。禁止/保留サイトを新規自動取得して補わない。
 
-出力は新しい `shadow-output/YYYY-MM-DD-local-news-pilot-<実行ID>/`。`source-bundle.json`、呼出し別request/response/metrics、根拠引用、レビュー、`status.json`を確認する。正常終了でも全日報の生成成功ではない。`news.json`の `publish_ready` は常にfalseで、人の内容検収が残る。試験器はみんかぶ1サイトだけなので、主要5材料の網羅性は保証しない。
+工程は記事内の文区切り抽出→事実だけの材料選別→振り返り1件ごとの執筆/原資料照合→hero/headline/summary/market/handoverを各1回→通貨/リスク/注目点を別々に執筆→PythonでHTML組込み→今日の公開ページとの比較。履歴・ツール・汎用AGENTSはモデルへ渡さない。常にQwen固定、各呼出し64k、入力24KB上限。中断時は同じ日付の同じフォルダで再開し、変更された入力/指示の工程だけ再生成する。
+
+出力は `shadow-output/YYYY-MM-DD-local-daily/`。`report.html`、`sections.json`、`calendar.json`、`validation.json`、`comparison.json`、`stages/*`、`status.json`を読み戻す。公開HTMLは生成後に比較用としてだけ保存する。公開側にも誤りがあり得るため、差があるだけではシャドーの誤りと判定しない。`publish_ready`は常にfalse。本番日報/RemoteTrigger/pushは変更しない。
 
 失敗時は終了コード1、`status.json`にFAILEDと具体的な理由を残す。部分生成物は `news.partial.json`だけとし、失敗したものを日報として採用しない。修正は不合格の欄に1回だけ、新しい推論で行う。
 

@@ -38,16 +38,7 @@ def save(path: Path, value: object) -> None:
 
 
 def fetch(url: str) -> str:
-    if urlparse(url).hostname != "fx.minkabu.jp":
-        raise ValueError("source is outside the pilot allowlist")
-    request = urllib.request.Request(url, headers={"User-Agent": "AUXEN-Shadow-Pilot/1.0"})
-    with urllib.request.urlopen(request, timeout=20) as response:
-        if urlparse(response.url).hostname != "fx.minkabu.jp":
-            raise ValueError("source redirected outside allowlist")
-        raw = response.read(600001)
-        if len(raw) > 600000:
-            raise ValueError("source response exceeds byte budget")
-        return raw.decode(response.headers.get_content_charset() or "utf-8")
+    raise ValueError("automatic Minkabu acquisition is not adopted; use retained dated inputs (ECONOMIC-CALENDAR-SOURCE-AUDIT.md)")
 
 
 class PlainText(HTMLParser):
@@ -172,10 +163,11 @@ def infer(stage: str, task: str, data: object, output_schema: dict, out: Path) -
     input_bytes = len(json.dumps(messages, ensure_ascii=False).encode("utf-8"))
     if input_bytes > MAX_INPUT_BYTES:
         raise ValueError(f"{stage}: input exceeds {MAX_INPUT_BYTES} bytes")
+    small_structured_stage = "extract" in stage or "plan" in stage
     body = {
         "model": MODEL, "messages": messages, "format": output_schema,
-        "stream": False, "think": "extract" not in stage, "keep_alive": "10m",
-        "options": {"num_ctx": 65536, "num_predict": 4096 if "extract" not in stage else 2048, "temperature": 0.1},
+        "stream": False, "think": not small_structured_stage, "keep_alive": "10m",
+        "options": {"num_ctx": 65536, "num_predict": 2048 if small_structured_stage else 6144, "temperature": 0.1},
     }
     save(out / f"{stage}.request.json", body)
     request = urllib.request.Request(

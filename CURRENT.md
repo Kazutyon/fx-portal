@@ -19,7 +19,7 @@ Phase 1 完了。デザインも一通り完成。日々のFX日報・デイト�
 
 ## 次の一手
 
-0. ローカルQwen日報: `OPENCLAW-FX-SPLIT-DESIGN.md` を現行設計とする。ニュース工程の試験器 `tools/local_fx_news.py` はシャドーのみ。複数取得元・当日カレンダー照合・市場環境/金利・金曜テンプレートへの組込み・全日報検収・既存07:00ジョブ接続が未完了。07:00ジョブは旧Stage1Aの固定日付指示のままで、全日報の自動化完成とは扱わない。本番採用は未承認。
+0. ローカルQwen日報: 毎朝の正規ニュース/カレンダー入力元を接続する必要がある。取得元監査で禁止/保留されたサイトを自動取得しない。日付別入力なしでは07:00実行器がFAILEDになるため、毎朝全自動の完成とは扱わない。今日9/29の全日報内容検収と公開日報との比較が進行中。月曜の公式金利・センチメント補足、主要市場休場の検証も残る。本番採用は未承認。
 
 1. shadow-history/への実測記録の永続化をワークフローに実装済み（`.github/workflows/economic-calendar-shadow.yml`、2026-09-14）。平日05:15 JST実行のたびにshadow-output/をshadow-history/$TARGET_DATE/へコピーしてgit commit・pushする。artifactの14日保持と違い恒久的に残る。次は数営業日〜FRED対象イベント日（雇用統計・CPI・PPI・JOLTS）を跨いで実データが蓄積されるのを待ち、shadow-history/の実データで捕捉率・重複・時刻適合を再検証する（review_on: 2026-09-30、docs/ops-workbench/follow-up-registry/FOLLOW-UP-REGISTRY.json FU-20260913-1C949F12）
 2. Forex Factoryフィードの利用条件をブラウザまたは手動で最終確認する（未着手のまま）
