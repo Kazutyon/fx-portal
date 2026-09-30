@@ -378,16 +378,16 @@ def evidence_batches(records: list[dict], byte_limit: int = 12000) -> list[list[
 
 
 def make_sections(sources: list[dict], calendar: dict, ranking: dict, out: Path, topic_probe: int = 0,
-                  hierarchical: bool = False, observational: bool = False) -> dict:
+                  hierarchical: bool = False, observational: bool = False, oneshot_only: bool = False) -> dict:
     import local_fx_grounding as grounding
-    return grounding.make_sections(sys.modules[__name__], sources, calendar, ranking, out, topic_probe, hierarchical, observational)
+    return grounding.make_sections(sys.modules[__name__], sources, calendar, ranking, out, topic_probe, hierarchical, observational, oneshot_only)
 
 
 def esc(text):
     return html.escape(str(text), quote=True)
 
 
-def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Path) -> str:
+def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Path, allow_single_source: bool = False) -> str:
     source = (ROOT / "gen_report_20260925.py").read_text(encoding="utf-8")
     tree = ast.parse(source)
     joined = next(n.value for n in tree.body if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "html" for t in n.targets))
@@ -398,6 +398,11 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
     # Do not turn unresolved/single-source rows into reader-facing "recheck" prose.
     # Retain all rows and disagreements in calendar.json/validation.json instead.
     events = [x for x in calendar["events"] if x["confirmed"]]
+    single_source = False
+    if not events and allow_single_source:
+        # Observation shadow only: show the one available source honestly labelled, never as cross-checked.
+        events = list(calendar["events"])
+        single_source = True
     if not events:
         raise ValueError("no confirmed calendar events for reader copy")
     key = calendar["key_events"]
@@ -446,6 +451,8 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
     report = report.replace("KissFX × ForexFactory 2ソース照合済み（要確認あり）", "時刻はJST・翌日早朝まで")
     report = re.sub(r'<p style="font-size:11px;color:var\(--muted\);margin-top:12px;">※ 時刻はJST。.*?</p>',
                     '<p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。24時以降は翌日早朝。予想値は市場予想であり発表結果ではありません。出典：KissFX、Forex Factory。</p>', report, flags=re.S)
+    if single_source:
+        report = report.replace("出典：KissFX、Forex Factory。", "出典：KissFXのみ（Forex Factoryは取得不可のため未照合・単一ソース）。")
     report = re.sub(r'<script data-goatcounter=.*?</script>', '', report, flags=re.S)
     report = report.replace('href="../', 'href="../../').replace('src="../', 'src="../../')
     # Archive paths were already two levels deep before the generic replacement.
@@ -491,7 +498,8 @@ def comparison(target: date, report: str, out: Path) -> dict:
 
 
 def execute(target: date, out: Path, prepare_only: bool, render_existing: bool = False, topic_probe: int = 0,
-            supplement_news: bool = False, hierarchical: bool = False, observational: bool = False) -> dict:
+            supplement_news: bool = False, hierarchical: bool = False, observational: bool = False,
+            oneshot_only: bool = False) -> dict:
     previous_status = out / "status.json"
     if previous_status.exists():
         previous = load(previous_status)
@@ -547,7 +555,17 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         if prepare_only:
             status["status"] = "PREPARED"
         else:
-            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out, topic_probe, hierarchical, observational)
+            sections = load(out / "sections.json") if render_existing else make_sections(sources, calendar, ranking, out, topic_probe, hierarchical, observational, oneshot_only)
+            if sections is None:  # one-shot only: its own report/checks live under oneshot/
+                failure = out / "oneshot" / "error.json"
+                status.update(status="FAILED" if failure.exists() else "ONESHOT_COMPLETE_REVIEW_PENDING",
+                              report=str(out / "oneshot" / "report.html"), quality="pending", publish_ready=False)
+                if failure.exists():
+                    status["error"] = load(failure)["error"]
+                status["finished_at"] = datetime.now(JST).isoformat()
+                news.save(out / "status.json", status)
+                news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
+                return status
             if topic_probe:
                 status.update(status="TOPIC_PROBE_COMPLETE_REVIEW_PENDING", probe_topics=len(sections["topics"]),
                               quality="pending", publish_ready=False)
@@ -555,7 +573,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                 news.save(out / "status.json", status)
                 news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})
                 return status
-            report = render(target, sections, calendar, ranking, out)
+            report = render(target, sections, calendar, ranking, out, observational)
             comparison(target, report, out)
             checks = {"three_to_five_topics": 3 <= len(sections["topics"]) <= 5,
                       "required_anchors": all(f'id="{x}"' in report for x in ["summary", "points", "ranking", "review", "calendar"]),
@@ -565,8 +583,8 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                       "editorial_source_reviews": len(sections.get("editorial_reviews", {})) == 8 and all(
                           r["verdict"] == "PASS" for r in sections.get("editorial_reviews", {}).values()),
                       "editorial_quality": len(sections.get("editorial_quality_reviews", {})) == 8 and all(
-                          r["verdict"] == "PASS" for r in sections.get("editorial_quality_reviews", {}).values()),
-                      "material_coverage": sections.get("material_coverage", {}).get("verdict") == "PASS",
+                          r["verdict"] in ("PASS", "SKIPPED") for r in sections.get("editorial_quality_reviews", {}).values()),
+                      "material_coverage": sections.get("material_coverage", {}).get("verdict") in ("PASS", "SKIPPED"),
                       "calendar_coverage_complete": all(x["confirmed"] for x in calendar["events"])}
             quality = {"checks": checks, "calendar_conflicts": calendar["conflicts"],
                        "single_source_calendar_rows": [x for x in calendar["events"] if not x["confirmed"]],
@@ -574,11 +592,18 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                        "displayed_calendar_rows": sum(bool(x["confirmed"]) for x in calendar["events"]),
                        "ranking_after_0700": datetime.fromisoformat(ranking["generated_at_jst"]) > datetime.combine(target, daytime(7), JST)}
             news.save(out / "validation.json", quality)
-            if not all(value for key, value in checks.items() if key not in {
-                    "today_ranking", "calendar_coverage_complete", "editorial_quality", "material_coverage"}):
+            advisory = {"today_ranking", "calendar_coverage_complete", "editorial_quality", "material_coverage"}
+            source_checks = {"three_to_five_topics", "no_internal_status", "topic_source_reviews", "editorial_source_reviews"}
+            if observational:
+                advisory |= source_checks  # never published: flag, keep the page, do not discard it
+            if not all(value for key, value in checks.items() if key not in advisory):
                 raise ValueError("structure or source-review gate failed")
+            failed_source = [x for x in sorted(source_checks) if not checks[x]] if observational else []
+            quality["failed_source_checks"] = failed_source
+            news.save(out / "validation.json", quality)
             status.update(status="SHADOW_COMPLETE_REVIEW_PENDING", report=str(out / "report.html"),
-                          quality="pending" if all(checks[x] for x in ["calendar_coverage_complete", "editorial_quality", "material_coverage"])
+                          quality="REJECTED_SOURCE_GAPS" if failed_source else
+                          "pending" if all(checks[x] for x in ["calendar_coverage_complete", "editorial_quality", "material_coverage"])
                           else "REJECTED_QUALITY_GAPS",
                           news_sources=len(sources), calendar_rows=len(calendar["events"]))
     except Exception as error:
@@ -599,6 +624,7 @@ def main() -> int:
     parser.add_argument("--topic-probe", type=int, choices=[1, 2], default=0, help="generate and review only the first one/two topics; no editorial or report")
     parser.add_argument("--supplement-news", action="store_true", help="isolated extra preceding-session collection; no scheduler change")
     parser.add_argument("--hierarchical-experiment", action="store_true", help="isolated summary-tree trial; no scheduler/default change")
+    parser.add_argument("--with-hierarchy", action="store_true", help="observation shadow: also run the slow hierarchical pipeline (about 60 min) after the one-shot")
     parser.add_argument("--observation-shadow", action="store_true", help="bounded free summaries; advisory intermediate/quality review; never publish")
     args = parser.parse_args()
     if args.observation_shadow:
@@ -623,7 +649,8 @@ def main() -> int:
             return 1
         try:
             status = execute(args.date, out, args.prepare_only, args.render_existing, args.topic_probe,
-                             args.supplement_news, args.hierarchical_experiment, args.observation_shadow)
+                             args.supplement_news, args.hierarchical_experiment, args.observation_shadow,
+                             args.observation_shadow and not args.with_hierarchy)
         finally:
             lock.seek(0)
             msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)

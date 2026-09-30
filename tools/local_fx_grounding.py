@@ -216,6 +216,38 @@ def country_errors(text, evidence):
     return []
 
 
+def number_errors(text, evidence, target):
+    """Deterministic: prices/decimals/3+ digit numbers and day-of-month in the copy
+    must appear in the supplied original evidence (quote/fact/context/dates).
+
+    Small integers (counts, hours) are ignored to avoid false positives; derived
+    figures are not computed, so a genuinely derived number is reported and left
+    to the flagged review rather than silently accepted.
+    """
+    def norm(value):
+        return unicodedata.normalize("NFKC", str(value)).replace(",", "")
+    corpus = norm(json.dumps([{k: x.get(k, "") for k in ["quote", "fact", "source_context", "published_at"]}
+                              for x in evidence], ensure_ascii=False) + json.dumps(date_facts(target), ensure_ascii=False))
+    known_text = re.findall(r"\d+(?:\.\d+)?", corpus)
+    known = {float(x) for x in known_text}
+    known_days = ({int(x) for x in re.findall(r"(\d{1,2})日", corpus)}
+                  | {int(x) for x in re.findall(r"\d{4}-\d{2}-(\d{2})", corpus)})
+    body = norm(text)
+    errors = []
+    for month, day in re.findall(r"(\d{1,2})月(\d{1,2})日", body):
+        if int(day) not in known_days:
+            errors.append(f"date {month}月{day}日 not found in original evidence")
+    plain = re.sub(r"\d{1,2}月\d{1,2}日", " ", body)
+    for token in re.findall(r"\d+(?:\.\d+)?", plain):
+        # A rounded/truncated form of an evidenced number ("1.13" for 1.1342) is not new information.
+        places = len(token.split(".")[1]) if "." in token else 0
+        rounded = any((k.startswith(token) and "." in token) or round(float(k), places) == float(token)
+                      for k in known_text if "." in k)
+        if ("." in token or len(token) >= 3) and float(token) not in known and not rounded:
+            errors.append(f"number {token} not found in original evidence")
+    return errors
+
+
 def copy_errors(copy, evidence, target, strict_references=True):
     allowed = {x["fact_id"]: x for x in evidence}
     errors = []
@@ -237,6 +269,7 @@ def copy_errors(copy, evidence, target, strict_references=True):
         linked = (list(evidence) if not strict_references
                   else [allowed[x] for x in ids])
         errors.extend(country_errors(text, linked))
+        errors.extend(number_errors(text, linked, target))
         if (re.search(r"下方(?:修正|改定)[^。]*予想を下回", text)
                 and not re.search(r"前回(?:値|分)|前月(?:値|分)|前期(?:値|分)|前値", text)):
             errors.append("below-forecast result described as a downward revision")
@@ -263,6 +296,10 @@ def copy_errors(copy, evidence, target, strict_references=True):
         if "观察" in text:
             errors.append("non-Japanese observation wording: replace 观察 with Japanese 観察")
     return errors
+
+
+# Observation shadow skips the advisory LLM quality/coverage reviews (time); compare with the Claude page by reading.
+SKIPPED_QUALITY = {"verdict": "SKIPPED", "reason": "observation shadow: advisory review omitted to save runtime"}
 
 
 def review_copy(api, out, label, copy, evidence, target, observational=False):
@@ -376,11 +413,17 @@ def author(api, out, label, purpose, evidence, target, length, overview=None, ob
                                  {**data, "rejected_draft": draft, "review": qc}, COPY), evidence)
         qc = review_copy(api, out, f"{label}-review-repair", draft, evidence, target, observational=observational)
     news.save(out / "stages" / f"{label}-grounded-review.json", {"draft": draft, "review": qc})
-    if qc["verdict"] != "PASS":
+    if qc["verdict"] != "PASS" and not observational:
         raise ValueError(f"{label}: original-context review failed after one repair: {qc['reason']}")
     body = "\n\n".join(s["text"] for s in draft["statements"])
     if re.search(api.FORBIDDEN, draft["title"] + body, re.I):
-        raise ValueError("internal status leaked into copy")
+        if not observational:
+            raise ValueError("internal status leaked into copy")
+        qc = {"verdict": "FAIL", "reason": "; ".join(x for x in [qc.get("reason") if qc["verdict"] != "PASS" else "",
+              "internal status leaked into copy"] if x)}
+    # Observation shadow is never published: a section that fails source review
+    # is kept, flagged (review.verdict FAIL, visible marker at assembly) and the
+    # remaining sections still run, so a whole report exists to compare.
     return {"title": draft["title"], "body": body, "statements": draft["statements"],
             "claim_ids": list(dict.fromkeys(x for s in draft["statements"]
                                             for x in s.get("fact_ids", [])
@@ -388,7 +431,7 @@ def author(api, out, label, purpose, evidence, target, length, overview=None, ob
             "review": qc}
 
 
-def extract(api, sources, target, out):
+def extract(api, sources, target, out, observational=False):
     facts = []
     for source in sources:
         extracted = []
@@ -422,7 +465,11 @@ def extract(api, sources, target, out):
                     news.save(out / "stages" / f'source-{source["source_id"]:02}-part-{part:02}-rejected-quote.json', claim)
                     continue
                 chunk_facts.append(bound)
-            if chunk_facts:
+            if chunk_facts and observational:
+                # Quotes are already verified verbatim by bind_claim and dates/scope are
+                # checked again by the final original-context review; skip the LLM re-check.
+                extracted.extend({**x, "claim_gate_accepted": True} for x in chunk_facts)
+            elif chunk_facts:
                 gate_schema = news.schema({"accepted_fact_ids": {"type": "array", "items": news.STRING, "maxItems": 6},
                     "rejections": {"type": "array", "items": news.schema({"fact_id": news.STRING, "reason": news.STRING})}})
                 checked = api.infer_cached(out, f'source-{source["source_id"]:02}-part-{part:02}-claim-gate-review',
@@ -682,6 +729,9 @@ def improve_editorial(api, out, key, purpose, evidence, peers, target, length, o
     extra = {"overview": overview} if overview else {}
     draft = author(api, out, f"grounded-editorial-{key}", purpose, evidence, target, length,
                    observational=observational, **extra)
+    if observational:
+        draft["quality_review"] = SKIPPED_QUALITY
+        return draft
     quality = review_editorial_quality(api, out, key, draft, evidence, peers, target, **extra)
     if quality["verdict"] == "FAIL" and not observational:
         news.save(out / "stages" / f"editorial-quality-{key}-first-rejected.json", {"draft": draft, "quality": quality})
@@ -705,7 +755,13 @@ def improve_editorial(api, out, key, purpose, evidence, peers, target, length, o
     return draft
 
 
-def material_coverage(api, out, material, topics, editorial, target):
+def material_coverage(api, out, material, topics, editorial, target, observational=False):
+    if observational:
+        used = {x for t in topics for x in t["claim_ids"]} | {x for v in editorial.values() for x in v["claim_ids"]}
+        result = {**SKIPPED_QUALITY, "available_facts": len(material), "used_facts": len(used),
+                  "unused_fact_ids": [x["fact_id"] for x in material if x["fact_id"] not in used]}
+        news.save(out / "material-coverage.json", result)
+        return result
     catalog = [{"fact_id": x["fact_id"], "fact": x["fact"], "event_scope": x.get("event_scope", "current")}
                for x in material]
     used = {x for t in topics for x in t["claim_ids"]}
@@ -751,15 +807,37 @@ def news_candidates(api, out, prior, target, observational=False):
     raise ValueError("news catalog did not converge within input budget")
 
 
-def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchical=False, observational=False):
+def run_oneshot(out, target, material, calendar, ranking):
+    """Observation shadow only: write the one-shot comparison report under out/oneshot first
+    (a few minutes). Any failure is recorded there and never affects the main run."""
+    import shutil
+    sub = out / "oneshot"
+    try:
+        import local_fx_oneshot as oneshot
+        sub.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(out / "policy.json", sub / "policy.json")
+        policy = json.loads((sub / "policy.json").read_text(encoding="utf-8"))
+        oneshot.generate(sub, target, material, calendar, ranking, policy)
+    except Exception as error:  # comparison output must not stop the main observation run
+        sub.mkdir(parents=True, exist_ok=True)
+        news.save(sub / "error.json", {"error": f"{type(error).__name__}: {error}",
+                                       "at": datetime.now().astimezone().isoformat()})
+
+
+def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchical=False, observational=False,
+                  oneshot_only=False):
     target = date.fromisoformat(calendar["date_jst"])
-    facts = extract(api, sources, target, out)
+    facts = extract(api, sources, target, out, observational)
     tree = None
     global_overview = None
     if hierarchical:
         import local_fx_hierarchy as hierarchy
         full_material = editorial_facts(calendar, ranking, facts, [])
         news.save(out / "shared-material.json", {"facts": full_material, "lifecycle": "evidence"})
+        if observational:
+            run_oneshot(out, target, full_material, calendar, ranking)
+            if oneshot_only:
+                return None
         tree = hierarchy.build(api, out, full_material, target, date_facts(target),
                                extractive=not observational, observational=observational)
         global_overview = hierarchy.overview(tree)
@@ -814,9 +892,19 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
                   "risk": "市場リスク", "points": "その他注目点"}
         roles = [(key, labels[key], length) for key, _, length in roles]
     editorial = {}
+    if observational:
+        # Short hero/headline reuse the summary's allocated evidence instead of
+        # three more LLM allocation stages each (about 3 minutes per role).
+        roles.sort(key=lambda r: r[0] != "summary")
+    summary_evidence = None
     for key, purpose, length in roles:
-        evidence = (hierarchy.allocate(api, out, key, material, target, date_facts(target), tree, purpose)
-                    if hierarchical else shared_role_evidence(api, out, key, material, target, topics))
+        if observational and key in {"hero", "headline"} and summary_evidence:
+            evidence = summary_evidence[:6]
+        else:
+            evidence = (hierarchy.allocate(api, out, key, material, target, date_facts(target), tree, purpose)
+                        if hierarchical else shared_role_evidence(api, out, key, material, target, topics))
+        if key == "summary":
+            summary_evidence = evidence
         if observational:
             pass  # Do not impose today's story or a mandatory causal pattern.
         elif key in {"hero", "headline"}:
@@ -830,6 +918,8 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
         news.save(out / "editorial-progress.json", editorial)
     # Recheck all fields against the FINAL peers, not merely preceding fields.
     for key, draft in editorial.items():
+        if observational:
+            continue
         evidence = [x for x in material if x["fact_id"] in draft["claim_ids"]]
         final_review = review_editorial_quality(api, out, key, draft, evidence, editorial, target,
                                               **({"overview": global_overview} if global_overview else {}))
@@ -838,7 +928,7 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
                                        "final_assessment": final_review}
         else:
             draft["quality_review"] = final_review
-    coverage = material_coverage(api, out, material, topics, editorial, target)
+    coverage = material_coverage(api, out, material, topics, editorial, target, observational)
     # Pair/risk classifications are small independent decisions over already
     # verified text, never a chance to rewrite prose or numbers.
     labels = api.infer_cached(out, "grounded-focus-label-plan",
@@ -848,9 +938,15 @@ def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchi
         news.schema({"focus_pair": news.STRING, "risk_level": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]}}))
     if labels["focus_pair"] not in [x["pair"] for x in ranking["rankings"][:5]]:
         raise ValueError("focus classification returned unranked pair")
-    result = {"topics": topics, **{k: editorial[k]["body"] for k in ["hero", "headline", "summary", "market", "handover"]},
-              **labels, "focus_body": editorial["focus"]["body"], "risk_body": editorial["risk"]["body"],
-              "points": [{"title": f"焦点{i+1}", "body": x["text"]} for i, x in enumerate(editorial["points"]["statements"])],
+    def marked(draft, text):
+        # Observation only: make a source-review failure visible to the reader of the shadow page.
+        return f"【根拠照合未通過】{text}" if observational and draft["review"]["verdict"] != "PASS" else text
+    topics = [{**t, "title": marked(t, t["title"])} for t in topics]
+    result = {"topics": topics, **{k: marked(editorial[k], editorial[k]["body"]) for k in ["hero", "headline", "summary", "market", "handover"]},
+              **labels, "focus_body": marked(editorial["focus"], editorial["focus"]["body"]),
+              "risk_body": marked(editorial["risk"], editorial["risk"]["body"]),
+              "points": [{"title": f"焦点{i+1}", "body": marked(editorial["points"], x["text"])}
+                         for i, x in enumerate(editorial["points"]["statements"])],
               "editorial_reviews": {k: x["review"] for k, x in editorial.items()}, "grounded_editorial": editorial,
               "editorial_quality_reviews": {k: x["quality_review"] for k, x in editorial.items()}, "material_coverage": coverage}
     news.save(out / "sections.json", result)

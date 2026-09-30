@@ -2,6 +2,10 @@
 
 更新: 2026-09-29。lifecycle: keep（現行設定の正本として保持、廃止時は記録後に退避）。
 
+## 追加: 一括版の並走（10/1 07時から、Owner指示A）
+
+既存cron（引数変更なし）の観測版が、事実抽出とカレンダー・ランキング取得の直後、階層要約の前に、一括版(`tools/local_fx_oneshot.py`)を先に実行する。成果物は`shadow-output/<日付>-local-daily/oneshot/`（`report.html`, `sections.json`, `oneshot-checks.json`）。LLM 4〜5回・約7分。失敗しても`oneshot/error.json`に記録するだけで、後続の階層版は止まらない。【10/1変更】cron引数は不変のまま、`--observation-shadow`は一括版のみ実行して終了（約10分）。階層版(約60分)を併走したい時だけ`--with-hierarchy`を付ける。一括版の意味照合は失敗しても`semantic_check_error`に記録してreport.htmlを出す（上限30000トークン）。以下は変更前の記述: 階層版は従来どおり約60分で、合計約70分（timeout 5400秒に収まる。無出力上限240秒は1呼び出しが約100秒のため超えない）。公開なし・Claude版との比較用。戻す場合は`grounding.make_sections`の`run_oneshot`呼び出し1行を外す。
+
 ## 現行: 数日観測版（9/30 07時から）
 
 Ownerの「縛りすぎ/明日自動/数日みて微調整」により、GALLERIA既存平日07:00 cronへ`--observation-shadow`を追加。次回`2026-09-30 07:00:00 +09:00`を実CLIで読み戻し、cron/triggersともenabled。手動実行なし、生成品質は未検証。90オフライン回帰PASS。
