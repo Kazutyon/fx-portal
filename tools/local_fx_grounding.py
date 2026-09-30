@@ -188,7 +188,7 @@ CLAIMS = news.schema({"claims": {"type": "array", "minItems": 0, "maxItems": 6,
 
 COPY = news.schema({"title": news.STRING, "statements": {"type": "array", "minItems": 1, "maxItems": 5,
     "items": news.schema({"text": news.STRING,
-        "fact_ids": {"type": "array", "items": news.STRING, "minItems": 1, "maxItems": 3},
+        "fact_ids": {"type": "array", "items": news.STRING, "minItems": 0, "maxItems": 3},
         "mode": {"type": "string", "enum": ["fact", "reported_forecast", "conditional", "attributed_outlook"]}})}})
 
 
@@ -216,7 +216,7 @@ def country_errors(text, evidence):
     return []
 
 
-def copy_errors(copy, evidence, target):
+def copy_errors(copy, evidence, target, strict_references=True):
     allowed = {x["fact_id"]: x for x in evidence}
     errors = []
     if not copy.get("statements"):
@@ -228,12 +228,14 @@ def copy_errors(copy, evidence, target):
             and not any(x.get("record_type") == "actual" and "利上げ" in x.get("fact", "") for x in evidence)):
         errors.append("headline presents rate-hike forecast without a forecast qualifier")
     for statement_no, statement in enumerate(copy["statements"], 1):
-        ids = statement["fact_ids"]
-        if not ids or any(x not in allowed for x in ids):
+        ids = statement.get("fact_ids", [])
+        invalid_references = not ids or any(x not in allowed for x in ids)
+        if strict_references and invalid_references:
             errors.append("invalid or absent fact reference")
             continue
         text = unicodedata.normalize("NFKC", statement["text"])
-        linked = [allowed[x] for x in ids]
+        linked = (list(evidence) if not strict_references
+                  else [allowed[x] for x in ids])
         errors.extend(country_errors(text, linked))
         if (re.search(r"下方(?:修正|改定)[^。]*予想を下回", text)
                 and not re.search(r"前回(?:値|分)|前月(?:値|分)|前期(?:値|分)|前値", text)):
@@ -263,14 +265,16 @@ def copy_errors(copy, evidence, target):
     return errors
 
 
-def review_copy(api, out, label, copy, evidence, target):
-    errors = copy_errors(copy, evidence, target)
+def review_copy(api, out, label, copy, evidence, target, observational=False):
+    errors = copy_errors(copy, evidence, target, strict_references=not observational)
     if "editorial-headline" in label and sum(len(x["text"]) for x in copy["statements"]) > 60:
         errors.append("headline exceeds the compact one-line card budget (60 characters)")
     if any(x in errors for x in ["no source-linked statements", "invalid or absent fact reference"]):
         return {"verdict": "FAIL", "reason": "; ".join(errors)}
-    used = set(x for s in copy["statements"] for x in s["fact_ids"])
-    originals = [x for x in evidence if x["fact_id"] in used]
+    valid_ids = {x["fact_id"] for x in evidence}
+    used = set(x for s in copy["statements"] for x in s.get("fact_ids", []) if x in valid_ids)
+    originals = (list(evidence) if observational else
+                 [x for x in evidence if x["fact_id"] in used])
     review_draft = {"title": copy["title"], "statements": [
         {"text": s["text"], "fact_ids": s["fact_ids"]} for s in copy["statements"]]}
     observation_rule = (
@@ -278,11 +282,16 @@ def review_copy(api, out, label, copy, evidence, target):
         "例: 原文にFRB発言予定があれば『予定される発言後、ドルの反応が変わるか観察する』は観察項目であり実績/因果断定ではない。"
         "一方『発言で必ずドル高になる』『発言でドルが上昇した』には、その機序/実績の原文支持が必要。"
         "予定日時、対象通貨、背景の既発生事実、数値と、文中で断定する因果は必ず根拠を照合。"
-        "背景と予定を結ぶ文は両方のfact_idsを確認。観察質問の完全一致文がないことだけをFAIL理由にしない。")
+        "背景と予定を結ぶ文は両方のfact_idsを確認。観察質問の完全一致文がないことだけをFAIL理由にしない。"
+        + (" fact_idsは内部ヒントであり、空/不完全でもoriginal_evidence全体で本文を照合する。IDの不備だけでFAILにしない。"
+           if observational else ""))
     data = {"date_facts": date_facts(target), "original_evidence": originals, "draft": review_draft,
             "observation_vs_assertion_rule": observation_rule}
+    reference_basis = ("入力されたoriginal_evidence全体の原文quoteとsource_contextまで戻って確認。"
+                       if observational else
+                       "fact_idsの原文quoteとsource_contextまで戻って確認。")
     task = (observation_rule + "厳格な原資料照合だけ行う。見出しと各statementの日時・取引時間帯・通貨ペア・数字・予想/実績・因果を"
-            "fact_idsの原文quoteとsource_contextまで戻って確認。抜粋だけで日時を決めない。"
+            + reference_basis + "抜粋だけで日時を決めない。"
             "前日のNYと当日東京、先週の出来事を混同したらFAIL。利上げ予想を実施済みにしたらFAIL。"
             "本日JST07時前掲載のNY為替概況の『きょうのNY』は前営業日のNY取引。東京記事には適用しない。"
             "outlookのevent_date_basisは見方が記録された時点であり、将来イベントの実施日ではない。"
@@ -304,8 +313,10 @@ def review_copy(api, out, label, copy, evidence, target):
     # Review individual source-linked statements, never drop contexts to fit.
     verdicts = []
     for i, statement in enumerate(review_draft["statements"]):
-        refs = set(statement["fact_ids"])
-        one = {"date_facts": date_facts(target), "original_evidence": [x for x in originals if x["fact_id"] in refs],
+        refs = set(statement.get("fact_ids", [])) & valid_ids
+        statement_originals = (list(evidence) if observational else
+                               [x for x in originals if x["fact_id"] in refs])
+        one = {"date_facts": date_facts(target), "original_evidence": statement_originals,
                "draft": {"title": copy["title"], "statements": [statement]},
                "observation_vs_assertion_rule": observation_rule}
         verdicts.append(api.infer_cached(out, f"{label}-{i:02}", task, one, news.QC_SCHEMA))
@@ -349,20 +360,21 @@ def author(api, out, label, purpose, evidence, target, length, overview=None, ob
             "本文にfact ID・出典管理・内部状況・要確認・再確認を書かない。")
     if observational:
         task = (f"FX日報の{purpose}を書く。分量は{length}文字を目安に、内容は資料に応じて判断する。"
-                "titleは短い日本語見出し。statementsに本文と対応するfact_idsを付ける。"
-                "各statementの事実・価格・因果は、そのstatementのfact_idsのfact/quoteで支える。"
+                "titleは短い日本語見出し。statementsのfact_idsは内部整理用の任意ヒントで、空でもよい。"
+                "本文の事実・価格・因果は入力資料全体で支える。IDの付け方を品質条件にしない。"
                 "値動きや理由の根拠がなければ無理に書かず、ある材料だけで説明する。"
                 "入力の事実・日付・数値・市場・予想と実績を守る。予想下振れを下方修正と呼ばない。"
                 "分析は条件付きとし、資料にない事実/価格/実現済み結果は作らない。"
                 "内部処理や管理IDは本文に書かない。")
     draft = normalize_modes(api.infer_cached(out, f"{label}-write", task, data, COPY), evidence)
-    qc = review_copy(api, out, f"{label}-review", draft, evidence, target)
+    qc = review_copy(api, out, f"{label}-review", draft, evidence, target, observational=observational)
     if qc["verdict"] != "PASS":
-        repair_task = (task + " 根拠のない文や句は削除し、残す主張を対応するfact_idsだけから書き直す。"
-                       if observational else task + " 指摘された誤りだけ修正。")
+        repair_task = (task + (" 根拠のない文や句は削除し、残す主張を入力資料の事実だけから書き直す。"
+                              if observational else " 指摘された誤りだけ修正。")
+                       )
         draft = normalize_modes(api.infer_cached(out, f"{label}-repair", repair_task,
                                  {**data, "rejected_draft": draft, "review": qc}, COPY), evidence)
-        qc = review_copy(api, out, f"{label}-review-repair", draft, evidence, target)
+        qc = review_copy(api, out, f"{label}-review-repair", draft, evidence, target, observational=observational)
     news.save(out / "stages" / f"{label}-grounded-review.json", {"draft": draft, "review": qc})
     if qc["verdict"] != "PASS":
         raise ValueError(f"{label}: original-context review failed after one repair: {qc['reason']}")
@@ -370,7 +382,9 @@ def author(api, out, label, purpose, evidence, target, length, overview=None, ob
     if re.search(api.FORBIDDEN, draft["title"] + body, re.I):
         raise ValueError("internal status leaked into copy")
     return {"title": draft["title"], "body": body, "statements": draft["statements"],
-            "claim_ids": list(dict.fromkeys(x for s in draft["statements"] for x in s["fact_ids"])),
+            "claim_ids": list(dict.fromkeys(x for s in draft["statements"]
+                                            for x in s.get("fact_ids", [])
+                                            if x in {f["fact_id"] for f in evidence})),
             "review": qc}
 
 

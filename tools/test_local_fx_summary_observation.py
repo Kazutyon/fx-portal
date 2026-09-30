@@ -137,6 +137,16 @@ class ObservationTests(unittest.TestCase):
         self.assertIsNotNone(re.search(daily.FORBIDDEN, "この情報は再確認が必要です。"))
         self.assertIsNotNone(re.search(daily.FORBIDDEN, "指標は要確認。"))
 
+    def test_observation_fact_id_hints_never_fail_content_review_by_themselves(self):
+        evidence = [{"fact_id": "N1-6", "record_type": "actual",
+                     "fact": "住宅価格指数は予想を上回った。",
+                     "quote": "住宅価格指数は予想を上回った。"}]
+        for hint in [[], ["STALE-ID"]]:
+            copy = {"title": "住宅指標", "statements": [{
+                "text": "住宅価格指数は予想を上回った。", "fact_ids": hint, "mode": "fact"}]}
+            errors = grounding.copy_errors(copy, evidence, date(2026, 9, 30), strict_references=False)
+            self.assertNotIn("invalid or absent fact reference", errors)
+
 
 if __name__ == "__main__":
     unittest.main()
