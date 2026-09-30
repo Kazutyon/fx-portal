@@ -170,24 +170,33 @@ def infer(stage: str, task: str, data: object, output_schema: dict, out: Path) -
         "stream": False, "think": not small_structured_stage and not FORCE_THINK_OFF, "keep_alive": "10m",
         "options": {"num_ctx": 65536, "num_predict": 2048 if small_structured_stage else 6144, "temperature": 0.1},
     }
-    save(out / f"{stage}.request.json", body)
-    request = urllib.request.Request(
-        OLLAMA + "/api/chat", data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-    )
-    started = time.monotonic()
-    with urllib.request.urlopen(request, timeout=180) as response:
-        result = json.load(response)
-    save(out / f"{stage}.response.json", result)
-    info = {
-        "stage": stage, "model": result.get("model"), "input_bytes": input_bytes,
-        "requested_num_ctx": 65536, "prompt_tokens": result.get("prompt_eval_count"),
-        "output_tokens": result.get("eval_count"), "done_reason": result.get("done_reason"),
-        "elapsed_seconds": round(time.monotonic() - started, 2),
-    }
-    save(out / f"{stage}.metrics.json", info)
-    print(json.dumps(info, ensure_ascii=True), flush=True)
-    if result.get("model") != MODEL or not result.get("done") or result.get("done_reason") != "stop":
+    for attempt in range(2):
+        save(out / f"{stage}.request.json", body)
+        request = urllib.request.Request(
+            OLLAMA + "/api/chat", data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        started = time.monotonic()
+        with urllib.request.urlopen(request, timeout=180) as response:
+            result = json.load(response)
+        save(out / f"{stage}.response.json", result)
+        info = {
+            "stage": stage, "model": result.get("model"), "input_bytes": input_bytes,
+            "requested_num_ctx": 65536, "requested_num_predict": body["options"]["num_predict"],
+            "prompt_tokens": result.get("prompt_eval_count"),
+            "output_tokens": result.get("eval_count"), "done_reason": result.get("done_reason"),
+            "elapsed_seconds": round(time.monotonic() - started, 2),
+        }
+        save(out / f"{stage}.metrics.json", info)
+        print(json.dumps(info, ensure_ascii=True), flush=True)
+        if result.get("model") == MODEL and result.get("done") and result.get("done_reason") == "stop":
+            break
+        if (attempt == 0 and not small_structured_stage and result.get("model") == MODEL
+                and result.get("done") and result.get("done_reason") == "length"):
+            for suffix, value in [("request", body), ("response", result), ("metrics", info)]:
+                save(out / f"{stage}-output-limit-first.{suffix}.json", value)
+            body = {**body, "options": {**body["options"], "num_predict": 8192}}
+            continue
         raise ValueError(f"{stage}: wrong model or incomplete response")
     content = result.get("message", {}).get("content", "").strip()
     if not content or content == "NO_REPLY":

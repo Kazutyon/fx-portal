@@ -1,6 +1,7 @@
 """keep: observation-mode regression tests; no live model, network or cron run."""
 import tempfile
 import unittest
+import re
 from datetime import date
 from pathlib import Path
 from unittest.mock import patch
@@ -130,6 +131,11 @@ class ObservationTests(unittest.TestCase):
         wrong["statements"][0]["text"] = "景気指標は予想を下回った。"
         self.assertNotIn("below-forecast result described as a downward revision",
                          grounding.copy_errors(wrong, [fact], date(2026, 9, 30)))
+
+    def test_source_reported_reconfirmation_is_not_internal_review_status(self):
+        self.assertIsNone(re.search(daily.FORBIDDEN, "円の過小評価を米国とも再確認している。"))
+        self.assertIsNotNone(re.search(daily.FORBIDDEN, "この情報は再確認が必要です。"))
+        self.assertIsNotNone(re.search(daily.FORBIDDEN, "指標は要確認。"))
 
 
 if __name__ == "__main__":

@@ -55,6 +55,34 @@ class PilotRegressionTests(unittest.TestCase):
                 self.assertEqual(request["options"]["num_predict"], 6144)
                 self.assertEqual(request["think"], not think_off)
 
+    def test_writer_length_retries_once_with_same_model_thinking_and_preserves_first(self):
+        first = self.result('{"verdict":', done_reason="length")
+        second = self.result('{"verdict":"PASS","reason":"supported"}')
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder)
+            responses = [io.BytesIO(json.dumps(value).encode()) for value in [first, second]]
+            with patch.object(pilot.urllib.request, "urlopen", side_effect=responses) as urlopen:
+                value = pilot.infer("topic-write", "test", {}, pilot.QC_SCHEMA, out)
+            self.assertEqual(value["verdict"], "PASS")
+            self.assertEqual(urlopen.call_count, 2)
+            first_request = json.loads((out / "topic-write-output-limit-first.request.json").read_text(encoding="utf-8"))
+            second_request = json.loads((out / "topic-write.request.json").read_text(encoding="utf-8"))
+            self.assertEqual(first_request["options"]["num_predict"], 6144)
+            self.assertEqual(second_request["options"]["num_predict"], 8192)
+            self.assertEqual(first_request["messages"], second_request["messages"])
+            self.assertEqual(first_request["model"], second_request["model"])
+            self.assertTrue(second_request["think"])
+            self.assertTrue((out / "topic-write-output-limit-first.response.json").exists())
+
+    def test_writer_second_length_still_fails_closed(self):
+        truncated = self.result('{"verdict":', done_reason="length")
+        with tempfile.TemporaryDirectory() as folder:
+            responses = [io.BytesIO(json.dumps(truncated).encode()) for _ in range(2)]
+            with patch.object(pilot.urllib.request, "urlopen", side_effect=responses) as urlopen:
+                with self.assertRaisesRegex(ValueError, "incomplete response"):
+                    pilot.infer("topic-write", "test", {}, pilot.QC_SCHEMA, Path(folder))
+            self.assertEqual(urlopen.call_count, 2)
+
     def test_visible_publication_time_controls_cutoff(self):
         page = '''<script type="application/ld+json">{
         "@type":"NewsArticle","headline":"test", "datePublished":"2026-09-29T06:55:00+09:00"

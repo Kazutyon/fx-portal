@@ -1,5 +1,11 @@
 # LOG
 
+## 2026-09-30 手動シャドー再実行 / Codex（FAILED）
+
+- Owner「もう一度今日のシャドー」指示。07時保存のsource-bundle/policy/KissFX/rankingを別evidence runへ複写、同Qwen64k/通常thinkingで08:59開始。元07時runは不変更。実行が約54分かかりOwnerが長すぎると指摘。追加推論は停止。
+- 09:23出典内の「再確認」を内部注記regexが誤検知→限定修正。09:27指標writeが6144出力上限で未完→同一モデル/入力で一度だけ8192に広げる有界再試行を実装。96オフライン回帰PASS。各失敗/status-historyは保持。
+- 09:54最終FAILED。ニュース5件の原文照合PASS、指標段落への全体要約混入なし。全体サマリーで執筆入力N1-9のJOLT数値を引用しながらstatementのfact_idsに付けず、修正後も原資料QC FAIL。report.htmlなし、validation/comparisonなし、publish_ready=false。本番/公開/モデル/cron/他PC変更なし。BUG-016へ引継ぎ。
+
 ## 2026-09-30 07時観測版の根拠境界修正 / Codex
 
 - 07:00起動・07:27 FAILED。2本目の指標記事へ別ソース由来のFRB/価格/因果が全体要約から混入し、原文QCが初稿/一度の修正をFAIL。report.htmlなし、公開なし。初稿の「予想下振れ→下方修正」も自己QCが見逃した。BUG-015に原因/再発条件を保存。
