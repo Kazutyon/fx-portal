@@ -1,0 +1,690 @@
+{
+  "date": "2026-10-01",
+  "generated_at_jst": "2026-10-01T08:46:55+09:00",
+  "source_count": 3,
+  "event_count": 45,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "02:30",
+      "country": "USD",
+      "name": "FOMC Member Barkin Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:25",
+      "country": "USD",
+      "name": "FOMC Member Cook Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:30",
+      "country": "USD",
+      "name": "President Trump Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:10",
+      "country": "USD",
+      "name": "FOMC Member Goolsbee Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Building Consents m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-4.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "07:00",
+      "country": "USD",
+      "name": "FOMC Member Kashkari Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "CNY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "BOJ Summary of Opinions",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Tankan Manufacturing Index",
+      "importance": "low",
+      "forecast": "25",
+      "previous": "22",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Tankan Non-Manufacturing Index",
+      "importance": "low",
+      "forecast": "36",
+      "previous": "37",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "JPY",
+      "name": "Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "54.1",
+      "previous": "54.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:30",
+      "country": "AUD",
+      "name": "Goods Trade Balance",
+      "importance": "low",
+      "forecast": "2.00B",
+      "previous": "1.92B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:30",
+      "country": "AUD",
+      "name": "RBA Financial Stability Review",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Nationwide HPI m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:30",
+      "country": "AUD",
+      "name": "Commodity Prices y/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "15.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:30",
+      "country": "CHF",
+      "name": "CPI m/m",
+      "importance": "medium",
+      "forecast": "0.0%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:30",
+      "country": "CHF",
+      "name": "Retail Sales y/y",
+      "importance": "low",
+      "forecast": "2.1%",
+      "previous": "2.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:15",
+      "country": "EUR",
+      "name": "Spanish Manufacturing PMI",
+      "importance": "low",
+      "forecast": "50.2",
+      "previous": "49.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:30",
+      "country": "CHF",
+      "name": "Manufacturing PMI",
+      "importance": "low",
+      "forecast": "56.3",
+      "previous": "57.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "Italian Manufacturing PMI",
+      "importance": "low",
+      "forecast": "50.1",
+      "previous": "49.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:50",
+      "country": "EUR",
+      "name": "French Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "50.3",
+      "previous": "50.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:55",
+      "country": "EUR",
+      "name": "German Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "53.8",
+      "previous": "53.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "52.7",
+      "previous": "52.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Italian Monthly Unemployment Rate",
+      "importance": "low",
+      "forecast": "5.8%",
+      "previous": "5.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "GBP",
+      "name": "BOE Gov Bailey Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "52.0",
+      "previous": "52.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "6.4%",
+      "previous": "6.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:03",
+      "country": "EUR",
+      "name": "Spanish 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.96|1.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:18",
+      "country": "EUR",
+      "name": "French 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "4.23|2.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:30",
+      "country": "USD",
+      "name": "Challenger Job Cuts y/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-38.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:35",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:00",
+      "country": "GBP",
+      "name": "MPC Member Mann Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Unemployment Claims",
+      "importance": "medium",
+      "forecast": "201K",
+      "previous": "197K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:05",
+      "country": "USD",
+      "name": "FOMC Member Barkin Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:05",
+      "country": "USD",
+      "name": "FOMC Member Collins Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:05",
+      "country": "USD",
+      "name": "FOMC Member Schmid Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Manufacturing PMI",
+      "importance": "low",
+      "forecast": null,
+      "previous": "53.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:45",
+      "country": "USD",
+      "name": "Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "56.9",
+      "previous": "57.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Construction Spending m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "-0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "FOMC Member Waller Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "ISM Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "54.8",
+      "previous": "54.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "ISM Manufacturing Prices",
+      "importance": "low",
+      "forecast": "72.9",
+      "previous": "71.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:15",
+      "country": "USD",
+      "name": "Omdia Total Vehicle Sales",
+      "importance": "low",
+      "forecast": "16.3M",
+      "previous": "16.8M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Natural Gas Storage",
+      "importance": "low",
+      "forecast": "63B",
+      "previous": "53B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 02:30 USD FOMC Member Barkin Speaks",
+    "single source: 04:25 USD FOMC Member Cook Speaks",
+    "single source: 04:30 USD President Trump Speaks",
+    "single source: 06:10 USD FOMC Member Goolsbee Speaks",
+    "single source: 06:45 NZD Building Consents m/m",
+    "single source: 07:00 USD FOMC Member Kashkari Speaks",
+    "single source: 08:01 CNY Bank Holiday",
+    "single source: 08:50 JPY BOJ Summary of Opinions",
+    "single source: 08:50 JPY Tankan Manufacturing Index",
+    "single source: 08:50 JPY Tankan Non-Manufacturing Index",
+    "single source: 09:30 JPY Final Manufacturing PMI",
+    "single source: 10:30 AUD Goods Trade Balance",
+    "single source: 10:30 AUD RBA Financial Stability Review",
+    "single source: 15:00 GBP Nationwide HPI m/m",
+    "single source: 15:30 AUD Commodity Prices y/y",
+    "single source: 15:30 CHF CPI m/m",
+    "single source: 15:30 CHF Retail Sales y/y",
+    "single source: 16:15 EUR Spanish Manufacturing PMI",
+    "single source: 16:30 CHF Manufacturing PMI",
+    "single source: 16:45 EUR Italian Manufacturing PMI",
+    "single source: 16:50 EUR French Final Manufacturing PMI",
+    "single source: 16:55 EUR German Final Manufacturing PMI",
+    "single source: 17:00 EUR Final Manufacturing PMI",
+    "single source: 17:00 EUR Italian Monthly Unemployment Rate",
+    "single source: 17:00 GBP BOE Gov Bailey Speaks",
+    "single source: 17:30 GBP Final Manufacturing PMI",
+    "single source: 18:00 EUR Unemployment Rate",
+    "single source: 18:03 EUR Spanish 10-y Bond Auction",
+    "single source: 18:18 EUR French 10-y Bond Auction",
+    "single source: 18:30 USD Challenger Job Cuts y/y",
+    "single source: 19:35 EUR German Buba President Nagel Speaks",
+    "single source: 21:00 GBP MPC Member Mann Speaks",
+    "single source: 21:30 USD Unemployment Claims",
+    "single source: 22:05 USD FOMC Member Barkin Speaks",
+    "single source: 22:05 USD FOMC Member Collins Speaks",
+    "single source: 22:05 USD FOMC Member Schmid Speaks",
+    "single source: 22:30 CAD Manufacturing PMI",
+    "single source: 22:30 EUR ECB President Lagarde Speaks",
+    "single source: 22:45 USD Final Manufacturing PMI",
+    "single source: 23:00 USD Construction Spending m/m",
+    "single source: 23:00 USD FOMC Member Waller Speaks",
+    "single source: 23:00 USD ISM Manufacturing PMI",
+    "single source: 23:00 USD ISM Manufacturing Prices",
+    "single source: 23:15 USD Omdia Total Vehicle Sales",
+    "single source: 23:30 USD Natural Gas Storage",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
