@@ -119,12 +119,13 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                  "本日の見通しを書く。handoverは本日の主要予定を時刻順にアジア/欧州/NYで整理し、予想値と前回値を示し、"
                  "上振れ・下振れで何が変わるかを条件付きで220〜350字。focus_pairはranking_top5から1ペア、focus_bodyは選んだ理由と"
                  "観察条件200〜300字。risk_levelとrisk_bodyは本日最大のリスクと条件200〜300字。"
-                 "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を5〜10件。"
-                 "各国の政策・景況・物価・雇用の主要指標と要人発言を優先し、同じ指標の副項目や小さな指標は含めない。",
+                 "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を8〜12件。"
+                 "各国の政策・景況・物価・雇用の主要指標と、中央銀行総裁・要人発言を優先し、同じ指標の副項目や小さな指標は含めない。"
+                 "本文で取り上げる通貨ペア(例: ユーロドル、ドル円)に関わる予定を必ず含める。",
                  {**data, "main_driver": story["main_driver"]},
                  news.schema({"handover": S, "focus_pair": {"type": "string", "enum": pairs}, "focus_body": S,
                               "risk_level": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]}, "risk_body": S,
-                              "key_event_nos": {"type": "array", "minItems": 5, "maxItems": 10, "items": {"type": "integer"}}}))
+                              "key_event_nos": {"type": "array", "minItems": 8, "maxItems": 12, "items": {"type": "integer"}}}))
 
     sections = {"topics": topics["topics"], "hero": story["hero"], "headline": story["headline"],
                 "summary": story["summary"], "market": story["market"], "handover": today["handover"],
