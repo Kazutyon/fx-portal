@@ -80,9 +80,9 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     """Write sections.json/report.html/oneshot-checks.json into out (which must hold policy.json)."""
     started = datetime.now(daily.JST).isoformat()
 
-    events = [{"time": e["time_jst"], "country": e["country"], "name": e["name"].strip(),
+    events = [{"no": n, "time": e["time_jst"], "country": e["country"], "name": e["name"].strip(),
                "importance": e["importance"], "forecast": e["forecast"], "previous": e["previous"]}
-              for e in calendar["events"]]  # the feed marks most European releases "low"; never drop by importance
+              for n, e in enumerate(calendar["events"], 1)]  # the feed marks most European releases "low"; never drop by importance
     pairs = [r["pair"] for r in ranking["rankings"][:5]]
     data = {"date_facts": grounding.date_facts(target),
             "facts": compact(material),
@@ -118,10 +118,13 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     today = call(out, "oneshot-3-today", style +
                  "本日の見通しを書く。handoverは本日の主要予定を時刻順にアジア/欧州/NYで整理し、予想値と前回値を示し、"
                  "上振れ・下振れで何が変わるかを条件付きで220〜350字。focus_pairはranking_top5から1ペア、focus_bodyは選んだ理由と"
-                 "観察条件200〜300字。risk_levelとrisk_bodyは本日最大のリスクと条件200〜300字。",
+                 "観察条件200〜300字。risk_levelとrisk_bodyは本日最大のリスクと条件200〜300字。"
+                 "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を5〜10件。"
+                 "各国の政策・景況・物価・雇用の主要指標と要人発言を優先し、同じ指標の副項目や小さな指標は含めない。",
                  {**data, "main_driver": story["main_driver"]},
                  news.schema({"handover": S, "focus_pair": {"type": "string", "enum": pairs}, "focus_body": S,
-                              "risk_level": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]}, "risk_body": S}))
+                              "risk_level": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]}, "risk_body": S,
+                              "key_event_nos": {"type": "array", "minItems": 5, "maxItems": 10, "items": {"type": "integer"}}}))
 
     sections = {"topics": topics["topics"], "hero": story["hero"], "headline": story["headline"],
                 "summary": story["summary"], "market": story["market"], "handover": today["handover"],
@@ -198,7 +201,12 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     checks["after_repair"] = {**mechanical(texts_after), "chars": {k: len(v) for k, v in texts_after.items()}}
     checks["finished_at"] = datetime.now(daily.JST).isoformat()
     news.save(out / "oneshot-checks.json", checks)
-    daily.render(target, sections, calendar, ranking, out, allow_single_source=True)
+    # The feed's own importance grades are the only filter for "key events"; with a single source (Forex Factory
+    # refused) they miss e.g. the Tankan and ISM, so use the model's selection when it is valid.
+    picked = sorted({n for n in today.get("key_event_nos", []) if 1 <= n <= len(calendar["events"])})
+    chosen = [calendar["events"][n - 1] for n in picked]  # calendar order is already by time
+    shown = {**calendar, "key_events": chosen or calendar["key_events"]}
+    daily.render(target, sections, shown, ranking, out, allow_single_source=True)
     print(json.dumps({"run_dir": str(out), "status": "ONESHOT_COMPLETE_REVIEW_PENDING",
                       "semantic_issues": len(checks["semantic_issues"]), "repaired": checks.get("repaired_sections", []),
                       "after_repair": {k: v for k, v in checks["after_repair"].items() if k != "chars"}},
