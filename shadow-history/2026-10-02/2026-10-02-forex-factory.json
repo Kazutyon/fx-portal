@@ -1,0 +1,197 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-02",
+  "fetched_at": "2026-10-02T08:52:17+09:00",
+  "events": [
+    {
+      "time_jst": "00:30",
+      "country": "CHF",
+      "name": "SNB Chairman Schlegel Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "02:30",
+      "country": "USD",
+      "name": "FOMC Member Jefferson Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "04:00",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "04:05",
+      "country": "CAD",
+      "name": "Gov Council Member Rogers Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "04:30",
+      "country": "USD",
+      "name": "FOMC Member Cook Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:01",
+      "country": "CNY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:20",
+      "country": "USD",
+      "name": "FOMC Member Logan Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Tokyo Core CPI y/y",
+      "importance": "medium",
+      "forecast": "2.4%",
+      "previous": "1.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "2.4%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Monetary Base y/y",
+      "importance": "low",
+      "forecast": "-16.3%",
+      "previous": "-15.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "Spanish Unemployment Change",
+      "importance": "low",
+      "forecast": "17.6K",
+      "previous": "44.4K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Italian Retail Sales m/m",
+      "importance": "low",
+      "forecast": "-0.1%",
+      "previous": "-0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "CPI Flash Estimate y/y",
+      "importance": "medium",
+      "forecast": "3.7%",
+      "previous": "3.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Core CPI Flash Estimate y/y",
+      "importance": "medium",
+      "forecast": "2.5%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Average Hourly Earnings m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Non-Farm Employment Change",
+      "importance": "high",
+      "forecast": "89K",
+      "previous": "162K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Unemployment Rate",
+      "importance": "high",
+      "forecast": "4.1%",
+      "previous": "4.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "FOMC Member Logan Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Factory Orders m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

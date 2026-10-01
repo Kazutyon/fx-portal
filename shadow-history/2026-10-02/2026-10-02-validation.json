@@ -1,0 +1,299 @@
+{
+  "date": "2026-10-02",
+  "generated_at_jst": "2026-10-02T08:52:18+09:00",
+  "source_count": 3,
+  "event_count": 19,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:30",
+      "country": "CHF",
+      "name": "SNB Chairman Schlegel Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "02:30",
+      "country": "USD",
+      "name": "FOMC Member Jefferson Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:00",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:05",
+      "country": "CAD",
+      "name": "Gov Council Member Rogers Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:30",
+      "country": "USD",
+      "name": "FOMC Member Cook Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "CNY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:20",
+      "country": "USD",
+      "name": "FOMC Member Logan Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Tokyo Core CPI y/y",
+      "importance": "medium",
+      "forecast": "2.4%",
+      "previous": "1.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "2.4%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Monetary Base y/y",
+      "importance": "low",
+      "forecast": "-16.3%",
+      "previous": "-15.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "Spanish Unemployment Change",
+      "importance": "low",
+      "forecast": "17.6K",
+      "previous": "44.4K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Italian Retail Sales m/m",
+      "importance": "low",
+      "forecast": "-0.1%",
+      "previous": "-0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "CPI Flash Estimate y/y",
+      "importance": "medium",
+      "forecast": "3.7%",
+      "previous": "3.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Core CPI Flash Estimate y/y",
+      "importance": "medium",
+      "forecast": "2.5%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Average Hourly Earnings m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Non-Farm Employment Change",
+      "importance": "high",
+      "forecast": "89K",
+      "previous": "162K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Unemployment Rate",
+      "importance": "high",
+      "forecast": "4.1%",
+      "previous": "4.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "FOMC Member Logan Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Factory Orders m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:30 CHF SNB Chairman Schlegel Speaks",
+    "single source: 02:30 USD FOMC Member Jefferson Speaks",
+    "single source: 04:00 USD FOMC Member Bowman Speaks",
+    "single source: 04:05 CAD Gov Council Member Rogers Speaks",
+    "single source: 04:30 USD FOMC Member Cook Speaks",
+    "single source: 08:01 CNY Bank Holiday",
+    "single source: 08:20 USD FOMC Member Logan Speaks",
+    "single source: 08:30 JPY Tokyo Core CPI y/y",
+    "single source: 08:30 JPY Unemployment Rate",
+    "single source: 08:50 JPY Monetary Base y/y",
+    "single source: 16:00 EUR Spanish Unemployment Change",
+    "single source: 17:00 EUR Italian Retail Sales m/m",
+    "single source: 18:00 EUR CPI Flash Estimate y/y",
+    "single source: 18:00 EUR Core CPI Flash Estimate y/y",
+    "single source: 21:30 USD Average Hourly Earnings m/m",
+    "single source: 21:30 USD Non-Farm Employment Change",
+    "single source: 21:30 USD Unemployment Rate",
+    "single source: 23:00 USD FOMC Member Logan Speaks",
+    "single source: 23:00 USD Factory Orders m/m",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
