@@ -102,7 +102,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
              "『本日のNY市場』のように未実施の市場を実施済みとして書かない。"
              "利回り・金利・為替レートは、資料にある具体的な水準（例: 利回りが何%まで上昇したか）を必ず書く。"
              "原因や理由は資料に書かれている範囲だけを書き、資料にない因果を自分で作らない。"
-             "市場関係者の見方は『〜と指摘されている』のように出所を明示する。")
+             "市場関係者の見方は『〜と指摘されている』のように出所を明示する。"
+             "同じ指標や価格が日中に上下した場合は、高値・安値・その後の動きの前後関係が読み手に分かるように書き、時点の違う数値を並べて矛盾して見える書き方をしない。")
     story = call(out, "oneshot-1-story", style +
                  "前営業日の相場を振り返る導入部分を書く。main_driverは今日の相場の最重要材料を1〜2文で。"
                  "heroは冒頭200字前後、headlineは60字以内の一言まとめ、summaryは前営業日の市場全体の整理350〜550字、"
@@ -117,7 +118,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                                "points": {"type": "array", "minItems": 3, "maxItems": 3, "items": S}}))
     today = call(out, "oneshot-3-today", style +
                  "本日の見通しを書く。handoverは本日の主要予定を時刻順にアジア/欧州/NYで整理し、予想値と前回値を示し、"
-                 "上振れ・下振れで何が変わるかを条件付きで220〜350字。focus_pairはranking_top5から1ペア、focus_bodyは選んだ理由と"
+                 "本日最大の材料の指標は、予想値・前回値と、上振れ・下振れでドル円などがどう動くかの条件を必ず書く。"
+                 "220〜350字。focus_pairはranking_top5から1ペア、focus_bodyは選んだ理由と"
                  "観察条件200〜300字。risk_levelとrisk_bodyは本日最大のリスクと条件200〜300字。"
                  "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を8〜12件。"
                  "各国の政策・景況・物価・雇用の主要指標と、中央銀行総裁・要人発言を優先し、同じ指標の副項目や小さな指標は含めない。"
