@@ -480,6 +480,40 @@ class DailyTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "after one repair"):
                 grounding.author(daily, Path(folder), "topic", "test", [fact], date(2026, 9, 29), "10")
 
+    def test_observation_keeps_failed_section_flagged_instead_of_stopping(self):
+        import local_fx_grounding as grounding
+        fact = {"fact_id": "N4-0", "record_type": "actual"}
+        copy = {"title": "test", "statements": [{"text": "test", "fact_ids": ["N4-0"], "mode": "fact"}]}
+        values = [copy, {"verdict": "FAIL", "reason": "bad"}, copy, {"verdict": "FAIL", "reason": "still bad"}]
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=values):
+            draft = grounding.author(daily, Path(folder), "topic", "test", [fact], date(2026, 9, 29), "10", observational=True)
+        self.assertEqual(draft["review"]["verdict"], "FAIL")
+        self.assertEqual(draft["body"], "test")
+
+    def test_observation_flags_internal_wording_instead_of_stopping(self):
+        import local_fx_grounding as grounding
+        fact = {"fact_id": "N4-0", "record_type": "actual"}
+        copy = {"title": "test", "statements": [{"text": "再確認が必要", "fact_ids": ["N4-0"], "mode": "fact"}]}
+        values = [copy, {"verdict": "PASS", "reason": "ok"}]
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=values):
+            draft = grounding.author(daily, Path(folder), "topic", "test", [fact], date(2026, 9, 29), "10", observational=True)
+        self.assertEqual(draft["review"]["verdict"], "FAIL")
+        self.assertIn("internal status leaked", draft["review"]["reason"])
+
+    def test_number_check_flags_price_from_another_article_but_allows_rounding(self):
+        import local_fx_grounding as grounding
+        facts = [{"quote": "米・8月JOLT求人件数：707.9万件（予想：722.8万件）", "fact": "求人件数707.9万件",
+                  "source_context": {"article_opening": "9月29日のNY為替"}, "published_at": "2026-09-30T06:00:00+09:00"}]
+        target = date(2026, 9, 30)
+        bad = grounding.number_errors("ドル円は157.70円まで上昇。求人は707.9万件。", facts, target)
+        self.assertEqual(bad, ["number 157.70 not found in original evidence"])
+        self.assertEqual(grounding.number_errors("求人は707.9万件で、予想の722.8万件を下回った。3日続く。", facts, target), [])
+        self.assertEqual(grounding.number_errors("707.9万件、約708万件", facts, target), [])
+        self.assertEqual(grounding.number_errors("9月29日の指標。10月5日発表。", facts, target),
+                         ["date 10月5日 not found in original evidence"])
+        rate = [{"quote": "終値は1.1342ドル", "fact": "", "source_context": {}, "published_at": ""}]
+        self.assertEqual(grounding.number_errors("1.13ドル台前半", rate, target), [])
+
     def test_case_shiller_year_and_month_are_not_merged(self):
         self.assertEqual(daily.event_code("S&P/CS Composite-20 HPI y/y"), "case-shiller-yy")
         self.assertEqual(daily.event_code("S＆P/ケース・シラー住宅価格指数 [前年比]"), "case-shiller-yy")
@@ -541,6 +575,17 @@ class DailyTests(unittest.TestCase):
     def test_monday_does_not_fake_inherited_policy_refresh(self):
         with self.assertRaisesRegex(ValueError, "Monday"):
             daily.claude_sources.inherit_policy(date(2026, 10, 5), Path("unused"), lambda *args: self.fail("unexpected request"))
+
+    def test_monday_observation_inherits_policy_with_original_date_and_label(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder)
+            currencies = ["USD", "GBP", "JPY", "EUR", "AUD", "NZD", "CAD", "CHF"]
+            rows = ''.join(f'<tr><td>{c} bank</td><td>{c}</td><td><strong>1.25%</strong></td><td>x</td></tr>' for c in currencies)
+            page = '<h3>主要中銀 政策金利</h3><span>2026-09-28 現在</span><table>' + rows + '</table>'
+            daily.claude_sources.inherit_policy(date(2026, 10, 5), out, lambda *args: page, allow_stale_monday=True)
+            policy = daily.load(out / "policy.json")
+            self.assertEqual(policy["source_as_of_jst"], "2026-09-28")
+            self.assertIn("Monday observation only", policy["method"])
 
     def test_cache_is_invalidated_when_prompt_changes(self):
         with tempfile.TemporaryDirectory() as folder:

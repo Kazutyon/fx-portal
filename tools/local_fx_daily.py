@@ -467,8 +467,8 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
             f'<a href="{esc(r["source_url"])}" target="_blank" rel="noopener noreferrer">{FLAGS.get(r["currency"], "")} {esc(r["bank"])} {esc(r["rate"])}</a>'
             for r in policy["rates"]) + '</p>'
         report = report.replace(esc(sections["market"]), esc(sections["market"]) + policy_html)
-    if target.weekday() == 0:
-        # Never silently fake Monday's required rate/sentiment supplement.
+    if target.weekday() == 0 and not allow_single_source:
+        # Never silently fake Monday's required rate/sentiment supplement (observation reports are never publishable).
         raise ValueError("Monday official-rate/sentiment supplement is not yet implemented")
     (out / "report.html").write_text(report, encoding="utf-8")
     return report
@@ -522,7 +522,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
     try:
         if os.environ.get("COMPUTERNAME", "").upper() != "GALLERIA":
             raise ValueError("wrong host")
-        if mirror_enabled() and target.weekday() == 0:
+        if mirror_enabled() and target.weekday() == 0 and not observational:
             raise ValueError("Monday Claude rate/sentiment refresh remains unimplemented")
         input_dir = ROOT / "shadow-input" / target.isoformat()
         for name in ["source-bundle.json", "calendar.input.json", "policy.json"]:
@@ -538,7 +538,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         calendar = collect_calendar(target, out, allow_single_source=observational)
         policy_path = out / "policy.json"
         if not policy_path.exists() and mirror_enabled():
-            claude_sources.inherit_policy(target, out, snapshot)
+            claude_sources.inherit_policy(target, out, snapshot, allow_stale_monday=observational)
         if not policy_path.exists() or load(policy_path).get("date_jst") != target.isoformat():
             raise ValueError("dated official policy input is required before generation")
         ranking = json.loads(snapshot(out, "ranking", "https://auxen.jp/data/daytrade-ranking.json"))

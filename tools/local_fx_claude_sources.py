@@ -169,8 +169,8 @@ def collect(target: date, out, snapshot):
               "strict_0700_backtest": False, "lifecycle": "evidence"})
 
 
-def inherit_policy(target, out, snapshot):
-    if target.weekday() == 0:
+def inherit_policy(target, out, snapshot, allow_stale_monday=False):
+    if target.weekday() == 0 and not allow_stale_monday:
         raise ValueError("Monday Claude rate/sentiment refresh is not implemented; do not inherit as fresh")
     page = snapshot(out, "published-index-policy-only", "https://auxen.jp/")
     match = re.search(r"主要中銀\s*政策金利.*?<table\b[^>]*>(.*?)</table>", page, re.S)
@@ -189,7 +189,8 @@ def inherit_policy(target, out, snapshot):
     if len(rates) != 8 or len({x["currency"] for x in rates}) != 8 or not as_of:
         raise ValueError("policy inheritance needs eight unique rates and original as-of date")
     news.save(out / "policy.json", {"date_jst": target.isoformat(), "rates": rates,
-              "source_as_of_jst": as_of[1], "method": "weekday published-index inheritance, not fresh official verification",
+              "source_as_of_jst": as_of[1], "method": "weekday published-index inheritance, not fresh official verification"
+              + ("; Monday observation only, as-of date shown on the report" if target.weekday() == 0 else ""),
               "lifecycle": "evidence"})
 
 
