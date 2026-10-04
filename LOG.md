@@ -760,3 +760,8 @@
 - `economic_calendar_fred.py` を追加。release_id 50(雇用統計)・10(CPI)・46(PPI)・192(JOLTS)の発表日をFRED APIから取得し、`official: true`のイベントとして正規化する。FREDは発表時刻を返さないため、BLSの既知の固定慣行（雇用統計・CPI・PPI=08:30 ET、JOLTS=10:00 ET）をコード側でJSTへ変換。TDDで4テスト作成・全PASS、既存6テストと合わせて10/10 PASS。
 - ワークフローへFRED取得ステップと`--input`追加を反映し、workflow_dispatchで実機実行（run `32024581692`）。`source_count: 3`を確認し、対象日（8/17）はBLS対象発表なしのため`fred.json`は0件・エラーなしで正常終了。
 - 過去実データ（2026-08-07・雇用統計、08-12・CPI等）とFREDの発表日が完全一致することも取得元検証時に確認済み。次回以降の雇用統計・CPI・PPI・JOLTS該当日は高重要度確認率が改善する見込み。実際の改善確認は次回該当日の実行後に行う。
+
+## 2026-10-05 07時cronの旧パス修正 / Claude
+
+- 10/5 07:00のOpenClaw cron `886af487`（FX Portal shadow collect）が、フォルダ移動後に消えた旧パス`Z:\vscode\projects\FX\fx-portal`を指していたためENOENTで25ms失敗。日報は未生成（10/3・10/4は週末で対象外）。
+- `openclaw cron edit`で`--command-argv`と`--command-cwd`を`Z:/vscode/units/finance-investment/FX/fx-portal/...`へ変更。読み戻しで反映確認。`tools/*.py`に旧パス参照なし。今日分の手動再実行はしていない。次回10/6 07:00で確認。
