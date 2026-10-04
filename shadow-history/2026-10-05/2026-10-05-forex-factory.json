@@ -1,0 +1,167 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-05",
+  "fetched_at": "2026-10-05T08:07:18+09:00",
+  "events": [
+    {
+      "time_jst": "05:00",
+      "country": "AUD",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:01",
+      "country": "CNY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:00",
+      "country": "AUD",
+      "name": "MI Inflation Gauge m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:00",
+      "country": "NZD",
+      "name": "ANZ Commodity Prices m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "Consumer Confidence",
+      "importance": "low",
+      "forecast": "35.3",
+      "previous": "35.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:15",
+      "country": "EUR",
+      "name": "Spanish Services PMI",
+      "importance": "low",
+      "forecast": "57.1",
+      "previous": "57.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "Italian Services PMI",
+      "importance": "low",
+      "forecast": "54.6",
+      "previous": "55.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:50",
+      "country": "EUR",
+      "name": "French Final Services PMI",
+      "importance": "low",
+      "forecast": "51.4",
+      "previous": "51.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:55",
+      "country": "EUR",
+      "name": "German Final Services PMI",
+      "importance": "low",
+      "forecast": "52.9",
+      "previous": "52.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "53.0",
+      "previous": "53.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:30",
+      "country": "EUR",
+      "name": "Sentix Investor Confidence",
+      "importance": "low",
+      "forecast": "4.5",
+      "previous": "5.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "51.7",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "PPI m/m",
+      "importance": "low",
+      "forecast": "1.9%",
+      "previous": "1.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:45",
+      "country": "USD",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "58.7",
+      "previous": "58.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "ISM Services PMI",
+      "importance": "medium",
+      "forecast": "55.1",
+      "previous": "55.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

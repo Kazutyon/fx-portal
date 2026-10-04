@@ -1,0 +1,255 @@
+{
+  "date": "2026-10-05",
+  "generated_at_jst": "2026-10-05T08:07:20+09:00",
+  "source_count": 3,
+  "event_count": 16,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "05:00",
+      "country": "AUD",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "CNY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:00",
+      "country": "AUD",
+      "name": "MI Inflation Gauge m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:00",
+      "country": "NZD",
+      "name": "ANZ Commodity Prices m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "Consumer Confidence",
+      "importance": "low",
+      "forecast": "35.3",
+      "previous": "35.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:15",
+      "country": "EUR",
+      "name": "Spanish Services PMI",
+      "importance": "low",
+      "forecast": "57.1",
+      "previous": "57.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "Italian Services PMI",
+      "importance": "low",
+      "forecast": "54.6",
+      "previous": "55.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:50",
+      "country": "EUR",
+      "name": "French Final Services PMI",
+      "importance": "low",
+      "forecast": "51.4",
+      "previous": "51.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:55",
+      "country": "EUR",
+      "name": "German Final Services PMI",
+      "importance": "low",
+      "forecast": "52.9",
+      "previous": "52.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "53.0",
+      "previous": "53.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "EUR",
+      "name": "Sentix Investor Confidence",
+      "importance": "low",
+      "forecast": "4.5",
+      "previous": "5.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "51.7",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "PPI m/m",
+      "importance": "low",
+      "forecast": "1.9%",
+      "previous": "1.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:45",
+      "country": "USD",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "58.7",
+      "previous": "58.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "ISM Services PMI",
+      "importance": "medium",
+      "forecast": "55.1",
+      "previous": "55.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 05:00 AUD Bank Holiday",
+    "single source: 08:01 CNY Bank Holiday",
+    "single source: 09:00 AUD MI Inflation Gauge m/m",
+    "single source: 09:00 NZD ANZ Commodity Prices m/m",
+    "single source: 14:00 JPY Consumer Confidence",
+    "single source: 16:15 EUR Spanish Services PMI",
+    "single source: 16:45 EUR German Buba President Nagel Speaks",
+    "single source: 16:45 EUR Italian Services PMI",
+    "single source: 16:50 EUR French Final Services PMI",
+    "single source: 16:55 EUR German Final Services PMI",
+    "single source: 17:00 EUR Final Services PMI",
+    "single source: 17:30 EUR Sentix Investor Confidence",
+    "single source: 17:30 GBP Final Services PMI",
+    "single source: 18:00 EUR PPI m/m",
+    "single source: 22:45 USD Final Services PMI",
+    "single source: 23:00 USD ISM Services PMI",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
