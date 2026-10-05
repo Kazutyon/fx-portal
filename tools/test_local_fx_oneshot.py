@@ -26,6 +26,11 @@ def canned(out, label, task, data, schema):
 
 @unittest.skipUnless(RUN.exists(), "saved 2026-09-30 evidence run not present")
 class OneshotTests(unittest.TestCase):
+    def setUp(self):  # never call the real external reviewer from these tests
+        patcher = patch.object(oneshot.external_review, "review", return_value={"status": "disabled"})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
     def inputs(self):
         return (json.loads((RUN / "shared-material.json").read_text(encoding="utf-8"))["facts"],
                 json.loads((RUN / "calendar.json").read_text(encoding="utf-8")),

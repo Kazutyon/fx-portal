@@ -14,7 +14,7 @@
 
 ## 次の一手
 
--1. 10/6 07:00の実行を確認する: OpenClaw cron 886af487（FX Portal shadow collect）の`openclaw cron runs`がok、`shadow-output/2026-10-06-local-daily/status.json`が出ること。
+-1. 10/6 07:00の実行を確認する: OpenClaw cron 886af487（FX Portal shadow collect）の`openclaw cron runs`がok、`shadow-output/2026-10-06-local-daily/status.json`が出ること。FFが取れて2ソース照合になっているか（`calendar-source-error.json`が無いこと）、`oneshot/oneshot-checks.json`の`external_review`が`status: ok`か（Codex Luna助言レビュー、約45秒追加、記録のみ）。Qwen自身の検証は同種の取り違えを見逃すため、レビュー指摘を毎日蓄積して精度を評価する。
 
 0. ローカルQwen日報: 今日これ以上再実行しない。次回10/1朝07時のstatus/成果物を確認し、IDの付け方ではなくニュース本文の内容品質で評価する。9/30の2失敗runを保持、特定相場テーマを固定しない。FF単一ソース/全指標/休場/月曜/品質は未解決。FU-20260929-4AD963FE継続。
 

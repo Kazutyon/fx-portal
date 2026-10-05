@@ -20,6 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import local_fx_daily as daily  # noqa: E402
+import local_fx_external_review as external_review  # noqa: E402
 import local_fx_grounding as grounding  # noqa: E402
 import local_fx_news as news  # noqa: E402
 
@@ -202,6 +203,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     news.save(out / "sections.json", sections)
     texts_after = texts_of(sections)
     checks["after_repair"] = {**mechanical(texts_after), "chars": {k: len(v) for k, v in texts_after.items()}}
+    # Second opinion from a different model; advisory, recorded only (see local_fx_external_review.py).
+    checks["external_review"] = external_review.review(out, verify_data, texts_after)
     checks["finished_at"] = datetime.now(daily.JST).isoformat()
     news.save(out / "oneshot-checks.json", checks)
     # The feed's own importance grades are the only filter for "key events"; with a single source (Forex Factory

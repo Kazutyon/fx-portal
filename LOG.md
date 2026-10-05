@@ -770,3 +770,13 @@
 
 - 原因: `tools/local_fx_daily.py`のfetchがurllib既定UAでFFフィード（nfs.faireconomy.media）へ接続し403。識別名`AUXEN-FX-Portal-Shadow-Calendar/1.0`（economic_calendar_forexfactory.pyと同じ）では200。ブラウザ偽装なし、当該ホストのみ適用。
 - 検証: test_local_fx_daily.py 60件PASS、fetch()実取得で10,658バイト。FF規約の最終確認は未実施（CURRENT次の一手2）。明日10/6 07:00の自動実行でFFが取れ、2ソース照合になるか確認する。
+
+## 2026-10-05 日報の品質確認と別モデルレビューの組込み / Claude
+
+- 10/5手動実行の本文を原資料と全数照合: 数字はほぼ一致。誤りは「178.03円=前週末高値」(正は177.91円)、「ISM製造業」(正は非製造業)、「177.00円」(資料外の目安)など。Qwen自身の検証(`semantic_issues`)は「数字が何を指すか」「指標名の一致」を問わず、機械チェックも数値の存在しか見ないため素通りした。
+- 別ローカルモデルの試験(10/5分): gemma3:27bは誤検出多数で本当の誤り0件、qwen3:30bとdeepseek-r1:32bは指摘0件。ローカル別モデルは不合格。
+- Claude sonnet(`claude -p`、約6分半)は7件、Codex Luna(gpt-5.6-luna、約44秒)は5〜7件を検出。Owner承認(2026-10-05)でLunaを採用。
+- 実装: `tools/local_fx_external_review.py`新設、`local_fx_oneshot.py`の最終段で`checks["external_review"]`へ記録のみ(本文は書き換えない)。失敗・時間切れ・無効でも日報は止めない。スイッチは`claude_mirror_shadow.json`の`external_review`。codex.exeは最新のVS Code拡張から探す。記事本文がCodexへ送られる点はOwner承認済み。
+- テスト: 新6件+既存計111件PASS。実Codexで組込み関数を10/5分に実行しstatus ok(43秒、5件指摘)。実行ごとに指摘は多少変わる。
+- 訂正: 「Dispatcher設定のcodexパスが古くCodex票が起動できない」は誤り。Dispatcherは`worker-routing.psm1`で最新拡張を自動解決する(実測で新パスを返す)。設定変更なし。
+- 未確認: 10/6 07時の自動実行でFF取得とexternal_reviewが動くか。FF規約の最終確認。

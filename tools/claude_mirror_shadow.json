@@ -10,5 +10,6 @@
   "publish": false,
   "model_fallback": false,
   "verification": "2026-09-29: 90 offline regression tests PASS; existing GALLERIA cron connected to observation-shadow and next 2026-09-30 07:00 JST read back; no live generation in this setup. Default thinking unchanged, output-limit/completion/quality still unproven; intermediate content QC advisory only, final source checks and no publication retained. Observe several days before content tuning.",
+  "external_review": {"enabled": true, "model": "gpt-5.6-luna", "timeout_seconds": 300, "owner_approved_on": "2026-10-05", "scope": "advisory second opinion on the finished one-shot draft; article text is sent to Codex; recorded only, never rewrites the draft"},
   "monday_rate_sentiment_refresh": "not implemented; explicit failure rather than fabrication"
 }
