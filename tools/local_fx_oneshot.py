@@ -189,22 +189,25 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                     for i in review["issues"] + external_issues]
         problems += [{"sections": [k], "reason": "本文の数値が資料にない: " + ", ".join(v)}
                      for k, v in checks["number_date_errors"].items()]
-        fixed = call(out, "oneshot-5-repair",
-                     "指摘された記述だけを直す。資料にない数値水準・出来事・原因は削除するか、資料にある事実の表現に置き換える。"
-                     "条件付きの見通し(上振れ・下振れ)は、資料にある数値だけを使って残してよい。指摘のない部分は変えない。"
-                     "fixesには修正が必要なsectionだけを、修正後の全文で返す。",
-                     {**verify_data, "problems": problems, "current": {k: texts[k] for k in sorted(flagged)}},
-                     news.schema({"fixes": {"type": "array", "items": news.schema({
-                         "section": {"type": "string", "enum": sorted(flagged)}, "text": S})}}))
-        for fix in fixed["fixes"]:
-            k, text = fix["section"], fix["text"]
-            if k.startswith("topic"):
-                sections["topics"][int(k[5:])]["body"] = text
-            elif k.startswith("point"):
-                sections["points"][int(k[5:])]["body"] = text
-            else:
-                sections[{"focus": "focus_body", "risk": "risk_body"}.get(k, k)] = text
-        checks["repaired_sections"] = [f["section"] for f in fixed["fixes"]]
+        try:  # a failed or cut-off repair must not lose the written report (same rule as the verify step)
+            fixed = call(out, "oneshot-5-repair",
+                         "指摘された記述だけを直す。資料にない数値水準・出来事・原因は削除するか、資料にある事実の表現に置き換える。"
+                         "条件付きの見通し(上振れ・下振れ)は、資料にある数値だけを使って残してよい。指摘のない部分は変えない。"
+                         "fixesには修正が必要なsectionだけを、修正後の全文で返す。",
+                         {**verify_data, "problems": problems, "current": {k: texts[k] for k in sorted(flagged)}},
+                         news.schema({"fixes": {"type": "array", "items": news.schema({
+                             "section": {"type": "string", "enum": sorted(flagged)}, "text": S})}}), 30000)  # thinking alone used 12000 tokens on 2026-10-06
+            for fix in fixed["fixes"]:
+                k, text = fix["section"], fix["text"]
+                if k.startswith("topic"):
+                    sections["topics"][int(k[5:])]["body"] = text
+                elif k.startswith("point"):
+                    sections["points"][int(k[5:])]["body"] = text
+                else:
+                    sections[{"focus": "focus_body", "risk": "risk_body"}.get(k, k)] = text
+            checks["repaired_sections"] = [f["section"] for f in fixed["fixes"]]
+        except Exception as error:
+            checks["repair_error"] = f"{type(error).__name__}: {error}"
     news.save(out / "sections.json", sections)
     texts_after = texts_of(sections)
     checks["after_repair"] = {**mechanical(texts_after), "chars": {k: len(v) for k, v in texts_after.items()}}

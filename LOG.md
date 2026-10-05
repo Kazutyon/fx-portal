@@ -781,3 +781,10 @@
 - 訂正: 「Dispatcher設定のcodexパスが古くCodex票が起動できない」は誤り。Dispatcherは`worker-routing.psm1`で最新拡張を自動解決する(実測で新パスを返す)。設定変更なし。
 - 未確認: 10/6 07時の自動実行でFF取得とexternal_reviewが動くか。FF規約の最終確認。
 - 同日追記(Owner「Lunaが指摘してからローカルLLMが修正するはず」): 当初は記録のみだったが、Lunaの指摘をQwenの修正段へ渡す形に変更。順序は Qwen下書き→Qwen自己検証→Luna照合(`external_review_before`、指摘は修正リストへ合流)→Qwen修正→修復した節がある時だけLunaで再確認(`external_review_after`、記録のみで再修正なし)。Luna不通・無効なら従来どおり。テスト新規1件を含む113件PASS。実機の全体通しは10/6 07時が初。
+
+## 2026-10-06 07時の自動実行が修正段の出力上限でFAILED→対策 / Claude
+
+- 結果: 10/6 07:00〜07:09、status FAILED（`ValueError: oneshot-5-repair: wrong model or incomplete response (length)`）、report.html未生成。cron最新runもerror(exit 1)。FF取得は成功（`calendar-source-error.json`なし）、Luna照合(`external_review_before`)も動き指摘4節を修正リストに合流させた。
+- 原因: 修正段の出力上限12,000トークンを、Qwenの考える部分(think 約2.2万字)だけで使い切り本文0文字で`done_reason=length`。修正対象が6節（Luna4+機械チェック2）と、Luna指摘の合流で従来より仕事量が増えていた。修正段だけが例外を握りつぶさず、日報全体を落とした（検証段は握りつぶす作りだった）。10/5の手動実行では修正対象4節で上限内に収まっていたため、組込み時のテストでは表に出なかった。
+- 対策: 修正段のnum_predictを30000へ、修正が失敗/打切りでも下書きのまま日報を出し`checks["repair_error"]`へ記録。回帰テスト新規1件、関連114件PASS。
+- 未実施: 10/6分の再実行（Owner判断待ち）。次の確認は10/7 07時の自動実行。

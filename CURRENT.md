@@ -5,7 +5,7 @@
 > 完了したタスクは → LOG.md に移して → このファイルから物理削除する。
 > **50 行を超えたら肥大化のサイン。即クリーンアップすること。**
 
-最終更新: 2026-10-05 / Claude（07時cronの旧パスを新パスへ修正。10/5朝は旧パスでENOENT失敗、日報未生成）
+最終更新: 2026-10-06 / Claude（10/6 07時は修正段が出力上限で失敗→修正済み、再実行は未実施）
 状態: active
 
 ## 現在の状態
@@ -14,7 +14,7 @@
 
 ## 次の一手
 
--1. 10/6 07:00の実行を確認する: OpenClaw cron 886af487（FX Portal shadow collect）の`openclaw cron runs`がok、`shadow-output/2026-10-06-local-daily/status.json`が出ること。FFが取れて2ソース照合になっているか（`calendar-source-error.json`が無いこと）、`oneshot/oneshot-checks.json`の`external_review_before`が`status: ok`か（Codex Lunaが下書きを照合→指摘をQwenの修正段へ渡す→修正後に`external_review_after`で再確認、各約45秒追加）。Qwen自身の検証は同種の取り違えを見逃すため、before/afterの指摘を毎日蓄積し、修正で直ったか・Qwenの修正が新しい誤りを入れていないかを評価する。
+-1. 10/6 07時の自動実行は`FAILED`（修正段`oneshot-5-repair`がQwenの考える部分だけで出力上限12000を使い切り、本文0文字・`length`、report.html未生成）。FF取得は成功(2ソース照合)、Luna照合も動いた。対策済み: 修正段の上限を30000へ、修正が失敗しても下書きで日報を残し`repair_error`を記録（114テストPASS）。次は10/7 07時の自動実行で、`status.json`が`ONESHOT_COMPLETE_REVIEW_PENDING`になり`external_review_after`が出るか確認。10/6分の再実行はOwner判断。
 
 0. ローカルQwen日報: 今日これ以上再実行しない。次回10/1朝07時のstatus/成果物を確認し、IDの付け方ではなくニュース本文の内容品質で評価する。9/30の2失敗runを保持、特定相場テーマを固定しない。FF単一ソース/全指標/休場/月曜/品質は未解決。FU-20260929-4AD963FE継続。
 
