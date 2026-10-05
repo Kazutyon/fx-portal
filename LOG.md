@@ -765,3 +765,8 @@
 
 - 10/5 07:00のOpenClaw cron `886af487`（FX Portal shadow collect）が、フォルダ移動後に消えた旧パス`Z:\vscode\projects\FX\fx-portal`を指していたためENOENTで25ms失敗。日報は未生成（10/3・10/4は週末で対象外）。
 - `openclaw cron edit`で`--command-argv`と`--command-cwd`を`Z:/vscode/units/finance-investment/FX/fx-portal/...`へ変更。読み戻しで反映確認。`tools/*.py`に旧パス参照なし。今日分の手動再実行はしていない。次回10/6 07:00で確認。
+
+## 2026-10-05 FF取得の403をUA指定で解消 / Claude
+
+- 原因: `tools/local_fx_daily.py`のfetchがurllib既定UAでFFフィード（nfs.faireconomy.media）へ接続し403。識別名`AUXEN-FX-Portal-Shadow-Calendar/1.0`（economic_calendar_forexfactory.pyと同じ）では200。ブラウザ偽装なし、当該ホストのみ適用。
+- 検証: test_local_fx_daily.py 60件PASS、fetch()実取得で10,658バイト。FF規約の最終確認は未実施（CURRENT次の一手2）。明日10/6 07:00の自動実行でFFが取れ、2ソース照合になるか確認する。

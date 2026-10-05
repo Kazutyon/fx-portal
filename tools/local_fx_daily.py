@@ -52,7 +52,10 @@ def fetch(url: str) -> str:
         raise ValueError("automatic acquisition is not approved; provide a dated local input snapshot (ECONOMIC-CALENDAR-SOURCE-AUDIT.md)")
     # Use urllib's transparent default client identification, not a custom agent
     # string rejected by RBA's public site. No browser impersonation or proxy.
-    request = urllib.request.Request(url)
+    # The FF feed rejects the default urllib agent with 403; use the project's
+    # honest identifying agent (same as economic_calendar_forexfactory.py) for that host only.
+    headers = {"User-Agent": "AUXEN-FX-Portal-Shadow-Calendar/1.0"} if urlparse(url).hostname == "nfs.faireconomy.media" else {}
+    request = urllib.request.Request(url, headers=headers)
     try:
         response = urllib.request.urlopen(request, timeout=25)
     except HTTPError as error:
