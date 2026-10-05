@@ -178,10 +178,15 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         checks["semantic_check_error"] = f"{type(error).__name__}: {error}"
     checks["semantic_issues"] = review["issues"]
     checks["before_repair"] = {"texts": texts}
+    # Second opinion from a different model (Codex Luna); its findings join the repair list below.
+    # Failure or disabled just means no extra findings (see local_fx_external_review.py).
+    checks["external_review_before"] = external_review.review(out, verify_data, texts)
+    external_issues = external_review.usable_issues(checks["external_review_before"], keys)
 
-    flagged = {k for i in review["issues"] for k in i["sections"]} | set(checks["number_date_errors"]) |         set(checks["internal_wording"]) | set(checks["meta_wording"])
+    flagged = {k for i in review["issues"] + external_issues for k in i["sections"]} | set(checks["number_date_errors"]) |         set(checks["internal_wording"]) | set(checks["meta_wording"])
     if flagged:
-        problems = [{"sections": i["sections"], "excerpt": i["excerpt"], "reason": i["reason"]} for i in review["issues"]]
+        problems = [{"sections": i["sections"], "excerpt": i["excerpt"], "reason": i["reason"]}
+                    for i in review["issues"] + external_issues]
         problems += [{"sections": [k], "reason": "本文の数値が資料にない: " + ", ".join(v)}
                      for k, v in checks["number_date_errors"].items()]
         fixed = call(out, "oneshot-5-repair",
@@ -203,8 +208,9 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     news.save(out / "sections.json", sections)
     texts_after = texts_of(sections)
     checks["after_repair"] = {**mechanical(texts_after), "chars": {k: len(v) for k, v in texts_after.items()}}
-    # Second opinion from a different model; advisory, recorded only (see local_fx_external_review.py).
-    checks["external_review"] = external_review.review(out, verify_data, texts_after)
+    # Re-check the repaired text with the same reviewer; recorded only, no further rewrite.
+    checks["external_review_after"] = (external_review.review(out, verify_data, texts_after)
+                                       if checks.get("repaired_sections") else {"status": "skipped", "reason": "nothing repaired"})
     checks["finished_at"] = datetime.now(daily.JST).isoformat()
     news.save(out / "oneshot-checks.json", checks)
     # The feed's own importance grades are the only filter for "key events"; with a single source (Forex Factory

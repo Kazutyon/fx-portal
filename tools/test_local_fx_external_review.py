@@ -66,6 +66,15 @@ class ExternalReviewTests(unittest.TestCase):
         result = ext.review(self.out, {}, {}, run=self.fake("[]"), config_path=self.cfg, extensions=self.root / "none")
         self.assertEqual(result["status"], "error")
 
+    def test_usable_issues_keeps_known_sections_only(self):
+        result = {"status": "ok", "issues": [
+            {"section": "focus", "excerpt": "a", "kind": "取り違え", "reason": "r"},
+            {"section": "nope", "excerpt": "b", "kind": "数値", "reason": "r"},
+            {"section": "risk", "excerpt": "", "kind": "数値", "reason": "r"}]}
+        got = ext.usable_issues(result, ["focus", "risk"])
+        self.assertEqual([i["sections"] for i in got], [["focus"]])
+        self.assertEqual(ext.usable_issues({"status": "error"}, ["focus"]), [])
+
 
 if __name__ == "__main__":
     unittest.main()

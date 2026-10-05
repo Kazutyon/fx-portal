@@ -52,6 +52,34 @@ class OneshotTests(unittest.TestCase):
             self.assertTrue((out / "report.html").exists())
             self.assertFalse(checks["publish_ready"])
 
+    def test_external_reviewer_findings_go_to_the_repair_step(self):
+        material, calendar, ranking = self.inputs()
+        seen = {}
+
+        def calls(out, label, task, data, schema, *rest):
+            if label.endswith("repair"):
+                seen["problems"] = data["problems"]
+                return {"fixes": [{"section": "focus", "text": "直した注目。"}]}
+            return canned(out, label, task, data, schema)
+
+        reviews = []
+
+        def reviewer(out, data, texts):
+            reviews.append(dict(texts))
+            return {"status": "ok", "issues": [{"section": "focus", "excerpt": "注目。", "kind": "取り違え", "reason": "指標名が違う"}]}
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls), patch.object(
+                oneshot.external_review, "review", side_effect=reviewer):
+            out = Path(folder)
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            checks = oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking,
+                                      json.loads((out / "policy.json").read_text(encoding="utf-8")))
+        self.assertTrue(any("指標名が違う" in p["reason"] and p["sections"] == ["focus"] for p in seen["problems"]))
+        self.assertEqual(checks["repaired_sections"], ["focus"])
+        self.assertEqual(reviews[0]["focus"], "注目。")      # first review sees the draft
+        self.assertEqual(reviews[1]["focus"], "直した注目。")  # second review sees the repaired text
+        self.assertIn("external_review_after", checks)
+
     def test_key_events_follow_model_selection_in_time_order_and_ignore_invalid_numbers(self):
         material, calendar, ranking = self.inputs()
         first, second = calendar["events"][0], calendar["events"][1]

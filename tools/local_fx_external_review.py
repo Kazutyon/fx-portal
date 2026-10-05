@@ -4,8 +4,9 @@ Why: the local Qwen writer and its own verifier share blind spots (2026-10-05: i
 "前週末高値" mix-ups and 製造業/非製造業). Trial that day: Luna found them in ~44s, other local
 models found none. Owner approved the trial and this wiring on 2026-10-05.
 
-Advisory only: the result is recorded in oneshot-checks.json, never rewrites the draft, and any
-failure (missing CLI, timeout, bad JSON, disabled) is recorded without stopping the run.
+The findings are recorded in oneshot-checks.json and handed to the local model's repair step
+(the reviewer itself never rewrites text). Any failure (missing CLI, timeout, bad JSON, disabled)
+is recorded and means no extra findings; it never stops the run.
 Source article text is sent to the reviewer, so the switch lives in claude_mirror_shadow.json
 ("external_review.enabled") and defaults to off when the key is absent.
 """
@@ -55,6 +56,19 @@ def parse_issues(text: str) -> list:
     if not isinstance(issues, list) or not all(isinstance(x, dict) for x in issues):
         raise ValueError("reviewer output is not a list of objects")
     return issues
+
+
+def usable_issues(result: dict, keys: list) -> list:
+    """Reviewer findings in the repair-step shape, limited to known sections."""
+    if result.get("status") != "ok":
+        return []
+    usable = []
+    for item in result.get("issues", []):
+        section = item.get("section")
+        if section in keys and item.get("excerpt") and item.get("reason"):
+            usable.append({"sections": [section], "excerpt": str(item["excerpt"]),
+                           "reason": f"別モデルの指摘({item.get('kind', 'その他')}): {item['reason']}"})
+    return usable
 
 
 def review(out: Path, verify_data: dict, texts: dict, run=subprocess.run, config_path: Path = CONFIG,

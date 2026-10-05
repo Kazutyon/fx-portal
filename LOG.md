@@ -776,7 +776,8 @@
 - 10/5手動実行の本文を原資料と全数照合: 数字はほぼ一致。誤りは「178.03円=前週末高値」(正は177.91円)、「ISM製造業」(正は非製造業)、「177.00円」(資料外の目安)など。Qwen自身の検証(`semantic_issues`)は「数字が何を指すか」「指標名の一致」を問わず、機械チェックも数値の存在しか見ないため素通りした。
 - 別ローカルモデルの試験(10/5分): gemma3:27bは誤検出多数で本当の誤り0件、qwen3:30bとdeepseek-r1:32bは指摘0件。ローカル別モデルは不合格。
 - Claude sonnet(`claude -p`、約6分半)は7件、Codex Luna(gpt-5.6-luna、約44秒)は5〜7件を検出。Owner承認(2026-10-05)でLunaを採用。
-- 実装: `tools/local_fx_external_review.py`新設、`local_fx_oneshot.py`の最終段で`checks["external_review"]`へ記録のみ(本文は書き換えない)。失敗・時間切れ・無効でも日報は止めない。スイッチは`claude_mirror_shadow.json`の`external_review`。codex.exeは最新のVS Code拡張から探す。記事本文がCodexへ送られる点はOwner承認済み。
+- 実装: `tools/local_fx_external_review.py`新設、`local_fx_oneshot.py`の最終段で最終段のレビュー結果を記録のみ(レビュアー自身は本文を書き換えない)。失敗・時間切れ・無効でも日報は止めない。スイッチは`claude_mirror_shadow.json`の`external_review`。codex.exeは最新のVS Code拡張から探す。記事本文がCodexへ送られる点はOwner承認済み。
 - テスト: 新6件+既存計111件PASS。実Codexで組込み関数を10/5分に実行しstatus ok(43秒、5件指摘)。実行ごとに指摘は多少変わる。
 - 訂正: 「Dispatcher設定のcodexパスが古くCodex票が起動できない」は誤り。Dispatcherは`worker-routing.psm1`で最新拡張を自動解決する(実測で新パスを返す)。設定変更なし。
 - 未確認: 10/6 07時の自動実行でFF取得とexternal_reviewが動くか。FF規約の最終確認。
+- 同日追記(Owner「Lunaが指摘してからローカルLLMが修正するはず」): 当初は記録のみだったが、Lunaの指摘をQwenの修正段へ渡す形に変更。順序は Qwen下書き→Qwen自己検証→Luna照合(`external_review_before`、指摘は修正リストへ合流)→Qwen修正→修復した節がある時だけLunaで再確認(`external_review_after`、記録のみで再修正なし)。Luna不通・無効なら従来どおり。テスト新規1件を含む113件PASS。実機の全体通しは10/6 07時が初。
