@@ -1,0 +1,180 @@
+{
+  "date": "2026-10-07",
+  "generated_at_jst": "2026-10-07T08:47:22+09:00",
+  "source_count": 3,
+  "event_count": 11,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:46",
+      "country": "NZD",
+      "name": "GDT Price Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-1.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "02:15",
+      "country": "USD",
+      "name": "FOMC Member Schmid Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "05:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "CNY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Average Cash Earnings y/y",
+      "importance": "low",
+      "forecast": "3.7%",
+      "previous": "4.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "Leading Indicators",
+      "importance": "low",
+      "forecast": "118.1%",
+      "previous": "117.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "-1.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Lloyds HPI m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:45",
+      "country": "EUR",
+      "name": "French Trade Balance",
+      "importance": "low",
+      "forecast": "-6.5B",
+      "previous": "-6.7B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "CHF",
+      "name": "Foreign Currency Reserves",
+      "importance": "low",
+      "forecast": null,
+      "previous": "770B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Crude Oil Inventories",
+      "importance": "low",
+      "forecast": "1.9M",
+      "previous": "0.9M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:46 NZD GDT Price Index",
+    "single source: 02:15 USD FOMC Member Schmid Speaks",
+    "single source: 05:30 USD API Weekly Statistical Bulletin",
+    "single source: 08:01 CNY Bank Holiday",
+    "single source: 08:30 JPY Average Cash Earnings y/y",
+    "single source: 14:00 JPY Leading Indicators",
+    "single source: 15:00 EUR German Industrial Production m/m",
+    "single source: 15:00 GBP Lloyds HPI m/m",
+    "single source: 15:45 EUR French Trade Balance",
+    "single source: 16:00 CHF Foreign Currency Reserves",
+    "single source: 23:30 USD Crude Oil Inventories",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
