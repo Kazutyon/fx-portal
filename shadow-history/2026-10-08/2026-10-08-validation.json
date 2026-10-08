@@ -1,0 +1,344 @@
+{
+  "date": "2026-10-08",
+  "generated_at_jst": "2026-10-08T09:11:11+09:00",
+  "source_count": 3,
+  "event_count": 22,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "02:00",
+      "country": "USD",
+      "name": "President Trump Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "02:01",
+      "country": "USD",
+      "name": "10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "4.83|2.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:00",
+      "country": "USD",
+      "name": "FOMC Meeting Minutes",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:00",
+      "country": "USD",
+      "name": "Consumer Credit m/m",
+      "importance": "low",
+      "forecast": "14.5B",
+      "previous": "18.1B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "RICS House Price Balance",
+      "importance": "low",
+      "forecast": "-30%",
+      "previous": "-28%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Current Account",
+      "importance": "low",
+      "forecast": "2.14T",
+      "previous": "2.52T",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:00",
+      "country": "AUD",
+      "name": "MI Inflation Expectations",
+      "importance": "low",
+      "forecast": null,
+      "previous": "4.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "12:35",
+      "country": "JPY",
+      "name": "30-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "4.08|3.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "Economy Watchers Sentiment",
+      "importance": "low",
+      "forecast": "46.7",
+      "previous": "46.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German Trade Balance",
+      "importance": "low",
+      "forecast": "19.0B",
+      "previous": "21.3B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:05",
+      "country": "CHF",
+      "name": "Gov Board Member Martin Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "BOE Credit Conditions Survey",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "USD",
+      "name": "FOMC Member Waller Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:15",
+      "country": "EUR",
+      "name": "Eurogroup Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:15",
+      "country": "GBP",
+      "name": "MPC Member Greene Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:30",
+      "country": "GBP",
+      "name": "MPC Member Pill Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "20:30",
+      "country": "EUR",
+      "name": "ECB Monetary Policy Meeting Accounts",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:15",
+      "country": "GBP",
+      "name": "BOE Gov Bailey Speaks",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Unemployment Claims",
+      "importance": "medium",
+      "forecast": "200K",
+      "previous": "197K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:00",
+      "country": "GBP",
+      "name": "MPC Member Lombardelli Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Final Wholesale Inventories m/m",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Natural Gas Storage",
+      "importance": "low",
+      "forecast": "79B",
+      "previous": "64B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 02:00 USD President Trump Speaks",
+    "single source: 02:01 USD 10-y Bond Auction",
+    "single source: 03:00 USD FOMC Meeting Minutes",
+    "single source: 04:00 USD Consumer Credit m/m",
+    "single source: 08:01 GBP RICS House Price Balance",
+    "single source: 08:50 JPY Current Account",
+    "single source: 09:00 AUD MI Inflation Expectations",
+    "single source: 12:35 JPY 30-y Bond Auction",
+    "single source: 14:00 JPY Economy Watchers Sentiment",
+    "single source: 15:00 EUR German Trade Balance",
+    "single source: 17:05 CHF Gov Board Member Martin Speaks",
+    "single source: 17:30 GBP BOE Credit Conditions Survey",
+    "single source: 17:30 USD FOMC Member Waller Speaks",
+    "single source: 18:15 EUR Eurogroup Meetings",
+    "single source: 18:15 GBP MPC Member Greene Speaks",
+    "single source: 19:30 GBP MPC Member Pill Speaks",
+    "single source: 20:30 EUR ECB Monetary Policy Meeting Accounts",
+    "single source: 21:15 GBP BOE Gov Bailey Speaks",
+    "single source: 21:30 USD Unemployment Claims",
+    "single source: 22:00 GBP MPC Member Lombardelli Speaks",
+    "single source: 23:00 USD Final Wholesale Inventories m/m",
+    "single source: 23:30 USD Natural Gas Storage",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
