@@ -19,7 +19,7 @@ def canned(out, label, task, data, schema):
     if label.endswith("topics"):
         return {"topics": [{"title": f"話題{i}", "body": "本文。"} for i in range(4)], "points": ["一。", "二。", "三。"]}
     if label.endswith("today"):
-        return {"handover": "引継ぎ。", "focus_pair": data["ranking_top5"][0]["pair"], "focus_body": "注目。",
+        return {"focus_pair": data["ranking_top5"][0]["pair"], "focus_body": "注目。",
                 "risk_level": "HIGH", "risk_body": "リスク。", "key_event_nos": [2, 1, 2, 9999]}
     return {"issues": []}
 
@@ -35,6 +35,21 @@ class OneshotTests(unittest.TestCase):
         return (json.loads((RUN / "shared-material.json").read_text(encoding="utf-8"))["facts"],
                 json.loads((RUN / "calendar.json").read_text(encoding="utf-8")),
                 json.loads((RUN / "market.json").read_text(encoding="utf-8"))["ranking"])
+
+    def test_handover_is_built_from_the_calendar_not_the_model(self):
+        events = [{"time_jst": "21:30", "country": "CAD", "name": "失業率", "forecast": "6.5%", "previous": "6.4%"},
+                  {"time_jst": "08:30", "country": "JPY", "name": "家計支出", "forecast": "-3.5%", "previous": "-3.6%"},
+                  {"time_jst": "29:00", "country": "USD", "name": "コリンズ連銀総裁の発言", "forecast": "—", "previous": "—"},
+                  {"time_jst": "23:00", "country": "USD", "name": "ミシガン大 速報", "forecast": "47.5", "previous": "47.8"},
+                  {"time_jst": "23:00", "country": "USD", "name": "ミシガン大 速報", "forecast": "47.6", "previous": "48.1"}]
+        text = oneshot.handover_text(events)
+        self.assertIn("アジア時間帯: 08:30 日本家計支出（予想-3.5%／前回-3.6%）。", text)
+        self.assertIn("29:00 米国コリンズ連銀総裁の発言", text)
+        self.assertNotIn("コリンズ連銀総裁の発言（", text)  # blank forecast/previous are not printed
+        self.assertIn("予想47.5／前回47.8", text)  # conflicting sources are both shown, never merged
+        self.assertIn("予想47.6／前回48.1", text)
+        self.assertLess(text.index("08:30"), text.index("21:30"))
+        self.assertEqual(oneshot.handover_text([]), "本日の主要予定は予定表にない。")
 
     def test_input_keeps_low_importance_events_and_original_passages(self):
         material, calendar, ranking = self.inputs()

@@ -30,6 +30,35 @@ SYSTEM = ("あなたは為替情報サイトAUXENの日報ライターです。�
           "具体的な数値と因果関係で読ませる日本語の文章を書き、指定JSONだけを返す。資料にない事実・数値は書かない。")
 
 
+COUNTRY = {"JPY": "日本", "USD": "米国", "EUR": "ユーロ圏", "GBP": "英国", "CHF": "スイス", "CAD": "カナダ",
+           "AUD": "豪州", "NZD": "NZ", "CNY": "中国"}
+BLANK = {"", "-", "—", "–", "--"}
+
+
+def handover_text(events: list) -> str:
+    """Today's key schedule built only from calendar fields (no model): time, name, forecast, previous.
+    Rows with the same time/country but different numbers are all kept, never merged by guess."""
+    def hhmm(e):
+        h, m = e["time_jst"].split(":")
+        return int(h) * 60 + int(m)
+
+    def label(e):
+        nums = [f"{k}{e[f]}" for k, f in (("予想", "forecast"), ("前回", "previous")) if str(e.get(f, "")).strip() not in BLANK]
+        return f"{e['time_jst']} {COUNTRY.get(e['country'], e['country'])}{e['name'].strip()}" + (f"（{'／'.join(nums)}）" if nums else "")
+
+    groups = [("アジア時間帯", 0, 15 * 60), ("欧州時間帯", 15 * 60, 21 * 60), ("NY時間帯", 21 * 60, 10 ** 6)]
+    parts, seen = [], set()
+    for name, lo, hi in groups:
+        rows = []
+        for e in sorted(events, key=hhmm):
+            if lo <= hhmm(e) < hi and (e["time_jst"], e["country"], e["name"], e.get("forecast"), e.get("previous")) not in seen:
+                seen.add((e["time_jst"], e["country"], e["name"], e.get("forecast"), e.get("previous")))
+                rows.append(label(e))
+        if rows:
+            parts.append(f"{name}: " + "、".join(rows) + "。")
+    return "本日の主要予定（日本時間、24時以降は翌日の時刻）。" + "".join(parts) if parts else "本日の主要予定は予定表にない。"
+
+
 def compact(facts):
     keep = []
     for x in facts:
@@ -118,20 +147,23 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                                           "items": news.schema({"title": S, "body": S})},
                                "points": {"type": "array", "minItems": 3, "maxItems": 3, "items": S}}))
     today = call(out, "oneshot-3-today", style +
-                 "本日の見通しを書く。handoverは本日の主要予定を時刻順にアジア/欧州/NYで整理し、予想値と前回値を示し、"
-                 "本日最大の材料の指標は、予想値・前回値と、上振れ・下振れでドル円などがどう動くかの条件を必ず書く。"
-                 "220〜350字。focus_pairはranking_top5から1ペア、focus_bodyは選んだ理由と"
+                 "本日の見通しを書く。focus_pairはranking_top5から1ペア、focus_bodyは選んだ理由と"
                  "観察条件200〜300字。risk_levelとrisk_bodyは本日最大のリスクと条件200〜300字。"
                  "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を8〜12件。"
                  "各国の政策・景況・物価・雇用の主要指標と、中央銀行総裁・要人発言を優先し、同じ指標の副項目や小さな指標は含めない。"
                  "本文で取り上げる通貨ペア(例: ユーロドル、ドル円)に関わる予定を必ず含める。",
                  {**data, "main_driver": story["main_driver"]},
-                 news.schema({"handover": S, "focus_pair": {"type": "string", "enum": pairs}, "focus_body": S,
+                 news.schema({"focus_pair": {"type": "string", "enum": pairs}, "focus_body": S,
                               "risk_level": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]}, "risk_body": S,
                               "key_event_nos": {"type": "array", "minItems": 8, "maxItems": 12, "items": {"type": "integer"}}}))
 
+    # The feed's own importance grades are the only filter for "key events"; with a single source (Forex Factory
+    # refused) they miss e.g. the Tankan and ISM, so use the model's selection (indices only) when it is valid.
+    picked = sorted({n for n in today.get("key_event_nos", []) if 1 <= n <= len(calendar["events"])})
+    chosen = [calendar["events"][n - 1] for n in picked] or calendar["key_events"]  # calendar order is already by time
+
     sections = {"topics": topics["topics"], "hero": story["hero"], "headline": story["headline"],
-                "summary": story["summary"], "market": story["market"], "handover": today["handover"],
+                "summary": story["summary"], "market": story["market"], "handover": handover_text(chosen),
                 "focus_pair": today["focus_pair"], "focus_body": today["focus_body"],
                 "risk_level": today["risk_level"], "risk_body": today["risk_body"],
                 "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(topics["points"])]}
@@ -216,11 +248,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                                        if checks.get("repaired_sections") else {"status": "skipped", "reason": "nothing repaired"})
     checks["finished_at"] = datetime.now(daily.JST).isoformat()
     news.save(out / "oneshot-checks.json", checks)
-    # The feed's own importance grades are the only filter for "key events"; with a single source (Forex Factory
-    # refused) they miss e.g. the Tankan and ISM, so use the model's selection when it is valid.
-    picked = sorted({n for n in today.get("key_event_nos", []) if 1 <= n <= len(calendar["events"])})
-    chosen = [calendar["events"][n - 1] for n in picked]  # calendar order is already by time
-    shown = {**calendar, "key_events": chosen or calendar["key_events"]}
+    shown = {**calendar, "key_events": chosen}
     daily.render(target, sections, shown, ranking, out, allow_single_source=True)
     print(json.dumps({"run_dir": str(out), "status": "ONESHOT_COMPLETE_REVIEW_PENDING",
                       "semantic_issues": len(checks["semantic_issues"]), "repaired": checks.get("repaired_sections", []),
