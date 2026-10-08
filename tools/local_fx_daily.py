@@ -183,21 +183,21 @@ def event_code(name: str) -> str:
 
 def numeric_value(text: str):
     text = text.replace("±", "").replace("−", "-").replace("－", "-").replace(",", "")
-    found = re.findall(r"([+-]?\d+(?:\.\d+)?)(%|千件|万件|億|[KMB])?", text)
+    found = re.findall(r"([+-]?\d+(?:\.\d+)?)(%|千件|万件|千人|万人|億|[KMB])?", text)
     if not found:
         return None
     value, unit = found[-1]
-    multiplier = {"千件": 1000, "万件": 10000, "億": 100000000,
+    multiplier = {"千件": 1000, "万件": 10000, "千人": 1000, "万人": 10000, "億": 100000000,
                   "K": 1000, "M": 1000000, "B": 1000000000}.get(unit, 1)
     return Decimal(value) * multiplier
 
 
 def numeric_resolution(text: str):
-    found = re.findall(r"([+-]?\d+(?:\.\d+)?)(%|千件|万件|億|[KMB])?", text.replace(",", ""))
+    found = re.findall(r"([+-]?\d+(?:\.\d+)?)(%|千件|万件|千人|万人|億|[KMB])?", text.replace(",", ""))
     if not found:
         return None
     value, unit = found[-1]
-    multiplier = {"千件": 1000, "万件": 10000, "億": 100000000,
+    multiplier = {"千件": 1000, "万件": 10000, "千人": 1000, "万人": 10000, "億": 100000000,
                   "K": 1000, "M": 1000000, "B": 1000000000}.get(unit, 1)
     decimals = len(value.split(".")[1]) if "." in value else 0
     return Decimal(multiplier) / Decimal(10) ** decimals
@@ -216,6 +216,25 @@ def numeric_agreement(left: str, right: str) -> str:
     if ra != rb and coarse - resolution / 2 <= fine < coarse + resolution / 2:
         return "rounding-compatible"
     return "conflict"
+
+
+def value_pairs(kiss_events: list, ff_rows: list, taken: set) -> dict:
+    """Pair KissFX and Forex Factory rows of the same indicator without a per-event name table: same country and
+    time, and the previous values agree (or forecast and previous are both within 2%). Only one-to-one pairs
+    where neither side has another candidate; anything ambiguous stays unpaired."""
+    def close(a, b):
+        x, y = numeric_value(a), numeric_value(b)
+        return x is not None and y is not None and abs(x - y) <= Decimal("0.02") * max(abs(x), abs(y))
+
+    def same(event, other):
+        if numeric_agreement(event["previous"], other["previous"]) in ("exact", "rounding-compatible"):
+            return True
+        return close(event["forecast"], other["forecast"]) and close(event["previous"], other["previous"])
+
+    wanted = {k: [i for i, f in enumerate(ff_rows) if i not in taken and f["country"] == e["country"]
+                  and f["time_jst"] == e["time_jst"] and same(e, f)] for k, e in enumerate(kiss_events)}
+    return {k: c[0] for k, c in wanted.items()
+            if len(c) == 1 and sum(1 for other in wanted.values() if c[0] in other) == 1}
 
 
 def weekly_schedule(text: str, target: date) -> str:
@@ -269,12 +288,19 @@ def collect_calendar(target: date, out: Path, allow_single_source: bool = False)
     events = parse_kiss(kiss, target)
     matched_ff = set()
     conflicts = []
-    for event in events:
+    by_name = {i for e in events for i, x in enumerate(ff) if x["country"] == e["country"]
+               and x["time_jst"] == e["time_jst"] and event_code(x["name"]) == event_code(e["name"])}
+    unnamed = [n for n, e in enumerate(events) if not any(
+        x["country"] == e["country"] and x["time_jst"] == e["time_jst"] and event_code(x["name"]) == event_code(e["name"]) for x in ff)]
+    by_value = {unnamed[k]: i for k, i in value_pairs([events[n] for n in unnamed], ff, by_name).items()}
+    for n, event in enumerate(events):
         codes = {event_code(event["name"])}
         if "政策金利" in event["name"] and "声明" in event["name"]:
             codes.add("rba-statement")
         candidates = [(i, x) for i, x in enumerate(ff) if x["country"] == event["country"] and event_code(x["name"]) in codes]
         exact = [(i, x) for i, x in candidates if x["time_jst"] == event["time_jst"]]
+        if not exact and n in by_value:
+            exact = [(by_value[n], ff[by_value[n]])]
         event["sources"] = [kiss_url] + ([ff_url] if exact else [])
         event["confirmed"] = bool(exact)
         for i, other in exact:

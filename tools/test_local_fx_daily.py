@@ -445,6 +445,7 @@ class DailyTests(unittest.TestCase):
         self.assertEqual(daily.numeric_agreement("7228千件", "7.23M"), "rounding-compatible")
         self.assertEqual(daily.numeric_agreement("7271千件", "7.27M"), "rounding-compatible")
         self.assertEqual(daily.numeric_agreement("56.1千件", "56K"), "rounding-compatible")
+        self.assertEqual(daily.numeric_agreement("-4.17万人", "-41.7K"), "exact")
         self.assertEqual(daily.numeric_agreement("89.1", "89.2"), "conflict")
         self.assertEqual(daily.numeric_agreement("7.23M", "7.24M"), "conflict")
 
@@ -596,6 +597,29 @@ class DailyTests(unittest.TestCase):
                 self.assertEqual(daily.infer_cached(out, "one", "first", {}, s)["body"], "a")
                 self.assertEqual(daily.infer_cached(out, "one", "changed", {}, s)["body"], "b")
                 self.assertEqual(infer.call_count, 2)
+
+class ValuePairTests(unittest.TestCase):
+    def row(self, time, country, name, forecast, previous):
+        return {"time_jst": time, "country": country, "name": name, "forecast": forecast, "previous": previous}
+
+    def test_pairs_same_indicator_without_a_name_table(self):
+        kiss = [self.row("21:30", "CAD", "失業率", "6.5%", "6.4%"), self.row("21:30", "CAD", "雇用ネット変化", "+1.00万人", "-4.17万人")]
+        ff = [self.row("21:30", "CAD", "Employment Change", "6.1K", "-41.7K"), self.row("21:30", "CAD", "Unemployment Rate", "6.5%", "6.4%")]
+        self.assertEqual(daily.value_pairs(kiss, ff, set()), {0: 1, 1: 0})
+
+    def test_close_values_pair_even_when_the_sources_disagree(self):
+        kiss = [self.row("23:00", "USD", "ミシガン大学消費者信頼感指数", "47.6", "48.1")]
+        ff = [self.row("23:00", "USD", "Prelim UoM Consumer Sentiment", "47.5", "47.8"),
+              self.row("23:00", "USD", "Prelim UoM Inflation Expectations", "—", "4.6%")]
+        self.assertEqual(daily.value_pairs(kiss, ff, set()), {0: 0})
+
+    def test_ambiguous_or_different_time_or_country_stays_unpaired(self):
+        kiss = [self.row("23:00", "USD", "A", "—", "0.7%")]
+        ff = [self.row("23:00", "USD", "X", "—", "0.7%"), self.row("23:00", "USD", "Y", "—", "0.7%"),
+              self.row("23:30", "USD", "Z", "—", "0.7%"), self.row("23:00", "EUR", "W", "—", "0.7%")]
+        self.assertEqual(daily.value_pairs(kiss, ff, set()), {})
+        self.assertEqual(daily.value_pairs(kiss, ff[:1], {0}), {})
+
 
 
 if __name__ == "__main__":
