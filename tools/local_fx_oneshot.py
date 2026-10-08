@@ -59,6 +59,14 @@ def handover_text(events: list) -> str:
     return "本日の主要予定（日本時間、24時以降は翌日の時刻）。" + "".join(parts) if parts else "本日の主要予定は予定表にない。"
 
 
+def ranking_sentence(ranking: dict, pair: str) -> str:
+    """Rank, score and direction come from the ranking data with the day/time it was computed (never from the model)."""
+    item = next(r for r in ranking["rankings"] if r["pair"] == pair)
+    at = datetime.fromisoformat(ranking["generated_at_jst"]).astimezone(daily.JST)
+    return (f"デイトレ適性ランキング（{at.month}月{at.day}日{at:%H:%M}時点の算出）で{item['rank']}位の{pair}"
+            f"（スコア{item['score']}、{item['verdict']}、方向{item['direction']}、ADX {item['adx_h4']}）。")
+
+
 def compact(facts):
     keep = []
     for x in facts:
@@ -134,21 +142,22 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
              "原因や理由は資料に書かれている範囲だけを書き、資料にない因果を自分で作らない。"
              "市場関係者の見方は『〜と指摘されている』のように出所を明示する。"
              "同じ指標や価格が日中に上下した場合は、高値・安値・その後の動きの前後関係が読み手に分かるように書き、時点の違う数値を並べて矛盾して見える書き方をしない。")
+    plain = {k: v for k, v in data.items() if k != "ranking_top5"}  # only the focus call needs the ranking
     story = call(out, "oneshot-1-story", style +
                  "前営業日の相場を振り返る導入部分を書く。main_driverは今日の相場の最重要材料を1〜2文で。"
                  "heroは冒頭200字前後、headlineは60字以内の一言まとめ、summaryは前営業日の市場全体の整理350〜550字、"
                  "marketはドル・円・ユーロなどの地合いと相反する材料、判断条件300〜450字。",
-                 data, news.schema({"main_driver": S, "hero": S, "headline": S, "summary": S, "market": S}))
+                 plain, news.schema({"main_driver": S, "hero": S, "headline": S, "summary": S, "market": S}))
     topics = call(out, "oneshot-2-topics", style +
                   "前営業日(previous)の主要な出来事を4〜5件の話題にまとめる。各話題は何が起き、価格がどう動き、なぜ動いたかを"
                   "250〜450字で。main_driverに関わる話題を先頭にする。pointsは本日の注目点を具体的に3件(各1〜2文)。",
-                  {**data, "main_driver": story["main_driver"]},
+                  {**plain, "main_driver": story["main_driver"]},
                   news.schema({"topics": {"type": "array", "minItems": 4, "maxItems": 5,
                                           "items": news.schema({"title": S, "body": S})},
                                "points": {"type": "array", "minItems": 3, "maxItems": 3, "items": S}}))
     today = call(out, "oneshot-3-today", style +
-                 "本日の見通しを書く。focus_pairはranking_top5から1ペア、focus_bodyは選んだ理由と"
-                 "観察条件200〜300字。risk_levelとrisk_bodyは本日最大のリスクと条件200〜300字。"
+                 "本日の見通しを書く。focus_pairはranking_top5から1ペア、focus_bodyは観察条件200〜300字"
+                 "（順位・スコア・ランキングの数値は別に機械的に付くので書かない）。risk_levelとrisk_bodyは本日最大のリスクと条件200〜300字。"
                  "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を8〜12件。"
                  "各国の政策・景況・物価・雇用の主要指標と、中央銀行総裁・要人発言を優先し、同じ指標の副項目や小さな指標は含めない。"
                  "本文で取り上げる通貨ペア(例: ユーロドル、ドル円)に関わる予定を必ず含める。",
@@ -164,7 +173,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
 
     sections = {"topics": topics["topics"], "hero": story["hero"], "headline": story["headline"],
                 "summary": story["summary"], "market": story["market"], "handover": handover_text(chosen),
-                "focus_pair": today["focus_pair"], "focus_body": today["focus_body"],
+                "focus_pair": today["focus_pair"],
+                "focus_body": ranking_sentence(ranking, today["focus_pair"]) + today["focus_body"],
                 "risk_level": today["risk_level"], "risk_body": today["risk_body"],
                 "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(topics["points"])]}
     news.save(out / "sections.json", sections)

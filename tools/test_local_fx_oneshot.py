@@ -51,6 +51,29 @@ class OneshotTests(unittest.TestCase):
         self.assertLess(text.index("08:30"), text.index("21:30"))
         self.assertEqual(oneshot.handover_text([]), "本日の主要予定は予定表にない。")
 
+    def test_focus_ranking_sentence_carries_its_computation_time(self):
+        ranking = {"generated_at_jst": "2026-10-08T08:39+09:00",
+                   "rankings": [{"pair": "EUR/USD", "rank": 1, "score": 97, "verdict": "最適", "direction": "下降", "adx_h4": 35.8}]}
+        self.assertEqual(oneshot.ranking_sentence(ranking, "EUR/USD"),
+                         "デイトレ適性ランキング（10月8日08:39時点の算出）で1位のEUR/USD（スコア97、最適、方向下降、ADX 35.8）。")
+
+    def test_story_and_topics_never_receive_the_ranking(self):
+        material, calendar, ranking = self.inputs()
+        seen = {}
+
+        def calls(out, label, task, data, schema, *rest):
+            seen[label] = "ranking_top5" in data
+            return canned(out, label, task, data, schema)
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
+            out = Path(folder) / "oneshot"
+            out.mkdir()
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+            sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
+        self.assertEqual((seen["oneshot-1-story"], seen["oneshot-2-topics"], seen["oneshot-3-today"]), (False, False, True))
+        self.assertIn("時点の算出）で", sections["focus_body"])
+
     def test_input_keeps_low_importance_events_and_original_passages(self):
         material, calendar, ranking = self.inputs()
         self.assertTrue(any("5.2911" in p for p in oneshot.passages(material)))
@@ -91,7 +114,7 @@ class OneshotTests(unittest.TestCase):
                                       json.loads((out / "policy.json").read_text(encoding="utf-8")))
         self.assertTrue(any("指標名が違う" in p["reason"] and p["sections"] == ["focus"] for p in seen["problems"]))
         self.assertEqual(checks["repaired_sections"], ["focus"])
-        self.assertEqual(reviews[0]["focus"], "注目。")      # first review sees the draft
+        self.assertTrue(reviews[0]["focus"].endswith("時点の算出）で1位のAUD/JPY（スコア71、適、方向下降、ADX 32.7）。注目。"))      # first review sees the draft
         self.assertEqual(reviews[1]["focus"], "直した注目。")  # second review sees the repaired text
         self.assertIn("external_review_after", checks)
 
