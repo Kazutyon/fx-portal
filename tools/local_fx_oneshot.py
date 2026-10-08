@@ -35,16 +35,34 @@ COUNTRY = {"JPY": "日本", "USD": "米国", "EUR": "ユーロ圏", "GBP": "英�
 BLANK = {"", "-", "—", "–", "--"}
 
 
+def event_label(e: dict) -> str:
+    nums = [f"{k}{e[f]}" for k, f in (("予想", "forecast"), ("前回", "previous")) if str(e.get(f, "")).strip() not in BLANK]
+    return f"{e['time_jst']} {COUNTRY.get(e['country'], e['country'])}{e['name'].strip()}" + (f"（{'／'.join(nums)}）" if nums else "")
+
+
+def sentence(x: dict) -> str:
+    """One sourced sentence from an extracted fact: the fact text as extracted (who said it is already in it) plus its article."""
+    text = x["fact"].strip()
+    if text.startswith("・"):
+        return "今日の注目点: " + text.lstrip("・ ").strip().rstrip("。") + "。"
+    title = (x.get("source_title") or "").strip()
+    return text + (f"（出典: {title}）" if title else "")
+
+
+def is_view(x: dict) -> bool:
+    return x.get("record_type") in ("outlook", "forecast") and bool(x.get("fact")) and not x["fact"].lstrip().startswith("・")
+
+
+def is_theme(x: dict) -> bool:
+    return bool(x.get("fact")) and x["fact"].lstrip().startswith("・")
+
+
 def handover_text(events: list) -> str:
     """Today's key schedule built only from calendar fields (no model): time, name, forecast, previous.
     Rows with the same time/country but different numbers are all kept, never merged by guess."""
     def hhmm(e):
         h, m = e["time_jst"].split(":")
         return int(h) * 60 + int(m)
-
-    def label(e):
-        nums = [f"{k}{e[f]}" for k, f in (("予想", "forecast"), ("前回", "previous")) if str(e.get(f, "")).strip() not in BLANK]
-        return f"{e['time_jst']} {COUNTRY.get(e['country'], e['country'])}{e['name'].strip()}" + (f"（{'／'.join(nums)}）" if nums else "")
 
     groups = [("アジア時間帯", 0, 15 * 60), ("欧州時間帯", 15 * 60, 21 * 60), ("NY時間帯", 21 * 60, 10 ** 6)]
     parts, seen = [], set()
@@ -53,7 +71,7 @@ def handover_text(events: list) -> str:
         for e in sorted(events, key=hhmm):
             if lo <= hhmm(e) < hi and (e["time_jst"], e["country"], e["name"], e.get("forecast"), e.get("previous")) not in seen:
                 seen.add((e["time_jst"], e["country"], e["name"], e.get("forecast"), e.get("previous")))
-                rows.append(label(e))
+                rows.append(event_label(e))
         if rows:
             parts.append(f"{name}: " + "、".join(rows) + "。")
     return "本日の主要予定（日本時間、24時以降は翌日の時刻）。" + "".join(parts) if parts else "本日の主要予定は予定表にない。"
@@ -150,20 +168,27 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                  plain, news.schema({"main_driver": S, "hero": S, "headline": S, "summary": S, "market": S}))
     topics = call(out, "oneshot-2-topics", style +
                   "前営業日(previous)の主要な出来事を4〜5件の話題にまとめる。各話題は何が起き、価格がどう動き、なぜ動いたかを"
-                  "250〜450字で。main_driverに関わる話題を先頭にする。pointsは本日の注目点を具体的に3件(各1〜2文)。",
+                  "250〜450字で。main_driverに関わる話題を先頭にする。",
                   {**plain, "main_driver": story["main_driver"]},
                   news.schema({"topics": {"type": "array", "minItems": 4, "maxItems": 5,
-                                          "items": news.schema({"title": S, "body": S})},
-                               "points": {"type": "array", "minItems": 3, "maxItems": 3, "items": S}}))
+                                          "items": news.schema({"title": S, "body": S})}}))
+    by_id = {x["fact_id"]: x for x in material}
+    view_ids = [x["fact_id"] for x in material if is_view(x)]
+    theme_ids = [x["fact_id"] for x in material if is_theme(x)]
+    point_ids = view_ids + theme_ids + [f"e{n}" for n in range(1, len(calendar["events"]) + 1)]
     today = call(out, "oneshot-3-today", style +
-                 "本日の見通しを書く。focus_pairはranking_top5から1ペア、focus_bodyは観察条件200〜300字"
-                 "（順位・スコア・ランキングの数値は別に機械的に付くので書かない）。risk_levelとrisk_bodyは本日最大のリスクと条件200〜300字。"
+                 "本日の見通しのうち、文章は書かず、資料の項目を番号で選ぶだけにする。"
+                 "focus_pairはranking_top5から1ペア。focus_view_idは、選んだ通貨ペアに関する市場関係者の見解のfactのid(なければ空文字)。"
+                 f"risk_view_idsは、本日から今週の相場を動かしうる最大のリスクに直結する市場関係者の見解のfactのid(最大2件、見解のidは{view_ids}から。数か月先の予測は選ばない)。"
+                 f"point_idsは、本日の注目点として読者に伝えるべき、重複しない項目のid3件(risk_view_idsと同じidは選ばない。factのid、または予定e<today_calendarのno>)。"
                  "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を8〜12件。"
                  "各国の政策・景況・物価・雇用の主要指標と、中央銀行総裁・要人発言を優先し、同じ指標の副項目や小さな指標は含めない。"
                  "本文で取り上げる通貨ペア(例: ユーロドル、ドル円)に関わる予定を必ず含める。",
                  {**data, "main_driver": story["main_driver"]},
-                 news.schema({"focus_pair": {"type": "string", "enum": pairs}, "focus_body": S,
-                              "risk_level": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]}, "risk_body": S,
+                 news.schema({"focus_pair": {"type": "string", "enum": pairs},
+                              "focus_view_id": {"type": "string", "enum": view_ids + [""]},
+                              "risk_view_ids": {"type": "array", "minItems": 0, "maxItems": 2, "items": {"type": "string", "enum": view_ids or [""]}},
+                              "point_ids": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string", "enum": point_ids}},
                               "key_event_nos": {"type": "array", "minItems": 8, "maxItems": 12, "items": {"type": "integer"}}}))
 
     # The feed's own importance grades are the only filter for "key events"; with a single source (Forex Factory
@@ -171,12 +196,33 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     picked = sorted({n for n in today.get("key_event_nos", []) if 1 <= n <= len(calendar["events"])})
     chosen = [calendar["events"][n - 1] for n in picked] or calendar["key_events"]  # calendar order is already by time
 
+    focus_view = by_id.get(today.get("focus_view_id", ""))
+    if focus_view and today["focus_pair"] not in (focus_view.get("pairs") or []):
+        focus_view = None  # a view about other pairs does not belong under this pair
+    risk_views = [by_id[i] for i in dict.fromkeys(today.get("risk_view_ids", [])) if i in by_id and is_view(by_id[i])]
+    points = []
+    for i in dict.fromkeys(today.get("point_ids", [])):
+        if i in {v["fact_id"] for v in risk_views}:
+            continue  # the same material is not repeated across sections
+        if re.fullmatch(r"e\d+", i) and 1 <= int(i[1:]) <= len(calendar["events"]):
+            points.append("本日の予定: " + event_label(calendar["events"][int(i[1:]) - 1]) + "。")
+        elif i in by_id:
+            points.append(sentence(by_id[i]))
+    for e in chosen:  # the model may repeat or miss an id: fill up to three from today's key schedule, in time order
+        text = "本日の予定: " + event_label(e) + "。"
+        if len(points) >= 3:
+            break
+        if text not in points:
+            points.append(text)
+    points = points[:3]
+    high = sum(1 for e in calendar["events"] if e["importance"] == "high")
     sections = {"topics": topics["topics"], "hero": story["hero"], "headline": story["headline"],
                 "summary": story["summary"], "market": story["market"], "handover": handover_text(chosen),
                 "focus_pair": today["focus_pair"],
-                "focus_body": ranking_sentence(ranking, today["focus_pair"]) + today["focus_body"],
-                "risk_level": today["risk_level"], "risk_body": today["risk_body"],
-                "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(topics["points"])]}
+                "focus_body": ranking_sentence(ranking, today["focus_pair"]) + (sentence(focus_view) if focus_view else ""),
+                "risk_level": f"高重要度予定 {high}件",
+                "risk_body": " ".join(sentence(x) for x in risk_views) or "資料に、本日のリスクとして挙げられた市場関係者の見解はない。",
+                "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(points)]}
     news.save(out / "sections.json", sections)
 
     evidence = [{"quote": x.get("quote", ""), "fact": x.get("fact", ""), "source_context": x.get("source_context", {}),
@@ -185,8 +231,9 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                  for e in events]
     evidence += [{"quote": json.dumps(x, ensure_ascii=False), "fact": "", "source_context": {}, "published_at": ""}
                  for x in data["ranking_top5"] + data["policy_rates"]]
-    keys = (["hero", "headline", "summary", "market", "handover", "focus", "risk"]
-            + [f"topic{i}" for i in range(len(sections["topics"]))] + [f"point{i}" for i in range(len(sections["points"]))])
+    # handover/focus/risk/points are assembled from sourced facts and the calendar (no model), so they are never
+    # sent to the repair step; only the model-written sections can be flagged and rewritten.
+    keys = ["hero", "headline", "summary", "market"] + [f"topic{i}" for i in range(len(sections["topics"]))]
 
     def texts_of(sec):
         return {"hero": sec["hero"], "headline": sec["headline"], "summary": sec["summary"], "market": sec["market"],
@@ -225,7 +272,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     checks["external_review_before"] = external_review.review(out, verify_data, texts)
     external_issues = external_review.usable_issues(checks["external_review_before"], keys)
 
-    flagged = {k for i in review["issues"] + external_issues for k in i["sections"]} | set(checks["number_date_errors"]) |         set(checks["internal_wording"]) | set(checks["meta_wording"])
+    flagged = ({k for i in review["issues"] + external_issues for k in i["sections"]} | set(checks["number_date_errors"]) |
+               set(checks["internal_wording"]) | set(checks["meta_wording"])) & set(keys)
     if flagged:
         problems = [{"sections": i["sections"], "excerpt": i["excerpt"], "reason": i["reason"]}
                     for i in review["issues"] + external_issues]

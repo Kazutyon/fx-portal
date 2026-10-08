@@ -17,10 +17,10 @@ def canned(out, label, task, data, schema):
     if label.endswith("story"):
         return {"main_driver": "x", "hero": "冒頭。", "headline": "見出し", "summary": "要約。", "market": "市場。"}
     if label.endswith("topics"):
-        return {"topics": [{"title": f"話題{i}", "body": "本文。"} for i in range(4)], "points": ["一。", "二。", "三。"]}
+        return {"topics": [{"title": f"話題{i}", "body": "本文。"} for i in range(4)]}
     if label.endswith("today"):
-        return {"focus_pair": data["ranking_top5"][0]["pair"], "focus_body": "注目。",
-                "risk_level": "HIGH", "risk_body": "リスク。", "key_event_nos": [2, 1, 2, 9999]}
+        return {"focus_pair": data["ranking_top5"][0]["pair"], "focus_view_id": "", "risk_view_ids": [],
+                "point_ids": ["e1", "e2", "e3"], "key_event_nos": [2, 1, 2, 9999]}
     return {"issues": []}
 
 
@@ -74,6 +74,53 @@ class OneshotTests(unittest.TestCase):
         self.assertEqual((seen["oneshot-1-story"], seen["oneshot-2-topics"], seen["oneshot-3-today"]), (False, False, True))
         self.assertIn("時点の算出）で", sections["focus_body"])
 
+    def test_interpretive_sections_are_assembled_from_chosen_ids_only(self):
+        material, calendar, ranking = self.inputs()
+        views = [f for f in material if oneshot.is_view(f)]
+        themes = [f for f in material if oneshot.is_theme(f)]
+        self.assertTrue(views and themes)
+        view, theme = views[0], themes[0]
+
+        def calls(out, label, task, data, schema, *rest):
+            if label.endswith("today"):
+                pair = data["ranking_top5"][0]["pair"]
+                enum = schema["properties"]["point_ids"]["items"]["enum"]
+                self.assertIn(view["fact_id"], enum)
+                self.assertIn("e1", enum)
+                return {"focus_pair": pair, "focus_view_id": view["fact_id"], "risk_view_ids": [view["fact_id"], "N999"],
+                        "point_ids": [theme["fact_id"], "e1", "e99999", view["fact_id"]], "key_event_nos": [1, 2]}
+            return canned(out, label, task, data, schema)
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
+            out = Path(folder)
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+            sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
+        self.assertEqual(sections["risk_body"], oneshot.sentence(view))  # unknown id dropped, text is the extracted fact
+        self.assertEqual(sections["points"][0]["body"], oneshot.sentence(theme))
+        self.assertEqual(sections["points"][1]["body"], "本日の予定: " + oneshot.event_label(calendar["events"][0]) + "。")
+        self.assertEqual(len(sections["points"]), 3)  # out-of-range id dropped, then filled from today's key schedule
+        self.assertEqual(len({p["body"] for p in sections["points"]}), 3)
+        self.assertRegex(sections["risk_level"], r"^高重要度予定 \d+件$")
+        pair_ok = sections["focus_pair"] in (view.get("pairs") or [])
+        self.assertEqual(oneshot.sentence(view) in sections["focus_body"], pair_ok)  # a view about other pairs is not attached
+
+    def test_assembled_sections_are_never_sent_to_repair(self):
+        material, calendar, ranking = self.inputs()
+        issue = {"status": "ok", "issues": [{"section": "risk", "excerpt": "x", "kind": "取り違え", "reason": "x"},
+                                            {"section": "point0", "excerpt": "x", "kind": "取り違え", "reason": "x"}]}
+
+        def calls(out, label, task, data, schema, *rest):
+            self.assertFalse(label.endswith("repair"))
+            return canned(out, label, task, data, schema)
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls), patch.object(
+                oneshot.external_review, "review", return_value=issue):
+            out = Path(folder)
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            checks = oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+        self.assertNotIn("repaired_sections", checks)
+
     def test_input_keeps_low_importance_events_and_original_passages(self):
         material, calendar, ranking = self.inputs()
         self.assertTrue(any("5.2911" in p for p in oneshot.passages(material)))
@@ -97,14 +144,14 @@ class OneshotTests(unittest.TestCase):
         def calls(out, label, task, data, schema, *rest):
             if label.endswith("repair"):
                 seen["problems"] = data["problems"]
-                return {"fixes": [{"section": "focus", "text": "直した注目。"}]}
+                return {"fixes": [{"section": "summary", "text": "直した要約。"}]}
             return canned(out, label, task, data, schema)
 
         reviews = []
 
         def reviewer(out, data, texts):
             reviews.append(dict(texts))
-            return {"status": "ok", "issues": [{"section": "focus", "excerpt": "注目。", "kind": "取り違え", "reason": "指標名が違う"}]}
+            return {"status": "ok", "issues": [{"section": "summary", "excerpt": "要約。", "kind": "取り違え", "reason": "指標名が違う"}]}
 
         with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls), patch.object(
                 oneshot.external_review, "review", side_effect=reviewer):
@@ -112,10 +159,10 @@ class OneshotTests(unittest.TestCase):
             (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
             checks = oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking,
                                       json.loads((out / "policy.json").read_text(encoding="utf-8")))
-        self.assertTrue(any("指標名が違う" in p["reason"] and p["sections"] == ["focus"] for p in seen["problems"]))
-        self.assertEqual(checks["repaired_sections"], ["focus"])
-        self.assertTrue(reviews[0]["focus"].endswith("時点の算出）で1位のAUD/JPY（スコア71、適、方向下降、ADX 32.7）。注目。"))      # first review sees the draft
-        self.assertEqual(reviews[1]["focus"], "直した注目。")  # second review sees the repaired text
+        self.assertTrue(any("指標名が違う" in p["reason"] and p["sections"] == ["summary"] for p in seen["problems"]))
+        self.assertEqual(checks["repaired_sections"], ["summary"])
+        self.assertEqual(reviews[0]["summary"], "要約。")      # first review sees the draft
+        self.assertEqual(reviews[1]["summary"], "直した要約。")  # second review sees the repaired text
         self.assertIn("external_review_after", checks)
 
     def test_cut_off_repair_keeps_the_draft_and_the_report(self):
@@ -127,7 +174,7 @@ class OneshotTests(unittest.TestCase):
                 raise ValueError("oneshot-5-repair: wrong model or incomplete response (length)")
             return canned(out, label, task, data, schema)
 
-        issue = {"status": "ok", "issues": [{"section": "focus", "excerpt": "注目。", "kind": "取り違え", "reason": "x"}]}
+        issue = {"status": "ok", "issues": [{"section": "summary", "excerpt": "要約。", "kind": "取り違え", "reason": "x"}]}
         with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls), patch.object(
                 oneshot.external_review, "review", return_value=issue):
             out = Path(folder)

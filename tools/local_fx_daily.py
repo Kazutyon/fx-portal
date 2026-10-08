@@ -469,7 +469,7 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
     report = report.replace("本日の経済指標カレンダー（全件）", "本日の経済指標カレンダー（主要予定）")
     report = report.replace("<em>金曜日</em>", f"<em>{weekday}曜日</em>")
     report = report.replace("前日の相場振り返り（2026-09-24）", f"前日の相場振り返り（{previous.isoformat()}）")
-    risk_color = {"HIGH": "var(--red,#c0392b)", "MEDIUM": "var(--gold,#c9a84c)", "LOW": "var(--cyan,#22d3ee)"}[sections["risk_level"]]
+    risk_color = {"HIGH": "var(--red,#c0392b)", "MEDIUM": "var(--gold,#c9a84c)", "LOW": "var(--cyan,#22d3ee)"}.get(sections["risk_level"], "var(--gold,#c9a84c)")
     report = report.replace(f'<h3 style="color:var(--red,#c0392b)">{esc(sections["risk_level"])}</h3>',
                             f'<h3 style="color:{risk_color}">{esc(sections["risk_level"])}</h3>')
     pair = sections["focus_pair"]
