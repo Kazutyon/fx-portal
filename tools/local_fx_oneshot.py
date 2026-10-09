@@ -49,6 +49,41 @@ def sentence(x: dict) -> str:
     return text + (f"（出典: {title}）" if title else "")
 
 
+PREFIX = re.compile(r"^(\d{4}年\d{1,2}月\d{1,2}日[^、。]{0,20}?、)")
+
+
+def join_facts(facts: list) -> str:
+    """Fact sentences in the order given. The date/market lead-in is kept on the first sentence and dropped from later
+    ones only when it is identical, so the reader still sees which day and market every statement is about."""
+    def same_lead_in(prefix: str) -> str:  # NY / ニューヨーク and 外為 / 外国為替 are spellings of one market; 欧州 etc. stay different
+        return re.sub(r"外国為替|外為|為替", "", prefix.replace("ニューヨーク", "NY"))
+
+    seen, parts = set(), []
+    for x in facts:
+        text = x["fact"].strip()
+        m = PREFIX.match(text)
+        if m and same_lead_in(m.group(1)) in seen:
+            text = text[m.end():]
+        elif m:
+            seen.add(same_lead_in(m.group(1)))
+        parts.append(text if text.endswith("。") else text + "。")
+    return "".join(parts)
+
+
+def join_sourced(facts: list) -> str:
+    """Sourced sentences in order; a run of sentences from the same article names the article once, after the run."""
+    out = []
+    for n, x in enumerate(facts):
+        text = x["fact"].strip()
+        if text.startswith("・"):
+            out.append(sentence(x))
+            continue
+        title = (x.get("source_title") or "").strip()
+        last_of_run = n + 1 == len(facts) or (facts[n + 1].get("source_title") or "").strip() != title
+        out.append(text + (f"（出典: {title}）" if title and last_of_run else ""))
+    return " ".join(out)
+
+
 def is_view(x: dict) -> bool:
     return x.get("record_type") in ("outlook", "forecast") and bool(x.get("fact")) and not x["fact"].lstrip().startswith("・")
 
@@ -163,18 +198,31 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     plain = {k: v for k, v in data.items() if k != "ranking_top5"}  # only the focus call needs the ranking
     story = call(out, "oneshot-1-story", style +
                  "前営業日の相場を振り返る導入部分を書く。main_driverは今日の相場の最重要材料を1〜2文で。"
-                 "heroは冒頭200字前後、headlineは60字以内の一言まとめ、summaryは前営業日の市場全体の整理350〜550字、"
-                 "marketはドル・円・ユーロなどの地合いと相反する材料、判断条件300〜450字。",
-                 plain, news.schema({"main_driver": S, "hero": S, "headline": S, "summary": S, "market": S}))
-    topics = call(out, "oneshot-2-topics", style +
-                  "前営業日(previous)の主要な出来事を4〜5件の話題にまとめる。各話題は何が起き、価格がどう動き、なぜ動いたかを"
-                  "250〜450字で。main_driverに関わる話題を先頭にする。",
-                  {**plain, "main_driver": story["main_driver"]},
-                  news.schema({"topics": {"type": "array", "minItems": 4, "maxItems": 5,
-                                          "items": news.schema({"title": S, "body": S})}}))
+                 "heroは冒頭200字前後、headlineは60字以内の一言まとめ、summaryは前営業日の市場全体の整理350〜550字。",
+                 plain, news.schema({"main_driver": S, "hero": S, "headline": S, "summary": S}))
     by_id = {x["fact_id"]: x for x in material}
     view_ids = [x["fact_id"] for x in material if is_view(x)]
     theme_ids = [x["fact_id"] for x in material if is_theme(x)]
+    event_ids = [x["fact_id"] for x in material if x["fact_id"].startswith("N") and not is_view(x) and not is_theme(x)]
+    topics = call(out, "oneshot-2-topics", style +
+                  "前営業日の主要な出来事を4〜5件の話題にまとめるが、文章は書かず、資料のfactをidで選ぶだけにする。"
+                  "各話題のfact_idsは、同じ出来事・同じ材料を扱うfactのid(2〜5件、時系列順、同じ内容を重複して選ばない)。"
+                  "titleは話題の見出し(30字以内。資料にある語と数値だけを使い、資料にない因果や数値は書かない)。"
+                  "main_driverに関わる話題を先頭にする。同じfactを複数の話題で使わない。"
+                  f"market_view_idsは、本日の地合いの判断材料となる市場関係者の見解のid(最大3件、{view_ids}から)。",
+                  {**plain, "main_driver": story["main_driver"]},
+                  news.schema({"topics": {"type": "array", "minItems": 4, "maxItems": 5, "items": news.schema({
+                                   "title": S, "fact_ids": {"type": "array", "minItems": 2, "maxItems": 5,
+                                                            "items": {"type": "string", "enum": event_ids}}})},
+                               "market_view_ids": {"type": "array", "minItems": 0, "maxItems": 3, "items": {"type": "string", "enum": view_ids or [""]}}}))
+    used = set()
+    topic_list = []
+    for t in topics["topics"]:
+        chosen_facts = [by_id[i] for i in dict.fromkeys(t["fact_ids"]) if i in by_id and i not in used]
+        used.update(x["fact_id"] for x in chosen_facts)
+        if chosen_facts:
+            topic_list.append({"title": t["title"], "body": join_facts(chosen_facts)})
+    market_views = [by_id[i] for i in dict.fromkeys(topics.get("market_view_ids", [])) if i in by_id and is_view(by_id[i])]
     point_ids = view_ids + theme_ids + [f"e{n}" for n in range(1, len(calendar["events"]) + 1)]
     today = call(out, "oneshot-3-today", style +
                  "本日の見通しのうち、文章は書かず、資料の項目を番号で選ぶだけにする。"
@@ -199,7 +247,9 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     focus_view = by_id.get(today.get("focus_view_id", ""))
     if focus_view and today["focus_pair"] not in (focus_view.get("pairs") or []):
         focus_view = None  # a view about other pairs does not belong under this pair
-    risk_views = [by_id[i] for i in dict.fromkeys(today.get("risk_view_ids", [])) if i in by_id and is_view(by_id[i])]
+    market_ids = {x["fact_id"] for x in market_views}
+    risk_views = [by_id[i] for i in dict.fromkeys(today.get("risk_view_ids", []))
+                  if i in by_id and is_view(by_id[i]) and i not in market_ids]
     points = []
     for i in dict.fromkeys(today.get("point_ids", [])):
         if i in {v["fact_id"] for v in risk_views}:
@@ -216,12 +266,14 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
             points.append(text)
     points = points[:3]
     high = sum(1 for e in calendar["events"] if e["importance"] == "high")
-    sections = {"topics": topics["topics"], "hero": story["hero"], "headline": story["headline"],
-                "summary": story["summary"], "market": story["market"], "handover": handover_text(chosen),
+    sections = {"topics": topic_list, "hero": story["hero"], "headline": story["headline"],
+                "summary": story["summary"],
+                "market": join_sourced(market_views) or "資料に、地合いの判断材料となる市場関係者の見解はない。",
+                "handover": handover_text(chosen),
                 "focus_pair": today["focus_pair"],
                 "focus_body": ranking_sentence(ranking, today["focus_pair"]) + (sentence(focus_view) if focus_view else ""),
                 "risk_level": f"高重要度予定 {high}件",
-                "risk_body": " ".join(sentence(x) for x in risk_views) or "資料に、本日のリスクとして挙げられた市場関係者の見解はない。",
+                "risk_body": join_sourced(risk_views) or "資料に、本日のリスクとして挙げられた市場関係者の見解はない。",
                 "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(points)]}
     news.save(out / "sections.json", sections)
 
@@ -233,11 +285,12 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                  for x in data["ranking_top5"] + data["policy_rates"]]
     # handover/focus/risk/points are assembled from sourced facts and the calendar (no model), so they are never
     # sent to the repair step; only the model-written sections can be flagged and rewritten.
-    keys = ["hero", "headline", "summary", "market"] + [f"topic{i}" for i in range(len(sections["topics"]))]
+    keys = ["hero", "headline", "summary"] + [f"title{i}" for i in range(len(sections["topics"]))]
 
     def texts_of(sec):
         return {"hero": sec["hero"], "headline": sec["headline"], "summary": sec["summary"], "market": sec["market"],
                 "handover": sec["handover"], "focus": sec["focus_body"], "risk": sec["risk_body"],
+                **{f"title{i}": t["title"] for i, t in enumerate(sec["topics"])},
                 **{f"topic{i}": t["body"] for i, t in enumerate(sec["topics"])},
                 **{f"point{i}": p["body"] for i, p in enumerate(sec["points"])}}
 
@@ -289,8 +342,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                              "section": {"type": "string", "enum": sorted(flagged)}, "text": S})}}), 30000)  # thinking alone used 12000 tokens on 2026-10-06
             for fix in fixed["fixes"]:
                 k, text = fix["section"], fix["text"]
-                if k.startswith("topic"):
-                    sections["topics"][int(k[5:])]["body"] = text
+                if k.startswith("title"):
+                    sections["topics"][int(k[5:])]["title"] = text
                 elif k.startswith("point"):
                     sections["points"][int(k[5:])]["body"] = text
                 else:

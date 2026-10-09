@@ -17,7 +17,8 @@ def canned(out, label, task, data, schema):
     if label.endswith("story"):
         return {"main_driver": "x", "hero": "冒頭。", "headline": "見出し", "summary": "要約。", "market": "市場。"}
     if label.endswith("topics"):
-        return {"topics": [{"title": f"話題{i}", "body": "本文。"} for i in range(4)]}
+        ids = [f["id"] for f in data["facts"] if f["id"].startswith("N") and f["type"] != "outlook" and not f["fact"].startswith("・")]
+        return {"topics": [{"title": f"話題{i}", "fact_ids": ids[2 * i:2 * i + 2]} for i in range(4)], "market_view_ids": []}
     if label.endswith("today"):
         return {"focus_pair": data["ranking_top5"][0]["pair"], "focus_view_id": "", "risk_view_ids": [],
                 "point_ids": ["e1", "e2", "e3"], "key_event_nos": [2, 1, 2, 9999]}
@@ -104,6 +105,53 @@ class OneshotTests(unittest.TestCase):
         self.assertRegex(sections["risk_level"], r"^高重要度予定 \d+件$")
         pair_ok = sections["focus_pair"] in (view.get("pairs") or [])
         self.assertEqual(oneshot.sentence(view) in sections["focus_body"], pair_ok)  # a view about other pairs is not attached
+
+    def test_join_facts_drops_a_repeated_lead_in_but_keeps_the_first(self):
+        a = {"fact": "2026年10月8日のニューヨーク外国為替市場で、ドル円は157.88円で終えた。"}
+        b = {"fact": "2026年10月8日のニューヨーク外国為替市場で、ユーロ円は177.01円で終えた。"}
+        c = {"fact": "2026年10月8日、トランプ氏が発言した。"}
+        d = {"fact": "米・先週分新規失業保険申請件数は19.7万件となった。"}
+        self.assertEqual(oneshot.join_facts([a, b, c, d]),
+                         "2026年10月8日のニューヨーク外国為替市場で、ドル円は157.88円で終えた。ユーロ円は177.01円で終えた。"
+                         "2026年10月8日、トランプ氏が発言した。米・先週分新規失業保険申請件数は19.7万件となった。")
+
+    def test_join_facts_treats_spelling_variants_as_one_lead_in_but_not_another_market(self):
+        a = {"fact": "2026年10月8日のNY外為市場で、原油は93.20ドルまで上昇した。"}
+        b = {"fact": "2026年10月8日のニューヨーク外国為替市場で、原油は90.21ドルまで反落した。"}
+        c = {"fact": "2026年10月8日の欧州市場で、ユーロは売られた。"}
+        self.assertEqual(oneshot.join_facts([a, b, c]),
+                         "2026年10月8日のNY外為市場で、原油は93.20ドルまで上昇した。原油は90.21ドルまで反落した。"
+                         "2026年10月8日の欧州市場で、ユーロは売られた。")
+
+    def test_join_sourced_names_a_run_from_one_article_once(self):
+        f = lambda t, s: {"fact": t, "source_title": s}
+        self.assertEqual(oneshot.join_sourced([f("甲。", "A"), f("乙。", "A"), f("丙。", "B")]), "甲。 乙。（出典: A） 丙。（出典: B）")
+
+    def test_topics_are_built_from_chosen_facts_without_reuse_across_topics(self):
+        material, calendar, ranking = self.inputs()
+        events = [f for f in material if f["fact_id"].startswith("N") and not oneshot.is_view(f) and not oneshot.is_theme(f)]
+        views = [f for f in material if oneshot.is_view(f)]
+        a, b, c = events[0], events[1], events[2]
+
+        def calls(out, label, task, data, schema, *rest):
+            if label.endswith("topics"):
+                self.assertIn(a["fact_id"], schema["properties"]["topics"]["items"]["properties"]["fact_ids"]["items"]["enum"])
+                self.assertNotIn(views[0]["fact_id"], schema["properties"]["topics"]["items"]["properties"]["fact_ids"]["items"]["enum"])
+                return {"topics": [{"title": "甲", "fact_ids": [a["fact_id"], b["fact_id"], "NOPE"]},
+                                   {"title": "乙", "fact_ids": [b["fact_id"], c["fact_id"]]},
+                                   {"title": "丙", "fact_ids": [b["fact_id"]]}],
+                        "market_view_ids": [views[0]["fact_id"], "X"]}
+            return canned(out, label, task, data, schema)
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
+            out = Path(folder)
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+            sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
+        self.assertEqual([t["title"] for t in sections["topics"]], ["甲", "乙"])  # "丙" had only an already-used fact
+        self.assertEqual(sections["topics"][0]["body"], oneshot.join_facts([a, b]))
+        self.assertEqual(sections["topics"][1]["body"], oneshot.join_facts([c]))
+        self.assertEqual(sections["market"], oneshot.sentence(views[0]))
 
     def test_assembled_sections_are_never_sent_to_repair(self):
         material, calendar, ranking = self.inputs()
