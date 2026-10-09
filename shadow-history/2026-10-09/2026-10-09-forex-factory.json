@@ -1,0 +1,117 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-09",
+  "fetched_at": "2026-10-09T09:21:26+09:00",
+  "events": [
+    {
+      "time_jst": "02:01",
+      "country": "USD",
+      "name": "30-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.31|2.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "02:40",
+      "country": "USD",
+      "name": "FOMC Member Musalem Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Household Spending y/y",
+      "importance": "low",
+      "forecast": "-3.5%",
+      "previous": "-3.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "JPY",
+      "name": "Prelim Machine Tool Orders y/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "64.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "CHF",
+      "name": "SECO Consumer Climate",
+      "importance": "low",
+      "forecast": "-32",
+      "previous": "-33",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Italian Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:15",
+      "country": "EUR",
+      "name": "ECOFIN Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Employment Change",
+      "importance": "high",
+      "forecast": "6.1K",
+      "previous": "-41.7K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Unemployment Rate",
+      "importance": "high",
+      "forecast": "6.5%",
+      "previous": "6.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Prelim UoM Consumer Sentiment",
+      "importance": "medium",
+      "forecast": "47.5",
+      "previous": "47.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Prelim UoM Inflation Expectations",
+      "importance": "medium",
+      "forecast": null,
+      "previous": "4.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
