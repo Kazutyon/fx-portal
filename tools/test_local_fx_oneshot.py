@@ -14,11 +14,10 @@ RUN = daily.ROOT / "shadow-output" / "2026-09-30-observation-trial-02"
 
 
 def canned(out, label, task, data, schema):
-    if label.endswith("story"):
-        return {"main_driver": "x", "hero": "冒頭。", "headline": "見出し", "summary": "要約。", "market": "市場。"}
     if label.endswith("topics"):
         ids = [f["id"] for f in data["facts"] if f["id"].startswith("N") and f["type"] != "outlook" and not f["fact"].startswith("・")]
-        return {"topics": [{"title": f"話題{i}", "fact_ids": ids[2 * i:2 * i + 2]} for i in range(4)], "market_view_ids": []}
+        return {"hero_ids": ids[:1], "summary_ids": ids[1:5],
+                "topics": [{"title": f"話題{i}", "fact_ids": ids[5 + 2 * i:7 + 2 * i]} for i in range(4)], "market_view_ids": []}
     if label.endswith("today"):
         return {"focus_pair": data["ranking_top5"][0]["pair"], "focus_view_id": "", "risk_view_ids": [],
                 "point_ids": ["e1", "e2", "e3"], "key_event_nos": [2, 1, 2, 9999]}
@@ -58,7 +57,7 @@ class OneshotTests(unittest.TestCase):
         self.assertEqual(oneshot.ranking_sentence(ranking, "EUR/USD"),
                          "デイトレ適性ランキング（10月8日08:39時点の算出）で1位のEUR/USD（スコア97、最適、方向下降、ADX 35.8）。")
 
-    def test_story_and_topics_never_receive_the_ranking(self):
+    def test_only_the_focus_call_receives_the_ranking(self):
         material, calendar, ranking = self.inputs()
         seen = {}
 
@@ -72,7 +71,7 @@ class OneshotTests(unittest.TestCase):
             (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
             oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
             sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
-        self.assertEqual((seen["oneshot-1-story"], seen["oneshot-2-topics"], seen["oneshot-3-today"]), (False, False, True))
+        self.assertEqual((seen["oneshot-2-topics"], seen["oneshot-3-today"]), (False, True))
         self.assertIn("時点の算出）で", sections["focus_body"])
 
     def test_interpretive_sections_are_assembled_from_chosen_ids_only(self):
@@ -131,13 +130,14 @@ class OneshotTests(unittest.TestCase):
         material, calendar, ranking = self.inputs()
         events = [f for f in material if f["fact_id"].startswith("N") and not oneshot.is_view(f) and not oneshot.is_theme(f)]
         views = [f for f in material if oneshot.is_view(f)]
-        a, b, c = events[0], events[1], events[2]
+        a, b, c, d = events[0], events[1], events[2], events[3]
 
         def calls(out, label, task, data, schema, *rest):
             if label.endswith("topics"):
                 self.assertIn(a["fact_id"], schema["properties"]["topics"]["items"]["properties"]["fact_ids"]["items"]["enum"])
                 self.assertNotIn(views[0]["fact_id"], schema["properties"]["topics"]["items"]["properties"]["fact_ids"]["items"]["enum"])
-                return {"topics": [{"title": "甲", "fact_ids": [a["fact_id"], b["fact_id"], "NOPE"]},
+                return {"hero_ids": [a["fact_id"]], "summary_ids": [d["fact_id"], c["fact_id"]],
+                        "topics": [{"title": "甲", "fact_ids": [a["fact_id"], b["fact_id"], "NOPE"]},
                                    {"title": "乙", "fact_ids": [b["fact_id"], c["fact_id"]]},
                                    {"title": "丙", "fact_ids": [b["fact_id"]]}],
                         "market_view_ids": [views[0]["fact_id"], "X"]}
@@ -149,8 +149,11 @@ class OneshotTests(unittest.TestCase):
             oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
             sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
         self.assertEqual([t["title"] for t in sections["topics"]], ["甲", "乙"])  # "丙" had only an already-used fact
-        self.assertEqual(sections["topics"][0]["body"], oneshot.join_facts([a, b]))
+        self.assertEqual(sections["hero"], oneshot.join_facts([a]))  # hero is served first, so the topics do not repeat it
+        self.assertEqual(sections["topics"][0]["body"], oneshot.join_facts([b]))
         self.assertEqual(sections["topics"][1]["body"], oneshot.join_facts([c]))
+        self.assertEqual(sections["summary"], oneshot.join_facts([d]))  # c already belongs to a topic
+        self.assertEqual(sections["headline"], "甲")
         self.assertEqual(sections["market"], oneshot.sentence(views[0]))
 
     def test_assembled_sections_are_never_sent_to_repair(self):
@@ -192,14 +195,14 @@ class OneshotTests(unittest.TestCase):
         def calls(out, label, task, data, schema, *rest):
             if label.endswith("repair"):
                 seen["problems"] = data["problems"]
-                return {"fixes": [{"section": "summary", "text": "直した要約。"}]}
+                return {"fixes": [{"section": "title0", "text": "直した見出し"}]}
             return canned(out, label, task, data, schema)
 
         reviews = []
 
         def reviewer(out, data, texts):
             reviews.append(dict(texts))
-            return {"status": "ok", "issues": [{"section": "summary", "excerpt": "要約。", "kind": "取り違え", "reason": "指標名が違う"}]}
+            return {"status": "ok", "issues": [{"section": "title0", "excerpt": "話題0", "kind": "取り違え", "reason": "指標名が違う"}]}
 
         with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls), patch.object(
                 oneshot.external_review, "review", side_effect=reviewer):
@@ -207,10 +210,12 @@ class OneshotTests(unittest.TestCase):
             (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
             checks = oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking,
                                       json.loads((out / "policy.json").read_text(encoding="utf-8")))
-        self.assertTrue(any("指標名が違う" in p["reason"] and p["sections"] == ["summary"] for p in seen["problems"]))
-        self.assertEqual(checks["repaired_sections"], ["summary"])
-        self.assertEqual(reviews[0]["summary"], "要約。")      # first review sees the draft
-        self.assertEqual(reviews[1]["summary"], "直した要約。")  # second review sees the repaired text
+            headline = json.loads((out / "sections.json").read_text(encoding="utf-8"))["headline"]
+        self.assertTrue(any("指標名が違う" in p["reason"] and p["sections"] == ["title0"] for p in seen["problems"]))
+        self.assertEqual(checks["repaired_sections"], ["title0"])
+        self.assertEqual(reviews[0]["title0"], "話題0")      # first review sees the draft
+        self.assertEqual(reviews[1]["title0"], "直した見出し")  # second review sees the repaired text
+        self.assertEqual(headline, "直した見出し")  # the headline follows the lead topic's (repaired) title
         self.assertIn("external_review_after", checks)
 
     def test_cut_off_repair_keeps_the_draft_and_the_report(self):
@@ -222,7 +227,7 @@ class OneshotTests(unittest.TestCase):
                 raise ValueError("oneshot-5-repair: wrong model or incomplete response (length)")
             return canned(out, label, task, data, schema)
 
-        issue = {"status": "ok", "issues": [{"section": "summary", "excerpt": "要約。", "kind": "取り違え", "reason": "x"}]}
+        issue = {"status": "ok", "issues": [{"section": "title0", "excerpt": "話題0", "kind": "取り違え", "reason": "x"}]}
         with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls), patch.object(
                 oneshot.external_review, "review", return_value=issue):
             out = Path(folder)

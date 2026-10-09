@@ -196,32 +196,40 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
              "市場関係者の見方は『〜と指摘されている』のように出所を明示する。"
              "同じ指標や価格が日中に上下した場合は、高値・安値・その後の動きの前後関係が読み手に分かるように書き、時点の違う数値を並べて矛盾して見える書き方をしない。")
     plain = {k: v for k, v in data.items() if k != "ranking_top5"}  # only the focus call needs the ranking
-    story = call(out, "oneshot-1-story", style +
-                 "前営業日の相場を振り返る導入部分を書く。main_driverは今日の相場の最重要材料を1〜2文で。"
-                 "heroは冒頭200字前後、headlineは60字以内の一言まとめ、summaryは前営業日の市場全体の整理350〜550字。",
-                 plain, news.schema({"main_driver": S, "hero": S, "headline": S, "summary": S}))
     by_id = {x["fact_id"]: x for x in material}
     view_ids = [x["fact_id"] for x in material if is_view(x)]
     theme_ids = [x["fact_id"] for x in material if is_theme(x)]
     event_ids = [x["fact_id"] for x in material if x["fact_id"].startswith("N") and not is_view(x) and not is_theme(x)]
     topics = call(out, "oneshot-2-topics", style +
-                  "前営業日の主要な出来事を4〜5件の話題にまとめるが、文章は書かず、資料のfactをidで選ぶだけにする。"
-                  "各話題のfact_idsは、同じ出来事・同じ材料を扱うfactのid(2〜5件、時系列順、同じ内容を重複して選ばない)。"
-                  "titleは話題の見出し(30字以内。資料にある語と数値だけを使い、資料にない因果や数値は書かない)。"
-                  "main_driverに関わる話題を先頭にする。同じfactを複数の話題で使わない。"
+                  "前営業日の相場の振り返りを組み立てるが、文章は書かず、資料のfactをidで選ぶだけにする。"
+                  "heroは冒頭に置く今日の相場の最重要材料のfactのid(1〜2件)。"
+                  "topicsは前営業日の主要な出来事の4〜5話題。各話題のfact_idsは、同じ出来事・同じ材料を扱うfactのid(2〜5件、時系列順)、"
+                  "titleは話題の見出し(30字以内。資料にある語と数値だけを使い、資料にない因果や数値は書かない)。最重要材料の話題を先頭にする。"
+                  "summary_idsは、前営業日の市場全体(主要通貨ペアの終値、主要指標の結果など)を整理するfactのid(4〜6件)。"
+                  "hero・各話題・summaryで同じfactを使わない。"
                   f"market_view_idsは、本日の地合いの判断材料となる市場関係者の見解のid(最大3件、{view_ids}から)。",
-                  {**plain, "main_driver": story["main_driver"]},
-                  news.schema({"topics": {"type": "array", "minItems": 4, "maxItems": 5, "items": news.schema({
+                  plain,
+                  news.schema({"hero_ids": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "enum": event_ids}},
+                               "topics": {"type": "array", "minItems": 4, "maxItems": 5, "items": news.schema({
                                    "title": S, "fact_ids": {"type": "array", "minItems": 2, "maxItems": 5,
                                                             "items": {"type": "string", "enum": event_ids}}})},
+                               "summary_ids": {"type": "array", "minItems": 4, "maxItems": 6, "items": {"type": "string", "enum": event_ids}},
                                "market_view_ids": {"type": "array", "minItems": 0, "maxItems": 3, "items": {"type": "string", "enum": view_ids or [""]}}}))
     used = set()
+
+    def take(ids):
+        facts = [by_id[i] for i in dict.fromkeys(ids) if i in by_id and i not in used]
+        used.update(x["fact_id"] for x in facts)
+        return facts
+
+    hero_facts = take(topics["hero_ids"])
     topic_list = []
     for t in topics["topics"]:
-        chosen_facts = [by_id[i] for i in dict.fromkeys(t["fact_ids"]) if i in by_id and i not in used]
-        used.update(x["fact_id"] for x in chosen_facts)
+        chosen_facts = take(t["fact_ids"])
         if chosen_facts:
             topic_list.append({"title": t["title"], "body": join_facts(chosen_facts)})
+    summary_facts = take(topics["summary_ids"])
+    titles = "、".join(t["title"] for t in topic_list)
     market_views = [by_id[i] for i in dict.fromkeys(topics.get("market_view_ids", [])) if i in by_id and is_view(by_id[i])]
     point_ids = view_ids + theme_ids + [f"e{n}" for n in range(1, len(calendar["events"]) + 1)]
     today = call(out, "oneshot-3-today", style +
@@ -232,7 +240,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                  "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を8〜12件。"
                  "各国の政策・景況・物価・雇用の主要指標と、中央銀行総裁・要人発言を優先し、同じ指標の副項目や小さな指標は含めない。"
                  "本文で取り上げる通貨ペア(例: ユーロドル、ドル円)に関わる予定を必ず含める。",
-                 {**data, "main_driver": story["main_driver"]},
+                 data,
                  news.schema({"focus_pair": {"type": "string", "enum": pairs},
                               "focus_view_id": {"type": "string", "enum": view_ids + [""]},
                               "risk_view_ids": {"type": "array", "minItems": 0, "maxItems": 2, "items": {"type": "string", "enum": view_ids or [""]}},
@@ -266,8 +274,10 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
             points.append(text)
     points = points[:3]
     high = sum(1 for e in calendar["events"] if e["importance"] == "high")
-    sections = {"topics": topic_list, "hero": story["hero"], "headline": story["headline"],
-                "summary": story["summary"],
+    sections = {"topics": topic_list,
+                "hero": join_facts(hero_facts) if hero_facts else f"{topic_list[0]['title']}。",
+                "headline": topic_list[0]["title"],
+                "summary": join_facts(summary_facts) if summary_facts else f"前営業日の主な話題: {titles}。",
                 "market": join_sourced(market_views) or "資料に、地合いの判断材料となる市場関係者の見解はない。",
                 "handover": handover_text(chosen),
                 "focus_pair": today["focus_pair"],
@@ -285,7 +295,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                  for x in data["ranking_top5"] + data["policy_rates"]]
     # handover/focus/risk/points are assembled from sourced facts and the calendar (no model), so they are never
     # sent to the repair step; only the model-written sections can be flagged and rewritten.
-    keys = ["hero", "headline", "summary"] + [f"title{i}" for i in range(len(sections["topics"]))]
+    keys = [f"title{i}" for i in range(len(sections["topics"]))]
 
     def texts_of(sec):
         return {"hero": sec["hero"], "headline": sec["headline"], "summary": sec["summary"], "market": sec["market"],
@@ -351,6 +361,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
             checks["repaired_sections"] = [f["section"] for f in fixed["fixes"]]
         except Exception as error:
             checks["repair_error"] = f"{type(error).__name__}: {error}"
+    sections["headline"] = sections["topics"][0]["title"]  # the headline is the lead topic's title (may have been repaired)
     news.save(out / "sections.json", sections)
     texts_after = texts_of(sections)
     checks["after_repair"] = {**mechanical(texts_after), "chars": {k: len(v) for k, v in texts_after.items()}}
