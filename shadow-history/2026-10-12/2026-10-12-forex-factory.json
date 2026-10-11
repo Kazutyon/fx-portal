@@ -1,0 +1,67 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-12",
+  "fetched_at": "2026-10-12T08:38:15+09:00",
+  "events": [
+    {
+      "time_jst": "08:00",
+      "country": "JPY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "MPC Member Breeden Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "20:00",
+      "country": "USD",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:00",
+      "country": "CAD",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:50",
+      "country": "GBP",
+      "name": "MPC Member Mann Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:15",
+      "country": "ALL",
+      "name": "IMF Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
