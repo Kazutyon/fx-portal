@@ -132,6 +132,23 @@ class OneshotTests(unittest.TestCase):
         self.assertIn("6.5％に悪化", text)
         self.assertEqual(oneshot.join_facts([c, c]), "カナダの9月失業率は6.4％から6.5％に悪化した。")
 
+    def test_calendar_and_weekly_facts_are_not_market_views(self):
+        news = {"fact_id": "N5-2", "record_type": "outlook", "fact": "ストラテジストは円安を指摘した。"}
+        calendar = {"fact_id": "C10", "record_type": "forecast", "fact": "2026-10-13 16:45 JST USD ウォラーFRB理事の発言。"}
+        weekly = {"fact_id": "W0", "record_type": "outlook", "fact": "▼ 10月13日(火) 豪)RBA議事録"}
+        theme = {"fact_id": "D1", "record_type": "outlook", "fact": "・イラン情勢"}
+        self.assertEqual([oneshot.is_view(x) for x in (news, calendar, weekly, theme)], [True, False, False, False])
+        self.assertTrue(oneshot.is_theme(theme))
+
+    def test_restated_view_is_detected_across_sections(self):
+        a = "日米両国とも、USD/JPYが160円を超えることは望んでいないと指摘されている。"
+        b = "アナリストは日米が160円超を望まないとし、USD/JPYは現行付近で推移する可能性があると分析した。"
+        c = "アナリストは、現在のフランス国債利回りスプレッドはECBが介入する水準には程遠いと指摘した。"
+        self.assertTrue(oneshot.restates(a, [a]))
+        self.assertTrue(oneshot.restates(b, [a]))  # same figure (160) and shared wording, different article
+        self.assertFalse(oneshot.restates(c, [a]))
+        self.assertFalse(oneshot.restates("米10年債利回りは5.23％まで低下した。", [a]))
+
     def test_join_sourced_names_a_run_from_one_article_once(self):
         f = lambda t, s: {"fact": t, "source_title": s}
         self.assertEqual(oneshot.join_sourced([f("甲。", "A"), f("乙。", "A"), f("丙。", "B")]), "甲。 乙。（出典: A） 丙。（出典: B）")

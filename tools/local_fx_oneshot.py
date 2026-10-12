@@ -9,6 +9,7 @@ Never publishes; does not touch the cron or the production pipeline.
 from __future__ import annotations
 
 import argparse
+import difflib
 import json
 import re
 import shutil
@@ -58,16 +59,13 @@ def join_facts(facts: list) -> str:
     def same_lead_in(prefix: str) -> str:  # NY / ニューヨーク and 外為 / 外国為替 are spellings of one market; 欧州 etc. stay different
         return re.sub(r"外国為替|外為|為替", "", prefix.replace("ニューヨーク", "NY"))
 
-    def numbers(text):  # the figures a sentence states, not the date in its lead-in
-        return {float(n) for n in re.findall(r"\d+(?:\.\d+)?", PREFIX.sub("", text))}
-
     seen, parts, stated = set(), [], []
     for x in facts:
         text = x["fact"].strip()
-        figures = numbers(text)
-        if figures and any(figures <= earlier for earlier in stated):
+        nums = figures(text)
+        if nums and any(nums <= earlier for earlier in stated):
             continue  # another article restating the same figures: say it once
-        stated.append(figures)
+        stated.append(nums)
         m = PREFIX.match(text)
         if m and same_lead_in(m.group(1)) in seen:
             text = text[m.end():]
@@ -92,7 +90,27 @@ def join_sourced(facts: list) -> str:
 
 
 def is_view(x: dict) -> bool:
-    return x.get("record_type") in ("outlook", "forecast") and bool(x.get("fact")) and not x["fact"].lstrip().startswith("・")
+    """A market participant's view from a news article. Calendar (C*), weekly schedule (W*) and ranking (R*) facts
+    are also typed forecast/outlook but are not views, so only the news facts (N*) qualify."""
+    return (x.get("fact_id", "").startswith("N") and x.get("record_type") in ("outlook", "forecast")
+            and bool(x.get("fact")) and not x["fact"].lstrip().startswith("・"))
+
+
+def figures(text: str) -> set:
+    """The figures a sentence states (not the date in its lead-in), as numbers so that 1.00 and 1 are the same."""
+    return {float(n) for n in re.findall(r"\d+(?:\.\d+)?", PREFIX.sub("", text))}
+
+
+def restates(text: str, others: list) -> bool:
+    """True when an already-chosen sentence says the same thing: nearly the same wording, or the same figures
+    (one set contains the other) with some wording in common. Two articles often carry one view in different words."""
+    mine = figures(text)
+    for other in others:
+        ratio = difflib.SequenceMatcher(None, text, other).ratio()
+        theirs = figures(other)
+        if ratio >= 0.6 or (mine and theirs and (mine <= theirs or theirs <= mine) and ratio >= 0.25):
+            return True
+    return False
 
 
 def is_theme(x: dict) -> bool:
@@ -264,7 +282,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         focus_view = None  # a view about other pairs does not belong under this pair
     market_ids = {x["fact_id"] for x in market_views}
     risk_views = [by_id[i] for i in dict.fromkeys(today.get("risk_view_ids", []))
-                  if i in by_id and is_view(by_id[i]) and i not in market_ids]
+                  if i in by_id and is_view(by_id[i]) and i not in market_ids
+                  and not restates(by_id[i]["fact"], [x["fact"] for x in market_views])]
     points = []
     for i in dict.fromkeys(today.get("point_ids", [])):
         if i in {v["fact_id"] for v in risk_views}:
