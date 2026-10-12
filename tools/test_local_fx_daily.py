@@ -613,6 +613,15 @@ class ValuePairTests(unittest.TestCase):
               self.row("23:00", "USD", "Prelim UoM Inflation Expectations", "—", "4.6%")]
         self.assertEqual(daily.value_pairs(kiss, ff, set()), {0: 0})
 
+    def test_speeches_without_figures_pair_only_when_one_to_one(self):
+        kiss = [self.row("18:30", "GBP", "ブリーデンBOE副総裁の発言", "—", "—")]
+        ff = [self.row("18:30", "GBP", "MPC Member Breeden Speaks", "—", "—"), self.row("20:00", "USD", "Bank Holiday", "—", "—")]
+        self.assertEqual(daily.value_pairs(kiss, ff, set()), {0: 0})
+        notice = kiss + [self.row("18:30", "GBP", "注目度の高い経済指標の発表はない", "-", "-")]
+        self.assertEqual(daily.value_pairs(notice, ff, set()), {0: 0})  # a "no release" notice row is not a candidate
+        two = ff + [self.row("18:30", "GBP", "MPC Member Pill Speaks", "—", "—")]
+        self.assertEqual(daily.value_pairs(kiss, two, set()), {})  # two candidates: left unpaired
+
     def test_ambiguous_or_different_time_or_country_stays_unpaired(self):
         kiss = [self.row("23:00", "USD", "A", "—", "0.7%")]
         ff = [self.row("23:00", "USD", "X", "—", "0.7%"), self.row("23:00", "USD", "Y", "—", "0.7%"),

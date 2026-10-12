@@ -58,9 +58,16 @@ def join_facts(facts: list) -> str:
     def same_lead_in(prefix: str) -> str:  # NY / ニューヨーク and 外為 / 外国為替 are spellings of one market; 欧州 etc. stay different
         return re.sub(r"外国為替|外為|為替", "", prefix.replace("ニューヨーク", "NY"))
 
-    seen, parts = set(), []
+    def numbers(text):  # the figures a sentence states, not the date in its lead-in
+        return {float(n) for n in re.findall(r"\d+(?:\.\d+)?", PREFIX.sub("", text))}
+
+    seen, parts, stated = set(), [], []
     for x in facts:
         text = x["fact"].strip()
+        figures = numbers(text)
+        if figures and any(figures <= earlier for earlier in stated):
+            continue  # another article restating the same figures: say it once
+        stated.append(figures)
         m = PREFIX.match(text)
         if m and same_lead_in(m.group(1)) in seen:
             text = text[m.end():]

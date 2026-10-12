@@ -226,7 +226,14 @@ def value_pairs(kiss_events: list, ff_rows: list, taken: set) -> dict:
         x, y = numeric_value(a), numeric_value(b)
         return x is not None and y is not None and abs(x - y) <= Decimal("0.02") * max(abs(x), abs(y))
 
+    def blank(row):
+        return numeric_value(row["forecast"]) is None and numeric_value(row["previous"]) is None
+
     def same(event, other):
+        if "発表はない" in event["name"]:
+            return False  # a notice row ("no major release"), not an event of the other source
+        if blank(event) and blank(other):
+            return True  # no figures to compare (speeches, holidays): the one-to-one rule below decides
         if numeric_agreement(event["previous"], other["previous"]) in ("exact", "rounding-compatible"):
             return True
         return close(event["forecast"], other["forecast"]) and close(event["previous"], other["previous"])

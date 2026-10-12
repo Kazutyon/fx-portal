@@ -122,6 +122,16 @@ class OneshotTests(unittest.TestCase):
                          "2026年10月8日のNY外為市場で、原油は93.20ドルまで上昇した。原油は90.21ドルまで反落した。"
                          "2026年10月8日の欧州市場で、ユーロは売られた。")
 
+    def test_join_facts_says_restated_figures_once(self):
+        a = {"fact": "2026年10月9日に発表された9月カナダ雇用統計で新規雇用者数は6.83万人減となり、予想の1.00万人増に反して減少した。"}
+        b = {"fact": "2026年10月9日、カナダの9月雇用統計で雇用者数が6.83万人減となり、市場予想の1万人増を下回った。"}
+        c = {"fact": "カナダの9月失業率は6.4％から6.5％に悪化した。"}
+        text = oneshot.join_facts([a, b, c])
+        self.assertIn("6.83万人減となり、予想の1.00万人増", text)
+        self.assertNotIn("市場予想の1万人増を下回った", text)  # restates the same figures
+        self.assertIn("6.5％に悪化", text)
+        self.assertEqual(oneshot.join_facts([c, c]), "カナダの9月失業率は6.4％から6.5％に悪化した。")
+
     def test_join_sourced_names_a_run_from_one_article_once(self):
         f = lambda t, s: {"fact": t, "source_title": s}
         self.assertEqual(oneshot.join_sourced([f("甲。", "A"), f("乙。", "A"), f("丙。", "B")]), "甲。 乙。（出典: A） 丙。（出典: B）")
