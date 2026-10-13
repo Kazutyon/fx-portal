@@ -1,0 +1,414 @@
+# -*- coding: utf-8 -*-
+"""FX日報 2026-10-14（水）生成スクリプト"""
+import glob, os
+
+TODAY = '2026-10-14'
+WEEKDAY = '水'
+
+HERO_TITLE_SUB = (
+    '前営業日10/13（火）はドル円が158.33円で3営業日ぶりに反落し、ロンドン時間に157円83銭まで下げたあと158円台を回復した。'
+    '本日10/14（水）は休場なしで、21:30の米CPIが今週最大の材料となり、結果次第で10/28のFOMCの利上げ織り込みが動く。'
+)
+
+SUMMARY_HEADLINE = (
+    'ドル円は米CPI前のポジション調整で158.33円へ反落、ユーロドルは1.119ドル近辺。'
+    '本日は21:30の米CPIが焦点で、結果が10/28FOMCの利上げ織り込みを決める'
+)
+
+SUMMARY_BODY = (
+    '10/13（火）のドル円は、米CPI発表を前にしたポジション調整でロンドン時間に157円83銭近辺まで下げ、NY序盤には200日移動平均線を維持できない場面があった（みんかぶ）。'
+    'その後は中東情勢の悪化による原油高を背景に158円台を回復したが、終値は158.33円と3営業日ぶりの下落となった（ザイFX）。'
+    '本日10/14は日本・米国・カナダとも休場がなく、流動性は通常に戻る（KissFX・ForexFactoryで休場の記載なし）。'
+)
+
+TOP_PAIR_BODY = (
+    '4時間足ランキング（10/13 10:30 JST生成・本日分は未更新）ではEUR/USDが1位・適判定（スコア77、ADX30.3、方向は下降）。'
+    'ユーロはフランスの債務リスクが重しとして指摘されており（みんかぶ）、10/13の終値は1.119ドル近辺だった（ザイFX）。'
+    '21:30の米CPI（前年比予想+3.6％・前回+3.4％）が予想を上回ればドル買い、下回ればドル売りで反応が分かれる。下降トレンドの方向では戻り売りが基本となる。'
+)
+
+RISK_LEVEL = 'HIGH'
+RISK_BODY = (
+    '21:30に米CPI（前月比予想+0.6％・前年比予想+3.6％）が発表される。米10年債利回りは10/13に一時5.17％台まで低下しており、CPIの結果で金利とドルが同時に動く。'
+    'ドル円オプションの変動率は低下してレンジを織り込んでいる（ザイFX）ため、予想から外れた場合は値が飛びやすい。為替介入への警戒も継続している（みんかぶ）。'
+)
+
+KEY_EVENTS_COUNT = '8件'
+KEY_EVENTS_SUMMARY = (
+    '中 CPI・PPI(10:30) / 欧 ラガルドECB総裁発言(11:10・17:30) / 英 ベイリーBOE総裁発言(14:30) / 加 マックレムBOC総裁発言(15:05) / 米 ボウマンFRB副議長発言(18:40) / 米 CPI(21:30) / 米 ベージュブック(翌03:00)'
+)
+
+MARKET_OVERVIEW = (
+    '10/13（火）はドル円が158.33〜158.35円、ユーロ円が177.26円、ユーロドルが1.119ドル近辺で引けた（ザイFX）。'
+    'ドル円は東京時間に介入への警戒感と原油の反落で上値が重く、ロンドン時間は157円83銭近辺まで下落、NY序盤は200日移動平均線（ピボット158円22銭付近）を割り込む場面もあった（みんかぶ）。'
+    '米9月中古住宅販売件数は予想を上回ったが、ウィリアムズNY連銀総裁が「年内の利上げは適切」としつつ「2027年の利上げは現時点では不要と予想」と述べたため、ドル売りがやや優勢となった（ザイFX）。'
+    '本日は休場がなく、21:30の米CPIまでは18:40のボウマンFRB副議長発言（投票権あり）と、欧州のラガルドECB総裁（11:10・17:30）、英国のベイリーBOE総裁（14:30）の発言が材料になる。'
+    '<br><br><strong>政策金利：</strong> 本日は水曜日のため前回更新（10/12）の値を引き継ぐ。FRB 3.75〜4.00％、日銀 1.25％、ECB 預金金利2.50％、BOE 3.75％、RBA 4.60％、RBNZ 2.75％、BOC 2.25％、SNB 0.00％（詳細は週次更新の月曜日版を参照）。'
+    '<br><br><strong>今週の焦点：</strong> 10/14に米消費者物価指数、10/15に米小売売上高と生産者物価指数。次回FOMCは10/28、日銀は10/30、ECBは10/29。'
+)
+
+RANKING_ROWS = [
+    (1, 'EUR/USD', 'rank-a', 'A', '直近スコア77・適。ADX30.3、ADR比106.1％、方向は下降。フランスの債務リスクがユーロの重しで、21:30の米CPIがドル側の変動要因（みんかぶ・ザイFX）。', 'trend-down', '↓'),
+    (2, 'USD/CAD', 'rank-b', 'B', '直近スコア69・適。ADX27.2、ADR比101.2％、方向は上昇。15:05にマックレムBOC総裁の発言、21:30にカナダ住宅建設許可がある。', 'trend-up', '↑'),
+    (3, 'EUR/JPY', 'rank-c', 'C', '直近スコア66・適。ADX24.2、ADR比100.1％、方向は下降。ユーロ円は10/13に177.26円で引けた（ザイFX）。', 'trend-down', '↓'),
+    (4, 'EUR/AUD', 'rank-c', 'C', '直近スコア57・候補。ADX34.3、ADR比69.9％、方向は下降。ADRが5年平均を大きく下回り値幅が出にくい。', 'trend-down', '↓'),
+    (5, 'USD/JPY', 'rank-c', 'C', '直近スコア42・見送り。ADX24.8、ADR比59.5％、方向は上昇。5日ADRは66.5pipsで5年平均111.7pipsを大きく下回るが、CPI発表時は値幅が拡大する。', 'trend-up', '↑'),
+]
+
+RANKING_ROWS_HTML = '\n'.join(f'''            <tr>
+              <td><span class="rank-badge {badge_class}">{letter}</span></td>
+              <td><strong>{pair}</strong><br><span style="color:var(--muted);font-size:12px;">{desc}</span></td>
+              <td><span class="{trend_class}">{arrow}</span></td>
+            </tr>''' for rank, pair, badge_class, letter, desc, trend_class, arrow in RANKING_ROWS)
+
+RANKING_NOTE = (
+    '※ 4時間足ランキングは2026/10/13 10:30 JST生成分（本日分は未更新・要確認）。'
+    'スコア・ADX・ADR比は候補選定の補助指標であり、売買推奨ではない。'
+)
+
+TOPICS = [
+    (
+        '米CPI前のポジション調整でドル指数が低下、ドル円はロンドン時間に157円83銭近辺',
+        '翌日の米消費者物価指数の発表を前にポジションを調整する動きが出て、ドル指数が低下した。ドル円はロンドン時間に一時157円83銭近辺まで下落した（みんかぶ）。'
+        '東京時間は介入への警戒感と原油価格の反落でドル高が一服していた。',
+    ),
+    (
+        '日銀は10月会合で利上げ見送りの公算大との報道、12月の利上げは排除されず',
+        'ロンドン時間に「日銀は今月会合で利上げ見送る公算大」との報道が出て、ドル円が激しく振れた。12月の利上げは排除されていないと伝えられた（みんかぶ）。'
+        '次回の日銀会合は10/30で、見送りが織り込まれると円買いの材料が出にくくなる。',
+    ),
+    (
+        'ドル円は200日移動平均線を割り込み、その後158円台を回復して158.33円で引け',
+        'NY序盤にドル円は200日移動平均線を維持できない場面があり、ピボットは158円22銭付近だった（みんかぶ）。'
+        'その後、中東情勢の紛争激化による原油高が意識されて158円09銭から158円47銭まで上昇し、米9月中古住宅販売件数が予想を上回ったこともドル買いにつながった。終値は158.33円で3営業日ぶりの下落（ザイFX）。',
+    ),
+    (
+        'ウィリアムズNY連銀総裁の発言で米10年債利回りが5.17％台へ低下、ユーロはフランスの債務リスクで下落圧力',
+        'ウィリアムズNY連銀総裁は年内の利上げを「適切」としつつ、2027年の利上げは「現時点では不要と予想」と述べ、米10年債利回りが一時5.17％台まで低下してドル売りがやや優勢になった（ザイFX）。'
+        'ユーロはNY時間にフランスの債務リスクを背景に下落リスクが指摘され、終値はユーロ円177.26円、ユーロドル1.119ドル近辺（みんかぶ・ザイFX）。',
+    ),
+]
+
+TOPICS_HTML = '\n'.join(f'''          <div class="topic">
+            <div class="topic-title">【トピック{i+1}】{title}</div>
+            {body}
+          </div>''' for i, (title, body) in enumerate(TOPICS))
+
+HANDOVER = (
+    '本日（10/14水）への引継ぎ：ドル円は158.33円、ユーロ円は177.26円、ユーロドルは1.119ドル近辺で前営業日を終えた。'
+    '本日は休場がなく、21:30の米CPI（前年比予想+3.6％・コア前年比予想+2.5％）が最大の材料。ドル円オプションの変動率が低下しているため、予想から外れた場合の値幅拡大に備える。'
+    '米CPIの結果は10/28FOMCの利上げ織り込みに直結し、18:40のボウマンFRB副議長発言が事前の地合いを決める。'
+)
+
+POINTS_EVENTS = [
+    '10:30 🇨🇳 中国 消費者物価指数（前年比予想+1.0％・前回+0.8％。Kiss/FF一致）',
+    '10:30 🇨🇳 中国 生産者物価指数（前年比予想+4.4％・前回+3.8％。Kiss/FF一致）',
+    '11:10 🇪🇺 ユーロ圏 ラガルドECB総裁 発言（Kiss/FF一致）／17:30 同 発言（Kiss/FF一致）',
+    '14:30 🇬🇧 英国 ベイリーBOE総裁 発言（Kiss/FF一致）',
+    '15:05 🇨🇦 カナダ マックレムBOC総裁 発言（Kiss/FF一致）',
+    '18:40 🇺🇸 米国 ボウマンFRB副議長 発言（投票権あり。Kiss/FF一致）',
+    '21:30 🇺🇸 米国 消費者物価指数（前月比予想+0.6％・前回+0.4％／前年比予想+3.6％・前回+3.4％。Kiss/FF一致）',
+    '21:30 🇺🇸 米国 コアCPI（前月比予想+0.2％・前回+0.3％／前年比予想+2.5％・前回+2.4％。Kiss/FF一致）',
+    '翌03:00（27:00） 🇺🇸 米国 地区連銀経済報告（ベージュブック）（Kiss/FF一致）',
+]
+POINTS_EVENTS_HTML = '\n'.join(f'              <li>{e}</li>' for e in POINTS_EVENTS)
+
+OTHER_POINTS = [
+    (
+        'ドル円：米CPIが方向を決め、158円台前半の200日移動平均線が分岐点',
+        'ドル円は10/13に157円83銭まで下げたあと158.33円で引けた。200日移動平均線（ピボット158円22銭付近）の上を維持すればCPIの上振れで158円台後半へ戻り、割り込めば157円台後半が下値の目安になる（みんかぶ・ザイFX）。'
+        'CPIの前年比が予想の+3.6％を上回ればFRBの追加利上げ観測が強まりドル買いが入り、下回ればドル売りになる。為替介入への警戒が160円手前の上値を抑える。',
+    ),
+    (
+        'ユーロ：ラガルドECB総裁が2回発言、フランスの債務リスクが重し',
+        '11:10と17:30にラガルドECB総裁の発言がある。次回のECB理事会は10/29で、9月のユーロ圏CPI（+3.8％）が上振れしているため追加利上げに言及すればユーロ買いになる。'
+        'フランスの債務リスクがユーロの上値を抑えており（みんかぶ）、19:15のEU経済サミットで財政に触れる発言が出ればユーロ売りが加速する。',
+    ),
+    (
+        'ポンド：14:30のベイリーBOE総裁発言',
+        'BOEは9/17に6対3の分裂投票で政策金利を3.75％に据え置いた。14:30のベイリー総裁の発言（12:30のブリーデン委員、15:00のピル委員の発言も続く）で11月の追加利上げに言及すればポンド買いになり、慎重姿勢が強ければポンド売りになる。次回会合は11/5。',
+    ),
+    (
+        'カナダドル：15:05のマックレムBOC総裁発言と21:30の住宅建設許可',
+        'BOCは政策金利2.25％を据え置いており、10/9の雇用統計は予想外の減少だった。15:05のマックレム総裁が景気の弱さに言及すればカナダドル売り、インフレを警戒する発言ならカナダドル買いになる。21:30の住宅建設許可は予想+3.0％（前回-17.3％）。次回会合は10/28。',
+    ),
+]
+OTHER_POINTS_HTML = '\n'.join(f'''              <li><strong>{title}</strong>：{body}</li>''' for title, body in OTHER_POINTS)
+
+CAL_ROWS = [
+    ('02:00', '🇺🇸 米', 'バーキン・リッチモンド連銀総裁 発言（FFのみ・発表済み・要確認）', '低', '要人発言', '—'),
+    ('05:00', '🇺🇸 米', 'コリンズ・ボストン連銀総裁 発言（FFのみ・発表済み・要確認）', '低', '要人発言', '—'),
+    ('06:45', '🇳🇿 NZ', '訪問者到着数 [前月比]（FFのみ・発表済み・要確認）', '低', '—', '0.5%'),
+    ('08:30', '🇦🇺 豪', 'ウエストパック景気先行指数／MI先行指数 [前月比]（Kiss -0.04％・FF 0.0％で不一致・要確認）', '低', '—', '-0.04% / 0.0%'),
+    ('08:50', '🇯🇵 日', 'マネーストックM2 [前年比]（FFのみ・要確認）', '低', '2.1%', '2.0%'),
+    ('10:30', '🇨🇳 中', '消費者物価指数 [前年比]（Kiss/FF一致）', '中', '+1.0%', '+0.8%'),
+    ('10:30', '🇨🇳 中', '生産者物価指数 [前年比]（Kiss/FF一致）', '中', '+4.4%', '+3.8%'),
+    ('11:03', '🇨🇳 中', '貿易収支（Kiss +1177.8億ドル／FF 米ドル建て116.8B・時刻差と金額差があり要確認）', '低', '+1177.8億ドル', '+1190.9億ドル'),
+    ('11:10', '🇪🇺 欧', 'ラガルドECB総裁 発言（Kiss/FF一致）', '中', '要人発言', '—'),
+    ('12:30', '🇬🇧 英', 'ブリーデンBOE副総裁 発言（Kiss/FF一致）', '低', '要人発言', '—'),
+    ('14:30', '🇬🇧 英', 'ベイリーBOE総裁 発言（Kiss/FF一致）', '中', '要人発言', '—'),
+    ('15:00', '🇩🇪 独', '卸売物価指数 [前月比]（FFのみ・要確認）', '低', '0.6%', '0.9%'),
+    ('15:00', '🇬🇧 英', 'ピルMPC委員 発言（Kiss/FF一致）', '低', '要人発言', '—'),
+    ('15:05', '🇨🇦 加', 'マックレムBOC総裁 発言（Kiss/FF一致）', '中', '要人発言', '—'),
+    ('17:03', '🇨🇳 中', 'M2マネーサプライ [前年比]（FFのみ・要確認）', '低', '7.4%', '7.5%'),
+    ('17:03', '🇨🇳 中', '新規人民元建て融資（FFのみ・要確認）', '低', '1025B', '60B'),
+    ('17:30', '🇪🇺 欧', 'ラガルドECB総裁 発言（Kiss/FF一致）', '中', '要人発言', '—'),
+    ('18:34', '🇩🇪 独', '30年債入札（FFのみ・要確認）', '低', '—', '3.80|1.6'),
+    ('18:40', '🇺🇸 米', 'ボウマンFRB副議長 発言・投票権あり（Kiss/FF一致）', '低', '要人発言', '—'),
+    ('19:15', '🇪🇺 欧', 'EU経済サミット（FFのみ・要確認）', '中', '—', '—'),
+    ('20:00', '🇺🇸 米', 'MBA住宅ローン申請指数（Kissのみ・要確認）', '低', '—', '-4.2%'),
+    ('21:00', '🇺🇸 米', 'モルガン・スタンレー決算（Kissのみ・要確認）', '低', '—', '—'),
+    ('21:30', '🇨🇦 加', '住宅建設許可 [前月比]（Kiss +3.0％・FF +2.9％で不一致・要確認）', '低', '+3.0% / +2.9%', '-17.3%'),
+    ('21:30', '🇺🇸 米', '消費者物価指数 [前月比]（Kiss/FF一致）', '高', '+0.6%', '+0.4%'),
+    ('21:30', '🇺🇸 米', '消費者物価指数 [前年比]（Kiss/FF一致）', '高', '+3.6%', '+3.4%'),
+    ('21:30', '🇺🇸 米', 'コア消費者物価指数 [前月比]（Kiss/FF一致）', '高', '+0.2%', '+0.3%'),
+    ('21:30', '🇺🇸 米', 'コア消費者物価指数 [前年比]（Kiss/FF一致）', '高', '+2.5%', '+2.4%'),
+    ('22:30', '🇬🇧 英', 'CB景気先行指数 [前月比]（FFのみ・要確認）', '低', '—', '-0.1%'),
+    ('23:15', '🌐 全', 'IMF・世界銀行 年次会合（FFのみ・要確認）', '低', '—', '—'),
+    ('26:30', '🇺🇸 米', 'バーキン・リッチモンド連銀総裁 発言（Kiss/FF一致）', '低', '要人発言', '—'),
+    ('27:00', '🇺🇸 米', '地区連銀経済報告（ベージュブック）（Kiss/FF一致）', '低', '—', '—'),
+]
+CAL_ROWS.sort(key=lambda r: (int(r[0][:2]), r[0]))
+
+CAL_ROWS_HTML = '\n'.join(
+    f'            <tr><td>{time}</td><td>{country}</td><td>{name}</td><td>{importance}</td><td>{forecast}</td><td>{previous}</td></tr>'
+    for time, country, name, importance, forecast, previous in CAL_ROWS
+)
+
+_files = sorted(glob.glob('reports/*.html'), reverse=True)
+_wd = {0:'月',1:'火',2:'水',3:'木',4:'金',5:'土',6:'日'}
+import datetime as _dt
+archive_entries = []
+for _f in _files:
+    _n = os.path.basename(_f)[:-5]
+    if _n == TODAY:
+        continue
+    _d = _dt.date.fromisoformat(_n)
+    archive_entries.append((f'{_n}.html', f'{_n}（{_wd[_d.weekday()]}）'))
+archive_entries = archive_entries[:10]
+SIDEBAR_ARCHIVE_HTML = '\n'.join(f'<li><a href="{href}">{label}</a></li>' for href, label in archive_entries)
+
+html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX日報 {TODAY}（{WEEKDAY}） | AUXEN FX Portal</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+</head>
+<body class="report-page">
+
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 {TODAY}（{WEEKDAY}）</h1>
+  <p>{HERO_TITLE_SUB}</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="../assets/logo.svg" alt="AUXEN"></div>
+      <div>
+        <h1>AUXEN</h1>
+        <p>FX Research Lab</p>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="../index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>ダッシュボード</a>
+      <a href="#" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>日報</a>
+      <a href="../archive.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>アーカイブ</a>
+      <span class="nav-section">ツール・販売</span>
+      <a href="../index.html#tools"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>トレードインジケーター</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="../about.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>About</a>
+      <a href="../disclaimer.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>免責事項</a>
+      <a href="../contact.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>お問い合わせ</a>
+    </nav>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
+      <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
+      <ul class="archive-list">
+{SIDEBAR_ARCHIVE_HTML}
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+        <h2>FX日報 {TODAY}（{WEEKDAY}）<span class="badge-live">最新</span></h2>
+        <p class="sub">{HERO_TITLE_SUB}</p>
+      </div>
+      <div class="date-card">
+        <span>Report Date</span>
+        <strong>{TODAY}</strong>
+        <em>水曜日</em>
+      </div>
+    </header>
+
+    <div class="summary-grid" id="summary">
+      <div class="card highlight">
+        <p class="label">一言まとめ</p>
+        <h3>{SUMMARY_HEADLINE}</h3>
+        <p>{SUMMARY_BODY}</p>
+      </div>
+      <div class="card">
+        <p class="label">最注目通貨</p>
+        <h3>EUR/USD 🇪🇺🇺🇸</h3>
+        <p>{TOP_PAIR_BODY}</p>
+      </div>
+      <div class="card">
+        <p class="label">Market Risk</p>
+        <h3 style="color:var(--red,#c0392b)">{RISK_LEVEL}</h3>
+        <p>{RISK_BODY}</p>
+      </div>
+      <div class="card">
+        <p class="label">本日の重要指標</p>
+        <h3>{KEY_EVENTS_COUNT}</h3>
+        <p>{KEY_EVENTS_SUMMARY}</p>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <div class="panel" id="points">
+        <div class="panel-head">
+          <h3>⚔️ 今日の注目ポイント</h3>
+          <span>経済指標・イベント</span>
+        </div>
+        <div class="report-body">
+          <div class="points-block">
+            <div class="block-title">🚫 本日の市場休場</div>
+            <ul class="points-list">
+              <li>休場なし（日本・米国・カナダ・欧州とも通常営業。KissFX・ForexFactoryで本日の休場の記載なし）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">📌 必見経済指標（時刻順）</div>
+            <ul class="points-list">
+{POINTS_EVENTS_HTML}
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">👁 その他注目点</div>
+            <ul class="points-list">
+{OTHER_POINTS_HTML}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="ranking">
+        <div class="panel-head">
+          <h3>🌏 今日の市場環境</h3>
+          <span>地合い・センチメント</span>
+        </div>
+        <div class="report-body" style="margin-bottom:20px;">
+          {MARKET_OVERVIEW}
+          </div>
+
+        <div class="panel-head" style="margin-top:4px;">
+          <h3>🏆 通貨ランキング</h3>
+          <span>本日の優先順</span>
+        </div>
+        <table class="fx-table">
+          <thead>
+            <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
+          </thead>
+          <tbody>
+{RANKING_ROWS_HTML}
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">{RANKING_NOTE}</p>
+      </div>
+
+      <div class="panel wide" id="review">
+        <div class="panel-head">
+          <h3>📰 前営業日の相場振り返り（2026-10-13）</h3>
+          <span>前日の主要トピック</span>
+        </div>
+        <div class="report-body">
+{TOPICS_HTML}
+          <div class="handover">
+            <strong>{HANDOVER}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full" id="calendar">
+        <div class="panel-head">
+          <h3>📅 本日の経済指標カレンダー（全件）</h3>
+          <span>本日の主要予定</span>
+        </div>
+        <table class="fx-table" style="font-size:0.9em;">
+          <thead>
+            <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
+          </thead>
+          <tbody>
+{CAL_ROWS_HTML}
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻は日本時間です。KissFX・ForexFactory JSONで一致した指標を採用し、片方または単独ソースでのみ確認できた項目は「（要確認）」を付記。重要度はForexFactory区分（KissFXのランクは画像表記のため取得不可）。</p>
+      </div>
+
+    </div><!-- /content-grid -->
+
+  </main>
+</div>
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="../about.html">About</a>
+    <a href="../disclaimer.html">免責事項</a>
+    <a href="../privacy.html">プライバシーポリシー</a>
+    <a href="../terms.html">利用規約</a>
+    <a href="../contact.html">お問い合わせ</a>
+  </div>
+</footer>
+</body>
+</html>
+"""
+
+with open(f'reports/{TODAY}.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f'reports/{TODAY}.html generated')
