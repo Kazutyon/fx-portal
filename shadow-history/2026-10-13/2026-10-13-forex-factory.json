@@ -1,0 +1,167 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-13",
+  "fetched_at": "2026-10-13T10:59:59+09:00",
+  "events": [
+    {
+      "time_jst": "01:10",
+      "country": "USD",
+      "name": "FOMC Member Hammack Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "BRC Retail Sales Monitor y/y",
+      "importance": "low",
+      "forecast": "0.8%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Bank Lending y/y",
+      "importance": "low",
+      "forecast": "5.5%",
+      "previous": "5.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "PPI y/y",
+      "importance": "low",
+      "forecast": "7.6%",
+      "previous": "7.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Monetary Policy Meeting Minutes",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "NAB Business Confidence",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "12:00",
+      "country": "GBP",
+      "name": "MPC Member Greene Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German Final CPI m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:45",
+      "country": "USD",
+      "name": "FOMC Member Waller Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:03",
+      "country": "CNY",
+      "name": "M2 Money Supply y/y",
+      "importance": "low",
+      "forecast": "7.4%",
+      "previous": "7.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:03",
+      "country": "CNY",
+      "name": "New Loans",
+      "importance": "low",
+      "forecast": "1025B",
+      "previous": "60B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:00",
+      "country": "USD",
+      "name": "NFIB Small Business Index",
+      "importance": "low",
+      "forecast": "98.1",
+      "previous": "98.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "23.8K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Existing Home Sales",
+      "importance": "low",
+      "forecast": "3.95M",
+      "previous": "3.98M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:15",
+      "country": "ALL",
+      "name": "IMF Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:30",
+      "country": "AUD",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
