@@ -1,0 +1,287 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-14",
+  "fetched_at": "2026-10-14T08:42:57+09:00",
+  "events": [
+    {
+      "time_jst": "02:00",
+      "country": "USD",
+      "name": "FOMC Member Barkin Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "05:00",
+      "country": "USD",
+      "name": "FOMC Member Collins Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Visitor Arrivals m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:30",
+      "country": "AUD",
+      "name": "MI Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "M2 Money Stock y/y",
+      "importance": "low",
+      "forecast": "2.1%",
+      "previous": "2.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "10:30",
+      "country": "CNY",
+      "name": "CPI y/y",
+      "importance": "low",
+      "forecast": "1.0%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "10:30",
+      "country": "CNY",
+      "name": "PPI y/y",
+      "importance": "low",
+      "forecast": "4.4%",
+      "previous": "3.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:03",
+      "country": "CNY",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "790B",
+      "previous": "809B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:04",
+      "country": "CNY",
+      "name": "USD-Denominated Trade Balance",
+      "importance": "low",
+      "forecast": "116.8B",
+      "previous": "119.1B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:10",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "12:30",
+      "country": "GBP",
+      "name": "MPC Member Breeden Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "14:30",
+      "country": "GBP",
+      "name": "BOE Gov Bailey Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German WPI m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "MPC Member Pill Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:05",
+      "country": "CAD",
+      "name": "BOC Gov Macklem Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:03",
+      "country": "CNY",
+      "name": "M2 Money Supply y/y",
+      "importance": "low",
+      "forecast": "7.4%",
+      "previous": "7.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:03",
+      "country": "CNY",
+      "name": "New Loans",
+      "importance": "low",
+      "forecast": "1025B",
+      "previous": "60B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:30",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:34",
+      "country": "EUR",
+      "name": "German 30-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.80|1.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:40",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:15",
+      "country": "EUR",
+      "name": "EU Economic Summit",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Building Permits m/m",
+      "importance": "low",
+      "forecast": "2.9%",
+      "previous": "-17.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "CPI m/m",
+      "importance": "high",
+      "forecast": "0.6%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "CPI y/y",
+      "importance": "high",
+      "forecast": "3.6%",
+      "previous": "3.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Core CPI m/m",
+      "importance": "high",
+      "forecast": "0.2%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Core CPI y/y",
+      "importance": "high",
+      "forecast": "2.5%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "GBP",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:15",
+      "country": "ALL",
+      "name": "IMF Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
