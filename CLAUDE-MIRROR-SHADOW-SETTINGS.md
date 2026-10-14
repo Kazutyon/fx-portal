@@ -45,3 +45,4 @@ Owner指示により、内部ルールを理由に別の取得方式へ変更せ
 
 `--think-off-experiment` は明示指定の隔離実験。Qwen/64k/24KB/出力上限を変えず4分14秒で完走したが、時点・日付誤りなどで独立品質不合格。通常cronにはこの引数を追加していない。自動fallbackではない。本文、全件指標、休場、月曜工程、ライブ取得と定時完走は未解決。自己PASSと完走を公開品質にしない。
 - 【2026-10-14変更】Owner指示で、`tools/claude_mirror_shadow.json`の`prose_writer`/`claim_check`を有効化し、`external_review`(Codex Luna)を無効化。cron引数・Task不変。一括版はモデルが散文で本文を書き、ローカルの文ごと照合→書き直しを行う(約8.5分、公開なし)。戻す場合は同JSONの該当`enabled`を戻す(`external_review.enabled=true`でLunaを併用に戻せる)。証拠はLOG.md 2026-10-14。
+- 【2026-10-15変更】`acquire_not_before_jst`("07:25")で、取得を07:25まで待つ(公開版の取得時刻07:17に合わせ、みんかぶの07:16の主要記事・07:20の本日の予定を含める)。cron引数・Task不変。戻す場合は同JSONのキーを削除。
