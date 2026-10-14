@@ -201,6 +201,38 @@ class DailyTests(unittest.TestCase):
             "record_type": "outlook"}, 0, date(2026, 9, 29))
         self.assertEqual(bound["event_scope"], "historical")
 
+    def test_overnight_ny_flash_is_the_previous_business_day_and_the_fact_states_that_date(self):
+        # minkabu posts "…＝ＮＹ為替" flashes at 03-06 JST; they report the previous day's NY session (2026-10-14 case).
+        import local_fx_grounding as grounding
+        quote = "短期金融市場での10月利上げ確率は一時50％程度まで上昇したが、米CPI後には33％程度まで低下している。"
+        source = {"source_id": 3, "title": "ドル円、急速に１５８円台前半に下落　１０月利上げは可能性が低いとの見方＝ＮＹ為替",
+                  "source_url": "https://fx.minkabu.jp/news/381578", "published_at": "2026-10-15T03:54:00+09:00",
+                  "text": "ドル円は急速に下落した。" + quote}
+        bound = grounding.bind_claim(source, {"kind": "event", "fact": "2026年10月15日、" + quote, "quote": quote,
+            "event_scope": "current", "market_session": "NY", "pairs": [], "record_type": "actual"}, 0, date(2026, 10, 15))
+        self.assertEqual(bound["event_scope"], "previous")
+        self.assertEqual(bound["event_date"], "2026-10-14")
+        self.assertTrue(bound["fact"].startswith("2026年10月14日、"))
+
+    def test_moving_average_name_is_not_read_as_a_calendar_date(self):
+        import local_fx_grounding as grounding
+        day, ambiguous = grounding.original_event_day(
+            "ポンド円は208円台に下落し、209.20円付近の21日線を下回る動きを示した。", "ポンド円は208円台に下落した。", date(2026, 10, 15))
+        self.assertEqual((day, ambiguous), (None, False))
+
+    def test_waiting_for_morning_articles_is_skipped_when_time_has_passed_or_unset(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder)
+            with patch.object(daily, "load", return_value={}):
+                self.assertEqual(daily.wait_for_morning_articles(date(2026, 10, 15), out), {"waited": False})
+            with patch.object(daily, "load", return_value={"acquire_not_before_jst": "00:00"}):
+                self.assertFalse(daily.wait_for_morning_articles(date(2026, 10, 15), out)["waited"])
+            real, early = daily.datetime, daily.datetime(2026, 10, 15, 5, 0, tzinfo=daily.JST)  # 2.4 h away: not waited
+            with patch.object(daily, "load", return_value={"acquire_not_before_jst": "07:25"}),                  patch.object(daily, "datetime") as clock:
+                clock.now.return_value = early
+                clock.combine = real.combine
+                self.assertFalse(daily.wait_for_morning_articles(date(2026, 10, 15), out)["waited"])
+
     def test_role_anchors_cannot_be_replaced_by_selector(self):
         import local_fx_grounding as grounding
         facts = [{"fact_id": "N0", "fact": "前日のドル円の実際の反応", "record_type": "actual", "event_scope": "previous"},

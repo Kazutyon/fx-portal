@@ -45,6 +45,29 @@ def mirror_enabled() -> bool:
             and config.get("model_fallback") is False)
 
 
+def wait_for_morning_articles(target: date, out: Path) -> dict:
+    """Hold live acquisition until acquire_not_before_jst (claude_mirror_shadow.json), e.g. "07:25".
+
+    The Claude morning run fetches at about 07:17, after minkabu's main NY recap (07:16) and the day's schedule posts
+    (07:20-07:21); a 07:00 acquisition misses them. Prints a line every 60 s (the cron kills a silent job after 240 s).
+    Not waited when the time has passed, when the bundle already exists (reruns), or when it is more than 30 min away."""
+    wanted = load(ROOT / "tools" / "claude_mirror_shadow.json").get("acquire_not_before_jst")
+    if not wanted or (out / "source-bundle.json").exists():
+        return {"waited": False}
+    hour, minute = (int(x) for x in wanted.split(":"))
+    deadline = datetime.combine(target, daytime(hour, minute), JST)
+    now = datetime.now(JST)
+    if now >= deadline or (deadline - now) > timedelta(minutes=30):
+        return {"waited": False, "not_before": wanted}
+    while True:
+        remaining = (deadline - datetime.now(JST)).total_seconds()
+        if remaining <= 0:
+            break
+        print(f"STAGE waiting-for-morning-articles until {wanted} JST ({int(remaining)}s)", flush=True)
+        time.sleep(min(60, remaining))
+    return {"waited": True, "not_before": wanted, "acquired_after": datetime.now(JST).isoformat()}
+
+
 def fetch(url: str) -> str:
     if urlparse(url).hostname not in HOSTS:
         raise ValueError("source is outside allowlist")
@@ -565,6 +588,8 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
             path = input_dir / name
             if path.exists():
                 news.save(out / name, load(path))
+        status["acquisition_wait"] = wait_for_morning_articles(target, out)
+        news.save(out / "status.json", status)
         sources = collect_news(target, out)
         if supplement_news:
             if not mirror_enabled() or render_existing:

@@ -29,5 +29,7 @@
     "enabled": true,
     "owner_directed_on": "2026-10-14",
     "scope": "local sentence-level support check by the same local model; findings go to the repair step (tools/local_fx_claim_check.py)"
-  }
+  },
+  "acquire_not_before_jst": "07:25",
+  "acquire_not_before_note": "2026-10-14: the main minkabu NY recap is posted at 07:16 and the day's schedule at 07:20-07:21; a 07:00 acquisition misses them. Shadow only, never published. Remove the key to acquire at job start."
 }

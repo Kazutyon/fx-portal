@@ -46,7 +46,7 @@ def original_event_day(quote, fact, published):
     Numeric day-only entries inherit the source/list month. Ambiguous multi-date
     quotations return no association rather than upgrading model prose to truth.
     """
-    markers = list(re.finditer(r"(?:(\d{1,2})月)?(\d{1,2})日(?!目|間|前|ぶり|続)", quote))
+    markers = list(re.finditer(r"(?:(\d{1,2})月)?(\d{1,2})日(?!目|間|前|ぶり|続|線|移動|平均|足)", quote))  # 21日線 is not the 21st
     if not markers:
         return None, False
     month = published.month
@@ -144,8 +144,12 @@ def bind_claim(source, claim, index, target):
         # Yesterday's '本日/今朝' is never silently promoted to today.
         result["event_scope"] = "previous" if published.date() == previous_day(target) else "historical"
         result["event_date_basis"] = "outlook reported at original publication, not a fresh current-day view"
+    # Any report of the NY session published before the Tokyo open (a "NY為替概況", or the overnight "…＝ＮＹ為替" /
+    # "ＮＹ債券" flashes minkabu posts at 03-06 JST) describes the previous business day's NY trading.
+    title_normal = unicodedata.normalize("NFKC", source["title"])
     morning_ny = (published.date() == target and published.hour < 7
-                  and bool(re.search(r"NY為替概況", unicodedata.normalize("NFKC", source["title"]))))
+                  and (bool(re.search(r"NY為替概況", title_normal))
+                       or (bool(re.search(r"NY|ニューヨーク", title_normal)) and result["market_session"] == "NY")))
     if (morning_ny and result["event_scope"] == "current" and result["record_type"] == "actual"
             and result["market_session"] in {"NY", "unspecified"}
             and not re.search(rf"(?:{target.month}月)?{target.day}日", quote_normal)):
@@ -175,6 +179,19 @@ def bind_claim(source, claim, index, target):
             result["event_scope"] = ("future" if event_day > target else "current" if event_day == target else
                                      "previous" if event_day == previous_day(target) else "historical")
             result["event_date_basis"] = "explicit original event date, not publication date"
+    # The date written at the head of the fact is the model's guess from the publication time. The event date was
+    # decided above from the article's own context, so the fact text is made to state that date (one source of truth).
+    event_date = result.get("event_date")
+    lead = re.match(r"(\d{4})年(\d{1,2})月(\d{1,2})日", result.get("fact", ""))
+    if event_date and lead:
+        try:
+            written = date(int(lead[1]), int(lead[2]), int(lead[3]))
+        except ValueError:
+            written = None
+        if written is not None and written.isoformat() != event_date:
+            decided = date.fromisoformat(event_date)
+            result["fact"] = f"{decided.year}年{decided.month}月{decided.day}日" + result["fact"][lead.end():]
+            result["event_date_basis"] = (result.get("event_date_basis", "") + "; fact date aligned to event_date").lstrip("; ")
     return result
 
 
@@ -441,6 +458,7 @@ def extract(api, sources, target, out, observational=False):
                 "event_scopeはprevious=指定前営業日の出来事、current=本日、historical=それ以前/週のまとめ、unknown=不明。"
                 "掲載日だけから決めずarticle_opening/nearby_heading/本文の文脈で判断。"
                 "朝のNY概況で『きょうのNY』は前営業日のNY。東京市場の『本日』は本日。"
+                "本日07時前に掲載されたNY市場の記事(＝ＮＹ為替など)の出来事も、前営業日のNY市場の出来事で、factの日付は掲載日ではなく出来事の日。"
                 "日付のない先週の振り返りを前日扱いにしない。"
                 "market_sessionは原文の市場、分からなければunspecified。pairsは当該事実の対象だけUSD/JPY等で返す。"
                 "実績actual・予想forecast・出典の見通しoutlookを区別。factは日付/市場/ペアを省略せず日本語1文。"
