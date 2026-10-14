@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import difflib
 import json
+import os
 import re
 import shutil
 import sys
@@ -21,6 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import local_fx_daily as daily  # noqa: E402
+import local_fx_claim_check as claim_check  # noqa: E402
 import local_fx_external_review as external_review  # noqa: E402
 import local_fx_grounding as grounding  # noqa: E402
 import local_fx_news as news  # noqa: E402
@@ -113,6 +115,37 @@ def restates(text: str, others: list) -> bool:
     return False
 
 
+def closing_ids(material: list) -> dict:
+    """pair -> fact_id of the one fact that states that pair's close ("終値は…"): the first in material order."""
+    closes = {}
+    for x in material:
+        pairs = x.get("pairs") or []
+        if x.get("fact_id", "").startswith("N") and len(pairs) == 1 and "終値" in x.get("fact", ""):
+            closes.setdefault(pairs[0], x["fact_id"])
+    return closes
+
+
+def conflicts_with_close(x: dict, closes: dict) -> bool:
+    """A previous-day 'X から Y まで…' range fact for a pair whose close is stated elsewhere: its wording ('…まで上昇し、
+    引けた') reads as a second, different close, so only the explicit close is kept."""
+    pairs = x.get("pairs") or []
+    return (x.get("kind") == "price" and x.get("event_scope", "previous") == "previous" and len(pairs) == 1
+            and pairs[0] in closes and x.get("fact_id") != closes[pairs[0]]
+            and re.search(r"から[0-9０-９].*まで", x.get("fact", "")) is not None)
+
+
+def no_market_view_text(titles: str) -> str:
+    return f"前営業日の主な話題: {titles}。" if titles else ""
+
+
+def risk_fallback(events: list) -> str:
+    """Risk text when no market participant's view was chosen: the day's high-importance releases, from the calendar."""
+    high = [e for e in events if e.get("importance") == "high"]
+    if not high:
+        return "本日、重要度の高い予定は予定表にない。"
+    return "本日の高重要度予定: " + "、".join(event_label(e) for e in high[:6]) + "。"
+
+
 def is_theme(x: dict) -> bool:
     return bool(x.get("fact")) and x["fact"].lstrip().startswith("・")
 
@@ -192,6 +225,49 @@ def call(out: Path, label: str, task: str, data: dict, schema: dict, num_predict
     return value
 
 
+SITE = {"zai.diamond.jp": "ザイFX", "fx.minkabu.jp": "みんかぶ", "www.gaitame.com": "外為どっとコム", "gaitame.com": "外為どっとコム",
+        "kissfx.com": "KissFX", "www.investing.com": "Investing.com", "jp.investing.com": "Investing.com"}
+
+
+def site_of(x: dict) -> str:
+    host = re.sub(r"^https?://([^/]+).*$", r"", x.get("source_url") or "")
+    return SITE.get(host, host)
+
+
+def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary_facts: list, market_views: list,
+                risk_views: list, topic_facts: list, key_events: list, date_facts: dict, high_events: list) -> None:
+    """Experiment (FX_WRITE_BODIES=1): the model writes hero/summary/topic bodies/market/risk as prose from the chosen
+    facts, the way the Claude morning run does. Numbers are still checked mechanically against the evidence afterwards."""
+    def facts_of(items):
+        return [{"id": x["fact_id"], "fact": x["fact"], "quote": x.get("quote", ""), "source": site_of(x)} for x in items]
+
+    data = {"date_facts": date_facts, "hero_facts": facts_of(hero_facts), "summary_facts": facts_of(summary_facts),
+            "topics": [{"title": t["title"], "facts": facts_of(f)} for t, f in zip(sections["topics"], topic_facts)],
+            "market_views": facts_of(market_views), "risk_views": facts_of(risk_views),
+            "today_key_events": [event_label(e) for e in key_events],
+            "today_high_importance_events": [{"time": e["time"], "country": e["country"], "name": e["name"],
+                                              "forecast": e["forecast"], "previous": e["previous"]} for e in high_events]}
+    task = ("あなたはFXトレード日報の筆者。読者は4時間足でトレンドを把握し、15分・30分足の波とローソク足でエントリーするFXトレーダー。"
+            "渡したfacts(とquote)を材料に、読ませる文章を書く。事実の羅列や原文の貼り合わせにせず、何が起き、なぜ動いたか(資料に書かれた背景・理由)、"
+            "本日への引継ぎ(注目する水準や、上振れ・下振れならどう動くかという条件付きの見通し)を、自分の言葉で整理して書く。"
+            "heroは前営業日の最重要の材料を2文。summaryは前営業日の市場全体の整理を3〜4文。topic_bodiesはtopicsと同じ順で、各話題を2〜4文。"
+            "marketは本日の地合いを2〜3文(market_viewsを材料に)。riskは本日から今週の最大のリスクを2文"
+            "(risk_viewsとtoday_high_importance_eventsを材料に。予想値・前回値があれば使ってよい)。"
+            "数値・日付・要人名・出来事は、渡した資料にあるものだけを使い、資料にない水準・数値は作らない。"
+            "出典を示すときは（ザイFX）のようにsourceの名前を括弧で添える。"
+            "現在は本日の午前7時で、本日の東京・ロンドン・NY市場はまだ始まっていない。前営業日の出来事は過去のこととして書く。"
+            "「様子見」「注目したい」「〜の可能性がある」「〜かもしれない」は使わない。")
+    n = len(sections["topics"])
+    result = call(out, "oneshot-2b-write", task, data,
+                  news.schema({"hero": S, "summary": S,
+                               "topic_bodies": {"type": "array", "minItems": n, "maxItems": n, "items": S},
+                               "market": S, "risk": S}), 16000)
+    sections["hero"], sections["summary"] = result["hero"].strip(), result["summary"].strip()
+    sections["market"], sections["risk_body"] = result["market"].strip(), result["risk"].strip()
+    for t, body in zip(sections["topics"], result["topic_bodies"]):
+        t["body"] = body.strip()
+
+
 def generate(out: Path, target: date, material: list, calendar: dict, ranking: dict, policy: dict) -> dict:
     """Write sections.json/report.html/oneshot-checks.json into out (which must hold policy.json)."""
     started = datetime.now(daily.JST).isoformat()
@@ -242,17 +318,21 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                                "market_view_ids": {"type": "array", "minItems": 0, "maxItems": 3, "items": {"type": "string", "enum": view_ids or [""]}}}))
     used = set()
 
+    closes = closing_ids(material)
+
     def take(ids):
-        facts = [by_id[i] for i in dict.fromkeys(ids) if i in by_id and i not in used]
+        facts = [by_id[i] for i in dict.fromkeys(ids)
+                 if i in by_id and i not in used and not conflicts_with_close(by_id[i], closes)]
         used.update(x["fact_id"] for x in facts)
         return facts
 
     hero_facts = take(topics["hero_ids"])
-    topic_list = []
+    topic_list, topic_facts = [], []
     for t in topics["topics"]:
         chosen_facts = take(t["fact_ids"])
         if chosen_facts:
             topic_list.append({"title": t["title"], "body": join_facts(chosen_facts)})
+            topic_facts.append(chosen_facts)
     summary_facts = take(topics["summary_ids"])
     titles = "、".join(t["title"] for t in topic_list)
     market_views = [by_id[i] for i in dict.fromkeys(topics.get("market_view_ids", [])) if i in by_id and is_view(by_id[i])]
@@ -304,13 +384,21 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                 "hero": join_facts(hero_facts) if hero_facts else f"{topic_list[0]['title']}。",
                 "headline": topic_list[0]["title"],
                 "summary": join_facts(summary_facts) if summary_facts else f"前営業日の主な話題: {titles}。",
-                "market": join_sourced(market_views) or "資料に、地合いの判断材料となる市場関係者の見解はない。",
+                "market": join_sourced(market_views) or no_market_view_text(titles) or "前営業日の主な話題は材料束にない。",
                 "handover": handover_text(chosen),
                 "focus_pair": today["focus_pair"],
                 "focus_body": ranking_sentence(ranking, today["focus_pair"]) + (sentence(focus_view) if focus_view else ""),
                 "risk_level": f"高重要度予定 {high}件",
-                "risk_body": join_sourced(risk_views) or "資料に、本日のリスクとして挙げられた市場関係者の見解はない。",
+                "risk_body": join_sourced(risk_views) or risk_fallback(calendar["events"]),
                 "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(points)]}
+    written = bool(os.environ.get("FX_WRITE_BODIES"))  # experiment 2026-10-14: the model writes the prose from the chosen facts
+    if written:
+        try:
+            write_prose(out, style, sections, hero_facts, summary_facts, market_views, risk_views, topic_facts, chosen,
+                        data["date_facts"], [e for e in events if e["importance"] == "high"])
+        except Exception as error:  # keep the assembled text; record why
+            written = False
+            sections["prose_error"] = f"{type(error).__name__}: {error}"
     news.save(out / "sections.json", sections)
 
     evidence = [{"quote": x.get("quote", ""), "fact": x.get("fact", ""), "source_context": x.get("source_context", {}),
@@ -322,6 +410,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     # handover/focus/risk/points are assembled from sourced facts and the calendar (no model), so they are never
     # sent to the repair step; only the model-written sections can be flagged and rewritten.
     keys = [f"title{i}" for i in range(len(sections["topics"]))]
+    if written:  # prose written by the model can be flagged and rewritten like the titles
+        keys += ["hero", "summary", "market", "risk"] + [f"topic{i}" for i in range(len(sections["topics"]))]
 
     def texts_of(sec):
         return {"hero": sec["hero"], "headline": sec["headline"], "summary": sec["summary"], "market": sec["market"],
@@ -360,6 +450,10 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     # Failure or disabled just means no extra findings (see local_fx_external_review.py).
     checks["external_review_before"] = external_review.review(out, verify_data, texts)
     external_issues = external_review.usable_issues(checks["external_review_before"], keys)
+    use_claim_check = bool(os.environ.get("FX_CLAIM_CHECK"))  # local sentence-level support check (no Codex)
+    if use_claim_check:
+        checks["claim_check_before"] = claim_check.review(out, verify_data, texts, os.environ.get("FX_REVIEW_MODEL") or None)
+        external_issues += external_review.usable_issues(checks["claim_check_before"], keys)
 
     flagged = ({k for i in review["issues"] + external_issues for k in i["sections"]} | set(checks["number_date_errors"]) |
                set(checks["internal_wording"]) | set(checks["meta_wording"])) & set(keys)
@@ -380,6 +474,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                 k, text = fix["section"], fix["text"]
                 if k.startswith("title"):
                     sections["topics"][int(k[5:])]["title"] = text
+                elif k.startswith("topic"):
+                    sections["topics"][int(k[5:])]["body"] = text
                 elif k.startswith("point"):
                     sections["points"][int(k[5:])]["body"] = text
                 else:
@@ -393,6 +489,9 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     checks["after_repair"] = {**mechanical(texts_after), "chars": {k: len(v) for k, v in texts_after.items()}}
     # Re-check the repaired text with the same reviewer; recorded only, no further rewrite.
     checks["external_review_after"] = (external_review.review(out, verify_data, texts_after)
+                                       if checks.get("repaired_sections") else {"status": "skipped", "reason": "nothing repaired"})
+    if use_claim_check:  # recorded only, like the external re-check
+        checks["claim_check_after"] = (claim_check.review(out, verify_data, texts_after, os.environ.get("FX_REVIEW_MODEL") or None)
                                        if checks.get("repaired_sections") else {"status": "skipped", "reason": "nothing repaired"})
     checks["finished_at"] = datetime.now(daily.JST).isoformat()
     news.save(out / "oneshot-checks.json", checks)

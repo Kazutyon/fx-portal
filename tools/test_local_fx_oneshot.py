@@ -287,5 +287,37 @@ class OneshotTests(unittest.TestCase):
             self.assertIn("boom", json.loads((out / "oneshot" / "error.json").read_text(encoding="utf-8"))["error"])
 
 
+def fact(fact_id, pair, text, kind=None, scope="previous"):
+    return {"fact_id": fact_id, "pairs": [pair], "fact": text, "kind": kind, "event_scope": scope}
+
+
+class ClosingAndFallbackTests(unittest.TestCase):
+    """Written 2026-10-14: a range fact ending '…まで上昇し、引けた' read as a second close next to '終値は158.33円'."""
+
+    material = [
+        fact("N0-0", "USD/JPY", "2026年10月13日のNY市場でドル円は3営業日ぶりに反落し、終値は158.33円だった。", "price"),
+        fact("N1-0", "USD/JPY", "2026年10月13日のNY市場で、ドル・円は158円09銭から158円47銭まで上昇し、引けた。", "price"),
+        fact("N1-3", "EUR/USD", "2026年10月13日のNY市場で、ユーロ・ドルは1.1185ドルから1.1205ドルまで上昇し、引けた。", "price"),
+        fact("N4-0", "USD/JPY", "2026年10月14日、NY市場終盤でUSD/JPYは158.30円付近で推移した。", "price", "today"),
+    ]
+
+    def test_only_the_explicit_close_is_kept_for_a_pair_that_has_one(self):
+        closes = oneshot.closing_ids(self.material)
+        self.assertEqual(closes, {"USD/JPY": "N0-0"})
+        kept = [x["fact_id"] for x in self.material if not oneshot.conflicts_with_close(x, closes)]
+        self.assertEqual(kept, ["N0-0", "N1-3", "N4-0"])  # N1-3: EUR/USD has no stated close, so its range stays
+
+    def test_risk_fallback_is_a_calendar_fact_not_a_notice_about_missing_material(self):
+        events = [{"time_jst": "21:30", "country": "USD", "name": "消費者物価指数", "importance": "high",
+                   "forecast": "+3.6%", "previous": "+3.4%"},
+                  {"time_jst": "08:50", "country": "JPY", "name": "企業物価指数", "importance": "low",
+                   "forecast": "", "previous": ""}]
+        text = oneshot.risk_fallback(events)
+        self.assertIn("21:30 米国消費者物価指数（予想+3.6%／前回+3.4%）", text)
+        self.assertNotIn("企業物価指数", text)
+        self.assertNotIn("資料", text)
+        self.assertNotIn("資料", oneshot.risk_fallback([]))
+
+
 if __name__ == "__main__":
     unittest.main()
