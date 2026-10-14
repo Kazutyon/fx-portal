@@ -115,6 +115,18 @@ def restates(text: str, others: list) -> bool:
     return False
 
 
+def feature(env_name: str, key: str) -> bool:
+    """Experiment switches: an environment variable, or {"<key>": {"enabled": true}} in claude_mirror_shadow.json
+    (the file already holds the external-review switch, so the morning cron needs no change)."""
+    if os.environ.get(env_name):
+        return True
+    try:
+        value = json.loads(external_review.CONFIG.read_text(encoding="utf-8")).get(key, {})
+    except (OSError, ValueError):
+        return False
+    return isinstance(value, dict) and bool(value.get("enabled"))
+
+
 def closing_ids(material: list) -> dict:
     """pair -> fact_id of the one fact that states that pair's close ("終値は…"): the first in material order."""
     closes = {}
@@ -391,7 +403,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                 "risk_level": f"高重要度予定 {high}件",
                 "risk_body": join_sourced(risk_views) or risk_fallback(calendar["events"]),
                 "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(points)]}
-    written = bool(os.environ.get("FX_WRITE_BODIES"))  # experiment 2026-10-14: the model writes the prose from the chosen facts
+    written = feature("FX_WRITE_BODIES", "prose_writer")  # experiment 2026-10-14: the model writes the prose from the chosen facts
     if written:
         try:
             write_prose(out, style, sections, hero_facts, summary_facts, market_views, risk_views, topic_facts, chosen,
@@ -450,7 +462,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     # Failure or disabled just means no extra findings (see local_fx_external_review.py).
     checks["external_review_before"] = external_review.review(out, verify_data, texts)
     external_issues = external_review.usable_issues(checks["external_review_before"], keys)
-    use_claim_check = bool(os.environ.get("FX_CLAIM_CHECK"))  # local sentence-level support check (no Codex)
+    use_claim_check = feature("FX_CLAIM_CHECK", "claim_check")  # local sentence-level support check (no Codex)
     if use_claim_check:
         checks["claim_check_before"] = claim_check.review(out, verify_data, texts, os.environ.get("FX_REVIEW_MODEL") or None)
         external_issues += external_review.usable_issues(checks["claim_check_before"], keys)

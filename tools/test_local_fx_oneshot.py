@@ -30,6 +30,9 @@ class OneshotTests(unittest.TestCase):
         patcher = patch.object(oneshot.external_review, "review", return_value={"status": "disabled"})
         patcher.start()
         self.addCleanup(patcher.stop)
+        off = patch.object(oneshot, "feature", return_value=False)  # tests cover the assembled path, whatever the config says
+        off.start()
+        self.addCleanup(off.stop)
 
     def inputs(self):
         return (json.loads((RUN / "shared-material.json").read_text(encoding="utf-8"))["facts"],

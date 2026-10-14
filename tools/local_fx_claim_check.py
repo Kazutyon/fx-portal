@@ -63,7 +63,9 @@ def review(out, verify_data: dict, texts: dict, model: str | None = None) -> dic
                           ensure_ascii=False)
     started, issues, errors = time.monotonic(), [], 0
     items = sentences(texts)
-    for key, sentence in items:
+    for n, (key, sentence) in enumerate(items, 1):
+        if n % 5 == 1:  # the cron kills a job that prints nothing for 240 s
+            print(f"STAGE claim-check {n}/{len(items)}", flush=True)
         try:
             verdict = judge(model, material, key, sentence)
         except Exception:

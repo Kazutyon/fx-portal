@@ -44,3 +44,4 @@ Owner指示により、内部ルールを理由に別の取得方式へ変更せ
 9/29午後の試験: ニュースはザイ4・みんかぶ4・外為0、FFライブ403。試験だけ同日保存済みFFを注記して継続。執筆は12KBの事実群から話題別に根拠選別し、16KB以下の選別引用で執筆/照合する（全文を再結合しない）。通常thinkingは3本目で出力6,144上限、未完走。18テストPASS。
 
 `--think-off-experiment` は明示指定の隔離実験。Qwen/64k/24KB/出力上限を変えず4分14秒で完走したが、時点・日付誤りなどで独立品質不合格。通常cronにはこの引数を追加していない。自動fallbackではない。本文、全件指標、休場、月曜工程、ライブ取得と定時完走は未解決。自己PASSと完走を公開品質にしない。
+- 【2026-10-14変更】Owner指示で、`tools/claude_mirror_shadow.json`の`prose_writer`/`claim_check`を有効化し、`external_review`(Codex Luna)を無効化。cron引数・Task不変。一括版はモデルが散文で本文を書き、ローカルの文ごと照合→書き直しを行う(約8.5分、公開なし)。戻す場合は同JSONの該当`enabled`を戻す(`external_review.enabled=true`でLunaを併用に戻せる)。証拠はLOG.md 2026-10-14。
