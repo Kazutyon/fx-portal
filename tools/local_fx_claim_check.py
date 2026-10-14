@@ -18,8 +18,11 @@ CHECKED = re.compile(r"^(hero|summary|market|risk|topic\d+)$")
 SPLIT = re.compile(r"(?<=。)")
 SYSTEM = ("あなたは資料照合係。『資料』に照らして、検査対象の1文の記述が資料に書かれているか判定する。"
           "数値・人名・出来事・原因・断定の強さのすべてが資料の記述の範囲内なら supported=true。"
-          "資料にない人名、資料より強い断定(確定した/当面続く/最大の、など)、資料にない因果・方針・見通しの断定が1つでもあれば "
-          "supported=false とし、その部分をunsupported_partに書く。")
+          "資料にない人名、資料より強い断定(確定した/当面続く/最大の、など)、資料にない出来事や因果の断定が1つでもあれば "
+          "supported=false とし、その部分をunsupported_partに書く。"
+          "ただし次は分析として認め、supported=true とする: 「〜を上回れば/下回れば、〜になりやすい」のような条件付きの見通しで、"
+          "条件に使う数値(予想値・前回値・既出の価格水準)が資料(factsまたはtoday_calendar)にあるもの。"
+          "また資料にある水準を『目安』『分岐点』として述べる文。条件付きでなく、資料にない出来事・数値・因果を事実として断定する文は認めない。")
 SCHEMA = {"type": "object", "properties": {"supported": {"type": "boolean"}, "unsupported_part": {"type": "string"},
                                            "reason": {"type": "string"}},
           "required": ["supported", "unsupported_part", "reason"]}
@@ -59,8 +62,8 @@ def judge(model: str, material: str, key: str, sentence: str, timeout: int = 600
 def review(out, verify_data: dict, texts: dict, model: str | None = None) -> dict:
     """Findings in local_fx_external_review.review's shape: {status, reviewer, issues:[{section, excerpt, reason, kind}]}."""
     model = model or news.MODEL
-    material = json.dumps({"facts": verify_data["facts"], "original_passages": verify_data["original_passages"]},
-                          ensure_ascii=False)
+    material = json.dumps({"facts": verify_data["facts"], "original_passages": verify_data["original_passages"],
+                           "today_calendar": verify_data.get("today_calendar", [])}, ensure_ascii=False)
     started, issues, errors = time.monotonic(), [], 0
     items = sentences(texts)
     for n, (key, sentence) in enumerate(items, 1):
