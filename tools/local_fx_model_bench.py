@@ -6,8 +6,6 @@ Env: FX_WRITE_BODIES=1 (prose writer), FX_CLAIM_CHECK=1 (local sentence check), 
 Lifecycle: the outputs are temporary; this script is kept as the way to compare models
 (see docs/EVIDENCE-LOCAL-LLM-MODEL-AND-CLAIM-CHECK-20261014.md).
 Check free VRAM first and do not run in the 07:00 shadow window."""
-Usage: python -I full_bench.py <model> <date> [<date> ...]
-Writes to shadow-output/bench-<model-tag>-<date>/ and appends a line to full_bench.jsonl."""
 import json, re, shutil, sys, time
 from datetime import date
 from pathlib import Path
