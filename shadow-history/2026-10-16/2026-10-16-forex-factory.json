@@ -1,0 +1,197 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-16",
+  "fetched_at": "2026-10-16T08:03:33+09:00",
+  "events": [
+    {
+      "time_jst": "01:00",
+      "country": "USD",
+      "name": "Crude Oil Inventories",
+      "importance": "low",
+      "forecast": "0.2M",
+      "previous": "-3.2M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "05:30",
+      "country": "USD",
+      "name": "FOMC Member Hammack Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:30",
+      "country": "NZD",
+      "name": "BusinessNZ Manufacturing Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "53.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "FPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:00",
+      "country": "GBP",
+      "name": "BOE Gov Bailey Speaks",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:30",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "12:30",
+      "country": "USD",
+      "name": "Fed Chairman Warsh Speaks",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "13:15",
+      "country": "CAD",
+      "name": "BOC Gov Macklem Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Final CPI y/y",
+      "importance": "low",
+      "forecast": "3.8%",
+      "previous": "3.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Final Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.5%",
+      "previous": "2.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "4.5B",
+      "previous": "5.0B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Italian Trade Balance",
+      "importance": "low",
+      "forecast": "7.50B",
+      "previous": "8.24B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:00",
+      "country": "CAD",
+      "name": "Gov Council Member Alexopoulos Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:15",
+      "country": "CAD",
+      "name": "Housing Starts",
+      "importance": "low",
+      "forecast": "234K",
+      "previous": "229K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Foreign Securities Purchases",
+      "importance": "low",
+      "forecast": "23.59B",
+      "previous": "20.65B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Import Prices m/m",
+      "importance": "low",
+      "forecast": "0.9%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "Capacity Utilization Rate",
+      "importance": "low",
+      "forecast": "76.5%",
+      "previous": "76.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:15",
+      "country": "ALL",
+      "name": "IMF Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
