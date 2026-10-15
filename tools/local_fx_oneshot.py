@@ -127,6 +127,27 @@ def feature(env_name: str, key: str) -> bool:
     return isinstance(value, dict) and bool(value.get("enabled"))
 
 
+def holiday_line(calendar: dict) -> str:
+    """Market holidays for the day, from the fetched schedule (never from the model)."""
+    text = (calendar.get("holiday_text") or "").strip()
+    return text or "休場なし（日本・米国・カナダ・欧州とも通常営業。取得した予定表に休場の記載なし）"
+
+
+def calendar_notes(calendar: dict, key_events: list) -> str:
+    """How far the two schedule sources agree, for the events shown: counts plus the disagreeing forecast values."""
+    events = calendar.get("events", [])
+    both = sum(1 for e in events if e.get("confirmed"))
+    single = len(events) - both
+    shown = {(e.get("time_jst"), (e.get("name") or "").strip()) for e in key_events}
+    conflicts = [c for c in calendar.get("conflicts", []) if (c.get("time_jst"), (c.get("name") or "").strip()) in shown]
+    text = f"予定表{len(events)}件のうちKissFXとForexFactoryで一致{both}件、片方のみ{single}件。"
+    if conflicts:
+        parts = [f"{c['time_jst']} {c['name']}の{'予想' if c.get('field') == 'forecast' else '前回'}はKiss {c.get('kissfx')}／FF {c.get('forexfactory')}"
+                 for c in conflicts[:4]]
+        text += "予想値が一致しない主要指標: " + "、".join(parts) + "（要確認）。"
+    return text
+
+
 def closing_ids(material: list) -> dict:
     """pair -> fact_id of the one fact that states that pair's close ("終値は…"): the first in material order."""
     closes = {}
@@ -263,6 +284,8 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
             "渡したfacts(とquote)を材料に、読ませる文章を書く。事実の羅列や原文の貼り合わせにせず、何が起き、なぜ動いたか(資料に書かれた背景・理由)、"
             "本日への引継ぎ(注目する水準や、上振れ・下振れならどう動くかという条件付きの見通し)を、自分の言葉で整理して書く。"
             "heroは前営業日の最重要の材料を2文。summaryは前営業日の市場全体の整理を3〜4文。topic_bodiesはtopicsと同じ順で、各話題を2〜4文。"
+            "handoffは『本日(日付と曜日)への引継ぎ』の段落(3〜4文): 前営業日の終値、本日最大の材料とその時刻、日中の主な予定、"
+            "資料にある水準を目安にした条件付きの見通し(上回れば〜、下回れば〜)。"
             "marketは本日の地合いを2〜3文(market_viewsを材料に)。riskは本日から今週の最大のリスクを2文"
             "(risk_viewsとtoday_high_importance_eventsを材料に。予想値・前回値があれば使ってよい)。"
             "数値・日付・要人名・出来事は、渡した資料にあるものだけを使い、資料にない水準・数値は作らない。"
@@ -273,7 +296,8 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
     result = call(out, "oneshot-2b-write", task, data,
                   news.schema({"hero": S, "summary": S,
                                "topic_bodies": {"type": "array", "minItems": n, "maxItems": n, "items": S},
-                               "market": S, "risk": S}), 16000)
+                               "market": S, "risk": S, "handoff": S}), 16000)
+    sections["handoff"] = result["handoff"].strip()
     sections["hero"], sections["summary"] = result["hero"].strip(), result["summary"].strip()
     sections["market"], sections["risk_body"] = result["market"].strip(), result["risk"].strip()
     for t, body in zip(sections["topics"], result["topic_bodies"]):
@@ -398,6 +422,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                 "summary": join_facts(summary_facts) if summary_facts else f"前営業日の主な話題: {titles}。",
                 "market": join_sourced(market_views) or no_market_view_text(titles) or "前営業日の主な話題は材料束にない。",
                 "handover": handover_text(chosen),
+                "market_holiday": holiday_line(calendar),
+                "calendar_notes": calendar_notes(calendar, chosen),
                 "focus_pair": today["focus_pair"],
                 "focus_body": ranking_sentence(ranking, today["focus_pair"]) + (sentence(focus_view) if focus_view else ""),
                 "risk_level": f"高重要度予定 {high}件",
@@ -423,11 +449,12 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     # sent to the repair step; only the model-written sections can be flagged and rewritten.
     keys = [f"title{i}" for i in range(len(sections["topics"]))]
     if written:  # prose written by the model can be flagged and rewritten like the titles
-        keys += ["hero", "summary", "market", "risk"] + [f"topic{i}" for i in range(len(sections["topics"]))]
+        keys += ["hero", "summary", "market", "risk", "handoff"] + [f"topic{i}" for i in range(len(sections["topics"]))]
 
     def texts_of(sec):
         return {"hero": sec["hero"], "headline": sec["headline"], "summary": sec["summary"], "market": sec["market"],
                 "handover": sec["handover"], "focus": sec["focus_body"], "risk": sec["risk_body"],
+                **({"handoff": sec["handoff"]} if sec.get("handoff") else {}),
                 **{f"title{i}": t["title"] for i, t in enumerate(sec["topics"])},
                 **{f"topic{i}": t["body"] for i, t in enumerate(sec["topics"])},
                 **{f"point{i}": p["body"] for i, p in enumerate(sec["points"])}}
@@ -476,8 +503,10 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                      for k, v in checks["number_date_errors"].items()]
         try:  # a failed or cut-off repair must not lose the written report (same rule as the verify step)
             fixed = call(out, "oneshot-5-repair",
-                         "指摘された記述だけを直す。資料にない数値水準・出来事・原因は削除するか、資料にある事実の表現に置き換える。"
-                         "条件付きの見通し(上振れ・下振れ)は、資料にある数値だけを使って残してよい。指摘のない部分は変えない。"
+                         "指摘された記述だけを直す。強すぎる断定の語(確定する・当面続く・最大の・加速する 等)は、資料の範囲の控えめな言い方"
+                         "(〜しやすい・〜が意識される 等)に言い換えて、文と条件付きの見通しは残す。"
+                         "資料にない数値水準・出来事・原因だけを削除するか、資料にある事実の表現に置き換える。"
+                         "条件付きの見通し(上振れ・下振れ)は、資料にある数値だけを使って残す。指摘のない部分は変えない。"
                          "fixesには修正が必要なsectionだけを、修正後の全文で返す。",
                          {**verify_data, "problems": problems, "current": {k: texts[k] for k in sorted(flagged)}},
                          news.schema({"fixes": {"type": "array", "items": news.schema({

@@ -14,7 +14,7 @@ import urllib.request
 
 import local_fx_news as news
 
-CHECKED = re.compile(r"^(hero|summary|market|risk|topic\d+)$")
+CHECKED = re.compile(r"^(hero|summary|market|risk|handoff|topic\d+)$")
 SPLIT = re.compile(r"(?<=。)")
 SYSTEM = ("あなたは資料照合係。『資料』に照らして、検査対象の1文の記述が資料に書かれているか判定する。"
           "数値・人名・出来事・原因・断定の強さのすべてが資料の記述の範囲内なら supported=true。"

@@ -322,5 +322,24 @@ class ClosingAndFallbackTests(unittest.TestCase):
         self.assertNotIn("資料", oneshot.risk_fallback([]))
 
 
+class HolidayAndNotesTests(unittest.TestCase):
+    """2026-10-16: the holiday line and the source cross-check note come from the fetched schedule, not the model."""
+
+    def test_holiday_line_uses_the_fetched_text_or_states_none(self):
+        self.assertIn("休場なし", oneshot.holiday_line({"holiday_text": ""}))
+        self.assertEqual(oneshot.holiday_line({"holiday_text": "米国債券市場休場（コロンバス・デー）"}),
+                         "米国債券市場休場（コロンバス・デー）")
+
+    def test_calendar_notes_count_agreement_and_name_disagreeing_forecasts_of_shown_events(self):
+        calendar = {"events": [{"confirmed": True}, {"confirmed": True}, {"confirmed": False}],
+                    "conflicts": [{"time_jst": "21:30", "name": "小売売上高", "field": "forecast", "kissfx": "+0.3%", "forexfactory": "+0.4%"},
+                                  {"time_jst": "23:00", "name": "別の指標", "field": "forecast", "kissfx": "1", "forexfactory": "2"}]}
+        shown = [{"time_jst": "21:30", "name": "小売売上高"}]
+        text = oneshot.calendar_notes(calendar, shown)
+        self.assertIn("一致2件、片方のみ1件", text)
+        self.assertIn("21:30 小売売上高の予想はKiss +0.3%／FF +0.4%", text)
+        self.assertNotIn("別の指標", text)  # a disagreement on an event that is not shown is not listed
+
+
 if __name__ == "__main__":
     unittest.main()

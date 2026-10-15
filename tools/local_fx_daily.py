@@ -484,7 +484,7 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
            "OTHER_POINTS_HTML": "\n".join(f'<li><strong>{esc(x["title"])}</strong>：{esc(x["body"])}</li>' for x in sections["points"]),
            "MARKET_OVERVIEW": esc(sections["market"]), "RANKING_ROWS_HTML": "\n".join(ranks),
            "RANKING_NOTE": f'4Hデイトレ適性ランキング・{esc(ranking["generated_at_jst"])} 時点。スコアはボラティリティ、トレンド、取引コストをもとに算出。',
-           "TOPICS_HTML": topics_html, "HANDOVER": esc(sections["handover"]),
+           "TOPICS_HTML": topics_html, "HANDOVER": esc((sections.get("handoff", "") + " " + sections["handover"]).strip()),
            "CAL_ROWS_HTML": "\n".join(f'<tr><td>{esc(x["time_jst"])}</td><td>{FLAGS.get(x["country"], "")} {esc(x["country"])}</td><td>{esc(x["name"])}</td><td>{"★高" if x["importance"] == "high" else "中" if x["importance"] == "medium" else "低"}</td><td>{esc(x["forecast"])}</td><td>{esc(x["previous"])}</td></tr>' for x in events),
            "SIDEBAR_ARCHIVE_HTML": "\n".join(f'<li><a href="../../reports/{p.name}">{p.stem}</a></li>' for p in archive)}
     parts = []
@@ -505,11 +505,15 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
     pair = sections["focus_pair"]
     report = report.replace("USD/JPY 🇺🇸🇯🇵</h3>", f'{esc(pair)} {"".join(FLAGS.get(c, "") for c in pair.split("/"))}</h3>')
     agenda = "本日の主要予定：" + " / ".join(f'{x["time_jst"]} {x["name"]}' for x in key[:3])
-    report = re.sub(r'<li>中国（祝日）。.*?</li>', lambda _: f'<li>{esc(agenda)}</li>', report)
-    report = report.replace("🚫 本日の市場休場", "📍 本日の市場予定")
+    holiday = sections.get("market_holiday")
+    lines = ([f'<li>{esc(holiday)}</li>'] if holiday else []) + [f'<li>{esc(agenda)}</li>']
+    report = re.sub(r'<li>中国（祝日）。.*?</li>', lambda _: "".join(lines), report)
+    report = report.replace("🚫 本日の市場休場", "📍 本日の市場休場・予定" if holiday else "📍 本日の市場予定")
     report = report.replace("KissFX × ForexFactory 2ソース照合済み（要確認あり）", "時刻はJST・翌日早朝まで")
     report = re.sub(r'<p style="font-size:11px;color:var\(--muted\);margin-top:12px;">※ 時刻はJST。.*?</p>',
-                    '<p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。24時以降は翌日早朝。予想値は市場予想であり発表結果ではありません。出典：KissFX、Forex Factory。</p>', report, flags=re.S)
+                    '<p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。24時以降は翌日早朝。予想値は市場予想であり発表結果ではありません。'
+                    + (esc(sections["calendar_notes"]) if sections.get("calendar_notes") else "")
+                    + '出典：KissFX、Forex Factory。</p>', report, flags=re.S)
     if single_source:
         report = report.replace("出典：KissFX、Forex Factory。", "出典：KissFXのみ（Forex Factoryは取得不可のため未照合・単一ソース）。")
     report = re.sub(r'<script data-goatcounter=.*?</script>', '', report, flags=re.S)
