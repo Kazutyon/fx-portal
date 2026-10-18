@@ -457,6 +457,7 @@ def extract(api, sources, target, out, observational=False):
                 "重要な事実を0〜6件抽出。quoteはこのtextから完全一致20〜180文字。"
                 "event_scopeはprevious=指定前営業日の出来事、current=本日、historical=それ以前/週のまとめ、unknown=不明。"
                 "掲載日だけから決めずarticle_opening/nearby_heading/本文の文脈で判断。"
+                "『昨日の相場』『なんで動いた？』のように前日を振り返る記事は、タイトルにその日の日付(その日の戦略名)があっても、述べているのは掲載日の前日の出来事。"
                 "朝のNY概況で『きょうのNY』は前営業日のNY。東京市場の『本日』は本日。"
                 "本日07時前に掲載されたNY市場の記事(＝ＮＹ為替など)の出来事も、前営業日のNY市場の出来事で、factの日付は掲載日ではなく出来事の日。"
                 "日付のない先週の振り返りを前日扱いにしない。"
