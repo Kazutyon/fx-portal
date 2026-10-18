@@ -279,6 +279,16 @@ def weekly_schedule(text: str, target: date) -> str:
     return " ".join(dict.fromkeys(blocks))
 
 
+def holiday_items(day_themes: str) -> str:
+    """Holiday statements from KissFX's 'その他、注目点' list, e.g. '香港と中国が祝日で休場' (empty when none)."""
+    items = []
+    for part in re.split(r"[・\n]", day_themes or ""):
+        part = re.sub(r"\s+", " ", part).strip(" 　")
+        if re.search(r"休場|祝日", part) and 3 <= len(part) <= 60 and part not in items:
+            items.append(part)
+    return "、".join(items)
+
+
 def collect_calendar(target: date, out: Path, allow_single_source: bool = False) -> dict:
     staged = out / "calendar.input.json"
     if staged.exists():
@@ -365,7 +375,7 @@ def collect_calendar(target: date, out: Path, allow_single_source: bool = False)
     key = [x for x in events if x["importance"] == "high" or event_code(x["name"]) in {"confidence", "jolts", "rba-rate", "rba-press"}]
     result = {"date_jst": target.isoformat(), "events": events, "key_events": key,
               "source_urls": [kiss_url] + ([ff_url] if ff_available else []),
-              "conflicts": conflicts, "holiday_text": "",
+              "conflicts": conflicts, "holiday_text": holiday_items(day_themes), "holiday_checked": True,
               "day_themes": day_themes,
               "weekly_themes": weekly_schedule(kiss_text, target),
               "rba_official_excerpt": "", "rba_schedule_excerpt": ""}

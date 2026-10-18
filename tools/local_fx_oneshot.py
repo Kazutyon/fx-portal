@@ -127,24 +127,42 @@ def feature(env_name: str, key: str) -> bool:
     return isinstance(value, dict) and bool(value.get("enabled"))
 
 
+HOLIDAY_COUNTRY = {"日本": "JPY", "米国": "USD", "アメリカ": "USD", "英国": "GBP", "イギリス": "GBP", "カナダ": "CAD", "豪": "AUD",
+                   "オーストラリア": "AUD", "ニュージーランド": "NZD", "スイス": "CHF", "欧州": "EUR", "ユーロ": "EUR", "ドイツ": "EUR",
+                   "フランス": "EUR", "中国": "CNY"}
+
+
 def holiday_line(calendar: dict) -> str:
-    """Market holidays for the day, from the fetched schedule (never from the model)."""
+    """Market holidays for the day from the fetched schedule (never from the model).
+
+    'No holiday' is stated only when the holiday list was actually read and had none; a country that is on holiday
+    but still has releases on the schedule is flagged for checking (the sources disagree)."""
     text = (calendar.get("holiday_text") or "").strip()
-    return text or "休場なし（日本・米国・カナダ・欧州とも通常営業。取得した予定表に休場の記載なし）"
+    if text:
+        line = f"休場: {text}（KissFXの記載）"
+        clash = []
+        for name, code in HOLIDAY_COUNTRY.items():
+            if name in text and any(e.get("country") == code for e in calendar.get("events", [])):
+                clash.append(name)
+        if clash:
+            line += "。" + "・".join(clash) + "は予定表に同日の指標があり、休場かどうかは要確認"
+        return line
+    if calendar.get("holiday_checked") or any("kissfx" in u for u in calendar.get("source_urls", [])):
+        return "休場なし（KissFXの記載に休場・祝日なし）"
+    return "休場の情報は取得できなかった"
 
 
 def calendar_notes(calendar: dict, key_events: list) -> str:
-    """How far the two schedule sources agree, for the events shown: counts plus the disagreeing forecast values."""
+    """Cross-check note for the schedule: only what was actually compared (events the two sources could be matched on)."""
     events = calendar.get("events", [])
-    both = sum(1 for e in events if e.get("confirmed"))
-    single = len(events) - both
+    matched = sum(1 for e in events if e.get("confirmed"))
     shown = {(e.get("time_jst"), (e.get("name") or "").strip()) for e in key_events}
     conflicts = [c for c in calendar.get("conflicts", []) if (c.get("time_jst"), (c.get("name") or "").strip()) in shown]
-    text = f"予定表{len(events)}件のうちKissFXとForexFactoryで一致{both}件、片方のみ{single}件。"
+    text = f"KissFXとForexFactoryで突き合わせできた指標は{matched}件（それ以外は片方の情報のみ）。"
     if conflicts:
         parts = [f"{c['time_jst']} {c['name']}の{'予想' if c.get('field') == 'forecast' else '前回'}はKiss {c.get('kissfx')}／FF {c.get('forexfactory')}"
                  for c in conflicts[:4]]
-        text += "予想値が一致しない主要指標: " + "、".join(parts) + "（要確認）。"
+        text += "表示した主要指標で値が一致しないもの: " + "、".join(parts) + "（要確認）。"
     return text
 
 
@@ -408,7 +426,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
             points.append("本日の予定: " + event_label(calendar["events"][int(i[1:]) - 1]) + "。")
         elif i in by_id:
             points.append(sentence(by_id[i]))
-    for e in chosen:  # the model may repeat or miss an id: fill up to three from today's key schedule, in time order
+    rank = {"high": 0, "medium": 1}
+    for e in sorted(chosen, key=lambda x: rank.get(x.get("importance"), 2)):  # the model may repeat or miss an id: fill up to three from today's key schedule, most important first (time order within a grade)
         text = "本日の予定: " + event_label(e) + "。"
         if len(points) >= 3:
             break

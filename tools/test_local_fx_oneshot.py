@@ -323,22 +323,35 @@ class ClosingAndFallbackTests(unittest.TestCase):
 
 
 class HolidayAndNotesTests(unittest.TestCase):
-    """2026-10-16: the holiday line and the source cross-check note come from the fetched schedule, not the model."""
+    """2026-10-19: 'no holiday' was printed although KissFX listed 香港と中国が祝日で休場 (holiday_text was never filled)."""
 
-    def test_holiday_line_uses_the_fetched_text_or_states_none(self):
-        self.assertIn("休場なし", oneshot.holiday_line({"holiday_text": ""}))
-        self.assertEqual(oneshot.holiday_line({"holiday_text": "米国債券市場休場（コロンバス・デー）"}),
-                         "米国債券市場休場（コロンバス・デー）")
+    def test_holiday_is_stated_from_the_text_and_a_country_with_releases_is_flagged(self):
+        calendar = {"holiday_text": "香港と中国が祝日で休場", "events": [{"country": "CNY"}, {"country": "CAD"}]}
+        line = oneshot.holiday_line(calendar)
+        self.assertIn("休場: 香港と中国が祝日で休場", line)
+        self.assertIn("中国は予定表に同日の指標があり、休場かどうかは要確認", line)
+        self.assertNotIn("休場なし", line)
 
-    def test_calendar_notes_count_agreement_and_name_disagreeing_forecasts_of_shown_events(self):
+    def test_no_holiday_is_claimed_only_when_the_kissfx_list_was_read(self):
+        self.assertEqual(oneshot.holiday_line({"holiday_text": "", "holiday_checked": True, "events": []}),
+                         "休場なし（KissFXの記載に休場・祝日なし）")
+        self.assertEqual(oneshot.holiday_line({"holiday_text": "", "events": []}), "休場の情報は取得できなかった")
+
+    def test_holiday_items_are_read_from_the_theme_list(self):
+        import local_fx_daily as daily
+        text = "その他、注目点及び懸念点など ・ 週明け ・ 香港と中国が祝日で休場 ・ 米国の主要企業の決算発表(徐々に本格化)"
+        self.assertEqual(daily.holiday_items(text), "香港と中国が祝日で休場")
+        self.assertEqual(daily.holiday_items("・ 週明け ・ 米国の決算発表"), "")
+
+    def test_calendar_notes_state_only_the_matched_count_and_real_disagreements_of_shown_events(self):
         calendar = {"events": [{"confirmed": True}, {"confirmed": True}, {"confirmed": False}],
                     "conflicts": [{"time_jst": "21:30", "name": "小売売上高", "field": "forecast", "kissfx": "+0.3%", "forexfactory": "+0.4%"},
                                   {"time_jst": "23:00", "name": "別の指標", "field": "forecast", "kissfx": "1", "forexfactory": "2"}]}
         shown = [{"time_jst": "21:30", "name": "小売売上高"}]
         text = oneshot.calendar_notes(calendar, shown)
-        self.assertIn("一致2件、片方のみ1件", text)
+        self.assertIn("突き合わせできた指標は2件（それ以外は片方の情報のみ）", text)
         self.assertIn("21:30 小売売上高の予想はKiss +0.3%／FF +0.4%", text)
-        self.assertNotIn("別の指標", text)  # a disagreement on an event that is not shown is not listed
+        self.assertNotIn("別の指標", text)
 
 
 if __name__ == "__main__":
