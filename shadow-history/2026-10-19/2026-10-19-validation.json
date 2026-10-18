@@ -1,0 +1,299 @@
+{
+  "date": "2026-10-19",
+  "generated_at_jst": "2026-10-19T07:24:15+09:00",
+  "source_count": 3,
+  "event_count": 19,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "06:30",
+      "country": "NZD",
+      "name": "BusinessNZ Services Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "51.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "-775M",
+      "previous": "-1349M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "Rightmove HPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:05",
+      "country": "AUD",
+      "name": "RBA Assist Gov Kent Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:30",
+      "country": "CNY",
+      "name": "New Home Prices m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.17%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Fixed Asset Investment ytd/y",
+      "importance": "low",
+      "forecast": "-7.3%",
+      "previous": "-7.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "GDP q/y",
+      "importance": "low",
+      "forecast": "4.4%",
+      "previous": "4.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Industrial Production y/y",
+      "importance": "low",
+      "forecast": "5.4%",
+      "previous": "5.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "NBS Press Conference",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Retail Sales y/y",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "5.3%",
+      "previous": "5.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "13:30",
+      "country": "JPY",
+      "name": "Tertiary Industry Activity m/m",
+      "importance": "low",
+      "forecast": "-0.3%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:02",
+      "country": "CNY",
+      "name": "Foreign Direct Investment ytd/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-5.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "CPI m/m",
+      "importance": "high",
+      "forecast": "0.2%",
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Common CPI y/y",
+      "importance": "medium",
+      "forecast": "2.6%",
+      "previous": "2.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Core CPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Median CPI y/y",
+      "importance": "high",
+      "forecast": "2.0%",
+      "previous": "2.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Trimmed CPI y/y",
+      "importance": "high",
+      "forecast": "1.9%",
+      "previous": "1.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "NAHB Housing Market Index",
+      "importance": "low",
+      "forecast": "31",
+      "previous": "32",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 06:30 NZD BusinessNZ Services Index",
+    "single source: 06:45 NZD Trade Balance",
+    "single source: 08:01 GBP Rightmove HPI m/m",
+    "single source: 08:05 AUD RBA Assist Gov Kent Speaks",
+    "single source: 10:30 CNY New Home Prices m/m",
+    "single source: 11:00 CNY Fixed Asset Investment ytd/y",
+    "single source: 11:00 CNY GDP q/y",
+    "single source: 11:00 CNY Industrial Production y/y",
+    "single source: 11:00 CNY NBS Press Conference",
+    "single source: 11:00 CNY Retail Sales y/y",
+    "single source: 11:00 CNY Unemployment Rate",
+    "single source: 13:30 JPY Tertiary Industry Activity m/m",
+    "single source: 15:02 CNY Foreign Direct Investment ytd/y",
+    "single source: 21:30 CAD CPI m/m",
+    "single source: 21:30 CAD Common CPI y/y",
+    "single source: 21:30 CAD Core CPI m/m",
+    "single source: 21:30 CAD Median CPI y/y",
+    "single source: 21:30 CAD Trimmed CPI y/y",
+    "single source: 23:00 USD NAHB Housing Market Index",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
