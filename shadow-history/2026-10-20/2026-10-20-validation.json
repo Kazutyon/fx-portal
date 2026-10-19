@@ -1,0 +1,270 @@
+{
+  "date": "2026-10-20",
+  "generated_at_jst": "2026-10-20T08:38:09+09:00",
+  "source_count": 3,
+  "event_count": 17,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:30",
+      "country": "CAD",
+      "name": "BOC Business Outlook Survey",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:00",
+      "country": "CNY",
+      "name": "1-y Loan Prime Rate",
+      "importance": "low",
+      "forecast": "3.00%",
+      "previous": "3.00%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:00",
+      "country": "CNY",
+      "name": "5-y Loan Prime Rate",
+      "importance": "low",
+      "forecast": "3.50%",
+      "previous": "3.50%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "EUR",
+      "name": "German PPI m/m",
+      "importance": "low",
+      "forecast": "1.5%",
+      "previous": "1.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Average Earnings Index 3m/y",
+      "importance": "medium",
+      "forecast": "3.8%",
+      "previous": "3.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Claimant Count Change",
+      "importance": "low",
+      "forecast": "19.4K",
+      "previous": "27.8K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "4.9%",
+      "previous": "4.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Current Account",
+      "importance": "low",
+      "forecast": "29.2B",
+      "previous": "27.6B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "German ZEW Economic Sentiment",
+      "importance": "low",
+      "forecast": "30.2",
+      "previous": "34.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "ZEW Economic Sentiment",
+      "importance": "low",
+      "forecast": "23.6",
+      "previous": "25.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:10",
+      "country": "CNY",
+      "name": "Foreign Direct Investment ytd/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-5.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:33",
+      "country": "GBP",
+      "name": "10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.38|3.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "24.8K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Building Permits",
+      "importance": "low",
+      "forecast": "1.39M",
+      "previous": "1.39M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Housing Starts",
+      "importance": "low",
+      "forecast": "1.30M",
+      "previous": "1.28M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Pending Home Sales m/m",
+      "importance": "low",
+      "forecast": "-0.7%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:50",
+      "country": "NZD",
+      "name": "GDT Price Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "1.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:30 CAD BOC Business Outlook Survey",
+    "single source: 10:00 CNY 1-y Loan Prime Rate",
+    "single source: 10:00 CNY 5-y Loan Prime Rate",
+    "single source: 15:00 EUR German PPI m/m",
+    "single source: 15:00 GBP Average Earnings Index 3m/y",
+    "single source: 15:00 GBP Claimant Count Change",
+    "single source: 15:00 GBP Unemployment Rate",
+    "single source: 17:00 EUR Current Account",
+    "single source: 18:00 EUR German ZEW Economic Sentiment",
+    "single source: 18:00 EUR ZEW Economic Sentiment",
+    "single source: 18:10 CNY Foreign Direct Investment ytd/y",
+    "single source: 18:33 GBP 10-y Bond Auction",
+    "single source: 21:15 USD ADP Weekly Employment Change",
+    "single source: 21:30 USD Building Permits",
+    "single source: 21:30 USD Housing Starts",
+    "single source: 23:00 USD Pending Home Sales m/m",
+    "single source: 23:50 NZD GDT Price Index",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
