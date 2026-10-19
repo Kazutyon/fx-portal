@@ -143,7 +143,7 @@ def collect(target: date, out, snapshot):
         links.sort(key=lambda x: 0 if re.search(r"[ＮN][ＹY]為替|ニューヨーク外国為替市場概況", x[1]) else
                    1 if re.search(r"市場概況|発言|介入|オプション|見通し|ラガルド", x[1]) else 2)
         accepted = 0
-        for url, title in links[:10]:
+        for url, title in links[:30]:
             try:
                 body = snapshot(out, f"live-article-{hashlib.sha256(url.encode()).hexdigest()[:16]}", url)
                 value = article(url, body)
@@ -155,15 +155,15 @@ def collect(target: date, out, snapshot):
                 value["source_id"] = len(sources)
                 sources.append(value)
                 accepted += 1
-                if accepted >= 4:
+                if accepted >= 7 or len(sources) >= 24:
                     break
             except (OSError, ValueError, KeyError) as error:
                 rejected.append({"url": url, "reason": str(error)})
         acquired_domains.append({"index": index, "accepted": accepted})
     news.save(out / "acquisition-review.json", {"indexes": acquired_domains, "rejected": rejected,
               "as_of_jst": cutoff.isoformat(), "lifecycle": "evidence"})
-    if not 5 <= len(sources) <= 12 or not any(re.search(r"[ＮN][ＹY]為替|ニューヨーク外国為替市場概況", x["title"]) for x in sources):
-        raise ValueError("news coverage gate failed: need 5-12 dated articles including NY recap")
+    if not 5 <= len(sources) <= 24 or not any(re.search(r"[ＮN][ＹY]為替|ニューヨーク外国為替市場概況", x["title"]) for x in sources):
+        raise ValueError("news coverage gate failed: need 5-24 dated articles including NY recap")
     news.save(out / "source-bundle.json", {"date_jst": target.isoformat(), "sources": sources,
               "as_of_jst": cutoff.isoformat(), "acquisition_mode": "claude-mirror",
               "strict_0700_backtest": False, "lifecycle": "evidence"})
