@@ -132,6 +132,10 @@ HOLIDAY_COUNTRY = {"日本": "JPY", "米国": "USD", "アメリカ": "USD", "英
                    "フランス": "EUR", "中国": "CNY"}
 
 
+# an ASCII snake_case name inside reader text is an internal leak; \b does not work next to Japanese characters
+CODE_LIKE = r"(?<![A-Za-z0-9_])[a-z]+(?:_[a-z]+)+(?![A-Za-z0-9_])"
+
+
 def holiday_line(calendar: dict) -> str:
     """Market holidays for the day from the fetched schedule (never from the model).
 
@@ -292,20 +296,21 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
     def facts_of(items):
         return [{"id": x["fact_id"], "fact": x["fact"], "quote": x.get("quote", ""), "source": site_of(x)} for x in items]
 
-    data = {"date_facts": date_facts, "hero_facts": facts_of(hero_facts), "summary_facts": facts_of(summary_facts),
-            "topics": [{"title": t["title"], "facts": facts_of(f)} for t, f in zip(sections["topics"], topic_facts)],
-            "market_views": facts_of(market_views), "risk_views": facts_of(risk_views),
-            "today_key_events": [event_label(e) for e in key_events],
-            "today_high_importance_events": [{"time": e["time"], "country": e["country"], "name": e["name"],
-                                              "forecast": e["forecast"], "previous": e["previous"]} for e in high_events]}
+    data = {"日付": date_facts, "最重要の材料": facts_of(hero_facts), "前営業日の市場全体の材料": facts_of(summary_facts),
+            "話題ごとの材料": [{"見出し": t["title"], "材料": facts_of(f)} for t, f in zip(sections["topics"], topic_facts)],
+            "地合いに関する見解": facts_of(market_views), "リスクに関する見解": facts_of(risk_views),
+            "本日の主な予定": [event_label(e) for e in key_events],
+            "本日の高重要度の予定": [{"時刻": e["time"], "国": e["country"], "名称": e["name"],
+                                      "予想": e["forecast"], "前回": e["previous"]} for e in high_events]}
     task = ("あなたはFXトレード日報の筆者。読者は4時間足でトレンドを把握し、15分・30分足の波とローソク足でエントリーするFXトレーダー。"
-            "渡したfacts(とquote)を材料に、読ませる文章を書く。事実の羅列や原文の貼り合わせにせず、何が起き、なぜ動いたか(資料に書かれた背景・理由)、"
+            "渡した材料(factとquote)を材料に、読ませる文章を書く。事実の羅列や原文の貼り合わせにせず、何が起き、なぜ動いたか(資料に書かれた背景・理由)、"
             "本日への引継ぎ(注目する水準や、上振れ・下振れならどう動くかという条件付きの見通し)を、自分の言葉で整理して書く。"
-            "heroは前営業日の最重要の材料を2文。summaryは前営業日の市場全体の整理を3〜4文。topic_bodiesはtopicsと同じ順で、各話題を2〜4文。"
+            "heroは前営業日の最重要の材料を2文。summaryは前営業日の市場全体の整理を3〜4文。各話題の本文は『話題ごとの材料』と同じ順で、各話題を2〜4文。"
             "handoffは『本日(日付と曜日)への引継ぎ』の段落(3〜4文): 前営業日の終値、本日最大の材料とその時刻、日中の主な予定、"
             "資料にある水準を目安にした条件付きの見通し(上回れば〜、下回れば〜)。"
-            "marketは本日の地合いを2〜3文(market_viewsを材料に)。riskは本日から今週の最大のリスクを2文"
-            "(risk_viewsとtoday_high_importance_eventsを材料に。予想値・前回値があれば使ってよい)。"
+            "marketは本日の地合いを2〜3文(『地合いに関する見解』を材料に)。riskは本日から今週の最大のリスクを2文"
+            "(『リスクに関する見解』と『本日の高重要度の予定』を材料に。予想値・前回値があれば使ってよい。"
+            "材料が乏しい日は、『本日の主な予定』から相場を動かしうるものを選んで書く)。"
             "数値・日付・要人名・出来事は、渡した資料にあるものだけを使い、資料にない水準・数値は作らない。"
             "出典を示すときは（ザイFX）のようにsourceの名前を括弧で添える。"
             "現在は本日の午前7時で、本日の東京・ロンドン・NY市場はまだ始まっていない。前営業日の出来事は過去のこととして書く。"
@@ -480,7 +485,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
 
     def mechanical(texts):
         return {"number_date_errors": {k: e for k, v in texts.items() if (e := grounding.number_errors(v, evidence, target))},
-                "internal_wording": [k for k, v in texts.items() if re.search(daily.FORBIDDEN, v, re.I)],
+                "internal_wording": [k for k, v in texts.items()
+                                     if re.search(daily.FORBIDDEN, v, re.I) or re.search(CODE_LIKE, v)],
                 "meta_wording": [k for k, v in texts.items() if re.search(r"資料に基づ|記載の範囲|資料に記載|資料にない", v)]}
 
     verify_data = {"date_facts": data["date_facts"], "facts": data["facts"], "today_calendar": events,

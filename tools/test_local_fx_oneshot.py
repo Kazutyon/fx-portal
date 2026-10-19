@@ -354,5 +354,30 @@ class HolidayAndNotesTests(unittest.TestCase):
         self.assertNotIn("別の指標", text)
 
 
+class PromptLeakTests(unittest.TestCase):
+    """2026-10-20: the report printed 'today_high_importance_events および risk_views …' (the writer quoted input key names)."""
+
+    def test_input_keys_given_to_the_writer_are_plain_japanese(self):
+        seen = {}
+
+        def fake_call(out, label, task, data, schema, *rest):
+            seen.update(task=task, data=data)
+            raise RuntimeError("stop after capturing the request")
+
+        sections = {"topics": [{"title": "話題", "body": "本文"}]}
+        facts = [{"fact_id": "N0-0", "fact": "ドル円は158円。", "quote": "ドル円は158円。", "source_url": "https://zai.diamond.jp/x",
+                  "published_at": "2026-10-20T04:00:00+09:00"}]
+        with patch.object(oneshot, "call", side_effect=fake_call):
+            with self.assertRaises(RuntimeError):
+                oneshot.write_prose(Path("."), "", sections, facts, facts, [], [], [facts], [], {"today_jst": "2026-10-20"}, [])
+        self.assertFalse([k for k in seen["data"] if "_" in k])
+        self.assertNotRegex(seen["task"], r"[a-z]+_[a-z_]+")
+
+    def test_code_like_identifier_next_to_japanese_text_is_detected(self):
+        import re
+        self.assertTrue(re.search(oneshot.CODE_LIKE, "today_high_importance_eventsおよびrisk_viewsに記載された"))
+        self.assertFalse(re.search(oneshot.CODE_LIKE, "ドル円は158円。（ザイFX）"))
+
+
 if __name__ == "__main__":
     unittest.main()
