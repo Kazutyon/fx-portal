@@ -1,0 +1,17 @@
+{
+  "source": "us-bea-official-schedule",
+  "date": "2026-10-22",
+  "fetched_at": "2026-10-22T08:16:52+09:00",
+  "events": [
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Experimental Research and Development Economic Statistics, U.S. and States, 2024",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": true,
+      "source_url": "https://www.bea.gov/news/schedule"
+    }
+  ]
+}
