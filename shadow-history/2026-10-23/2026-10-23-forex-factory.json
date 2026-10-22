@@ -1,0 +1,217 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-23",
+  "fetched_at": "2026-10-23T08:21:13+09:00",
+  "events": [
+    {
+      "time_jst": "07:00",
+      "country": "AUD",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": null,
+      "previous": "49.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "07:00",
+      "country": "AUD",
+      "name": "Flash Services PMI",
+      "importance": "low",
+      "forecast": null,
+      "previous": "51.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:01",
+      "country": "GBP",
+      "name": "GfK Consumer Confidence",
+      "importance": "low",
+      "forecast": "-14",
+      "previous": "-13",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "National Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.1%",
+      "previous": "1.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "JPY",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": "54.5",
+      "previous": "54.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "15:00",
+      "country": "GBP",
+      "name": "Retail Sales m/m",
+      "importance": "medium",
+      "forecast": "-0.1%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:15",
+      "country": "EUR",
+      "name": "French Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "50.5",
+      "previous": "50.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:15",
+      "country": "EUR",
+      "name": "French Flash Services PMI",
+      "importance": "medium",
+      "forecast": "50.7",
+      "previous": "51.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:30",
+      "country": "EUR",
+      "name": "German Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "53.5",
+      "previous": "53.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:30",
+      "country": "EUR",
+      "name": "German Flash Services PMI",
+      "importance": "medium",
+      "forecast": "52.5",
+      "previous": "52.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": "52.7",
+      "previous": "52.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Flash Services PMI",
+      "importance": "low",
+      "forecast": "52.6",
+      "previous": "53.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "51.8",
+      "previous": "52.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:30",
+      "country": "GBP",
+      "name": "Flash Services PMI",
+      "importance": "medium",
+      "forecast": "51.8",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Core Retail Sales m/m",
+      "importance": "low",
+      "forecast": "1.1%",
+      "previous": "-0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "Retail Sales m/m",
+      "importance": "low",
+      "forecast": "1.3%",
+      "previous": "-0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:00",
+      "country": "EUR",
+      "name": "Belgian NBB Business Climate",
+      "importance": "low",
+      "forecast": "-11.8",
+      "previous": "-12.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:45",
+      "country": "USD",
+      "name": "Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "55.4",
+      "previous": "57.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:45",
+      "country": "USD",
+      "name": "Flash Services PMI",
+      "importance": "medium",
+      "forecast": "57.9",
+      "previous": "58.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Revised UoM Consumer Sentiment",
+      "importance": "medium",
+      "forecast": "46.3",
+      "previous": "46.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Revised UoM Inflation Expectations",
+      "importance": "medium",
+      "forecast": null,
+      "previous": "4.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
