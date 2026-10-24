@@ -663,5 +663,37 @@ class ValuePairTests(unittest.TestCase):
 
 
 
+class UnloadTests(unittest.TestCase):
+    def test_unload_asks_ollama_to_drop_the_model_now(self):
+        import local_fx_news as news
+        seen = {}
+
+        class Reply:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def read(self):
+                return b"{}"
+
+        def fake(request, timeout=0):
+            seen["url"] = request.full_url
+            seen["body"] = json.loads(request.data)
+            return Reply()
+
+        with patch("urllib.request.urlopen", fake):
+            self.assertTrue(news.unload_model())
+        self.assertTrue(seen["url"].endswith("/api/generate"))
+        self.assertEqual(seen["body"]["keep_alive"], 0)
+        self.assertEqual(seen["body"]["model"], news.MODEL)
+
+    def test_unload_failure_never_raises(self):
+        import local_fx_news as news
+        with patch("urllib.request.urlopen", side_effect=OSError("down")):
+            self.assertFalse(news.unload_model())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -23,6 +23,19 @@ ROOT = Path(__file__).resolve().parents[1]
 JST = timezone(timedelta(hours=9))
 MODEL = "qwen3.6:27b"
 OLLAMA = "http://127.0.0.1:11434"
+
+
+def unload_model(model: str = "") -> bool:
+    """Free the GPU as soon as a run ends. Calls inside a run keep the model for 10 minutes; this is the final release."""
+    body = {"model": model or MODEL, "keep_alive": 0, "stream": False}
+    try:
+        request = urllib.request.Request(OLLAMA + "/api/generate", data=json.dumps(body).encode(),
+                                         headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(request, timeout=30) as response:
+            response.read()
+        return True
+    except Exception:
+        return False
 INDEX = "https://fx.minkabu.jp/news"
 MAX_INPUT_BYTES = 24000
 FORCE_THINK_OFF = False  # Explicit one-run experiment only; never an automatic fallback.

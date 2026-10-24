@@ -729,6 +729,8 @@ def main() -> int:
         finally:
             lock.seek(0)
             msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
+    if not args.prepare_only and not args.render_existing:
+        print("STAGE model-unload " + ("done" if news.unload_model() else "skipped"), flush=True)
     print(json.dumps({"run_dir": str(out), **status}, ensure_ascii=True), flush=True)
     return 1 if status["status"] == "FAILED" else 0
 
