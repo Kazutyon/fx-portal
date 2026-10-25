@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-26",
+  "generated_at_jst": "2026-10-26T07:31:32+09:00",
+  "source_count": 3,
+  "event_count": 4,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "04:00",
+      "country": "NZD",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:10",
+      "country": "AUD",
+      "name": "RBA Assist Gov Jones Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "German ifo Business Climate",
+      "importance": "low",
+      "forecast": "90.0",
+      "previous": "89.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "20:00",
+      "country": "GBP",
+      "name": "CBI Realized Sales",
+      "importance": "low",
+      "forecast": "-47",
+      "previous": "-55",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 04:00 NZD Bank Holiday",
+    "single source: 06:10 AUD RBA Assist Gov Jones Speaks",
+    "single source: 18:00 EUR German ifo Business Climate",
+    "single source: 20:00 GBP CBI Realized Sales",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
