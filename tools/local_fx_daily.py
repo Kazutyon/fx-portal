@@ -289,6 +289,46 @@ def holiday_items(day_themes: str) -> str:
     return "、".join(items)
 
 
+def accepted_pairs(raw_pairs: list, events: list, ff: list, rest_k: list, rest_f: list) -> dict:
+    """Model-proposed KissFX/Forex Factory pairs, kept only when both rows were still unpaired, the country and the
+    scheduled time are the same, and neither row is used twice. Figures always come from the feeds, never the model."""
+    taken_k, taken_f, accepted = set(), set(), {}
+    for pair in raw_pairs:
+        n, i = pair.get("kiss_no"), pair.get("ff_no")
+        if n not in rest_k or i not in rest_f or n in taken_k or i in taken_f:
+            continue
+        if events[n]["country"] != ff[i]["country"] or events[n]["time_jst"] != ff[i]["time_jst"]:
+            continue
+        taken_k.add(n)
+        taken_f.add(i)
+        accepted[n] = i
+    return accepted
+
+
+def ai_match(out: Path, events: list, ff: list, rest_k: list, rest_f: list) -> tuple:
+    """One small local-model call: which still-unpaired rows are the same indicator (Japanese vs English names), and a
+    Japanese name for the Forex Factory rows. Failure leaves the code-only result."""
+    if not rest_f:
+        return {}, {}
+    row = lambda no, e: {"no": no, "time": e["time_jst"], "country": e["country"], "name": e["name"],
+                         "forecast": e["forecast"], "previous": e["previous"]}
+    data = {"KissFX": [row(n, events[n]) for n in rest_k], "ForexFactory": [row(i, ff[i]) for i in rest_f]}
+    task = ("同じ日の経済指標の一覧が、KissFX(日本語名)とForexFactory(英語名)にある。"
+            "同じ指標の組み合わせを、KissFXのnoとForexFactoryのnoで答える(指標の種類が同じなら、予想値・前回値が少し違っていても同じ指標。"
+            "『除く〜』『コア』のような別の指標とは組み合わせない)。組み合わせがない行は含めない。"
+            "さらにForexFactoryの全行に、日本語の指標名(国名は付けない。例: Durable Goods Orders m/m→耐久財受注 前月比)を付ける。")
+    try:
+        result = infer_cached(out, "calendar-plan-match", task, data, news.schema({
+            "pairs": {"type": "array", "items": news.schema({"kiss_no": {"type": "integer"}, "ff_no": {"type": "integer"}})},
+            "names": {"type": "array", "items": news.schema({"ff_no": {"type": "integer"}, "name": {"type": "string"}})}}))
+    except Exception as error:
+        print(f"STAGE calendar-plan-match skipped {type(error).__name__}", flush=True)
+        return {}, {}
+    names = {x["ff_no"]: x["name"].strip() for x in result.get("names", [])
+             if x.get("ff_no") in rest_f and 2 <= len(x.get("name", "").strip()) <= 40}
+    return accepted_pairs(result.get("pairs", []), events, ff, rest_k, rest_f), names
+
+
 def collect_calendar(target: date, out: Path, allow_single_source: bool = False) -> dict:
     staged = out / "calendar.input.json"
     if staged.exists():
@@ -333,6 +373,9 @@ def collect_calendar(target: date, out: Path, allow_single_source: bool = False)
     unnamed = [n for n, e in enumerate(events) if not any(
         x["country"] == e["country"] and x["time_jst"] == e["time_jst"] and event_code(x["name"]) == event_code(e["name"]) for x in ff)]
     by_value = {unnamed[k]: i for k, i in value_pairs([events[n] for n in unnamed], ff, by_name).items()}
+    rest_k = [n for n in unnamed if n not in by_value]
+    rest_f = [i for i in range(len(ff)) if i not in by_name and i not in by_value.values()]
+    ai_pairs, ai_names = ai_match(out, events, ff, rest_k, rest_f)
     for n, event in enumerate(events):
         codes = {event_code(event["name"])}
         if "政策金利" in event["name"] and "声明" in event["name"]:
@@ -341,6 +384,8 @@ def collect_calendar(target: date, out: Path, allow_single_source: bool = False)
         exact = [(i, x) for i, x in candidates if x["time_jst"] == event["time_jst"]]
         if not exact and n in by_value:
             exact = [(by_value[n], ff[by_value[n]])]
+        if not exact and n in ai_pairs:
+            exact = [(ai_pairs[n], ff[ai_pairs[n]])]
         event["sources"] = [kiss_url] + ([ff_url] if exact else [])
         event["confirmed"] = bool(exact)
         for i, other in exact:
@@ -364,7 +409,10 @@ def collect_calendar(target: date, out: Path, allow_single_source: bool = False)
             conflicts.append({"kiss": event, "ff": [x for _, x in candidates]})
     for i, event in enumerate(ff):
         if i not in matched_ff:
-            events.append({**event, "sources": [ff_url], "confirmed": False})
+            row = {**event, "sources": [ff_url], "confirmed": False}
+            if i in ai_names:
+                row["name_ja_guess"] = ai_names[i]  # recorded only: a model translation can be wrong (SPPI -> retail sales), so the feed's own name is still shown
+            events.append(row)
     events.sort(key=lambda x: (x["time_jst"], x["country"], x["name"]))
     # Claude's weekday flow uses KissFX + FF, not mandatory RBA web requests.
     kiss_text = news.plain(re.sub(r"<script\b.*?</script>|<style\b.*?</style>", "", kiss, flags=re.S))

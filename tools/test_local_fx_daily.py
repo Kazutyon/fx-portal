@@ -695,5 +695,21 @@ class UnloadTests(unittest.TestCase):
             self.assertFalse(news.unload_model())
 
 
+class AiPairTests(unittest.TestCase):
+    EVENTS = [{"country": "USD", "time_jst": "21:30", "name": "耐久財受注"}, {"country": "USD", "time_jst": "21:30", "name": "耐久財受注【除輸送用機器】"}]
+    FF = [{"country": "USD", "time_jst": "21:30", "name": "Durable Goods Orders m/m"},
+          {"country": "USD", "time_jst": "21:30", "name": "Core Durable Goods Orders m/m"},
+          {"country": "EUR", "time_jst": "21:30", "name": "Other"}]
+
+    def test_valid_pairs_are_kept(self):
+        got = daily.accepted_pairs([{"kiss_no": 0, "ff_no": 0}, {"kiss_no": 1, "ff_no": 1}], self.EVENTS, self.FF, [0, 1], [0, 1, 2])
+        self.assertEqual(got, {0: 0, 1: 1})
+
+    def test_other_country_reuse_and_unknown_rows_are_dropped(self):
+        got = daily.accepted_pairs([{"kiss_no": 0, "ff_no": 2}, {"kiss_no": 0, "ff_no": 0}, {"kiss_no": 1, "ff_no": 0},
+                                    {"kiss_no": 5, "ff_no": 1}], self.EVENTS, self.FF, [0, 1], [0, 1, 2])
+        self.assertEqual(got, {0: 0})
+
+
 if __name__ == "__main__":
     unittest.main()
