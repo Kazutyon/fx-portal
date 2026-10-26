@@ -730,6 +730,16 @@ def main() -> int:
             lock.seek(0)
             msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
     if not args.prepare_only and not args.render_existing:
+        try:  # record-only comparison of the published report with the collected articles; never changes status
+            import local_fx_published_check as published_check
+            published = ROOT / "reports" / f"{args.date}.html"
+            if published.exists() and (out / "shared-material.json").exists():
+                result = published_check.check(published, out, args.date)
+                (out / "published-check.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+                print(f"STAGE published-check flagged={result['sentences_flagged']} "
+                      f"close_mismatch={sum(1 for f in result['flagged'] if f['close_mismatch'])}", flush=True)
+        except Exception as error:
+            print(f"STAGE published-check skipped {type(error).__name__}", flush=True)
         print("STAGE model-unload " + ("done" if news.unload_model() else "skipped"), flush=True)
     print(json.dumps({"run_dir": str(out), **status}, ensure_ascii=True), flush=True)
     return 1 if status["status"] == "FAILED" else 0
