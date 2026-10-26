@@ -379,5 +379,27 @@ class PromptLeakTests(unittest.TestCase):
         self.assertFalse(re.search(oneshot.CODE_LIKE, "ドル円は158円。（ザイFX）"))
 
 
+class WriterContextTests(unittest.TestCase):
+    MATERIAL = [
+        {"fact_id": "N0-0", "fact": "10/23のNYでドル円は終値156.87円となった。", "kind": "event", "event_scope": "previous", "pairs": ["USD/JPY"], "source_url": "https://zai.diamond.jp/a"},
+        {"fact_id": "N0-1", "fact": "ドル円は156.30円まで下落後、157.08円まで上昇した。", "kind": "event", "event_scope": "previous", "pairs": ["USD/JPY"], "source_url": "https://zai.diamond.jp/a"},
+        {"fact_id": "N1-0", "fact": "ダウは652.82ドル安で引けた。", "kind": "event", "event_scope": "previous", "pairs": [], "source_url": "https://zai.diamond.jp/b"},
+        {"fact_id": "N2-0", "fact": "10/28にFOMCが開かれる。", "kind": "event", "event_scope": "future", "pairs": [], "source_url": "https://zai.diamond.jp/c"},
+    ]
+
+    def test_price_moves_keeps_the_explicit_close_first_with_the_range(self):
+        moves = oneshot.price_moves(self.MATERIAL)
+        self.assertEqual(moves[0]["通貨ペア"], "USD/JPY")
+        self.assertIn("終値156.87円", moves[0]["値動き"][0]["fact"])
+        self.assertEqual(len(moves[0]["値動き"]), 2)
+
+    def test_other_previous_facts_excludes_shown_and_future(self):
+        rest = oneshot.other_previous_facts(self.MATERIAL, {"N0-0"})
+        facts = [r["fact"] for r in rest]
+        self.assertTrue(any("ダウ" in f for f in facts))
+        self.assertFalse(any("FOMC" in f for f in facts))
+        self.assertFalse(any("終値156.87円" in f for f in facts))
+
+
 if __name__ == "__main__":
     unittest.main()

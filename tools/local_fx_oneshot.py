@@ -289,8 +289,30 @@ def site_of(x: dict) -> str:
     return SITE.get(host, host)
 
 
+def price_moves(material: list, limit_pairs: int = 4, per_pair: int = 4) -> list:
+    """The previous day's close and range per pair, so the writer can state the day's net result in one line."""
+    closes = closing_ids(material)
+    by_id = {x["fact_id"]: x for x in material}
+    moves = []
+    for pair, close_id in list(closes.items())[:limit_pairs]:
+        ids = [close_id] + [x["fact_id"] for x in material
+                            if x["fact_id"] != close_id and x.get("event_scope") == "previous" and x.get("pairs") == [pair]
+                            and re.search(r"高値|安値|一時|まで", x.get("fact", ""))]
+        moves.append({"通貨ペア": pair, "値動き": [{"fact": by_id[i]["fact"], "source": site_of(by_id[i])}
+                                                   for i in ids[:per_pair]]})
+    return moves
+
+
+def other_previous_facts(material: list, shown: set, limit: int = 30) -> list:
+    """Previous-day facts the topic selection did not pick (stocks, oil, gold, positioning...) as background for the writer."""
+    return [{"fact": x["fact"], "source": site_of(x)} for x in material
+            if x.get("fact_id", "").startswith("N") and x.get("event_scope") == "previous" and x.get("kind") != "outlook"
+            and x["fact_id"] not in shown][:limit]
+
+
 def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary_facts: list, market_views: list,
-                risk_views: list, topic_facts: list, key_events: list, date_facts: dict, high_events: list) -> None:
+                risk_views: list, topic_facts: list, key_events: list, date_facts: dict, high_events: list,
+                material: list | None = None, weekly: str = "") -> None:
     """Experiment (FX_WRITE_BODIES=1): the model writes hero/summary/topic bodies/market/risk as prose from the chosen
     facts, the way the Claude morning run does. Numbers are still checked mechanically against the evidence afterwards."""
     def facts_of(items):
@@ -302,6 +324,13 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
             "本日の主な予定": [event_label(e) for e in key_events],
             "本日の高重要度の予定": [{"時刻": e["time"], "国": e["country"], "名称": e["name"],
                                       "予想": e["forecast"], "前回": e["previous"]} for e in high_events]}
+    if material:
+        data["前営業日の値動き"] = price_moves(material)
+        shown = {x["fact_id"] for x in hero_facts + summary_facts + market_views + risk_views}
+        shown.update(x["fact_id"] for facts in topic_facts for x in facts)
+        data["前営業日のその他の材料"] = other_previous_facts(material, shown)
+    if weekly:
+        data["今週の予定"] = weekly[:1200]
     task = ("あなたはFXトレード日報の筆者。読者は4時間足でトレンドを把握し、15分・30分足の波とローソク足でエントリーするFXトレーダー。"
             "渡した材料(factとquote)を材料に、読ませる文章を書く。事実の羅列や原文の貼り合わせにせず、何が起き、なぜ動いたか(資料に書かれた背景・理由)、"
             "本日への引継ぎ(注目する水準や、上振れ・下振れならどう動くかという条件付きの見通し)を、自分の言葉で整理して書く。"
@@ -311,6 +340,7 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
             "marketは本日の地合いを2〜3文(『地合いに関する見解』を材料に)。riskは本日から今週の最大のリスクを2文"
             "(『リスクに関する見解』と『本日の高重要度の予定』を材料に。予想値・前回値があれば使ってよい。"
             "材料が乏しい日は、『本日の主な予定』から相場を動かしうるものを選んで書く)。"
+            "『前営業日の値動き』は主要通貨ペアの終値と高値・安値。『前営業日のその他の材料』は株価・原油・金・ポジションなど相場の背景。『今週の予定』は週の中央銀行会合や決算。heroとsummaryは、前営業日の相場の結論(終値と、何が相場を動かしたか)を、これらも見て言い切る。summaryは数値の羅列にせず、終値→動かした材料→本日への含み、の順で結論として書く。riskの2文目とhandoffの最後の1文は、『今週の予定』にある中央銀行会合や決算に向けた含み(本日の動きとのつながり)を書く。『今週の予定』がなければ書かない。"
             "数値・日付・要人名・出来事は、渡した資料にあるものだけを使い、資料にない水準・数値は作らない。"
             "出典を示すときは（ザイFX）のようにsourceの名前を括弧で添える。"
             "現在は本日の午前7時で、本日の東京・ロンドン・NY市場はまだ始まっていない。前営業日の出来事は過去のこととして書く。"
@@ -457,7 +487,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     if written:
         try:
             write_prose(out, style, sections, hero_facts, summary_facts, market_views, risk_views, topic_facts, chosen,
-                        data["date_facts"], [e for e in events if e["importance"] == "high"])
+                        data["date_facts"], [e for e in events if e["importance"] == "high"],
+                        material, calendar.get("weekly_themes") or "")
         except Exception as error:  # keep the assembled text; record why
             written = False
             sections["prose_error"] = f"{type(error).__name__}: {error}"
