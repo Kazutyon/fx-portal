@@ -27,6 +27,11 @@ class PublishedCheckTests(unittest.TestCase):
         self.assertEqual(result["sentences_flagged"], 1)
         self.assertTrue(result["flagged"][0]["close_mismatch"])
 
+    def test_close_value_reads_both_wordings(self):
+        self.assertEqual(pc.close_value("ドル円は終値は156.87円となった。"), 156.87)
+        self.assertEqual(pc.close_value("USD/JPYは157.50円で終値を付け、63銭高かった。"), 157.5)
+        self.assertIsNone(pc.close_value("ドル円は157.08円まで上昇した。"))
+
     def test_the_stated_close_is_not_flagged(self):
         result = self.run_check("前営業日10/23（金）のドル円は157.08円まで戻したが、引けは156.87円だった。")
         self.assertFalse(any(f["close_mismatch"] for f in result["flagged"]))

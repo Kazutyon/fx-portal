@@ -732,8 +732,8 @@ def main() -> int:
     if not args.prepare_only and not args.render_existing:
         try:  # record-only comparison of the published report with the collected articles; never changes status
             import local_fx_published_check as published_check
-            published = ROOT / "reports" / f"{args.date}.html"
-            if published.exists() and (out / "shared-material.json").exists():
+            published = published_check.fetch_published(args.date, ROOT)
+            if published is not None and (out / "shared-material.json").exists():
                 result = published_check.check(published, out, args.date)
                 (out / "published-check.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
                 print(f"STAGE published-check flagged={result['sentences_flagged']} "

@@ -55,8 +55,27 @@ def evidence_of(run: Path) -> list:
 
 
 def close_value(fact: str):
-    m = re.search(r"終値は\s*([0-9][0-9,]*\.?[0-9]*)", unicodedata.normalize("NFKC", fact))
-    return float(m.group(1).replace(",", "")) if m else None
+    """The close stated by an article fact: '終値は156.87円' or '157.50円で終値を付け'."""
+    text = unicodedata.normalize("NFKC", fact).replace(",", "")
+    m = re.search(r"終値は\s*([0-9]+\.?[0-9]*)", text) or re.search(r"([0-9]+\.[0-9]+)\s*(?:円|ドル)?\s*で終値", text)
+    return float(m.group(1)) if m else None
+
+
+def fetch_published(target: date, root: Path) -> Path | None:
+    """The report as published: the local checkout may predate the 07:00 push, so fall back to the live page."""
+    local = root / "reports" / f"{target}.html"
+    if local.exists():
+        return local
+    import urllib.request
+    try:
+        with urllib.request.urlopen(f"https://kazutyon.github.io/fx-portal/reports/{target}.html", timeout=30) as response:
+            body = response.read()
+    except Exception:
+        return None
+    cache = root / ".runtime" / "local-fx-shadow" / f"published-{target}.html"
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    cache.write_bytes(body)
+    return cache
 
 
 def check(published: Path, run: Path, target: date) -> dict:
@@ -93,9 +112,9 @@ def check(published: Path, run: Path, target: date) -> dict:
 def main() -> int:
     target = date.fromisoformat(sys.argv[1]) if len(sys.argv) > 1 else date.today()
     root = Path(__file__).resolve().parent.parent
-    published = root / "reports" / f"{target}.html"
+    published = fetch_published(target, root)
     run = root / "shadow-output" / f"{target}-local-daily"
-    if not published.exists() or not (run / "shared-material.json").exists():
+    if published is None or not (run / "shared-material.json").exists():
         print("published-check skipped (missing report or collected material)")
         return 0
     result = check(published, run, target)
