@@ -1,0 +1,225 @@
+{
+  "date": "2026-10-27",
+  "generated_at_jst": "2026-10-27T08:50:57+09:00",
+  "source_count": 3,
+  "event_count": 14,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "SPPI y/y",
+      "importance": "low",
+      "forecast": "3.7%",
+      "previous": "3.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:01",
+      "country": "GBP",
+      "name": "BRC Shop Price Index y/y",
+      "importance": "low",
+      "forecast": "1.6%",
+      "previous": "1.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "BOJ Core CPI y/y",
+      "importance": "low",
+      "forecast": "1.9%",
+      "previous": "1.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Spanish Unemployment Rate",
+      "importance": "low",
+      "forecast": "9.9%",
+      "previous": "9.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "M3 Money Supply y/y",
+      "importance": "low",
+      "forecast": "3.5%",
+      "previous": "3.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Private Loans y/y",
+      "importance": "low",
+      "forecast": "3.1%",
+      "previous": "3.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "18.5K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Core Durable Goods Orders m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Durable Goods Orders m/m",
+      "importance": "low",
+      "forecast": "2.0%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:00",
+      "country": "USD",
+      "name": "HPI m/m",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:00",
+      "country": "USD",
+      "name": "S&P/CS Composite-20 HPI y/y",
+      "importance": "low",
+      "forecast": "2.6%",
+      "previous": "2.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "CB Consumer Confidence",
+      "importance": "medium",
+      "forecast": "81.2",
+      "previous": "81.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "New Home Sales",
+      "importance": "low",
+      "forecast": "651K",
+      "previous": "684K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "Richmond Manufacturing Index",
+      "importance": "low",
+      "forecast": "0",
+      "previous": "-2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 08:50 JPY SPPI y/y",
+    "single source: 09:01 GBP BRC Shop Price Index y/y",
+    "single source: 14:00 JPY BOJ Core CPI y/y",
+    "single source: 17:00 EUR Spanish Unemployment Rate",
+    "single source: 18:00 EUR M3 Money Supply y/y",
+    "single source: 18:00 EUR Private Loans y/y",
+    "single source: 21:15 USD ADP Weekly Employment Change",
+    "single source: 21:30 USD Core Durable Goods Orders m/m",
+    "single source: 21:30 USD Durable Goods Orders m/m",
+    "single source: 22:00 USD HPI m/m",
+    "single source: 22:00 USD S&P/CS Composite-20 HPI y/y",
+    "single source: 23:00 USD CB Consumer Confidence",
+    "single source: 23:00 USD New Home Sales",
+    "single source: 23:00 USD Richmond Manufacturing Index",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
