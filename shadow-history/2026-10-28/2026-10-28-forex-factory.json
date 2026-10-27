@@ -1,0 +1,217 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-28",
+  "fetched_at": "2026-10-28T08:45:34+09:00",
+  "events": [
+    {
+      "time_jst": "05:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:15",
+      "country": "AUD",
+      "name": "RBA Gov Bullock Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "CPI m/m",
+      "importance": "high",
+      "forecast": "0.7%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "CPI y/y",
+      "importance": "high",
+      "forecast": "4.2%",
+      "previous": "4.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Trimmed Mean CPI m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "10:00",
+      "country": "NZD",
+      "name": "Official Cash Rate",
+      "importance": "high",
+      "forecast": "3.00%",
+      "previous": "2.75%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "10:00",
+      "country": "NZD",
+      "name": "RBNZ Rate Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "11:00",
+      "country": "NZD",
+      "name": "RBNZ Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German GfK Consumer Climate",
+      "importance": "low",
+      "forecast": "-30.1",
+      "previous": "-30.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "CHF",
+      "name": "UBS Economic Expectations",
+      "importance": "low",
+      "forecast": null,
+      "previous": "2.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:42",
+      "country": "EUR",
+      "name": "German 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.58|1.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "GBP",
+      "name": "Annual Budget Release",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "GBP",
+      "name": "Autumn Forecast Statement",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Goods Trade Balance",
+      "importance": "low",
+      "forecast": "-130.4B",
+      "previous": "-132.6B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Prelim Wholesale Inventories m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:00",
+      "country": "CNY",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:45",
+      "country": "CAD",
+      "name": "BOC Monetary Policy Report",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:45",
+      "country": "CAD",
+      "name": "BOC Rate Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:45",
+      "country": "CAD",
+      "name": "Overnight Rate",
+      "importance": "high",
+      "forecast": "2.50%",
+      "previous": "2.25%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:30",
+      "country": "CAD",
+      "name": "BOC Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Crude Oil Inventories",
+      "importance": "low",
+      "forecast": "-0.1M",
+      "previous": "-3.1M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

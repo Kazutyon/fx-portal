@@ -1,0 +1,329 @@
+{
+  "date": "2026-10-28",
+  "generated_at_jst": "2026-10-28T08:45:37+09:00",
+  "source_count": 3,
+  "event_count": 21,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "05:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:15",
+      "country": "AUD",
+      "name": "RBA Gov Bullock Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "CPI m/m",
+      "importance": "high",
+      "forecast": "0.7%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "CPI y/y",
+      "importance": "high",
+      "forecast": "4.2%",
+      "previous": "4.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Trimmed Mean CPI m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:00",
+      "country": "NZD",
+      "name": "Official Cash Rate",
+      "importance": "high",
+      "forecast": "3.00%",
+      "previous": "2.75%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:00",
+      "country": "NZD",
+      "name": "RBNZ Rate Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "NZD",
+      "name": "RBNZ Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German GfK Consumer Climate",
+      "importance": "low",
+      "forecast": "-30.1",
+      "previous": "-30.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "CHF",
+      "name": "UBS Economic Expectations",
+      "importance": "low",
+      "forecast": null,
+      "previous": "2.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:42",
+      "country": "EUR",
+      "name": "German 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.58|1.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "GBP",
+      "name": "Annual Budget Release",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "GBP",
+      "name": "Autumn Forecast Statement",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Goods Trade Balance",
+      "importance": "low",
+      "forecast": "-130.4B",
+      "previous": "-132.6B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Prelim Wholesale Inventories m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:00",
+      "country": "CNY",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:45",
+      "country": "CAD",
+      "name": "BOC Monetary Policy Report",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:45",
+      "country": "CAD",
+      "name": "BOC Rate Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:45",
+      "country": "CAD",
+      "name": "Overnight Rate",
+      "importance": "high",
+      "forecast": "2.50%",
+      "previous": "2.25%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "CAD",
+      "name": "BOC Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Crude Oil Inventories",
+      "importance": "low",
+      "forecast": "-0.1M",
+      "previous": "-3.1M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 05:30 USD API Weekly Statistical Bulletin",
+    "single source: 09:15 AUD RBA Gov Bullock Speaks",
+    "single source: 09:30 AUD CPI m/m",
+    "single source: 09:30 AUD CPI y/y",
+    "single source: 09:30 AUD Trimmed Mean CPI m/m",
+    "single source: 10:00 NZD Official Cash Rate",
+    "single source: 10:00 NZD RBNZ Rate Statement",
+    "single source: 11:00 NZD RBNZ Press Conference",
+    "single source: 16:00 EUR German GfK Consumer Climate",
+    "single source: 18:00 CHF UBS Economic Expectations",
+    "single source: 18:42 EUR German 10-y Bond Auction",
+    "single source: 21:30 GBP Annual Budget Release",
+    "single source: 21:30 GBP Autumn Forecast Statement",
+    "single source: 21:30 USD Goods Trade Balance",
+    "single source: 21:30 USD Prelim Wholesale Inventories m/m",
+    "single source: 22:00 CNY CB Leading Index m/m",
+    "single source: 22:45 CAD BOC Monetary Policy Report",
+    "single source: 22:45 CAD BOC Rate Statement",
+    "single source: 22:45 CAD Overnight Rate",
+    "single source: 23:30 CAD BOC Press Conference",
+    "single source: 23:30 USD Crude Oil Inventories",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
