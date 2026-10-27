@@ -5,7 +5,7 @@
   "scope": "GALLERIA existing FX shadow only",
   "internal_source_policy_exception": true,
   "source_operator_permission_verified": false,
-  "model": "qwen3.6:27b",
+  "model": "qwen3.8:27b",
   "num_ctx": 65536,
   "publish": false,
   "model_fallback": false,

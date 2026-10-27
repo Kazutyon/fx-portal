@@ -21,7 +21,7 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 JST = timezone(timedelta(hours=9))
-MODEL = "qwen3.6:27b"
+MODEL = "qwen3.8:27b"
 OLLAMA = "http://127.0.0.1:11434"
 
 
