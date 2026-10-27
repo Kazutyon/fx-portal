@@ -55,9 +55,11 @@ def evidence_of(run: Path) -> list:
 
 
 def close_value(fact: str):
-    """The close stated by an article fact: '終値は156.87円' or '157.50円で終値を付け'."""
+    """The close stated by an article fact: '終値は156.87円', '終値157.95円となり' or '157.50円で終値を付け'."""
     text = unicodedata.normalize("NFKC", fact).replace(",", "")
-    m = re.search(r"終値は\s*([0-9]+\.?[0-9]*)", text) or re.search(r"([0-9]+\.[0-9]+)\s*(?:円|ドル)?\s*で終値", text)
+    # "終値は156.87円", "終値157.95円となり" and "157.50円で終値を付け"; the previous session's close ("前営業日NY終値") is not the day's
+    m = (re.search(r"(?<!NY)(?<!前日)終値は?\s*([0-9]+\.[0-9]+)", text)
+         or re.search(r"([0-9]+\.[0-9]+)\s*(?:円|ドル)?\s*で終値", text))
     return float(m.group(1)) if m else None
 
 

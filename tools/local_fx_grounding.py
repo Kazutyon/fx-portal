@@ -242,7 +242,9 @@ def number_errors(text, evidence, target):
     to the flagged review rather than silently accepted.
     """
     def norm(value):
-        return unicodedata.normalize("NFKC", str(value)).replace(",", "")
+        # "157円67銭" is the same figure as "157.67円"
+        return re.sub(r"(\d+)円(\d{1,2})銭", lambda m: f"{m[1]}.{m[2].zfill(2)}円",
+                      unicodedata.normalize("NFKC", str(value)).replace(",", ""))
     corpus = norm(json.dumps([{k: x.get(k, "") for k in ["quote", "fact", "source_context", "published_at"]}
                               for x in evidence], ensure_ascii=False) + json.dumps(date_facts(target), ensure_ascii=False))
     known_text = re.findall(r"\d+(?:\.\d+)?", corpus)

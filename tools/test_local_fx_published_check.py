@@ -31,6 +31,14 @@ class PublishedCheckTests(unittest.TestCase):
         self.assertEqual(pc.close_value("ドル円は終値は156.87円となった。"), 156.87)
         self.assertEqual(pc.close_value("USD/JPYは157.50円で終値を付け、63銭高かった。"), 157.5)
         self.assertIsNone(pc.close_value("ドル円は157.08円まで上昇した。"))
+        self.assertEqual(pc.close_value("ドル円は終値157.95円となり、前営業日NY終値157.50円から45銭高かった。"), 157.95)
+        self.assertEqual(pc.close_value("前営業日NY終値157.50円と比べて高い。"), None)
+
+    def test_sen_notation_equals_decimal_yen(self):
+        import local_fx_grounding as grounding
+        evidence = [{"quote": "ドル円は157円67銭から157円96銭まで上昇した。", "fact": "", "source_context": {}, "published_at": ""}]
+        self.assertEqual(grounding.number_errors("ドル円は157.67円〜157.96円で推移した。", evidence, date(2026, 10, 28)), [])
+        self.assertTrue(grounding.number_errors("ドル円は157.12円まで下げた。", evidence, date(2026, 10, 28)))
 
     def test_the_stated_close_is_not_flagged(self):
         result = self.run_check("前営業日10/23（金）のドル円は157.08円まで戻したが、引けは156.87円だった。")
