@@ -45,5 +45,19 @@ class PublishedCheckTests(unittest.TestCase):
         self.assertFalse(any(f["close_mismatch"] for f in result["flagged"]))
 
 
+class CoverageTests(unittest.TestCase):
+    def test_topic_figures_missing_from_the_shadow_are_listed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pub, shadow = Path(tmp) / "p.html", Path(tmp) / "s.html"
+            pub.write_text("<p>【トピック1】米CB消費者信頼感指数は91.7に上昇</p><p>指数は91.7で前回84.2を上回った。</p>"
+                           "<p>【トピック2】ドル円は157.95円へ続伸</p><p>終値157.95円で前日の157.50円から上昇した。</p>"
+                           "<p>本日（10/28水）への引継ぎ：ドル円は157.95円。</p>", encoding="utf-8")
+            shadow.write_text("<p>ドル円は157円95銭で、前日の157.50円から上昇した。</p>", encoding="utf-8")
+            got = pc.coverage(pub, shadow)
+        self.assertEqual([t["status"] for t in got["topics"]], ["missing", "covered"])
+        self.assertEqual(got["topics"][0]["missing_figures"], ["91.7", "84.2"])
+        self.assertEqual((got["total"], got["missing"], got["partial"]), (2, 1, 0))
+
+
 if __name__ == "__main__":
     unittest.main()

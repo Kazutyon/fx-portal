@@ -4,6 +4,8 @@ No model calls, no changes to any report. Two mechanical checks per sentence of 
   numbers    prices/decimals that appear in none of the collected articles;
   close-role a pair stated as having closed ("引けた/終値") at a number other than the close an article states
              explicitly ("終値は…"), e.g. an intraday high reported as the close.
+A third, coverage, lists the published report's topics (「トピックN」) whose figures the shadow report does not contain
+(the Claude run led with something the shadow never wrote); topics are matched by their figures, not by wording.
 Results go to published-check.json in the shadow run directory."""
 from __future__ import annotations
 
@@ -80,6 +82,52 @@ def fetch_published(target: date, root: Path) -> Path | None:
     return cache
 
 
+def norm_text(text: str) -> str:
+    return re.sub(r"(\d+)円(\d{1,2})銭", lambda m: f"{m[1]}.{m[2].zfill(2)}円",
+                  unicodedata.normalize("NFKC", text).replace(",", ""))
+
+
+def topic_blocks(text: str) -> list:
+    """The published report's numbered topics: [(title, body)]; a topic runs until the next one or the hand-over line."""
+    lines = [l.strip() for l in text.splitlines() if l.strip()]
+    blocks, current = [], None
+    for line in lines:
+        m = re.match(r"【トピック\d+】(.+)", line)
+        if m:
+            current = [m.group(1), []]
+            blocks.append(current)
+        elif current is not None and re.match(r"本日[（(]|ポータル|AUXEN", line):
+            current = None
+        elif current is not None:
+            current[1].append(line)
+    return [(t, " ".join(b)) for t, b in blocks]
+
+
+def figures(text: str) -> list:
+    """Distinctive figures of a text: decimals and 3+ digit numbers, not years."""
+    found = re.findall(r"(?<![0-9.])\d+(?:\.\d+)?(?![0-9])", norm_text(text))
+    return list(dict.fromkeys(t for t in found if ("." in t or len(t) >= 3) and not re.fullmatch(r"20[0-9]{2}", t)))
+
+
+def coverage(published: Path, shadow_report: Path) -> dict:
+    """Which published topics the shadow report lacks. 'covered' >50% of the topic's figures appear in the shadow report,
+    'partial' some, 'missing' none; a topic with fewer than two figures is matched by the key words of its title."""
+    shadow = norm_text(page_text(shadow_report))
+    topics = []
+    for title, body in topic_blocks(page_text(published)):
+        nums = figures(title + " " + body)
+        have = [n for n in nums if re.search(r"(?<![0-9.])" + re.escape(n) + r"(?![0-9])", shadow)]
+        if len(nums) >= 2:
+            ratio = len(have) / len(nums)
+            status = "covered" if ratio > 0.5 else "partial" if have else "missing"
+        else:
+            terms = re.findall(r"[ァ-ヶー]{3,}|[一-龥]{3,}", title)
+            status = "covered" if any(t in shadow for t in terms) else "missing"
+        topics.append({"title": title, "status": status, "figures": nums, "missing_figures": [n for n in nums if n not in have]})
+    return {"topics": topics, "total": len(topics),
+            "missing": sum(t["status"] == "missing" for t in topics), "partial": sum(t["status"] == "partial" for t in topics)}
+
+
 def check(published: Path, run: Path, target: date) -> dict:
     material = json.loads((run / "shared-material.json").read_text(encoding="utf-8"))["facts"]
     by_id = {x["fact_id"]: x for x in material}
@@ -107,8 +155,12 @@ def check(published: Path, run: Path, target: date) -> dict:
                         role.append(f"{pair}: states a close of {after.group(1)} but the articles state the close as {close}")
         if numbers or role:
             flagged.append({"sentence": s[:200], "numbers_not_in_articles": numbers, "close_mismatch": role})
-    return {"published": str(published), "date": str(target), "closes_from_articles": closes,
-            "sentences_flagged": len(flagged), "flagged": flagged}
+    result = {"published": str(published), "date": str(target), "closes_from_articles": closes,
+              "sentences_flagged": len(flagged), "flagged": flagged}
+    report = run / "oneshot" / "report.html"
+    if report.exists():
+        result["coverage"] = coverage(published, report)
+    return result
 
 
 def main() -> int:
@@ -121,7 +173,8 @@ def main() -> int:
         return 0
     result = check(published, run, target)
     (run / "published-check.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"STAGE published-check flagged={result['sentences_flagged']}", flush=True)
+    cov = result.get("coverage", {})
+    print(f"STAGE published-check flagged={result['sentences_flagged']} topics_missing={cov.get('missing')} topics_partial={cov.get('partial')}", flush=True)
     return 0
 
 

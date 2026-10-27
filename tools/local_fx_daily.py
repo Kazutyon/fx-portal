@@ -785,7 +785,8 @@ def main() -> int:
                 result = published_check.check(published, out, args.date)
                 (out / "published-check.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
                 print(f"STAGE published-check flagged={result['sentences_flagged']} "
-                      f"close_mismatch={sum(1 for f in result['flagged'] if f['close_mismatch'])}", flush=True)
+                      f"close_mismatch={sum(1 for f in result['flagged'] if f['close_mismatch'])} "
+                      f"topics_missing={result.get('coverage', {}).get('missing')} topics_partial={result.get('coverage', {}).get('partial')}", flush=True)
         except Exception as error:
             print(f"STAGE published-check skipped {type(error).__name__}", flush=True)
         print("STAGE model-unload " + ("done" if news.unload_model() else "skipped"), flush=True)
