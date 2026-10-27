@@ -26,6 +26,7 @@ import local_fx_claim_check as claim_check  # noqa: E402
 import local_fx_external_review as external_review  # noqa: E402
 import local_fx_grounding as grounding  # noqa: E402
 import local_fx_news as news  # noqa: E402
+import local_fx_quotes as quotes_mod  # noqa: E402
 
 S = news.STRING
 TEMPERATURE = 0.3
@@ -312,7 +313,7 @@ def other_previous_facts(material: list, shown: set, limit: int = 30) -> list:
 
 def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary_facts: list, market_views: list,
                 risk_views: list, topic_facts: list, key_events: list, date_facts: dict, high_events: list,
-                material: list | None = None, weekly: str = "") -> None:
+                material: list | None = None, weekly: str = "", quotes: list | None = None) -> None:
     """Experiment (FX_WRITE_BODIES=1): the model writes hero/summary/topic bodies/market/risk as prose from the chosen
     facts, the way the Claude morning run does. Numbers are still checked mechanically against the evidence afterwards."""
     def facts_of(items):
@@ -329,6 +330,8 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
         shown = {x["fact_id"] for x in hero_facts + summary_facts + market_views + risk_views}
         shown.update(x["fact_id"] for facts in topic_facts for x in facts)
         data["前営業日のその他の材料"] = other_previous_facts(material, shown)
+    if quotes:
+        data["前営業日の株・商品・金利の終値"] = [q["fact"] for q in quotes]
     if weekly:
         data["今週の予定"] = weekly[:1200]
     task = ("あなたはFXトレード日報の筆者。読者は4時間足でトレンドを把握し、15分・30分足の波とローソク足でエントリーするFXトレーダー。"
@@ -340,7 +343,7 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
             "marketは本日の地合いを2〜3文(『地合いに関する見解』を材料に)。riskは本日から今週の最大のリスクを2文"
             "(『リスクに関する見解』『本日の高重要度の予定』『今週の予定』を材料に。予想値・前回値があれば使ってよい。"
             "材料が乏しい日は、『本日の主な予定』から相場を動かしうるものを選んで書く)。"
-            "『前営業日の値動き』は主要通貨ペアの終値と高値・安値、『前営業日のその他の材料』は株価・原油・金・ポジションなど相場の背景、『今週の予定』は週の中央銀行会合や決算。いずれも、前営業日の相場の全体像(終値と、何が相場を動かしたか)と、本日から今週への流れを読者に伝えるための材料として使う。"
+            "『前営業日の値動き』は主要通貨ペアの終値と高値・安値、『前営業日のその他の材料』は株価・原油・金・ポジションなど相場の背景、『前営業日の株・商品・金利の終値』はダウ・日経平均・金・原油・米10年債利回りなどの終値、『今週の予定』は週の中央銀行会合や決算。いずれも、前営業日の相場の全体像(終値と、何が相場を動かしたか)と、本日から今週への流れを読者に伝えるための材料として使う。"
             "数値・日付・要人名・出来事は、渡した資料にあるものだけを使い、資料にない水準・数値は作らない。"
             "出典を示すときは（ザイFX）のようにsourceの名前を括弧で添える。"
             "現在は本日の午前7時で、本日の東京・ロンドン・NY市場はまだ始まっていない。前営業日の出来事は過去のこととして書く。"
@@ -360,6 +363,10 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
 def generate(out: Path, target: date, material: list, calendar: dict, ranking: dict, policy: dict) -> dict:
     """Write sections.json/report.html/oneshot-checks.json into out (which must hold policy.json)."""
     started = datetime.now(daily.JST).isoformat()
+    try:  # closes of stocks/commodities/yields (code-fetched); without them the report is written as before
+        quotes = quotes_mod.load(out, target)
+    except Exception:
+        quotes = []
 
     events = [{"no": n, "time": e["time_jst"], "country": e["country"], "name": e["name"].strip(),
                "importance": e["importance"], "forecast": e["forecast"], "previous": e["previous"]}
@@ -488,14 +495,14 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         try:
             write_prose(out, style, sections, hero_facts, summary_facts, market_views, risk_views, topic_facts, chosen,
                         data["date_facts"], [e for e in events if e["importance"] == "high"],
-                        material, calendar.get("weekly_themes") or "")
+                        material, calendar.get("weekly_themes") or "", quotes)
         except Exception as error:  # keep the assembled text; record why
             written = False
             sections["prose_error"] = f"{type(error).__name__}: {error}"
     news.save(out / "sections.json", sections)
 
     evidence = [{"quote": x.get("quote", ""), "fact": x.get("fact", ""), "source_context": x.get("source_context", {}),
-                 "published_at": x.get("published_at", "")} for x in material]
+                 "published_at": x.get("published_at", "")} for x in material + quotes]
     evidence += [{"quote": json.dumps(e, ensure_ascii=False), "fact": "", "source_context": {}, "published_at": ""}
                  for e in events]
     evidence += [{"quote": json.dumps(x, ensure_ascii=False), "fact": "", "source_context": {}, "published_at": ""}
@@ -520,7 +527,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                                      if re.search(daily.FORBIDDEN, v, re.I) or re.search(CODE_LIKE, v)],
                 "meta_wording": [k for k, v in texts.items() if re.search(r"資料に基づ|記載の範囲|資料に記載|資料にない", v)]}
 
-    verify_data = {"date_facts": data["date_facts"], "facts": data["facts"], "today_calendar": events,
+    verify_data = {"date_facts": data["date_facts"], "facts": data["facts"] + compact(quotes), "today_calendar": events,
                    "original_passages": data["original_passages"]}
     issue_schema = news.schema({"issues": {"type": "array", "items": news.schema({
         "sections": {"type": "array", "items": {"type": "string", "enum": keys}},
