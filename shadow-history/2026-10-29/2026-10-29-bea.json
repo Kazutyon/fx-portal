@@ -1,0 +1,27 @@
+{
+  "source": "us-bea-official-schedule",
+  "date": "2026-10-29",
+  "fetched_at": "2026-10-29T08:59:26+09:00",
+  "events": [
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "GDP (Advance Estimate), 3rd Quarter 2026",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": true,
+      "source_url": "https://www.bea.gov/news/schedule"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Personal Income and Outlays, September 2026",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": true,
+      "source_url": "https://www.bea.gov/news/schedule"
+    }
+  ]
+}

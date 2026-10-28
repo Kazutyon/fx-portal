@@ -1,0 +1,227 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-10-29",
+  "fetched_at": "2026-10-29T08:59:25+09:00",
+  "events": [
+    {
+      "time_jst": "03:00",
+      "country": "USD",
+      "name": "FOMC Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "03:00",
+      "country": "USD",
+      "name": "Federal Funds Rate",
+      "importance": "high",
+      "forecast": "4.00%",
+      "previous": "4.00%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "03:30",
+      "country": "USD",
+      "name": "FOMC Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:00",
+      "country": "NZD",
+      "name": "ANZ Business Confidence",
+      "importance": "low",
+      "forecast": null,
+      "previous": "51.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Import Prices q/q",
+      "importance": "low",
+      "forecast": "1.3%",
+      "previous": "5.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "Consumer Confidence",
+      "importance": "low",
+      "forecast": "35.1",
+      "previous": "35.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Italian Monthly Unemployment Rate",
+      "importance": "low",
+      "forecast": "6.2%",
+      "previous": "6.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "M4 Money Supply m/m",
+      "importance": "low",
+      "forecast": "0.3%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "Mortgage Approvals",
+      "importance": "low",
+      "forecast": "54K",
+      "previous": "55K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "Net Lending to Individuals m/m",
+      "importance": "low",
+      "forecast": "6.2B",
+      "previous": "6.9B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:33",
+      "country": "EUR",
+      "name": "Italian 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "4.58|1.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Advance GDP Price Index q/q",
+      "importance": "medium",
+      "forecast": "3.2%",
+      "previous": "6.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Advance GDP q/q",
+      "importance": "high",
+      "forecast": "3.2%",
+      "previous": "1.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Core PCE Price Index m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Personal Income m/m",
+      "importance": "low",
+      "forecast": "0.3%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Personal Spending m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Unemployment Claims",
+      "importance": "medium",
+      "forecast": "198K",
+      "previous": "194K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:50",
+      "country": "CAD",
+      "name": "Gov Council Member Gravelle Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:15",
+      "country": "EUR",
+      "name": "Main Refinancing Rate",
+      "importance": "high",
+      "forecast": "2.65%",
+      "previous": "2.65%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:15",
+      "country": "EUR",
+      "name": "Monetary Policy Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:45",
+      "country": "EUR",
+      "name": "ECB Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "Natural Gas Storage",
+      "importance": "low",
+      "forecast": "75B",
+      "previous": "77B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
