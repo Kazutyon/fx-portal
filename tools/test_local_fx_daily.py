@@ -551,6 +551,10 @@ class DailyTests(unittest.TestCase):
         self.assertEqual(daily.event_code("S&P/CS Composite-20 HPI y/y"), "case-shiller-yy")
         self.assertEqual(daily.event_code("S＆P/ケース・シラー住宅価格指数 [前年比]"), "case-shiller-yy")
         self.assertNotEqual(daily.event_code("GDP [前月比]"), daily.event_code("GDP [前年比]"))
+        # GDP and its price index/deflator are different indicators released together: one code must not cover both
+        self.assertEqual(daily.event_code("GDPデフレーター【速報値】"), daily.event_code("Advance GDP Price Index q/q"))
+        self.assertNotEqual(daily.event_code("第3四半期GDP【速報値】"), daily.event_code("GDPデフレーター【速報値】"))
+        self.assertEqual(daily.event_code("第3四半期GDP【速報値】"), daily.event_code("Advance GDP q/q"))
 
     def test_rowspans_preserve_second_measure_and_next_day(self):
         page = '''<table><tr><td rowspan="2">22:00</td>

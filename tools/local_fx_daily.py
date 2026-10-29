@@ -193,6 +193,7 @@ def event_code(name: str) -> str:
              (r"Press Conference|記者会見", "rba-press"), (r"KOF", "kof"),
              (r"Consumer Confidence|消費者信頼感", "confidence"), (r"JOLTS|求人", "jolts"),
              (r"Case.Shiller|S.P/CS|ケース.シラー", "case-shiller"), (r"HPI|住宅価格指数", "housing"),
+             (r"GDP.*(?:デフレーター|Price Index)|(?:デフレーター|Price Index).*GDP", "gdp-deflator"),
              (r"GDP", "gdp"), (r"Mann|マンMPC", "mann"),
              (r"Mortgage Approvals|住宅ローン承認", "mortgage-approvals"),
              (r"M4 Money Supply|マネーサプライM4", "m4"),
