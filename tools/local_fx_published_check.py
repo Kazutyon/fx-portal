@@ -149,7 +149,9 @@ def check(published: Path, run: Path, target: date) -> dict:
                 if close is None or pair not in PAIR_WORDS:
                     continue
                 for m in re.finditer(PAIR_WORDS[pair], norm):
-                    tail = norm[m.end(): m.end() + 60]
+                    # a figure belongs to the nearest pair word before it ("ユーロ円は176.05円、ユーロドルは1.1154ドルで引けた")
+                    others = [o.start() for w in PAIR_WORDS.values() for o in re.finditer(w, norm) if o.start() >= m.end()]
+                    tail = norm[m.end(): min([m.end() + 60] + others)]
                     after = re.search(r"([0-9]+\.[0-9]+)\s*(?:円|ドル)?(?:まで|で)?[^。、]{0,6}?(?:%s)" % CLOSED, tail)
                     if after and abs(float(after.group(1)) - close) > 1e-9:
                         role.append(f"{pair}: states a close of {after.group(1)} but the articles state the close as {close}")

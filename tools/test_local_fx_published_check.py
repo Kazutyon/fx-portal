@@ -40,6 +40,18 @@ class PublishedCheckTests(unittest.TestCase):
         self.assertEqual(grounding.number_errors("ドル円は157.67円〜157.96円で推移した。", evidence, date(2026, 10, 28)), [])
         self.assertTrue(grounding.number_errors("ドル円は157.12円まで下げた。", evidence, date(2026, 10, 28)))
 
+    def test_two_pairs_in_one_sentence_each_keep_their_own_figure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Path(tmp) / "run"
+            (run / "sources").mkdir(parents=True)
+            facts = [{"fact_id": "N0-0", "fact": "ユーロ円は終値は176.05円となった。", "kind": "event", "event_scope": "previous",
+                      "pairs": ["EUR/JPY"], "quote": "終値は176.05円", "source_context": {}, "published_at": ""}]
+            (run / "shared-material.json").write_text(json.dumps({"facts": facts}, ensure_ascii=False), encoding="utf-8")
+            page = Path(tmp) / "report.html"
+            page.write_text("<p>ユーロ円は176.05円、ユーロドルは1.1154ドルで引けた（ザイFX）。</p>", encoding="utf-8")
+            result = pc.check(page, run, date(2026, 10, 29))
+        self.assertFalse(any(f["close_mismatch"] for f in result["flagged"]))
+
     def test_the_stated_close_is_not_flagged(self):
         result = self.run_check("前営業日10/23（金）のドル円は157.08円まで戻したが、引けは156.87円だった。")
         self.assertFalse(any(f["close_mismatch"] for f in result["flagged"]))
