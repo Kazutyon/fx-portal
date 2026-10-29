@@ -1,0 +1,494 @@
+{
+  "date": "2026-10-30",
+  "generated_at_jst": "2026-10-30T08:55:22+09:00",
+  "source_count": 3,
+  "event_count": 32,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:30",
+      "country": "CAD",
+      "name": "Gov Council Member Vincent Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "02:30",
+      "country": "CHF",
+      "name": "Gov Board Member Tschudin Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Tokyo Core CPI y/y",
+      "importance": "medium",
+      "forecast": "2.6%",
+      "previous": "2.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "2.5%",
+      "previous": "2.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Prelim Industrial Production m/m",
+      "importance": "low",
+      "forecast": "1.2%",
+      "previous": "-1.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Retail Sales y/y",
+      "importance": "low",
+      "forecast": "3.3%",
+      "previous": "2.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "PPI q/q",
+      "importance": "low",
+      "forecast": "1.0%",
+      "previous": "1.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Private Sector Credit m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:30",
+      "country": "JPY",
+      "name": "BOJ Policy Rate",
+      "importance": "high",
+      "forecast": "<1.25%",
+      "previous": "<1.25%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:30",
+      "country": "JPY",
+      "name": "Monetary Policy Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:31",
+      "country": "JPY",
+      "name": "BOJ Outlook Report",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "Housing Starts y/y",
+      "importance": "low",
+      "forecast": "2.7%",
+      "previous": "6.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:30",
+      "country": "JPY",
+      "name": "BOJ Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:30",
+      "country": "EUR",
+      "name": "French Consumer Spending m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "-0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:30",
+      "country": "EUR",
+      "name": "French Flash GDP q/q",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German Import Prices m/m",
+      "importance": "low",
+      "forecast": "1.9%",
+      "previous": "1.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Nationwide HPI m/m",
+      "importance": "low",
+      "forecast": "-0.2%",
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:29",
+      "country": "EUR",
+      "name": "German Prelim CPI m/m",
+      "importance": "medium",
+      "forecast": "0.1%",
+      "previous": "0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "French Prelim CPI m/m",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "-0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "French Prelim Private Payrolls q/q",
+      "importance": "low",
+      "forecast": "-0.1%",
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "CHF",
+      "name": "KOF Economic Barometer",
+      "importance": "low",
+      "forecast": "108.1",
+      "previous": "109.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Spanish Flash CPI y/y",
+      "importance": "low",
+      "forecast": "4.9%",
+      "previous": "4.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Spanish Flash GDP q/q",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:55",
+      "country": "EUR",
+      "name": "German Unemployment Change",
+      "importance": "low",
+      "forecast": "5K",
+      "previous": "12K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "German Prelim GDP q/q",
+      "importance": "medium",
+      "forecast": "0.1%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Italian Prelim GDP q/q",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Italian Prelim CPI m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Prelim Flash GDP q/q",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "6.4%",
+      "previous": "6.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "CAD",
+      "name": "GDP m/m",
+      "importance": "medium",
+      "forecast": "0.2%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "Employment Cost Index q/q",
+      "importance": "medium",
+      "forecast": "0.8%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:45",
+      "country": "USD",
+      "name": "Chicago PMI",
+      "importance": "low",
+      "forecast": "55.8",
+      "previous": "58.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:30 CAD Gov Council Member Vincent Speaks",
+    "single source: 02:30 CHF Gov Board Member Tschudin Speaks",
+    "single source: 08:30 JPY Tokyo Core CPI y/y",
+    "single source: 08:30 JPY Unemployment Rate",
+    "single source: 08:50 JPY Prelim Industrial Production m/m",
+    "single source: 08:50 JPY Retail Sales y/y",
+    "single source: 09:30 AUD PPI q/q",
+    "single source: 09:30 AUD Private Sector Credit m/m",
+    "single source: 11:30 JPY BOJ Policy Rate",
+    "single source: 11:30 JPY Monetary Policy Statement",
+    "single source: 11:31 JPY BOJ Outlook Report",
+    "single source: 14:00 JPY Housing Starts y/y",
+    "single source: 14:30 JPY BOJ Press Conference",
+    "single source: 15:30 EUR French Consumer Spending m/m",
+    "single source: 15:30 EUR French Flash GDP q/q",
+    "single source: 16:00 EUR German Import Prices m/m",
+    "single source: 16:00 GBP Nationwide HPI m/m",
+    "single source: 16:29 EUR German Prelim CPI m/m",
+    "single source: 16:45 EUR French Prelim CPI m/m",
+    "single source: 16:45 EUR French Prelim Private Payrolls q/q",
+    "single source: 17:00 CHF KOF Economic Barometer",
+    "single source: 17:00 EUR Spanish Flash CPI y/y",
+    "single source: 17:00 EUR Spanish Flash GDP q/q",
+    "single source: 17:55 EUR German Unemployment Change",
+    "single source: 18:00 EUR German Prelim GDP q/q",
+    "single source: 18:00 EUR Italian Prelim GDP q/q",
+    "single source: 19:00 EUR Italian Prelim CPI m/m",
+    "single source: 19:00 EUR Prelim Flash GDP q/q",
+    "single source: 19:00 EUR Unemployment Rate",
+    "single source: 21:30 CAD GDP m/m",
+    "single source: 21:30 USD Employment Cost Index q/q",
+    "single source: 22:45 USD Chicago PMI",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
