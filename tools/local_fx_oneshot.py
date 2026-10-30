@@ -41,6 +41,8 @@ BLANK = {"", "-", "—", "–", "--"}
 
 def event_label(e: dict) -> str:
     nums = [f"{k}{e[f]}" for k, f in (("予想", "forecast"), ("前回", "previous")) if str(e.get(f, "")).strip() not in BLANK]
+    nums += [f"FF{k}{e['ff'][f]}" for k, f in (("時刻", "time_jst"), ("予想", "forecast"), ("前回", "previous"))
+             if (e.get("ff") or {}).get(f) and str(e["ff"][f]).strip() not in BLANK]  # the other feed's differing value, kept beside
     return f"{e['time_jst']} {COUNTRY.get(e['country'], e['country'])}{e['name'].strip()}" + (f"（{'／'.join(nums)}）" if nums else "")
 
 
@@ -165,7 +167,7 @@ def calendar_notes(calendar: dict, key_events: list) -> str:
     conflicts = [c for c in calendar.get("conflicts", []) if (c.get("time_jst"), (c.get("name") or "").strip()) in shown]
     text = f"KissFXとForexFactoryで突き合わせできた指標は{matched}件（それ以外は片方の情報のみ）。"
     if conflicts:
-        parts = [f"{c['time_jst']} {c['name']}の{'予想' if c.get('field') == 'forecast' else '前回'}はKiss {c.get('kissfx')}／FF {c.get('forexfactory')}"
+        parts = [f"{c['time_jst']} {c['name']}の{ {'forecast': '予想', 'time_jst': '時刻'}.get(c.get('field'), '前回') }はKiss {c.get('kissfx')}／FF {c.get('forexfactory')}"
                  for c in conflicts[:4]]
         text += "表示した主要指標で値が一致しないもの: " + "、".join(parts) + "（要確認）。"
     return text
@@ -369,7 +371,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         quotes = []
 
     events = [{"no": n, "time": e["time_jst"], "country": e["country"], "name": e["name"].strip(),
-               "importance": e["importance"], "forecast": e["forecast"], "previous": e["previous"]}
+               "importance": e["importance"], "forecast": e["forecast"], "previous": e["previous"],
+               **({"ff": e["ff"]} if e.get("ff") else {})}
               for n, e in enumerate(calendar["events"], 1)]  # the feed marks most European releases "low"; never drop by importance
     pairs = [r["pair"] for r in ranking["rankings"][:5]]
     data = {"date_facts": grounding.date_facts(target),

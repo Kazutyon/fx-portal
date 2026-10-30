@@ -547,15 +547,6 @@ class DailyTests(unittest.TestCase):
         rate = [{"quote": "終値は1.1342ドル", "fact": "", "source_context": {}, "published_at": ""}]
         self.assertEqual(grounding.number_errors("1.13ドル台前半", rate, target), [])
 
-    def test_case_shiller_year_and_month_are_not_merged(self):
-        self.assertEqual(daily.event_code("S&P/CS Composite-20 HPI y/y"), "case-shiller-yy")
-        self.assertEqual(daily.event_code("S＆P/ケース・シラー住宅価格指数 [前年比]"), "case-shiller-yy")
-        self.assertNotEqual(daily.event_code("GDP [前月比]"), daily.event_code("GDP [前年比]"))
-        # GDP and its price index/deflator are different indicators released together: one code must not cover both
-        self.assertEqual(daily.event_code("GDPデフレーター【速報値】"), daily.event_code("Advance GDP Price Index q/q"))
-        self.assertNotEqual(daily.event_code("第3四半期GDP【速報値】"), daily.event_code("GDPデフレーター【速報値】"))
-        self.assertEqual(daily.event_code("第3四半期GDP【速報値】"), daily.event_code("Advance GDP q/q"))
-
     def test_rowspans_preserve_second_measure_and_next_day(self):
         page = '''<table><tr><td rowspan="2">22:00</td>
         <td class="title" rowspan="2">米)ケース・シラー住宅価格指数 [前月比/前年比]</td>
@@ -634,39 +625,6 @@ class DailyTests(unittest.TestCase):
                 self.assertEqual(daily.infer_cached(out, "one", "changed", {}, s)["body"], "b")
                 self.assertEqual(infer.call_count, 2)
 
-class ValuePairTests(unittest.TestCase):
-    def row(self, time, country, name, forecast, previous):
-        return {"time_jst": time, "country": country, "name": name, "forecast": forecast, "previous": previous}
-
-    def test_pairs_same_indicator_without_a_name_table(self):
-        kiss = [self.row("21:30", "CAD", "失業率", "6.5%", "6.4%"), self.row("21:30", "CAD", "雇用ネット変化", "+1.00万人", "-4.17万人")]
-        ff = [self.row("21:30", "CAD", "Employment Change", "6.1K", "-41.7K"), self.row("21:30", "CAD", "Unemployment Rate", "6.5%", "6.4%")]
-        self.assertEqual(daily.value_pairs(kiss, ff, set()), {0: 1, 1: 0})
-
-    def test_close_values_pair_even_when_the_sources_disagree(self):
-        kiss = [self.row("23:00", "USD", "ミシガン大学消費者信頼感指数", "47.6", "48.1")]
-        ff = [self.row("23:00", "USD", "Prelim UoM Consumer Sentiment", "47.5", "47.8"),
-              self.row("23:00", "USD", "Prelim UoM Inflation Expectations", "—", "4.6%")]
-        self.assertEqual(daily.value_pairs(kiss, ff, set()), {0: 0})
-
-    def test_speeches_without_figures_pair_only_when_one_to_one(self):
-        kiss = [self.row("18:30", "GBP", "ブリーデンBOE副総裁の発言", "—", "—")]
-        ff = [self.row("18:30", "GBP", "MPC Member Breeden Speaks", "—", "—"), self.row("20:00", "USD", "Bank Holiday", "—", "—")]
-        self.assertEqual(daily.value_pairs(kiss, ff, set()), {0: 0})
-        notice = kiss + [self.row("18:30", "GBP", "注目度の高い経済指標の発表はない", "-", "-")]
-        self.assertEqual(daily.value_pairs(notice, ff, set()), {0: 0})  # a "no release" notice row is not a candidate
-        two = ff + [self.row("18:30", "GBP", "MPC Member Pill Speaks", "—", "—")]
-        self.assertEqual(daily.value_pairs(kiss, two, set()), {})  # two candidates: left unpaired
-
-    def test_ambiguous_or_different_time_or_country_stays_unpaired(self):
-        kiss = [self.row("23:00", "USD", "A", "—", "0.7%")]
-        ff = [self.row("23:00", "USD", "X", "—", "0.7%"), self.row("23:00", "USD", "Y", "—", "0.7%"),
-              self.row("23:30", "USD", "Z", "—", "0.7%"), self.row("23:00", "EUR", "W", "—", "0.7%")]
-        self.assertEqual(daily.value_pairs(kiss, ff, set()), {})
-        self.assertEqual(daily.value_pairs(kiss, ff[:1], {0}), {})
-
-
-
 class UnloadTests(unittest.TestCase):
     def test_unload_asks_ollama_to_drop_the_model_now(self):
         import local_fx_news as news
@@ -699,20 +657,41 @@ class UnloadTests(unittest.TestCase):
             self.assertFalse(news.unload_model())
 
 
-class AiPairTests(unittest.TestCase):
-    EVENTS = [{"country": "USD", "time_jst": "21:30", "name": "耐久財受注"}, {"country": "USD", "time_jst": "21:30", "name": "耐久財受注【除輸送用機器】"}]
-    FF = [{"country": "USD", "time_jst": "21:30", "name": "Durable Goods Orders m/m"},
-          {"country": "USD", "time_jst": "21:30", "name": "Core Durable Goods Orders m/m"},
-          {"country": "EUR", "time_jst": "21:30", "name": "Other"}]
+class FeedMatchTests(unittest.TestCase):
+    """Calendar matching is the model's judgment; the code only keeps the structure sound and records disagreements."""
+    EVENTS = [{"country": "JPY", "time_jst": "09:30", "name": "BOJ政策金利 ＆ 声明発表", "forecast": "1.25% 据え置き", "previous": "1.25%", "importance": "high"},
+              {"country": "USD", "time_jst": "21:30", "name": "第3四半期GDP【速報値】", "forecast": "+3.2%", "previous": "—", "importance": "high"},
+              {"country": "USD", "time_jst": "21:30", "name": "GDPデフレーター【速報値】", "forecast": "+3.2%", "previous": "+6.1%", "importance": "medium"}]
+    FF = [{"country": "JPY", "time_jst": "11:30", "name": "BOJ Policy Rate", "forecast": "1.25%", "previous": "1.25%", "importance": "high"},
+          {"country": "USD", "time_jst": "21:30", "name": "Advance GDP q/q", "forecast": "3.2%", "previous": "1.5%", "importance": "high"},
+          {"country": "USD", "time_jst": "21:30", "name": "Advance GDP Price Index q/q", "forecast": "3.2%", "previous": "6.2%", "importance": "medium"},
+          {"country": "EUR", "time_jst": "21:30", "name": "Other", "forecast": "—", "previous": "—", "importance": "low"}]
 
-    def test_valid_pairs_are_kept(self):
-        got = daily.accepted_pairs([{"kiss_no": 0, "ff_no": 0}, {"kiss_no": 1, "ff_no": 1}], self.EVENTS, self.FF, [0, 1], [0, 1, 2])
-        self.assertEqual(got, {0: 0, 1: 1})
-
-    def test_other_country_reuse_and_unknown_rows_are_dropped(self):
-        got = daily.accepted_pairs([{"kiss_no": 0, "ff_no": 2}, {"kiss_no": 0, "ff_no": 0}, {"kiss_no": 1, "ff_no": 0},
-                                    {"kiss_no": 5, "ff_no": 1}], self.EVENTS, self.FF, [0, 1], [0, 1, 2])
+    def test_a_pair_with_a_different_time_is_kept(self):
+        got = daily.feed_pairs([{"kiss_no": 0, "ff_no": 0}], self.EVENTS, self.FF)
         self.assertEqual(got, {0: 0})
+
+    def test_only_structure_is_checked(self):
+        got = daily.feed_pairs([{"kiss_no": 0, "ff_no": 3}, {"kiss_no": 1, "ff_no": 1}, {"kiss_no": 1, "ff_no": 2},
+                                {"kiss_no": 2, "ff_no": 1}, {"kiss_no": 9, "ff_no": 0}, {"kiss_no": "x", "ff_no": 0}], self.EVENTS, self.FF)
+        self.assertEqual(got, {1: 1})  # other currency, a row used twice, unknown and malformed rows are dropped
+
+    def test_disagreements_keep_both_values_and_are_recorded(self):
+        events = [dict(e) for e in self.EVENTS]
+        matched, conflicts = daily.merge_feeds(events, self.FF, {0: 0, 1: 1, 2: 2}, "k", "f")
+        self.assertEqual(matched, {0, 1, 2})
+        self.assertEqual(events[0]["ff"], {"time_jst": "11:30"})
+        self.assertEqual(events[1]["previous"], "1.5%")  # a figure the Kiss row lacks is filled from the paired FF row
+        self.assertEqual(events[2]["previous"], "+6.1%")
+        self.assertEqual(events[2]["ff"], {"previous": "6.2%"})
+        self.assertTrue(all(e["confirmed"] and e["sources"] == ["k", "f"] for e in events))
+        self.assertEqual({(c["type"], c["field"]) for c in conflicts}, {("time", "time_jst"), ("numeric", "previous")})
+
+    def test_unmatched_rows_stay_unconfirmed(self):
+        events = [dict(e) for e in self.EVENTS]
+        matched, conflicts = daily.merge_feeds(events, self.FF, {}, "k", "f")
+        self.assertEqual((matched, conflicts), (set(), []))
+        self.assertFalse(any(e["confirmed"] for e in events))
 
 
 if __name__ == "__main__":
