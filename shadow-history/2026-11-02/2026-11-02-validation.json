@@ -1,0 +1,285 @@
+{
+  "date": "2026-11-02",
+  "generated_at_jst": "2026-11-02T08:33:32+09:00",
+  "source_count": 3,
+  "event_count": 18,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "09:00",
+      "country": "AUD",
+      "name": "MI Inflation Gauge m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Building Approvals m/m",
+      "importance": "low",
+      "forecast": "1.8%",
+      "previous": "-6.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "JPY",
+      "name": "Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "53.3",
+      "previous": "53.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:45",
+      "country": "AUD",
+      "name": "ANZ Job Advertisements m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "2.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:45",
+      "country": "CNY",
+      "name": "RatingDog Manufacturing PMI",
+      "importance": "low",
+      "forecast": "52.0",
+      "previous": "52.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:30",
+      "country": "AUD",
+      "name": "Commodity Prices y/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "15.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German Retail Sales m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "1.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:30",
+      "country": "CHF",
+      "name": "Retail Sales y/y",
+      "importance": "low",
+      "forecast": "3.0%",
+      "previous": "3.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:15",
+      "country": "EUR",
+      "name": "Spanish Manufacturing PMI",
+      "importance": "low",
+      "forecast": "50.4",
+      "previous": "51.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "CHF",
+      "name": "Manufacturing PMI",
+      "importance": "low",
+      "forecast": "55.3",
+      "previous": "55.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:45",
+      "country": "EUR",
+      "name": "Italian Manufacturing PMI",
+      "importance": "low",
+      "forecast": "49.9",
+      "previous": "50.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:50",
+      "country": "EUR",
+      "name": "French Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "49.3",
+      "previous": "49.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:55",
+      "country": "EUR",
+      "name": "German Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "54.2",
+      "previous": "54.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "52.4",
+      "previous": "52.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "52.8",
+      "previous": "52.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:00",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "CAD",
+      "name": "Manufacturing PMI",
+      "importance": "low",
+      "forecast": null,
+      "previous": "51.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:45",
+      "country": "USD",
+      "name": "Final Manufacturing PMI",
+      "importance": "low",
+      "forecast": "56.0",
+      "previous": "56.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 09:00 AUD MI Inflation Gauge m/m",
+    "single source: 09:30 AUD Building Approvals m/m",
+    "single source: 09:30 JPY Final Manufacturing PMI",
+    "single source: 09:45 AUD ANZ Job Advertisements m/m",
+    "single source: 10:45 CNY RatingDog Manufacturing PMI",
+    "single source: 14:30 AUD Commodity Prices y/y",
+    "single source: 16:00 EUR German Retail Sales m/m",
+    "single source: 16:30 CHF Retail Sales y/y",
+    "single source: 17:15 EUR Spanish Manufacturing PMI",
+    "single source: 17:30 CHF Manufacturing PMI",
+    "single source: 17:45 EUR Italian Manufacturing PMI",
+    "single source: 17:50 EUR French Final Manufacturing PMI",
+    "single source: 17:55 EUR German Final Manufacturing PMI",
+    "single source: 18:00 EUR Final Manufacturing PMI",
+    "single source: 18:30 GBP Final Manufacturing PMI",
+    "single source: 21:00 EUR German Buba President Nagel Speaks",
+    "single source: 23:30 CAD Manufacturing PMI",
+    "single source: 23:45 USD Final Manufacturing PMI",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
