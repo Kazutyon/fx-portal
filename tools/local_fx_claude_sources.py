@@ -118,7 +118,9 @@ def article(url, page):
             "sha256": hashlib.sha256(text.encode()).hexdigest()}
 
 
-def collect(target: date, out, snapshot):
+def collect(target: date, out, snapshot, choose=None):
+    """Read every index page, let `choose` (the local model, from the titles only) pick the articles worth reading, then
+    fetch and check those. Without a chooser (or if it fails) every candidate is read; the time window still applies."""
     cutoff = datetime.now(news.JST)
     if target != cutoff.date():
         raise ValueError("live source acquisition only supports today's JST date; use dated input for history")
@@ -127,10 +129,9 @@ def collect(target: date, out, snapshot):
         previous -= timedelta(days=1)
     start = datetime.combine(previous, time(), news.JST)
     sources, rejected, seen = [], [], set()
-    acquired_domains = []
+    candidates = []
     for label, index, pattern in INDEXES:
         page = snapshot(out, f"{label}-live-index", index)
-        links = []
         for href, markup in re.findall(r'<a\b[^>]*href=["\x27]([^"\x27]+)["\x27][^>]*>(.*?)</a>', page, re.S):
             url = urljoin(index, html.unescape(href)).split("#")[0]
             title = news.plain(markup)
@@ -139,27 +140,34 @@ def collect(target: date, out, snapshot):
             if url in seen or not title or re.search(r"四本値|ピボット|トレンド一覧", title):
                 continue
             seen.add(url)
-            links.append((url, title))
-        links.sort(key=lambda x: 0 if re.search(r"[ＮN][ＹY]為替|ニューヨーク外国為替市場概況", x[1]) else
-                   1 if re.search(r"市場概況|発言|介入|オプション|見通し|ラガルド", x[1]) else 2)
-        accepted = 0
-        for url, title in links[:30]:
-            try:
-                body = snapshot(out, f"live-article-{hashlib.sha256(url.encode()).hexdigest()[:16]}", url)
-                value = article(url, body)
-                at = datetime.fromisoformat(value["published_at"])
-                if not start <= at <= cutoff:
-                    raise ValueError("article outside previous-session/acquisition-start window")
-                if value["sha256"] in {s["sha256"] for s in sources}:
-                    continue
-                value["source_id"] = len(sources)
-                sources.append(value)
-                accepted += 1
-                if accepted >= 7 or len(sources) >= 24:
-                    break
-            except (OSError, ValueError, KeyError) as error:
-                rejected.append({"url": url, "reason": str(error)})
-        acquired_domains.append({"index": index, "accepted": accepted})
+            candidates.append({"no": len(candidates), "site": label, "index": index, "url": url, "title": title})
+    picked = candidates
+    if choose is not None and candidates:
+        try:
+            chosen = choose([{"no": c["no"], "site": c["site"], "title": c["title"]} for c in candidates])
+            picked = [candidates[n] for n in dict.fromkeys(chosen) if isinstance(n, int) and 0 <= n < len(candidates)] or candidates
+        except Exception as error:  # a failed choice must not lose the day: read every candidate instead
+            rejected.append({"url": "", "reason": f"article choice failed, all candidates read: {error}"})
+    accepted_by = {index: 0 for _, index, _ in INDEXES}
+    for item in picked[:40]:  # safety ceiling on fetch/extraction time, not an editorial limit
+        url = item["url"]
+        try:
+            body = snapshot(out, f"live-article-{hashlib.sha256(url.encode()).hexdigest()[:16]}", url)
+            value = article(url, body)
+            at = datetime.fromisoformat(value["published_at"])
+            if not start <= at <= cutoff:
+                raise ValueError("article outside previous-session/acquisition-start window")
+            if value["sha256"] in {s["sha256"] for s in sources}:
+                continue
+            value["source_id"] = len(sources)
+            sources.append(value)
+            accepted_by[item["index"]] += 1
+        except (OSError, ValueError, KeyError) as error:
+            rejected.append({"url": url, "reason": str(error)})
+    acquired_domains = [{"index": index, "candidates": sum(1 for c in candidates if c["index"] == index),
+                         "accepted": accepted_by[index]} for _, index, _ in INDEXES]
+    news.save(out / "article-candidates.json", {"candidates": candidates, "picked": [c["no"] for c in picked],
+                                                "lifecycle": "evidence"})
     # Few articles or no NY recap make a thinner report, not no report: record it and go on. Only "nothing at all" stops.
     coverage_gaps = []
     if len(sources) < 5:

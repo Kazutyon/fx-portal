@@ -2,7 +2,7 @@
 import json
 import tempfile
 import unittest
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -630,6 +630,30 @@ class DailyTests(unittest.TestCase):
             self.assertEqual(policy["source_as_of_jst"], "2026-11-02")
             self.assertTrue(all(r["source_url"] == daily.claude_sources.POLICY_URL for r in policy["rates"]))
             self.assertIn("誘導目標レンジの上限", seen["text"])
+
+    def test_articles_are_picked_by_the_model_from_titles_and_failures_read_everything(self):
+        index = ('<a href="/articles/-/1">NY外為：米5年債入札は最高落札利回り4.845%</a>'
+                 '<a href="/articles/-/2">おすすめのFXキャンペーン10選</a><a href="/articles/-/3">ドル円は157円台</a>')
+        article_text = "ドル円は157円台で推移した。" * 10
+
+        def fetch(out, label, url, *a):
+            if "live-index" in label:
+                return index
+            return url
+        seen = []
+
+        def fake_article(url, body):
+            seen.append(url)
+            return {"source_url": url, "title": "t" + url[-1], "published_at": "2026-11-03T05:00:00+09:00",
+                    "text": article_text + url, "sha256": url, "fetched_at": "2026-11-03T06:00:00+09:00"}
+        claude = daily.claude_sources
+        with tempfile.TemporaryDirectory() as folder, patch.object(claude, "INDEXES", [("zai", "https://zai.diamond.jp/x", r"/articles/-/\d+")]),                 patch.object(claude, "article", side_effect=fake_article),                 patch.object(claude, "datetime", type("Fixed", (datetime,), {"now": classmethod(lambda cls, tz=None: datetime(2026, 11, 3, 7, 0, tzinfo=daily.JST))})):
+            out = Path(folder)
+            claude.collect(date(2026, 11, 3), out, fetch, lambda titles: [t["no"] for t in titles if "キャンペーン" not in t["title"]])
+            self.assertEqual([daily.load(out / "source-bundle.json")["sources"][i]["source_url"][-1] for i in range(2)], ["1", "3"])
+            seen.clear()
+            claude.collect(date(2026, 11, 3), out, fetch, lambda titles: (_ for _ in ()).throw(ValueError("down")))
+            self.assertEqual(len(seen), 3)  # the chooser failed: every candidate was read
 
     def test_policy_with_nothing_readable_is_a_gap_not_a_made_up_table(self):
         with tempfile.TemporaryDirectory() as folder:

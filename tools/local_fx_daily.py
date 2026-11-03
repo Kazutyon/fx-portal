@@ -126,12 +126,12 @@ def collect_news(target: date, out: Path) -> list[dict]:
     if not bundle_path.exists():
         if not mirror_enabled():
             raise ValueError("dated local news input bundle is required")
-        claude_sources.collect(target, out, snapshot)
+        claude_sources.collect(target, out, snapshot, article_picker(out, target))
     bundle = load(bundle_path)
     if bundle.get("date_jst") != target.isoformat():
         raise ValueError("news bundle has wrong date")
     sources = bundle["sources"]
-    if not 1 <= len(sources) <= 24 or len({s["source_url"] for s in sources}) != len(sources):
+    if not 1 <= len(sources) <= 60 or len({s["source_url"] for s in sources}) != len(sources):
         raise ValueError("news source count/uniqueness gate failed")
     cutoff = datetime.combine(target, daytime(7), JST)
     if bundle.get("acquisition_mode") == "claude-mirror":
@@ -298,6 +298,19 @@ def record_gap(out: Path, item: str, reason) -> None:
 def empty_calendar(target: date) -> dict:
     return {"date_jst": target.isoformat(), "events": [], "key_events": [], "source_urls": [], "conflicts": [],
             "holiday_text": "", "holiday_checked": False, "day_themes": "", "weekly_themes": ""}
+
+
+def article_picker(out: Path, target: date):
+    """The local model picks, from the index titles alone, the articles worth reading for the report."""
+    def choose(titles: list) -> list:
+        task = (f"FXの日報({target.month}月{target.day}日の朝7時に出す)を書くために、読むべき記事を一覧の題名から選ぶ。"
+                "日報は、前営業日の相場がなぜ動いたか(各市場の概況、要人発言、経済指標の結果、国債入札、金利・株・商品の動き)と、"
+                "本日の予定・見通しを伝える。題名に日付や時刻があれば手がかりにする。口座の比較、キャンペーン、ツールの紹介、"
+                "初心者向けの解説のように、その日の相場を伝えない記事は選ばない。選ぶ件数は、必要なだけ(多くても40件まで)。")
+        result = infer_cached(out, "article-pick", task, titles, news.schema({
+            "picked": {"type": "array", "items": {"type": "integer"}}}), max_bytes=96000)
+        return result.get("picked", [])
+    return choose
 
 
 def policy_reader(out: Path):
