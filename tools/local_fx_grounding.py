@@ -864,10 +864,46 @@ def run_oneshot(out, target, material, calendar, ranking):
                                        "at": datetime.now().astimezone().isoformat()})
 
 
+def merge_duplicates(api, out, facts):
+    """Several outlets report the same event. The model says which accepted facts state the same thing; the code keeps the
+    most detailed one of each group and records the others as `also_stated_in`. A fact is only dropped when every number in
+    it is also in the kept fact (so no figure is lost). A failed call or an odd answer leaves the facts unchanged."""
+    live = [x for x in facts if x.get("claim_gate_accepted")]
+    if len(live) < 2:
+        return facts
+    numbers = lambda text: set(re.findall(r"\d+(?:[.,]\d+)?", text))
+    by_id = {x["fact_id"]: x for x in live}
+    task = ("以下は、複数の記事から取り出した事実の一覧。同じ出来事・同じ内容を述べている事実どうしを、idの組で答える。"
+            "数字、発言者、時刻、市場、ペア、原因などの細部が違うものは別の事実として、組にしない。同じ内容が他にない事実は含めない。")
+    try:  # the stage name carries "extract" so the call has the larger output budget and no long thinking
+        result = api.infer_cached(out, "fact-merge-extract", task,
+                                  [{"id": x["fact_id"], "fact": x["fact"]} for x in live],
+                                  news.schema({"groups": {"type": "array", "items": news.schema({
+                                      "fact_ids": {"type": "array", "items": news.STRING}})}}), max_bytes=200000)
+    except Exception as error:
+        news.save(out / "stages" / "fact-merge-error.json", {"error": f"{type(error).__name__}: {error}"})
+        return facts
+    used = set()
+    for group in result.get("groups", []):
+        ids = [i for i in dict.fromkeys(group.get("fact_ids", [])) if i in by_id and i not in used]
+        if len(ids) < 2:
+            continue
+        keep = max((by_id[i] for i in ids), key=lambda x: (len(numbers(x["fact"])), len(x["fact"])))
+        for i in ids:
+            other = by_id[i]
+            if other is keep or not numbers(other["fact"]) <= numbers(keep["fact"]):
+                continue
+            other["claim_gate_accepted"] = False
+            other["merged_into"] = keep["fact_id"]
+            keep.setdefault("source_context", {}).setdefault("also_stated_in", []).append(other.get("source_title", ""))
+        used.update(ids)
+    return facts
+
+
 def make_sections(api, sources, calendar, ranking, out, topic_probe=0, hierarchical=False, observational=False,
                   oneshot_only=False):
     target = date.fromisoformat(calendar["date_jst"])
-    facts = extract(api, sources, target, out, observational)
+    facts = merge_duplicates(api, out, extract(api, sources, target, out, observational))
     tree = None
     global_overview = None
     if hierarchical:

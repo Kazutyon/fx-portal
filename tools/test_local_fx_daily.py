@@ -437,6 +437,29 @@ class DailyTests(unittest.TestCase):
         self.assertEqual(sorted(x["pairs"][0] for x in facts), ["EUR/USD", "USD/JPY"])
         self.assertEqual([c.args[1] for c in gap.call_args_list], ["前営業日の出来事"])  # only the thin-day note, no lost chunk
 
+    def test_duplicate_facts_are_merged_keeping_every_number(self):
+        import local_fx_grounding as grounding
+        mk = lambda i, text, title: {"fact_id": i, "fact": text, "source_title": title, "claim_gate_accepted": True}
+        facts = [mk("N0", "ドル円は157.94円で引けた。", "A"), mk("N1", "ドル円は157.94円で引け、反発した。", "B"),
+                 mk("N2", "ドル円は157.94円で引けた。高値は158.20円。", "C"), mk("N3", "ユーロドルは1.1187ドルで引けた。", "D")]
+        groups = {"groups": [{"fact_ids": ["N0", "N1", "N2", "N9"]}, {"fact_ids": ["N3"]}]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", return_value=groups):
+            grounding.merge_duplicates(daily, Path(folder), facts)
+        live = [x["fact_id"] for x in facts if x["claim_gate_accepted"]]
+        self.assertEqual(live, ["N2", "N3"])  # N2 has the most numbers; N0 and N1 only repeat its figures
+        self.assertEqual(facts[0]["merged_into"], "N2")
+        self.assertEqual(facts[2]["source_context"]["also_stated_in"], ["A", "B"])
+
+    def test_merge_never_drops_a_fact_with_a_figure_the_kept_one_lacks(self):
+        import local_fx_grounding as grounding
+        mk = lambda i, text: {"fact_id": i, "fact": text, "source_title": i, "claim_gate_accepted": True}
+        facts = [mk("N0", "ドル円は157.94円で引けた。高値158.20円。"), mk("N1", "ドル円は157.63円から上昇した。")]
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", return_value={"groups": [{"fact_ids": ["N0", "N1"]}]}):
+            grounding.merge_duplicates(daily, Path(folder), facts)
+        self.assertTrue(all(x["claim_gate_accepted"] for x in facts))
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=ValueError("down")):
+            self.assertIs(grounding.merge_duplicates(daily, Path(folder), facts), facts)  # a failed call changes nothing
+
     def test_us_country_cannot_be_added_to_unlabelled_mexican_release(self):
         import local_fx_grounding as grounding
         quote = "今週の主な指標 09/28 21:00 貿易収支 （8月） 結果 6.054億ドル 予想 15.3億ドル 前回 -8.475億ドル"
