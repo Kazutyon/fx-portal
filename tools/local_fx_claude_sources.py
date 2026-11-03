@@ -175,39 +175,33 @@ def collect(target: date, out, snapshot):
               "strict_0700_backtest": False, "lifecycle": "evidence"})
 
 
-def inherit_policy(target, out, snapshot, read, allow_stale_monday=False):
-    """Inherit the published index's policy-rate table. `read(rows)` (the local model) says which table row is which
-    bank/currency and copies the rate cell as written; this function only checks that every copied value is really in
-    that row. Rows the model could not read are left out (the report just shows fewer banks)."""
-    if target.weekday() == 0 and not allow_stale_monday:
-        raise ValueError("Monday Claude rate/sentiment refresh is not implemented; do not inherit as fresh")
-    page = snapshot(out, "published-index-policy-only", "https://auxen.jp/")
-    match = re.search(r"主要中銀\s*政策金利.*?<table\b[^>]*>(.*?)</table>", page, re.S)
-    if not match:
-        raise ValueError("published index policy table missing")
-    as_of = re.search(r"(\d{4}-\d{2}-\d{2})\s*現在", page[match.start():match.end()])
-    rows = []
-    for row in re.findall(r"<tr\b[^>]*>(.*?)</tr>", match[1], re.S):
-        cells = [news.plain(x) for x in re.findall(r"<t[dh]\b[^>]*>(.*?)</t[dh]>", row, re.S)]
-        if cells:
-            rows.append(cells)
+POLICY_URL = "https://zai.diamond.jp/articles/-/401200"  # ザイFX: 主要各国の政策金利の推移 (a public news site, not our own published report)
+POLICY_BANKS = {"USD": "FRB", "GBP": "BOE", "JPY": "日銀", "EUR": "ECB", "AUD": "RBA", "NZD": "RBNZ", "CAD": "BOC", "CHF": "SNB"}
+
+
+def collect_policy(target, out, snapshot, read):
+    """Policy rates from the ザイFX history table. The page is the source of truth, never our published report:
+    `read(text)` (the local model) says each bank's latest rate and month as the table writes them; this function only
+    checks that every copied number (and note) is really in the page. Banks the model could not read are left out."""
+    page = snapshot(out, "policy-rate-history", POLICY_URL)
+    text = news.plain(re.sub(r"<script\b.*?</script>|<style\b.*?</style>", "", page, flags=re.S))
+    published = re.search(r'"datePublished"\s*:\s*"(\d{4}-\d{2}-\d{2})', page)
     rates = []
-    for item in read([{"row_no": n, "cells": cells} for n, cells in enumerate(rows)]):
-        n = item.get("row_no")
-        if not isinstance(n, int) or not 0 <= n < len(rows):
+    for item in read(text):
+        currency = item.get("currency")
+        number = str(item.get("rate", "")).replace("%", "").strip()
+        note = str(item.get("note", "")).strip()
+        if (currency not in POLICY_BANKS or any(x["currency"] == currency for x in rates) or not number
+                or not re.search(r"(?<![\d.])" + re.escape(number) + r"(?![\d.])", text)):
             continue
-        cells = rows[n]
-        currency = re.search(r"\b(JPY|USD|EUR|GBP|AUD|NZD|CAD|CHF)\b", " ".join(cells))
-        if (not currency or item.get("currency") != currency[1] or item.get("rate") not in cells
-                or item.get("bank") not in cells or any(x["currency"] == currency[1] for x in rates)):
-            continue
-        rates.append({"bank": item["bank"], "currency": currency[1], "rate": item["rate"], "source_url": "https://auxen.jp/"})
-    if not rates or not as_of:
-        raise ValueError("policy inheritance found no readable rate or no original as-of date")
+        rates.append({"bank": POLICY_BANKS[currency], "currency": currency,
+                      "rate": f"{number}%" + (f"（{note}）" if note and note in text else ""),
+                      "as_of": str(item.get("month", "")), "source_url": POLICY_URL})
+    if not rates:
+        raise ValueError("no policy rate could be read from the history page")
     news.save(out / "policy.json", {"date_jst": target.isoformat(), "rates": rates,
-              "source_as_of_jst": as_of[1], "method": "weekday published-index inheritance, not fresh official verification"
-              + ("; Monday observation only, as-of date shown on the report" if target.weekday() == 0 else ""),
-              "lifecycle": "evidence"})
+              "source_as_of_jst": published[1] if published else target.isoformat(),
+              "method": "ザイFX 政策金利推移表の最新月の値(表の更新が決定直後より遅れることがある)", "lifecycle": "evidence"})
 
 
 def supplement_previous(target, out, snapshot, sources):

@@ -301,14 +301,16 @@ def empty_calendar(target: date) -> dict:
 
 
 def policy_reader(out: Path):
-    """The local model reads the policy-rate table rows (layout and notes such as 要確認 vary); inherit_policy checks the copies."""
-    def read(rows: list) -> list:
-        task = ("公開済みの日報トップにある主要中銀の政策金利表の各行(cells)を読み、中銀名(bank)・通貨コード(currency: "
-                "JPY/USD/EUR/GBP/AUD/NZD/CAD/CHF)・政策金利のセル(rate)を、行の表記のまま写す。"
-                "rateに（要確認）などの注記が付いていれば、そのまま含める。金利でない行は含めない。")
-        result = infer_cached(out, "policy-table-read", task, rows, news.schema({
-            "rates": {"type": "array", "items": news.schema({"row_no": {"type": "integer"}, "bank": {"type": "string"},
-                                                             "currency": {"type": "string"}, "rate": {"type": "string"}})}}))
+    """The local model reads the policy-rate history page (layout varies); collect_policy checks the copies."""
+    def read(text: str) -> list:
+        task = ("ザイFXの『主要各国の政策金利の推移』ページの本文。米国・日本・欧州(ユーロ圏)・英国・オーストラリア・ニュージーランド・"
+                "カナダ・スイスについて、各国の表で最新の年の、数字が入っている最後の月の政策金利を答える。"
+                "currencyはJPY/USD/EUR/GBP/AUD/NZD/CAD/CHF、rateは表の数字を表記のまま、monthはその月(例 2026年11月)、"
+                "noteは、注記にその数字の意味(上限など)が書かれていれば、その部分だけを注記から短く(10字以内)そのまま抜き出し、なければ空文字。")
+        result = infer_cached(out, "policy-table-read", task, {"本文": text}, news.schema({
+            "rates": {"type": "array", "items": news.schema({"currency": {"type": "string"}, "rate": {"type": "string"},
+                                                             "month": {"type": "string"}, "note": {"type": "string"}})}}),
+            max_bytes=96000)  # the whole page (all years of the eight banks); the context window is 64k tokens
         return result.get("rates", [])
     return read
 
@@ -403,7 +405,7 @@ def collect_calendar(target: date, out: Path, allow_single_source: bool = False)
     return result
 
 
-def infer_cached(out: Path, label: str, task: str, data, schema: dict) -> dict:
+def infer_cached(out: Path, label: str, task: str, data, schema: dict, max_bytes: int = news.MAX_INPUT_BYTES) -> dict:
     fingerprint = hashlib.sha256(json.dumps(["qwen-stage-budget-v3", task, data, schema, news.FORCE_THINK_OFF], ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     artifact = out / "stages" / f"{label}.json"
     if artifact.exists():
@@ -425,7 +427,7 @@ def infer_cached(out: Path, label: str, task: str, data, schema: dict) -> dict:
         news.save(out / "stages" / "history" / f"{label}-{previous_hash[:16]}.json", history)
     news.save(out / "progress.json", {"stage": label, "state": "RUNNING", "at": datetime.now(JST).isoformat()})
     print(f"STAGE {label} RUNNING", flush=True)
-    value = news.infer(label, task, data, schema, out / "stages")
+    value = news.infer(label, task, data, schema, out / "stages", max_bytes)
     news.save(artifact, {"input_sha256": fingerprint, "value": value})
     news.save(out / "progress.json", {"stage": label, "state": "DONE", "at": datetime.now(JST).isoformat()})
     print(f"STAGE {label} DONE", flush=True)
@@ -642,7 +644,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         policy_path = out / "policy.json"
         if not policy_path.exists() and mirror_enabled():
             try:
-                claude_sources.inherit_policy(target, out, snapshot, policy_reader(out), allow_stale_monday=observational)
+                claude_sources.collect_policy(target, out, snapshot, policy_reader(out))
             except Exception as error:
                 record_gap(out, "主要中銀の政策金利", f"{type(error).__name__}: {error}")
                 news.save(policy_path, {"date_jst": target.isoformat(), "rates": [], "source_as_of_jst": "",

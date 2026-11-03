@@ -49,12 +49,13 @@ class ObservationTests(unittest.TestCase):
     def test_quality_review_does_not_rewrite_observed_draft(self):
         draft = {"title": "見出し", "body": "本文", "review": {"verdict": "PASS"}}
         with patch.object(grounding, "author", return_value=draft) as author, patch.object(
-                grounding, "review_editorial_quality", return_value={"verdict": "FAIL", "reason": "thin"}):
+                grounding, "review_editorial_quality") as quality:
             result = grounding.improve_editorial(daily, Path("unused"), "market", "市場環境", [], {},
                 date(2026, 9, 30), "300", observational=True)
             self.assertEqual(author.call_count, 1)
             self.assertEqual(result["body"], "本文")
-            self.assertEqual(result["quality_review"]["verdict"], "FAIL")
+            self.assertEqual(result["quality_review"]["verdict"], "SKIPPED")
+            quality.assert_not_called()  # advisory LLM quality review is omitted in observation
 
     def test_initial_source_failure_remains_fatal(self):
         with patch.object(grounding, "author", side_effect=ValueError("source failure")):
@@ -101,7 +102,7 @@ class ObservationTests(unittest.TestCase):
         self.assertEqual([x["fact_id"] for x in calls[0][2]["facts"]], ["N1-6"])
         self.assertIn("値動きや理由の根拠がなければ無理に書かず", calls[0][1])
 
-    def test_observation_repair_rebuilds_from_same_facts_and_still_fails_closed(self):
+    def test_observation_repair_rebuilds_from_same_facts_and_keeps_flagged_failure(self):
         fact = {"fact_id": "N1-6", "fact": "住宅価格指数は予想を上回った。",
                 "quote": "住宅価格指数：+0.3（予想+0.1）", "record_type": "actual"}
         draft = {"title": "誤った解釈", "statements": [
@@ -114,10 +115,10 @@ class ObservationTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as folder, patch.object(daily, "infer_cached", side_effect=infer), patch.object(
                 grounding, "review_copy", return_value={"verdict": "FAIL", "reason": "unsupported"}):
-            with self.assertRaisesRegex(ValueError, "original-context review failed"):
-                grounding.author(daily, Path(folder), "topic", "指標の振り返り", [fact],
-                                 date(2026, 9, 30), "250", overview={"synopsis": ["別記事のFRB観測"]},
-                                 observational=True)
+            result = grounding.author(daily, Path(folder), "topic", "指標の振り返り", [fact],
+                                      date(2026, 9, 30), "250", overview={"synopsis": ["別記事のFRB観測"]},
+                                      observational=True)
+        self.assertEqual(result["review"]["verdict"], "FAIL")
         self.assertEqual([x[0] for x in calls], ["topic-write", "topic-repair"])
         self.assertNotIn("global_overview", calls[1][2])
         self.assertIn("根拠のない文や句は削除", calls[1][1])

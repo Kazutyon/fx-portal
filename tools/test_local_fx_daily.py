@@ -413,10 +413,29 @@ class DailyTests(unittest.TestCase):
                   "published_at": "2026-09-29T05:50:00+09:00", "text": quote + chunk}
         claim = {"kind": "event", "fact": quote, "quote": quote,
                  "event_scope": "previous", "market_session": "London", "pairs": ["USD/JPY"], "record_type": "actual"}
-        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "source_chunks", return_value=[chunk]), patch.object(daily, "infer_cached", return_value={"claims": [claim]}) as infer:
-            with self.assertRaisesRegex(ValueError, "previous-session facts insufficient"):
-                grounding.extract(daily, [source], date(2026, 9, 29), Path(folder))
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "record_gap") as gap, patch.object(daily, "source_chunks", return_value=[chunk]), patch.object(daily, "infer_cached", return_value={"claims": [claim]}) as infer:
+            self.assertEqual(grounding.extract(daily, [source], date(2026, 9, 29), Path(folder)), [])
+            gap.assert_called_once()  # a thin day is recorded, never filled from today's Tokyo
             self.assertEqual(infer.call_count, 1)
+
+    def test_cut_off_extraction_is_retried_on_halves_instead_of_losing_the_chunk(self):
+        import local_fx_grounding as grounding
+        first, second = "ニューヨーク時間のドル円は157.94円で引けた。", "ニューヨーク時間のユーロドルは1.1187ドルで引けた。"
+        source = {"source_id": 6, "title": "NY概況", "source_url": "https://test.example/6",
+                  "published_at": "2026-09-29T05:50:00+09:00", "text": "市場の概況。" * 50 + first + second}
+
+        def claim(quote, pair):
+            return {"kind": "price", "fact": "前営業日のNYで" + quote, "quote": quote, "event_scope": "previous",
+                    "market_session": "NY", "pairs": [pair], "record_type": "actual"}
+
+        def infer(out, label, task, data, schema):
+            if data["text"] == first + second:
+                raise ValueError("wrong model or incomplete response (length)")
+            return {"claims": [claim(first, "USD/JPY")] if data["text"] == first else [claim(second, "EUR/USD")]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "source_chunks", return_value=[first + second]),                 patch.object(daily, "infer_cached", side_effect=infer), patch.object(daily, "record_gap") as gap:
+            facts = grounding.extract(daily, [source], date(2026, 9, 29), Path(folder), True)
+        self.assertEqual(sorted(x["pairs"][0] for x in facts), ["EUR/USD", "USD/JPY"])
+        self.assertEqual([c.args[1] for c in gap.call_args_list], ["前営業日の出来事"])  # only the thin-day note, no lost chunk
 
     def test_us_country_cannot_be_added_to_unlabelled_mexican_release(self):
         import local_fx_grounding as grounding
@@ -588,66 +607,43 @@ class DailyTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "not approved"):
                     daily.fetch(url)
 
-    @staticmethod
-    def read_rows(rows):
-        """Stands in for the model: copy each row's bank / currency / rate cells."""
-        return [{"row_no": r["row_no"], "bank": r["cells"][0], "currency": r["cells"][1].split()[-1], "rate": r["cells"][2]}
-                for r in rows if len(r["cells"]) > 2 and r["cells"][2].endswith(("%", "）"))]
+    POLICY_PAGE = ('<script type="application/ld+json">{"datePublished":"2026-11-02T17:18:00+09:00"}</script>'
+                   '<p>米国 ※2008年12月以降は、誘導目標レンジの上限を掲載 2026年 3.75 4.00 4.00 日本 2026年 1.00 1.25 1.25 '
+                   'ニュージーランド 2026年 2.50 2.75 2.75</p>')
 
-    def test_policy_rate_with_note_is_kept_and_unreadable_rows_do_not_stop_the_run(self):
+    def test_policy_rates_come_from_the_history_page_with_checked_copies(self):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder)
-            rows = ('<tr><td>RBNZ</td><td>🇳🇿 NZD</td><td><strong>3.00%（要確認）</strong></td><td>x</td></tr>'
-                    '<tr><td>FRB</td><td>🇺🇸 USD</td><td>3.75–4.00%</td><td>x</td></tr>'
-                    '<tr><td>BOE</td><td>🇬🇧 GBP</td><td>3.75%</td><td>x</td></tr>')
-            page = '<h3>主要中銀 政策金利</h3><span>2026-11-03 現在</span><table>' + rows + '</table>'
+            seen = {}
 
-            def read(rows):  # one invented value, one rate for a row that is not that bank, one real row left unread
-                return [{"row_no": 0, "bank": "RBNZ", "currency": "NZD", "rate": "3.00%（要確認）"},
-                        {"row_no": 1, "bank": "FRB", "currency": "USD", "rate": "9.99%"},
-                        {"row_no": 2, "bank": "RBA", "currency": "GBP", "rate": "3.75%"}]
-            daily.claude_sources.inherit_policy(date(2026, 11, 3), out, lambda *args: page, read)
+            def read(text):  # stands in for the model: a note that is on the page, an invented value, a repeat, a bad bank
+                seen["text"] = text
+                return [{"currency": "USD", "rate": "4.00", "month": "2026年11月", "note": "誘導目標レンジの上限"},
+                        {"currency": "JPY", "rate": "1.25%", "month": "2026年11月", "note": "ページにない注記"},
+                        {"currency": "NZD", "rate": "3.00", "month": "2026年11月", "note": ""},
+                        {"currency": "JPY", "rate": "1.25", "month": "2026年11月", "note": ""},
+                        {"currency": "XXX", "rate": "1.25", "month": "", "note": ""}]
+            daily.claude_sources.collect_policy(date(2026, 11, 3), out, lambda *args: self.POLICY_PAGE, read)
             policy = daily.load(out / "policy.json")
-            self.assertEqual([(r["currency"], r["rate"]) for r in policy["rates"]], [("NZD", "3.00%（要確認）")])
+            self.assertEqual([(r["bank"], r["rate"]) for r in policy["rates"]],
+                             [("FRB", "4.00%（誘導目標レンジの上限）"), ("日銀", "1.25%")])
+            self.assertEqual(policy["source_as_of_jst"], "2026-11-02")
+            self.assertTrue(all(r["source_url"] == daily.claude_sources.POLICY_URL for r in policy["rates"]))
+            self.assertIn("誘導目標レンジの上限", seen["text"])
 
-    def test_missing_input_is_recorded_and_the_empty_stand_in_is_well_formed(self):
+    def test_policy_with_nothing_readable_is_a_gap_not_a_made_up_table(self):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder)
-            daily.record_gap(out, "経済指標の予定表", ValueError("boom"))
-            daily.record_gap(out, "経済指標の予定表", ValueError("boom"))
-            self.assertEqual(daily.load(out / "gaps.json"), [{"item": "経済指標の予定表", "reason": "boom"}])
-            calendar = daily.empty_calendar(date(2026, 11, 3))
-            self.assertEqual((calendar["events"], calendar["key_events"], calendar["day_themes"]), ([], [], ""))
-            import local_fx_oneshot as oneshot
-            self.assertIn("不明", oneshot.risk_fallback([]))
-            self.assertEqual(oneshot.ranking_sentence({"rankings": [], "generated_at_jst": "2026-11-03T07:00:00+09:00"}, "USD/JPY"), "")
+            with self.assertRaises(ValueError):
+                daily.claude_sources.collect_policy(date(2026, 11, 3), out, lambda *args: self.POLICY_PAGE, lambda text: [])
+            self.assertFalse((out / "policy.json").exists())
 
-    def test_policy_inheritance_preserves_original_date_and_ignores_stance(self):
+    def test_monday_policy_is_read_fresh_from_the_page(self):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder)
-            currencies = ["USD", "GBP", "JPY", "EUR", "AUD", "NZD", "CAD", "CHF"]
-            rows = ''.join(f'<tr><td>{c} bank</td><td>{c}</td><td><strong>1.25%</strong></td><td>要確認</td></tr>' for c in currencies)
-            page = '<h3>主要中銀 政策金利</h3><span>2026-09-25 現在</span><table>' + rows + '</table>'
-            daily.claude_sources.inherit_policy(date(2026, 9, 29), out, lambda *args: page, self.read_rows)
-            policy = daily.load(out / "policy.json")
-            self.assertEqual(policy["source_as_of_jst"], "2026-09-25")
-            self.assertEqual(len(policy["rates"]), 8)
-            self.assertNotIn("要確認", json.dumps(policy))
-
-    def test_monday_does_not_fake_inherited_policy_refresh(self):
-        with self.assertRaisesRegex(ValueError, "Monday"):
-            daily.claude_sources.inherit_policy(date(2026, 10, 5), Path("unused"), lambda *args: self.fail("unexpected request"), self.read_rows)
-
-    def test_monday_observation_inherits_policy_with_original_date_and_label(self):
-        with tempfile.TemporaryDirectory() as folder:
-            out = Path(folder)
-            currencies = ["USD", "GBP", "JPY", "EUR", "AUD", "NZD", "CAD", "CHF"]
-            rows = ''.join(f'<tr><td>{c} bank</td><td>{c}</td><td><strong>1.25%</strong></td><td>x</td></tr>' for c in currencies)
-            page = '<h3>主要中銀 政策金利</h3><span>2026-09-28 現在</span><table>' + rows + '</table>'
-            daily.claude_sources.inherit_policy(date(2026, 10, 5), out, lambda *args: page, self.read_rows, allow_stale_monday=True)
-            policy = daily.load(out / "policy.json")
-            self.assertEqual(policy["source_as_of_jst"], "2026-09-28")
-            self.assertIn("Monday observation only", policy["method"])
+            daily.claude_sources.collect_policy(date(2026, 11, 2), out, lambda *args: self.POLICY_PAGE,
+                                                lambda text: [{"currency": "JPY", "rate": "1.25", "month": "2026年11月", "note": ""}])
+            self.assertEqual(daily.load(out / "policy.json")["rates"][0]["rate"], "1.25%")
 
     def test_cache_is_invalidated_when_prompt_changes(self):
         with tempfile.TemporaryDirectory() as folder:

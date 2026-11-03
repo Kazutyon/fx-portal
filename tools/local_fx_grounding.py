@@ -195,7 +195,7 @@ def bind_claim(source, claim, index, target):
     return result
 
 
-CLAIMS = news.schema({"claims": {"type": "array", "minItems": 0, "maxItems": 6,
+CLAIMS = news.schema({"claims": {"type": "array", "minItems": 0,
     "items": news.schema({"kind": {"type": "string", "enum": ["event", "price", "cause", "outlook"]},
         "fact": news.STRING, "quote": news.STRING,
         "event_scope": {"type": "string", "enum": ["previous", "current", "historical", "unknown"]},
@@ -455,8 +455,8 @@ def extract(api, sources, target, out, observational=False):
     for source in sources:
         extracted = []
         for part, text in enumerate(api.source_chunks(source["text"])):
-            value = api.infer_cached(out, f'source-{source["source_id"]:02}-part-{part:02}-typed-extract',
-                "重要な事実を0〜6件抽出。quoteはこのtextから完全一致20〜180文字。"
+            task = (
+                "重要な事実を、この資料にある数だけすべて抽出(数字が多い資料は件数も多くなってよい)。quoteはこのtextから完全一致20〜180文字。"
                 "event_scopeはprevious=指定前営業日の出来事、current=本日、historical=それ以前/週のまとめ、unknown=不明。"
                 "掲載日だけから決めずarticle_opening/nearby_heading/本文の文脈で判断。"
                 "『昨日の相場』『なんで動いた？』のように前日を振り返る記事は、タイトルにその日の日付(その日の戦略名)があっても、述べているのは掲載日の前日の出来事。"
@@ -468,10 +468,24 @@ def extract(api, sources, target, out, observational=False):
                 "発言・価格反応・原因・条件付き見通しを拾い、同時発生を因果にしない。" +
                 ("先週末はhistorical。前営業日掲載の『本日/今朝』は掲載日であり本日ではない。"
                  "outlookは出典の見方が記録された時点で、将来予定の実施日と混同しない。"
-                 if datetime.fromisoformat(source["published_at"]).astimezone(news.JST).date() < target else ""),
+                 if datetime.fromisoformat(source["published_at"]).astimezone(news.JST).date() < target else ""))
+            def ask(label, piece, task=task, source=source):
+                return api.infer_cached(out, label, task,
                 {"date_facts": date_facts(target), "published_at": source["published_at"],
                  "source_title": source["title"], "article_opening": source["text"][:240],
-                 "nearby_heading": context_for(source, text)["nearby_heading"], "text": text}, CLAIMS)
+                 "nearby_heading": context_for(source, piece)["nearby_heading"], "text": piece}, CLAIMS)
+            label = f'source-{source["source_id"]:02}-part-{part:02}-typed-extract'
+            try:
+                value = ask(label, text)
+            except ValueError:  # a call that came back cut off or unreadable: ask again on each half instead of losing the chunk
+                value = {"claims": []}
+                cut = text.rfind("。", 0, len(text) // 2 + 1) + 1 or len(text) // 2
+                for tag, piece in (("a", text[:cut]), ("b", text[cut:])):
+                    try:
+                        value["claims"] += ask(label.replace("-typed-extract", tag + "-typed-extract"), piece)["claims"]
+                    except ValueError as error:
+                        if hasattr(api, "record_gap"):
+                            api.record_gap(out, "ニュース記事の事実抽出", f"{source['title'][:30]} の一部: {error}")
             chunk_facts = []
             for claim in value["claims"]:
                 if claim["quote"] not in text:
@@ -491,7 +505,7 @@ def extract(api, sources, target, out, observational=False):
                 # checked again by the final original-context review; skip the LLM re-check.
                 extracted.extend({**x, "claim_gate_accepted": True} for x in chunk_facts)
             elif chunk_facts:
-                gate_schema = news.schema({"accepted_fact_ids": {"type": "array", "items": news.STRING, "maxItems": 6},
+                gate_schema = news.schema({"accepted_fact_ids": {"type": "array", "items": news.STRING},
                     "rejections": {"type": "array", "items": news.schema({"fact_id": news.STRING, "reason": news.STRING})}})
                 checked = api.infer_cached(out, f'source-{source["source_id"]:02}-part-{part:02}-claim-gate-review',
                     "抽出したfact/型/日時/市場/対象ペアを原文に照合。本日JST07時前掲載のNY為替概況の"
@@ -551,7 +565,10 @@ def extract(api, sources, target, out, observational=False):
         facts.extend(extracted)
         news.save(out / "claims.json", facts)
     if len([x for x in facts if x["event_scope"] == "previous" and x["claim_gate_accepted"]]) < 5:
-        raise ValueError("previous-session facts insufficient; do not fill from today's Tokyo")
+        # Few previous-session facts make a thin report, not no report: record it; never fill the gap from today's Tokyo.
+        if not hasattr(api, "record_gap"):
+            raise ValueError("previous-session facts insufficient; do not fill from today's Tokyo")
+        api.record_gap(out, "前営業日の出来事", "前営業日の出来事として使える事実が5件未満")
     return facts
 
 
