@@ -409,21 +409,20 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     view_ids = [x["fact_id"] for x in material if is_view(x)]
     theme_ids = [x["fact_id"] for x in material if is_theme(x)]
     event_ids = [x["fact_id"] for x in material if x["fact_id"].startswith("N") and not is_view(x) and not is_theme(x)]
-    topics = call(out, "oneshot-2-topics", style +
-                  "前営業日の相場の振り返りを組み立てるが、文章は書かず、資料のfactをidで選ぶだけにする。"
-                  "heroは冒頭に置く今日の相場の最重要材料のfactのid(1〜2件)。"
-                  "topicsは前営業日の主要な出来事の4〜5話題。各話題のfact_idsは、同じ出来事・同じ材料を扱うfactのid(2〜5件、時系列順)、"
-                  "titleは話題の見出し(30字以内。資料にある語と数値だけを使い、資料にない因果や数値は書かない)。最重要材料の話題を先頭にする。"
-                  "summary_idsは、前営業日の市場全体(主要通貨ペアの終値、主要指標の結果など)を整理するfactのid(4〜6件)。"
-                  "hero・各話題・summaryで同じfactを使わない。"
-                  f"market_view_idsは、本日の地合いの判断材料となる市場関係者の見解のid(最大3件、{view_ids}から)。",
-                  plain,
-                  news.schema({"hero_ids": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "enum": event_ids}},
-                               "topics": {"type": "array", "minItems": 4, "maxItems": 5, "items": news.schema({
-                                   "title": S, "fact_ids": {"type": "array", "minItems": 2, "maxItems": 5,
-                                                            "items": {"type": "string", "enum": event_ids}}})},
-                               "summary_ids": {"type": "array", "minItems": 4, "maxItems": 6, "items": {"type": "string", "enum": event_ids}},
-                               "market_view_ids": {"type": "array", "minItems": 0, "maxItems": 3, "items": {"type": "string", "enum": view_ids or [""]}}}))
+    topics_task = (style +
+                   "前営業日の相場の振り返りを組み立てるが、文章は書かず、資料のfactをidで選ぶだけにする。"
+                   "heroは冒頭に置く今日の相場の最重要材料のfactのid(1〜2件)。"
+                   "topicsは前営業日の主要な出来事の4〜5話題。各話題のfact_idsは、同じ出来事・同じ材料を扱うfactのid(2〜5件、時系列順)、"
+                   "titleは話題の見出し(30字以内。資料にある語と数値だけを使い、資料にない因果や数値は書かない)。最重要材料の話題を先頭にする。"
+                   "summary_idsは、前営業日の市場全体(主要通貨ペアの終値、主要指標の結果など)を整理するfactのid(4〜6件)。"
+                   "hero・各話題・summaryで同じfactを使わない。"
+                   f"market_view_idsは、本日の地合いの判断材料となる市場関係者の見解のid(最大3件、{view_ids}から)。")
+    topics_schema = news.schema({"hero_ids": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "enum": event_ids}},
+                                 "topics": {"type": "array", "minItems": 4, "maxItems": 5, "items": news.schema({
+                                     "title": S, "fact_ids": {"type": "array", "minItems": 2, "maxItems": 5,
+                                                              "items": {"type": "string", "enum": event_ids}}})},
+                                 "summary_ids": {"type": "array", "minItems": 4, "maxItems": 6, "items": {"type": "string", "enum": event_ids}},
+                                 "market_view_ids": {"type": "array", "minItems": 0, "maxItems": 3, "items": {"type": "string", "enum": view_ids or [""]}}})
     used = set()
 
     closes = closing_ids(material)
@@ -434,13 +433,26 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         used.update(x["fact_id"] for x in facts)
         return facts
 
-    hero_facts = take(topics["hero_ids"])
-    topic_list, topic_facts = [], []
-    for t in topics["topics"]:
-        chosen_facts = take(t["fact_ids"])
-        if chosen_facts:
-            topic_list.append({"title": t["title"], "body": join_facts(chosen_facts)})
-            topic_facts.append(chosen_facts)
+    # A long material list can make the model repeat one id in every slot (2026-11-04: "N7-0" everywhere, so no topic
+    # got a fact). Ask again, telling the model what went wrong, instead of stopping the whole report.
+    retry_note = ""
+    for attempt in range(3):
+        topics = call(out, "oneshot-2-topics" if attempt == 0 else f"oneshot-2-topics-retry{attempt}",
+                      topics_task + retry_note, plain, topics_schema)
+        used.clear()
+        hero_facts = take(topics["hero_ids"])
+        topic_list, topic_facts = [], []
+        for t in topics["topics"]:
+            chosen_facts = take(t["fact_ids"])
+            if chosen_facts:
+                topic_list.append({"title": t["title"], "body": join_facts(chosen_facts)})
+                topic_facts.append(chosen_facts)
+        if topic_list:
+            break
+        retry_note = ("前回の答えは、同じidを繰り返していて、どの話題にも事実が割り当たらず、使えなかった。"
+                      "heroと各話題とsummaryで、資料の別々のfactのidを選び直す。")
+    if not topic_list:
+        raise ValueError("oneshot-2-topics: no usable topics after 3 attempts")
     summary_facts = take(topics["summary_ids"])
     titles = "、".join(t["title"] for t in topic_list)
     market_views = [by_id[i] for i in dict.fromkeys(topics.get("market_view_ids", [])) if i in by_id and is_view(by_id[i])]

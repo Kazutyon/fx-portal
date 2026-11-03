@@ -77,6 +77,44 @@ class OneshotTests(unittest.TestCase):
         self.assertEqual((seen["oneshot-2-topics"], seen["oneshot-3-today"]), (False, True))
         self.assertIn("時点の算出）で", sections["focus_body"])
 
+    def test_topic_selection_that_repeats_one_id_is_asked_again(self):
+        material, calendar, ranking = self.inputs()
+        labels, tasks = [], {}
+
+        def calls(out, label, task, data, schema, *rest):
+            labels.append(label)
+            tasks[label] = task
+            if label == "oneshot-2-topics":  # 2026-11-04: every slot got the same id, so no topic had a fact
+                one = canned(out, label, task, data, schema)["hero_ids"][0]
+                return {"hero_ids": [one, one], "summary_ids": [one] * 4, "market_view_ids": [],
+                        "topics": [{"title": f"話題{i}", "fact_ids": [one, one]} for i in range(4)]}
+            return canned(out, label.replace("-retry1", ""), task, data, schema)
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
+            out = Path(folder) / "oneshot"
+            out.mkdir()
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+            sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
+        self.assertEqual(labels[:2], ["oneshot-2-topics", "oneshot-2-topics-retry1"])
+        self.assertIn("同じidを繰り返して", tasks["oneshot-2-topics-retry1"])
+        self.assertEqual(len(sections["topics"]), 4)
+
+    def test_topic_selection_that_never_gets_usable_says_so(self):
+        material, calendar, ranking = self.inputs()
+
+        def calls(out, label, task, data, schema, *rest):
+            one = canned(out, "topics", task, data, schema)["hero_ids"][0]
+            return {"hero_ids": [one], "summary_ids": [one] * 4, "market_view_ids": [],
+                    "topics": [{"title": "話題", "fact_ids": [one, one]}] * 4}
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
+            out = Path(folder) / "oneshot"
+            out.mkdir()
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "no usable topics after 3 attempts"):
+                oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+
     def test_interpretive_sections_are_assembled_from_chosen_ids_only(self):
         material, calendar, ranking = self.inputs()
         views = [f for f in material if oneshot.is_view(f)]
