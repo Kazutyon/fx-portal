@@ -131,7 +131,7 @@ def collect_news(target: date, out: Path) -> list[dict]:
     if bundle.get("date_jst") != target.isoformat():
         raise ValueError("news bundle has wrong date")
     sources = bundle["sources"]
-    if not 5 <= len(sources) <= 24 or len({s["source_url"] for s in sources}) != len(sources):
+    if not 1 <= len(sources) <= 24 or len({s["source_url"] for s in sources}) != len(sources):
         raise ValueError("news source count/uniqueness gate failed")
     cutoff = datetime.combine(target, daytime(7), JST)
     if bundle.get("acquisition_mode") == "claude-mirror":
@@ -283,6 +283,21 @@ def ai_pairs(out: Path, events: list, ff: list) -> dict:
         print(f"STAGE calendar-plan-match skipped {type(error).__name__}", flush=True)
         return {}
     return feed_pairs(result.get("pairs", []), events, ff)
+
+
+def record_gap(out: Path, item: str, reason) -> None:
+    """An input that could not be had is written down (gaps.json) and the run goes on without it; the writer is told."""
+    path = out / "gaps.json"
+    gaps = load(path) if path.exists() else []
+    entry = {"item": item, "reason": str(reason)[:200]}
+    if entry not in gaps:
+        news.save(path, gaps + [entry])
+    print(f"STAGE gap {item}: {entry['reason']}", flush=True)
+
+
+def empty_calendar(target: date) -> dict:
+    return {"date_jst": target.isoformat(), "events": [], "key_events": [], "source_urls": [], "conflicts": [],
+            "holiday_text": "", "holiday_checked": False, "day_themes": "", "weekly_themes": ""}
 
 
 def policy_reader(out: Path):
@@ -477,7 +492,7 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
         # Observation shadow only: show the one available source honestly labelled, never as cross-checked.
         events = list(calendar["events"])
         single_source = True
-    if not events:
+    if not events and not allow_single_source:
         raise ValueError("no confirmed calendar events for reader copy")
     key = calendar["key_events"]
     topics_html = "\n".join(f'<div class="topic"><h4 class="topic-title">{i+1}. {esc(t["title"])}</h4><p>{esc(t["body"])}</p></div>' for i, t in enumerate(sections["topics"]))
@@ -541,7 +556,7 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
         if policy["date_jst"] != target.isoformat():
             raise ValueError("dated policy input mismatch")
         policy_as_of = policy.get("source_as_of_jst", policy["date_jst"])
-        policy_html = f'<p style="margin-top:16px"><strong>政策金利（{esc(policy_as_of)}時点）：</strong>' + " / ".join(
+        policy_html = "" if not policy["rates"] else f'<p style="margin-top:16px"><strong>政策金利（{esc(policy_as_of)}時点）：</strong>' + " / ".join(
             f'<a href="{esc(r["source_url"])}" target="_blank" rel="noopener noreferrer">{FLAGS.get(r["currency"], "")} {esc(r["bank"])} {esc(r["rate"])}</a>'
             for r in policy["rates"]) + '</p>'
         report = report.replace(esc(sections["market"]), esc(sections["market"]) + policy_html)
@@ -610,26 +625,46 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         status["acquisition_wait"] = wait_for_morning_articles(target, out)
         news.save(out / "status.json", status)
         sources = collect_news(target, out)
+        review = out / "acquisition-review.json"
+        for note in (load(review).get("coverage_gaps", []) if review.exists() else []):
+            record_gap(out, "ニュース記事", note)
         if supplement_news:
             if not mirror_enabled() or render_existing:
                 raise ValueError("supplement requires isolated mirror generation, not render-only")
             sources = claude_sources.supplement_previous(target, out, snapshot, sources)
             sources = claude_sources.recover_article_formats(target, out, snapshot, sources)
-        calendar = collect_calendar(target, out, allow_single_source=observational)
+        try:
+            calendar = collect_calendar(target, out, allow_single_source=observational)
+        except Exception as error:
+            record_gap(out, "経済指標の予定表", f"{type(error).__name__}: {error}")
+            calendar = empty_calendar(target)
+            news.save(out / "calendar.json", calendar)
         policy_path = out / "policy.json"
         if not policy_path.exists() and mirror_enabled():
-            claude_sources.inherit_policy(target, out, snapshot, policy_reader(out), allow_stale_monday=observational)
+            try:
+                claude_sources.inherit_policy(target, out, snapshot, policy_reader(out), allow_stale_monday=observational)
+            except Exception as error:
+                record_gap(out, "主要中銀の政策金利", f"{type(error).__name__}: {error}")
+                news.save(policy_path, {"date_jst": target.isoformat(), "rates": [], "source_as_of_jst": "",
+                                        "method": "not available today", "lifecycle": "evidence"})
         if not policy_path.exists() or load(policy_path).get("date_jst") != target.isoformat():
             raise ValueError("dated official policy input is required before generation")
-        ranking = json.loads(snapshot(out, "ranking", "https://auxen.jp/data/daytrade-ranking.json"))
-        ranking_at = datetime.fromisoformat(ranking["generated_at_jst"])
-        if ranking_at.tzinfo is None or ranking_at > datetime.now(JST) or ranking_at.astimezone(JST).date() > target:
-            raise ValueError("ranking timestamp is invalid or from the future")
-        today_ranking = ranking_at.astimezone(JST).date() == target
-        if not today_ranking and not mirror_enabled():
-            raise ValueError("ranking is not from the report day")
-        if len(ranking["rankings"]) < 5:
-            raise ValueError("ranking contains fewer than five pairs")
+        try:
+            ranking = json.loads(snapshot(out, "ranking", "https://auxen.jp/data/daytrade-ranking.json"))
+            ranking_at = datetime.fromisoformat(ranking["generated_at_jst"])
+            if ranking_at.tzinfo is None or ranking_at > datetime.now(JST) or ranking_at.astimezone(JST).date() > target:
+                raise ValueError("ranking timestamp is invalid or from the future")
+            today_ranking = ranking_at.astimezone(JST).date() == target
+            if not today_ranking and not mirror_enabled():
+                raise ValueError("ranking is not from the report day")
+            if not ranking["rankings"]:
+                raise ValueError("ranking is empty")
+            if len(ranking["rankings"]) < 5:
+                record_gap(out, "通貨ランキング", f"{len(ranking['rankings'])}ペアだけ(通常は5ペア以上)")
+        except Exception as error:
+            record_gap(out, "通貨ランキング", f"{type(error).__name__}: {error}")
+            ranking = {"rankings": [], "generated_at_jst": datetime.now(JST).isoformat()}
+            today_ranking = False
         news.save(out / "market.json", {"ranking": ranking, "source_url": "https://auxen.jp/data/daytrade-ranking.json",
                                        "today_ranking": today_ranking, "ranking_stale": not today_ranking})
         if prepare_only:
@@ -642,6 +677,8 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
                               report=str(out / "oneshot" / "report.html"), quality="pending", publish_ready=False)
                 if failure.exists():
                     status["error"] = load(failure)["error"]
+                if (out / "gaps.json").exists():
+                    status["gaps"] = load(out / "gaps.json")
                 status["finished_at"] = datetime.now(JST).isoformat()
                 news.save(out / "status.json", status)
                 news.save(ROOT / ".runtime" / "local-fx-shadow" / "latest.json", {**status, "run_dir": str(out)})

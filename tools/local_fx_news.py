@@ -46,7 +46,14 @@ def save(path: Path, value: object) -> None:
     text = json.dumps(value, ensure_ascii=False, indent=2) + "\n"
     pending = path.with_suffix(path.suffix + ".pending")
     pending.write_text(text, encoding="utf-8")
-    pending.replace(path)
+    for attempt in range(8):  # on the shared drive another process (scanner, indexer) can briefly hold the target
+        try:
+            pending.replace(path)
+            break
+        except PermissionError:
+            if attempt == 7:
+                raise
+            time.sleep(0.25 * (attempt + 1))
     if json.loads(path.read_text(encoding="utf-8")) != value:
         raise ValueError("saved artifact did not read back correctly")
 

@@ -198,6 +198,8 @@ def no_market_view_text(titles: str) -> str:
 
 def risk_fallback(events: list) -> str:
     """Risk text when no market participant's view was chosen: the day's high-importance releases, from the calendar."""
+    if not events:
+        return "予定表を取得できなかったため、本日の高重要度予定は不明。"
     high = [e for e in events if e.get("importance") == "high"]
     if not high:
         return "本日、重要度の高い予定は予定表にない。"
@@ -230,7 +232,9 @@ def handover_text(events: list) -> str:
 
 def ranking_sentence(ranking: dict, pair: str) -> str:
     """Rank, score and direction come from the ranking data with the day/time it was computed (never from the model)."""
-    item = next(r for r in ranking["rankings"] if r["pair"] == pair)
+    item = next((r for r in ranking["rankings"] if r["pair"] == pair), None)
+    if item is None:  # no ranking today (it could not be fetched): say nothing rather than invent a rank
+        return ""
     at = datetime.fromisoformat(ranking["generated_at_jst"]).astimezone(daily.JST)
     return (f"デイトレ適性ランキング（{at.month}月{at.day}日{at:%H:%M}時点の算出）で{item['rank']}位の{pair}"
             f"（スコア{item['score']}、{item['verdict']}、方向{item['direction']}、ADX {item['adx_h4']}）。")
@@ -315,7 +319,7 @@ def other_previous_facts(material: list, shown: set, limit: int = 30) -> list:
 
 def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary_facts: list, market_views: list,
                 risk_views: list, topic_facts: list, key_events: list, date_facts: dict, high_events: list,
-                material: list | None = None, weekly: str = "", quotes: list | None = None) -> None:
+                material: list | None = None, weekly: str = "", quotes: list | None = None, gaps: list | None = None) -> None:
     """Experiment (FX_WRITE_BODIES=1): the model writes hero/summary/topic bodies/market/risk as prose from the chosen
     facts, the way the Claude morning run does. Numbers are still checked mechanically against the evidence afterwards."""
     def facts_of(items):
@@ -336,6 +340,8 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
         data["前営業日の株・商品・金利の終値"] = [q["fact"] for q in quotes]
     if weekly:
         data["今週の予定"] = weekly[:1200]
+    if gaps:
+        data["今朝取得できなかった情報"] = [f"{g['item']}: {g['reason']}" for g in gaps]
     task = ("あなたはFXトレード日報の筆者。読者は4時間足でトレンドを把握し、15分・30分足の波とローソク足でエントリーするFXトレーダー。"
             "渡した材料(factとquote)を材料に、読ませる文章を書く。事実の羅列や原文の貼り合わせにせず、何が起き、なぜ動いたか(資料に書かれた背景・理由)、"
             "本日への引継ぎ(注目する水準や、上振れ・下振れならどう動くかという条件付きの見通し)を、自分の言葉で整理して書く。"
@@ -346,6 +352,7 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
             "(『リスクに関する見解』『本日の高重要度の予定』『今週の予定』を材料に。予想値・前回値があれば使ってよい。"
             "材料が乏しい日は、『本日の主な予定』から相場を動かしうるものを選んで書く)。"
             "『前営業日の値動き』は主要通貨ペアの終値と高値・安値、『前営業日のその他の材料』は株価・原油・金・ポジションなど相場の背景、『前営業日の株・商品・金利の終値』はダウ・日経平均・金・原油・米10年債利回りなどの終値、『今週の予定』は週の中央銀行会合や決算。いずれも、前営業日の相場の全体像(終値と、何が相場を動かしたか)と、本日から今週への流れを読者に伝えるための材料として使う。"
+            "『今朝取得できなかった情報』は、今朝の取得で得られなかった材料(予定表、ランキング、記事など)。その分の数値や予定は作らず、書けるものだけで書く。"
             "数値・日付・要人名・出来事は、渡した資料にあるものだけを使い、資料にない水準・数値は作らない。"
             "出典を示すときは（ザイFX）のようにsourceの名前を括弧で添える。"
             "現在は本日の午前7時で、本日の東京・ロンドン・NY市場はまだ始まっていない。前営業日の出来事は過去のこととして書く。"
@@ -375,6 +382,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                **({"ff": e["ff"]} if e.get("ff") else {})}
               for n, e in enumerate(calendar["events"], 1)]  # the feed marks most European releases "low"; never drop by importance
     pairs = [r["pair"] for r in ranking["rankings"][:5]]
+    gaps_path = out / "gaps.json"  # inputs the morning run could not get (written by local_fx_daily.record_gap)
+    gaps = json.loads(gaps_path.read_text(encoding="utf-8")) if gaps_path.exists() else []
     data = {"date_facts": grounding.date_facts(target),
             "facts": compact(material),
             "today_calendar": events,
@@ -445,11 +454,14 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                  "各国の政策・景況・物価・雇用の主要指標と、中央銀行総裁・要人発言を優先し、同じ指標の副項目や小さな指標は含めない。"
                  "本文で取り上げる通貨ペア(例: ユーロドル、ドル円)に関わる予定を必ず含める。",
                  data,
-                 news.schema({"focus_pair": {"type": "string", "enum": pairs},
+                 news.schema({**({"focus_pair": {"type": "string", "enum": pairs}} if pairs else {}),
                               "focus_view_id": {"type": "string", "enum": view_ids + [""]},
                               "risk_view_ids": {"type": "array", "minItems": 0, "maxItems": 2, "items": {"type": "string", "enum": view_ids or [""]}},
-                              "point_ids": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string", "enum": point_ids}},
-                              "key_event_nos": {"type": "array", "minItems": 8, "maxItems": 12, "items": {"type": "integer"}}}))
+                              # a day with few schedule rows (or none: the calendar could not be fetched) allows fewer picks
+                              "point_ids": {"type": "array", "minItems": min(3, len(point_ids)), "maxItems": min(3, len(point_ids)),
+                                            "items": {"type": "string", "enum": point_ids or [""]}},
+                              "key_event_nos": {"type": "array", "minItems": min(8, len(events)), "maxItems": min(12, len(events)),
+                                                "items": {"type": "integer"}}}))
 
     # The feed's own importance grades are the only filter for "key events"; with a single source (Forex Factory
     # refused) they miss e.g. the Tankan and ISM, so use the model's selection (indices only) when it is valid.
@@ -457,7 +469,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     chosen = [calendar["events"][n - 1] for n in picked] or calendar["key_events"]  # calendar order is already by time
 
     focus_view = by_id.get(today.get("focus_view_id", ""))
-    if focus_view and today["focus_pair"] not in (focus_view.get("pairs") or []):
+    focus_pair = today.get("focus_pair", "")
+    if focus_view and focus_pair not in (focus_view.get("pairs") or []):
         focus_view = None  # a view about other pairs does not belong under this pair
     market_ids = {x["fact_id"] for x in market_views}
     risk_views = [by_id[i] for i in dict.fromkeys(today.get("risk_view_ids", []))
@@ -488,8 +501,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                 "handover": handover_text(chosen),
                 "market_holiday": holiday_line(calendar),
                 "calendar_notes": calendar_notes(calendar, chosen),
-                "focus_pair": today["focus_pair"],
-                "focus_body": ranking_sentence(ranking, today["focus_pair"]) + (sentence(focus_view) if focus_view else ""),
+                "focus_pair": focus_pair,
+                "focus_body": ranking_sentence(ranking, focus_pair) + (sentence(focus_view) if focus_view else ""),
                 "risk_level": f"高重要度予定 {high}件",
                 "risk_body": join_sourced(risk_views) or risk_fallback(calendar["events"]),
                 "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(points)]}
@@ -498,10 +511,16 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         try:
             write_prose(out, style, sections, hero_facts, summary_facts, market_views, risk_views, topic_facts, chosen,
                         data["date_facts"], [e for e in events if e["importance"] == "high"],
-                        material, calendar.get("weekly_themes") or "", quotes)
+                        material, calendar.get("weekly_themes") or "", quotes, gaps)
         except Exception as error:  # keep the assembled text; record why
             written = False
             sections["prose_error"] = f"{type(error).__name__}: {error}"
+    if not calendar["events"]:  # the schedule could not be fetched: say so instead of "no events today"
+        sections.update(handover="本日の予定表は取得できなかった。", risk_level="高重要度予定 不明(予定表なし)",
+                        calendar_notes="今朝は予定表を取得できなかった。")
+    other_gaps = [g["item"] for g in gaps if g["item"] != "経済指標の予定表"]
+    if other_gaps:
+        sections["calendar_notes"] = (sections.get("calendar_notes", "") + "今朝取得できなかった情報: " + "、".join(other_gaps) + "。")
     news.save(out / "sections.json", sections)
 
     evidence = [{"quote": x.get("quote", ""), "fact": x.get("fact", ""), "source_context": x.get("source_context", {}),

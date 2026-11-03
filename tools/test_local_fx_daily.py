@@ -610,6 +610,18 @@ class DailyTests(unittest.TestCase):
             policy = daily.load(out / "policy.json")
             self.assertEqual([(r["currency"], r["rate"]) for r in policy["rates"]], [("NZD", "3.00%（要確認）")])
 
+    def test_missing_input_is_recorded_and_the_empty_stand_in_is_well_formed(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder)
+            daily.record_gap(out, "経済指標の予定表", ValueError("boom"))
+            daily.record_gap(out, "経済指標の予定表", ValueError("boom"))
+            self.assertEqual(daily.load(out / "gaps.json"), [{"item": "経済指標の予定表", "reason": "boom"}])
+            calendar = daily.empty_calendar(date(2026, 11, 3))
+            self.assertEqual((calendar["events"], calendar["key_events"], calendar["day_themes"]), ([], [], ""))
+            import local_fx_oneshot as oneshot
+            self.assertIn("不明", oneshot.risk_fallback([]))
+            self.assertEqual(oneshot.ranking_sentence({"rankings": [], "generated_at_jst": "2026-11-03T07:00:00+09:00"}, "USD/JPY"), "")
+
     def test_policy_inheritance_preserves_original_date_and_ignores_stance(self):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder)

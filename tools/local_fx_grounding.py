@@ -837,6 +837,8 @@ def run_oneshot(out, target, material, calendar, ranking):
         import local_fx_oneshot as oneshot
         sub.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(out / "policy.json", sub / "policy.json")
+        if (out / "gaps.json").exists():
+            shutil.copyfile(out / "gaps.json", sub / "gaps.json")
         policy = json.loads((sub / "policy.json").read_text(encoding="utf-8"))
         oneshot.generate(sub, target, material, calendar, ranking, policy)
     except Exception as error:  # comparison output must not stop the main observation run

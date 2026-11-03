@@ -160,10 +160,16 @@ def collect(target: date, out, snapshot):
             except (OSError, ValueError, KeyError) as error:
                 rejected.append({"url": url, "reason": str(error)})
         acquired_domains.append({"index": index, "accepted": accepted})
+    # Few articles or no NY recap make a thinner report, not no report: record it and go on. Only "nothing at all" stops.
+    coverage_gaps = []
+    if len(sources) < 5:
+        coverage_gaps.append(f"取得できた記事が{len(sources)}件だけ(通常は5件以上)")
+    if not any(re.search(r"[ＮN][ＹY]為替|ニューヨーク外国為替市場概況", x["title"]) for x in sources):
+        coverage_gaps.append("ニューヨーク市場の概況記事が取得できなかった")
     news.save(out / "acquisition-review.json", {"indexes": acquired_domains, "rejected": rejected,
-              "as_of_jst": cutoff.isoformat(), "lifecycle": "evidence"})
-    if not 5 <= len(sources) <= 24 or not any(re.search(r"[ＮN][ＹY]為替|ニューヨーク外国為替市場概況", x["title"]) for x in sources):
-        raise ValueError("news coverage gate failed: need 5-24 dated articles including NY recap")
+              "coverage_gaps": coverage_gaps, "as_of_jst": cutoff.isoformat(), "lifecycle": "evidence"})
+    if not sources:
+        raise ValueError("news coverage failed: no dated article could be read")
     news.save(out / "source-bundle.json", {"date_jst": target.isoformat(), "sources": sources,
               "as_of_jst": cutoff.isoformat(), "acquisition_mode": "claude-mirror",
               "strict_0700_backtest": False, "lifecycle": "evidence"})
