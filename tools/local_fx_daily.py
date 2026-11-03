@@ -285,6 +285,19 @@ def ai_pairs(out: Path, events: list, ff: list) -> dict:
     return feed_pairs(result.get("pairs", []), events, ff)
 
 
+def policy_reader(out: Path):
+    """The local model reads the policy-rate table rows (layout and notes such as 要確認 vary); inherit_policy checks the copies."""
+    def read(rows: list) -> list:
+        task = ("公開済みの日報トップにある主要中銀の政策金利表の各行(cells)を読み、中銀名(bank)・通貨コード(currency: "
+                "JPY/USD/EUR/GBP/AUD/NZD/CAD/CHF)・政策金利のセル(rate)を、行の表記のまま写す。"
+                "rateに（要確認）などの注記が付いていれば、そのまま含める。金利でない行は含めない。")
+        result = infer_cached(out, "policy-table-read", task, rows, news.schema({
+            "rates": {"type": "array", "items": news.schema({"row_no": {"type": "integer"}, "bank": {"type": "string"},
+                                                             "currency": {"type": "string"}, "rate": {"type": "string"}})}}))
+        return result.get("rates", [])
+    return read
+
+
 def merge_feeds(events: list, ff: list, pairs: dict, kiss_url: str, ff_url: str) -> tuple:
     """Fold the Forex Factory row into its KissFX row. When the feeds disagree (time or figures) both values are kept:
     the KissFX value stays in the row and the Forex Factory value goes in `ff`, with a conflict record."""
@@ -605,7 +618,7 @@ def execute(target: date, out: Path, prepare_only: bool, render_existing: bool =
         calendar = collect_calendar(target, out, allow_single_source=observational)
         policy_path = out / "policy.json"
         if not policy_path.exists() and mirror_enabled():
-            claude_sources.inherit_policy(target, out, snapshot, allow_stale_monday=observational)
+            claude_sources.inherit_policy(target, out, snapshot, policy_reader(out), allow_stale_monday=observational)
         if not policy_path.exists() or load(policy_path).get("date_jst") != target.isoformat():
             raise ValueError("dated official policy input is required before generation")
         ranking = json.loads(snapshot(out, "ranking", "https://auxen.jp/data/daytrade-ranking.json"))

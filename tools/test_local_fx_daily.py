@@ -588,13 +588,35 @@ class DailyTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "not approved"):
                     daily.fetch(url)
 
+    @staticmethod
+    def read_rows(rows):
+        """Stands in for the model: copy each row's bank / currency / rate cells."""
+        return [{"row_no": r["row_no"], "bank": r["cells"][0], "currency": r["cells"][1].split()[-1], "rate": r["cells"][2]}
+                for r in rows if len(r["cells"]) > 2 and r["cells"][2].endswith(("%", "）"))]
+
+    def test_policy_rate_with_note_is_kept_and_unreadable_rows_do_not_stop_the_run(self):
+        with tempfile.TemporaryDirectory() as folder:
+            out = Path(folder)
+            rows = ('<tr><td>RBNZ</td><td>🇳🇿 NZD</td><td><strong>3.00%（要確認）</strong></td><td>x</td></tr>'
+                    '<tr><td>FRB</td><td>🇺🇸 USD</td><td>3.75–4.00%</td><td>x</td></tr>'
+                    '<tr><td>BOE</td><td>🇬🇧 GBP</td><td>3.75%</td><td>x</td></tr>')
+            page = '<h3>主要中銀 政策金利</h3><span>2026-11-03 現在</span><table>' + rows + '</table>'
+
+            def read(rows):  # one invented value, one rate for a row that is not that bank, one real row left unread
+                return [{"row_no": 0, "bank": "RBNZ", "currency": "NZD", "rate": "3.00%（要確認）"},
+                        {"row_no": 1, "bank": "FRB", "currency": "USD", "rate": "9.99%"},
+                        {"row_no": 2, "bank": "RBA", "currency": "GBP", "rate": "3.75%"}]
+            daily.claude_sources.inherit_policy(date(2026, 11, 3), out, lambda *args: page, read)
+            policy = daily.load(out / "policy.json")
+            self.assertEqual([(r["currency"], r["rate"]) for r in policy["rates"]], [("NZD", "3.00%（要確認）")])
+
     def test_policy_inheritance_preserves_original_date_and_ignores_stance(self):
         with tempfile.TemporaryDirectory() as folder:
             out = Path(folder)
             currencies = ["USD", "GBP", "JPY", "EUR", "AUD", "NZD", "CAD", "CHF"]
             rows = ''.join(f'<tr><td>{c} bank</td><td>{c}</td><td><strong>1.25%</strong></td><td>要確認</td></tr>' for c in currencies)
             page = '<h3>主要中銀 政策金利</h3><span>2026-09-25 現在</span><table>' + rows + '</table>'
-            daily.claude_sources.inherit_policy(date(2026, 9, 29), out, lambda *args: page)
+            daily.claude_sources.inherit_policy(date(2026, 9, 29), out, lambda *args: page, self.read_rows)
             policy = daily.load(out / "policy.json")
             self.assertEqual(policy["source_as_of_jst"], "2026-09-25")
             self.assertEqual(len(policy["rates"]), 8)
@@ -602,7 +624,7 @@ class DailyTests(unittest.TestCase):
 
     def test_monday_does_not_fake_inherited_policy_refresh(self):
         with self.assertRaisesRegex(ValueError, "Monday"):
-            daily.claude_sources.inherit_policy(date(2026, 10, 5), Path("unused"), lambda *args: self.fail("unexpected request"))
+            daily.claude_sources.inherit_policy(date(2026, 10, 5), Path("unused"), lambda *args: self.fail("unexpected request"), self.read_rows)
 
     def test_monday_observation_inherits_policy_with_original_date_and_label(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -610,7 +632,7 @@ class DailyTests(unittest.TestCase):
             currencies = ["USD", "GBP", "JPY", "EUR", "AUD", "NZD", "CAD", "CHF"]
             rows = ''.join(f'<tr><td>{c} bank</td><td>{c}</td><td><strong>1.25%</strong></td><td>x</td></tr>' for c in currencies)
             page = '<h3>主要中銀 政策金利</h3><span>2026-09-28 現在</span><table>' + rows + '</table>'
-            daily.claude_sources.inherit_policy(date(2026, 10, 5), out, lambda *args: page, allow_stale_monday=True)
+            daily.claude_sources.inherit_policy(date(2026, 10, 5), out, lambda *args: page, self.read_rows, allow_stale_monday=True)
             policy = daily.load(out / "policy.json")
             self.assertEqual(policy["source_as_of_jst"], "2026-09-28")
             self.assertIn("Monday observation only", policy["method"])

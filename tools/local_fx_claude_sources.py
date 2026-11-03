@@ -169,7 +169,10 @@ def collect(target: date, out, snapshot):
               "strict_0700_backtest": False, "lifecycle": "evidence"})
 
 
-def inherit_policy(target, out, snapshot, allow_stale_monday=False):
+def inherit_policy(target, out, snapshot, read, allow_stale_monday=False):
+    """Inherit the published index's policy-rate table. `read(rows)` (the local model) says which table row is which
+    bank/currency and copies the rate cell as written; this function only checks that every copied value is really in
+    that row. Rows the model could not read are left out (the report just shows fewer banks)."""
     if target.weekday() == 0 and not allow_stale_monday:
         raise ValueError("Monday Claude rate/sentiment refresh is not implemented; do not inherit as fresh")
     page = snapshot(out, "published-index-policy-only", "https://auxen.jp/")
@@ -177,17 +180,24 @@ def inherit_policy(target, out, snapshot, allow_stale_monday=False):
     if not match:
         raise ValueError("published index policy table missing")
     as_of = re.search(r"(\d{4}-\d{2}-\d{2})\s*現在", page[match.start():match.end()])
-    rates = []
+    rows = []
     for row in re.findall(r"<tr\b[^>]*>(.*?)</tr>", match[1], re.S):
-        cells = [news.plain(x) for x in re.findall(r"<td\b[^>]*>(.*?)</td>", row, re.S)]
-        if len(cells) != 4:
+        cells = [news.plain(x) for x in re.findall(r"<t[dh]\b[^>]*>(.*?)</t[dh]>", row, re.S)]
+        if cells:
+            rows.append(cells)
+    rates = []
+    for item in read([{"row_no": n, "cells": cells} for n, cells in enumerate(rows)]):
+        n = item.get("row_no")
+        if not isinstance(n, int) or not 0 <= n < len(rows):
             continue
-        currency = re.search(r"\b(JPY|USD|EUR|GBP|AUD|NZD|CAD|CHF)\b", cells[1])
-        if currency and re.fullmatch(r"\d+(?:\.\d+)?(?:[–〜~\-]\d+(?:\.\d+)?)?%", cells[2]):
-            rates.append({"bank": cells[0], "currency": currency[1], "rate": cells[2],
-                          "source_url": "https://auxen.jp/"})
-    if len(rates) != 8 or len({x["currency"] for x in rates}) != 8 or not as_of:
-        raise ValueError("policy inheritance needs eight unique rates and original as-of date")
+        cells = rows[n]
+        currency = re.search(r"\b(JPY|USD|EUR|GBP|AUD|NZD|CAD|CHF)\b", " ".join(cells))
+        if (not currency or item.get("currency") != currency[1] or item.get("rate") not in cells
+                or item.get("bank") not in cells or any(x["currency"] == currency[1] for x in rates)):
+            continue
+        rates.append({"bank": item["bank"], "currency": currency[1], "rate": item["rate"], "source_url": "https://auxen.jp/"})
+    if not rates or not as_of:
+        raise ValueError("policy inheritance found no readable rate or no original as-of date")
     news.save(out / "policy.json", {"date_jst": target.isoformat(), "rates": rates,
               "source_as_of_jst": as_of[1], "method": "weekday published-index inheritance, not fresh official verification"
               + ("; Monday observation only, as-of date shown on the report" if target.weekday() == 0 else ""),
