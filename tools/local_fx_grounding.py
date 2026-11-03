@@ -885,20 +885,34 @@ def merge_duplicates(api, out, facts):
     except Exception as error:
         news.save(out / "stages" / "fact-merge-error.json", {"error": f"{type(error).__name__}: {error}"})
         return facts
-    used = set()
+    used, pairs = set(), []
     for group in result.get("groups", []):
         ids = [i for i in dict.fromkeys(group.get("fact_ids", [])) if i in by_id and i not in used]
         if len(ids) < 2:
             continue
         keep = max((by_id[i] for i in ids), key=lambda x: (len(numbers(x["fact"])), len(x["fact"])))
-        for i in ids:
-            other = by_id[i]
-            if other is keep or not numbers(other["fact"]) <= numbers(keep["fact"]):
-                continue
-            other["claim_gate_accepted"] = False
-            other["merged_into"] = keep["fact_id"]
-            keep.setdefault("source_context", {}).setdefault("also_stated_in", []).append(other.get("source_title", ""))
+        pairs += [(by_id[i], keep) for i in ids if by_id[i] is not keep and numbers(by_id[i]["fact"]) <= numbers(keep["fact"])]
         used.update(ids)
+    if not pairs:
+        return facts
+    try:  # a narrow second question per pair: does the fact to drop say anything the kept one does not?
+        checked = api.infer_cached(out, "fact-merge-check-extract",
+                                   "各組について、dropped(消す側)に、kept(残す側)に書かれていない情報(発言者、原因の説明、別の出来事、数字、時刻など)が"
+                                   "あるかを答える。あればdropped_adds_informationをtrueにする。",
+                                   [{"no": n, "kept": k["fact"], "dropped": d["fact"]} for n, (d, k) in enumerate(pairs)],
+                                   news.schema({"checks": {"type": "array", "items": news.schema({
+                                       "no": {"type": "integer"}, "dropped_adds_information": {"type": "boolean"}})}}),
+                                   max_bytes=200000)
+    except Exception as error:
+        news.save(out / "stages" / "fact-merge-error.json", {"error": f"{type(error).__name__}: {error}"})
+        return facts
+    adds = {c["no"]: c["dropped_adds_information"] for c in checked.get("checks", [])}
+    for n, (other, keep) in enumerate(pairs):
+        if adds.get(n, True):  # no answer counts as "adds information": keep the fact
+            continue
+        other["claim_gate_accepted"] = False
+        other["merged_into"] = keep["fact_id"]
+        keep.setdefault("source_context", {}).setdefault("also_stated_in", []).append(other.get("source_title", ""))
     return facts
 
 
