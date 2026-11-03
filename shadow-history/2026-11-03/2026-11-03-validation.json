@@ -1,0 +1,209 @@
+{
+  "date": "2026-11-03",
+  "generated_at_jst": "2026-11-03T11:15:46+09:00",
+  "source_count": 3,
+  "event_count": 13,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "Construction Spending m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "ISM Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "54.5",
+      "previous": "54.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "ISM Manufacturing Prices",
+      "importance": "low",
+      "forecast": "77.2",
+      "previous": "77.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:00",
+      "country": "USD",
+      "name": "Loan Officer Survey",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Building Consents m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:00",
+      "country": "JPY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "12:30",
+      "country": "AUD",
+      "name": "Cash Rate",
+      "importance": "high",
+      "forecast": "4.85%",
+      "previous": "4.60%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "12:30",
+      "country": "AUD",
+      "name": "RBA Monetary Policy Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "12:30",
+      "country": "AUD",
+      "name": "RBA Rate Statement",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "13:30",
+      "country": "AUD",
+      "name": "RBA Press Conference",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:30",
+      "country": "CHF",
+      "name": "CPI m/m",
+      "importance": "medium",
+      "forecast": "0.0%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "French Gov Budget Balance",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-159.6B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:33",
+      "country": "GBP",
+      "name": "10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.42|3.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:00 USD Construction Spending m/m",
+    "single source: 00:00 USD ISM Manufacturing PMI",
+    "single source: 00:00 USD ISM Manufacturing Prices",
+    "single source: 04:00 USD Loan Officer Survey",
+    "single source: 06:45 NZD Building Consents m/m",
+    "single source: 09:00 JPY Bank Holiday",
+    "single source: 12:30 AUD Cash Rate",
+    "single source: 12:30 AUD RBA Monetary Policy Statement",
+    "single source: 12:30 AUD RBA Rate Statement",
+    "single source: 13:30 AUD RBA Press Conference",
+    "single source: 16:30 CHF CPI m/m",
+    "single source: 16:45 EUR French Gov Budget Balance",
+    "single source: 19:33 GBP 10-y Bond Auction",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
