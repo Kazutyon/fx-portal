@@ -317,6 +317,62 @@ def other_previous_facts(material: list, shown: set, limit: int = 30) -> list:
             and x["fact_id"] not in shown][:limit]
 
 
+def fallback_topics(material: list, take, by_id: dict):
+    """No model: when the topic selection could not be had, line up the previous session's facts article by article
+    (the first article's first fact leads, then up to four facts per article for up to five articles). The result is
+    plainer than the model's choice and is reported as a gap."""
+    previous = [x for x in material if x.get("fact_id", "").startswith("N") and x.get("event_scope") == "previous"
+                and not is_view(x) and not is_theme(x)]
+    articles = {}
+    for x in previous:
+        articles.setdefault(x["fact_id"].split("-")[0], []).append(x)
+    hero_facts = take([previous[0]["fact_id"]]) if previous else []
+    topic_list, topic_facts = [], []
+    for facts in articles.values():
+        chosen = take([x["fact_id"] for x in facts[:4]])
+        if not chosen:
+            continue
+        pair = next((p for x in chosen for p in (x.get("pairs") or [])), "")
+        topic_list.append({"title": f"{site_of(chosen[0])}: {pair or '市場全体'}の動き", "body": join_facts(chosen)})
+        topic_facts.append(chosen)
+        if len(topic_list) == 5:
+            break
+    summary_ids = list(closing_ids(material).values())[:6]
+    return hero_facts, topic_list, topic_facts, {"summary_ids": summary_ids, "market_view_ids": []}
+
+
+VERIFY_INPUT_BYTES = 115000  # about 36k tokens; the check and repair calls reserve VERIFY_OUTPUT_TOKENS of the 64k context for the answer
+VERIFY_OUTPUT_TOKENS = 22000  # thinking alone used 12000 tokens on 2026-10-06; the answers themselves are 5-6k
+
+
+def fit_to_context(data: dict, limit: int = VERIFY_INPUT_BYTES):
+    """The material grew with the uncapped extraction (338 facts on 2026-11-04): the check and repair inputs reached 300 KB and
+    the server silently cut the prompt to half the context, so the checker saw only part of the evidence. Shrink what is sent
+    in the order of least loss: the verbatim quote of every fact first (the fact sentence stays), then the article passages from
+    the end. Returns the data and what was cut (empty when everything fit)."""
+    size = lambda d: len(json.dumps(d, ensure_ascii=False).encode())
+    cut = {}
+    if size(data) > limit:
+        data = {**data, "facts": [{k: v for k, v in f.items() if k != "quote"} for f in data["facts"]]}
+        cut["quotes_removed"] = True
+    passages_all = list(data.get("original_passages", []))
+    kept = passages_all
+    while size({**data, "original_passages": kept}) > limit and kept:
+        kept = kept[:-max(1, len(kept) // 10)]
+    if len(kept) < len(passages_all):
+        data = {**data, "original_passages": kept}
+        cut["passages_kept"] = f"{len(kept)}/{len(passages_all)}"
+    return data, cut
+
+
+def advisory(review, *args) -> dict:
+    """A second-opinion check only adds findings: if it fails, the report is kept and the failure is recorded."""
+    try:
+        return review(*args)
+    except Exception as error:
+        return {"status": "error", "reason": f"{type(error).__name__}: {str(error)[:120]}"}
+
+
 def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary_facts: list, market_views: list,
                 risk_views: list, topic_facts: list, key_events: list, date_facts: dict, high_events: list,
                 material: list | None = None, weekly: str = "", quotes: list | None = None, gaps: list | None = None) -> None:
@@ -405,6 +461,11 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
              "市場関係者の見方は『〜と指摘されている』のように出所を明示する。"
              "同じ指標や価格が日中に上下した場合は、高値・安値・その後の動きの前後関係が読み手に分かるように書き、時点の違う数値を並べて矛盾して見える書き方をしない。")
     plain = {k: v for k, v in data.items() if k != "ranking_top5"}  # only the focus call needs the ranking
+    # The two picking calls answer with ids only, so the fact sentence is enough; the verbatim quotes and article passages
+    # (about half of the input) only matter to the writer and the checks. A shorter list is easier to choose from.
+    lean_facts = [{k: v for k, v in f.items() if k != "quote"} for f in data["facts"]]
+    picking = {k: v for k, v in plain.items() if k != "original_passages"}
+    picking["facts"] = lean_facts
     by_id = {x["fact_id"]: x for x in material}
     view_ids = [x["fact_id"] for x in material if is_view(x)]
     theme_ids = [x["fact_id"] for x in material if is_theme(x)]
@@ -433,12 +494,19 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         used.update(x["fact_id"] for x in facts)
         return facts
 
-    # A long material list can make the model repeat one id in every slot (2026-11-04: "N7-0" everywhere, so no topic
-    # got a fact). Ask again, telling the model what went wrong, instead of stopping the whole report.
-    retry_note = ""
+    # A picking call can fail (cut-off output, schema mismatch) or return an unusable answer (2026-11-04: the same id in
+    # every slot, so no topic got a fact). Ask again and tell the model what went wrong; if it still fails, build the
+    # topics from the material in article order and record the gap, so the report is always written.
+    retry_note, topic_list, topic_facts = "", [], []
+    topics = {"hero_ids": [], "summary_ids": [], "market_view_ids": []}
+    hero_facts = []
     for attempt in range(3):
-        topics = call(out, "oneshot-2-topics" if attempt == 0 else f"oneshot-2-topics-retry{attempt}",
-                      topics_task + retry_note, plain, topics_schema)
+        try:
+            topics = call(out, "oneshot-2-topics" if attempt == 0 else f"oneshot-2-topics-retry{attempt}",
+                          topics_task + retry_note, picking, topics_schema)
+        except Exception as error:
+            retry_note = f"前回は答えが使えなかった({type(error).__name__}: {str(error)[:80]})。短く、指定の形で答える。"
+            continue
         used.clear()
         hero_facts = take(topics["hero_ids"])
         topic_list, topic_facts = [], []
@@ -452,21 +520,23 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         retry_note = ("前回の答えは、同じidを繰り返していて、どの話題にも事実が割り当たらず、使えなかった。"
                       "heroと各話題とsummaryで、資料の別々のfactのidを選び直す。")
     if not topic_list:
-        raise ValueError("oneshot-2-topics: no usable topics after 3 attempts")
+        used.clear()
+        hero_facts, topic_list, topic_facts, topics = fallback_topics(material, take, by_id)
+        daily.record_gap(out, "話題の選定", "モデルの選定が3回とも使えず、記事の順に事実を並べた")
+        gaps = gaps + [{"item": "話題の選定", "reason": "モデルの選定が3回とも使えず、記事の順に事実を並べた"}]
     summary_facts = take(topics["summary_ids"])
     titles = "、".join(t["title"] for t in topic_list)
     market_views = [by_id[i] for i in dict.fromkeys(topics.get("market_view_ids", [])) if i in by_id and is_view(by_id[i])]
     point_ids = view_ids + theme_ids + [f"e{n}" for n in range(1, len(calendar["events"]) + 1)]
-    today = call(out, "oneshot-3-today", style +
+    today_task = (style +
                  "本日の見通しのうち、文章は書かず、資料の項目を番号で選ぶだけにする。"
                  "focus_pairはranking_top5から1ペア。focus_view_idは、選んだ通貨ペアに関する市場関係者の見解のfactのid(なければ空文字)。"
                  f"risk_view_idsは、本日から今週の相場を動かしうる最大のリスクに直結する市場関係者の見解のfactのid(最大2件、見解のidは{view_ids}から。数か月先の予測は選ばない)。"
                  f"point_idsは、本日の注目点として読者に伝えるべき、重複しない項目のid3件(risk_view_idsと同じidは選ばない。factのid、または予定e<today_calendarのno>)。"
                  "key_event_nosは、本日の相場を動かす主要予定のtoday_calendarのno(整数)を8〜12件。"
                  "各国の政策・景況・物価・雇用の主要指標と、中央銀行総裁・要人発言を優先し、同じ指標の副項目や小さな指標は含めない。"
-                 "本文で取り上げる通貨ペア(例: ユーロドル、ドル円)に関わる予定を必ず含める。",
-                 data,
-                 news.schema({**({"focus_pair": {"type": "string", "enum": pairs}} if pairs else {}),
+                 "本文で取り上げる通貨ペア(例: ユーロドル、ドル円)に関わる予定を必ず含める。")
+    today_schema = (news.schema({**({"focus_pair": {"type": "string", "enum": pairs}} if pairs else {}),
                               "focus_view_id": {"type": "string", "enum": view_ids + [""]},
                               "risk_view_ids": {"type": "array", "minItems": 0, "maxItems": 2, "items": {"type": "string", "enum": view_ids or [""]}},
                               # a day with few schedule rows (or none: the calendar could not be fetched) allows fewer picks
@@ -474,6 +544,20 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                                             "items": {"type": "string", "enum": point_ids or [""]}},
                               "key_event_nos": {"type": "array", "minItems": min(8, len(events)), "maxItems": min(12, len(events)),
                                                 "items": {"type": "integer"}}}))
+    # The picks are an aid, not a precondition: if two asks fail, the report is written from the schedule's own key events
+    # and without a focus-view / risk-view / extra points.
+    picking_today = {**picking, "ranking_top5": data["ranking_top5"]}
+    today, today_note = None, ""
+    for attempt in range(2):
+        try:
+            today = call(out, "oneshot-3-today" if attempt == 0 else "oneshot-3-today-retry1", today_task + today_note, picking_today, today_schema)
+            break
+        except Exception as error:
+            today_note = f"前回は答えが使えなかった({type(error).__name__}: {str(error)[:80]})。短く、指定の形で答える。"
+    if today is None:
+        daily.record_gap(out, "今日の見通しの選定", "モデルの選定が2回とも使えず、予定表の主要予定だけで書いた")
+        gaps = gaps + [{"item": "今日の見通しの選定", "reason": "モデルの選定が2回とも使えず、予定表の主要予定だけで書いた"}]
+        today = {"focus_pair": pairs[0] if pairs else "", "focus_view_id": "", "risk_view_ids": [], "point_ids": [], "key_event_nos": []}
 
     # The feed's own importance grades are the only filter for "key events"; with a single source (Forex Factory
     # refused) they miss e.g. the Tankan and ISM, so use the model's selection (indices only) when it is valid.
@@ -506,8 +590,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     points = points[:3]
     high = sum(1 for e in calendar["events"] if e["importance"] == "high")
     sections = {"topics": topic_list,
-                "hero": join_facts(hero_facts) if hero_facts else f"{topic_list[0]['title']}。",
-                "headline": topic_list[0]["title"],
+                "hero": join_facts(hero_facts) if hero_facts else (f"{topic_list[0]['title']}。" if topic_list else "前営業日の主な出来事は材料から選べなかった。"),
+                "headline": topic_list[0]["title"] if topic_list else "前営業日の相場",
                 "summary": join_facts(summary_facts) if summary_facts else f"前営業日の主な話題: {titles}。",
                 "market": join_sourced(market_views) or no_market_view_text(titles) or "前営業日の主な話題は材料束にない。",
                 "handover": handover_text(chosen),
@@ -561,8 +645,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                                      if re.search(daily.FORBIDDEN, v, re.I) or re.search(CODE_LIKE, v)],
                 "meta_wording": [k for k, v in texts.items() if re.search(r"資料に基づ|記載の範囲|資料に記載|資料にない", v)]}
 
-    verify_data = {"date_facts": data["date_facts"], "facts": data["facts"] + compact(quotes), "today_calendar": events,
-                   "original_passages": data["original_passages"]}
+    verify_data, trimmed = fit_to_context({"date_facts": data["date_facts"], "facts": data["facts"] + compact(quotes),
+                                           "today_calendar": events, "original_passages": data["original_passages"]})
     issue_schema = news.schema({"issues": {"type": "array", "items": news.schema({
         "sections": {"type": "array", "items": {"type": "string", "enum": keys}},
         "excerpt": S, "kind": {"type": "string", "enum": ["時制", "資料外の因果", "数値", "資料外の出来事", "予想と実績", "その他"]},
@@ -575,8 +659,10 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     texts = texts_of(sections)
     checks = {**mechanical(texts), "chars": {k: len(v) for k, v in texts.items()}, "started_at": started,
               "publish_ready": False}
+    if trimmed:
+        checks["verify_input_trimmed"] = trimmed
     try:  # the semantic check is advisory: a cut-off or failed check must not lose the written report
-        review = call(out, "oneshot-4-verify", verify_task, {**verify_data, "draft": texts}, issue_schema, 30000)
+        review = call(out, "oneshot-4-verify", verify_task, {**verify_data, "draft": texts}, issue_schema, VERIFY_OUTPUT_TOKENS)
     except Exception as error:
         review = {"issues": []}
         checks["semantic_check_error"] = f"{type(error).__name__}: {error}"
@@ -584,11 +670,11 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     checks["before_repair"] = {"texts": texts}
     # Second opinion from a different model (Codex Luna); its findings join the repair list below.
     # Failure or disabled just means no extra findings (see local_fx_external_review.py).
-    checks["external_review_before"] = external_review.review(out, verify_data, texts)
+    checks["external_review_before"] = advisory(external_review.review, out, verify_data, texts)
     external_issues = external_review.usable_issues(checks["external_review_before"], keys)
     use_claim_check = feature("FX_CLAIM_CHECK", "claim_check")  # local sentence-level support check (no Codex)
     if use_claim_check:
-        checks["claim_check_before"] = claim_check.review(out, verify_data, texts, os.environ.get("FX_REVIEW_MODEL") or None)
+        checks["claim_check_before"] = advisory(claim_check.review, out, verify_data, texts, os.environ.get("FX_REVIEW_MODEL") or None)
         external_issues += external_review.usable_issues(checks["claim_check_before"], keys)
 
     flagged = ({k for i in review["issues"] + external_issues for k in i["sections"]} | set(checks["number_date_errors"]) |
@@ -607,7 +693,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                          "fixesには修正が必要なsectionだけを、修正後の全文で返す。",
                          {**verify_data, "problems": problems, "current": {k: texts[k] for k in sorted(flagged)}},
                          news.schema({"fixes": {"type": "array", "items": news.schema({
-                             "section": {"type": "string", "enum": sorted(flagged)}, "text": S})}}), 30000)  # thinking alone used 12000 tokens on 2026-10-06
+                             "section": {"type": "string", "enum": sorted(flagged)}, "text": S})}}), VERIFY_OUTPUT_TOKENS)  # thinking alone used 12000 tokens on 2026-10-06
             for fix in fixed["fixes"]:
                 k, text = fix["section"], fix["text"]
                 if k.startswith("title"):
@@ -621,15 +707,16 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
             checks["repaired_sections"] = [f["section"] for f in fixed["fixes"]]
         except Exception as error:
             checks["repair_error"] = f"{type(error).__name__}: {error}"
-    sections["headline"] = sections["topics"][0]["title"]  # the headline is the lead topic's title (may have been repaired)
+    if sections["topics"]:
+        sections["headline"] = sections["topics"][0]["title"]  # the headline is the lead topic's title (may have been repaired)
     news.save(out / "sections.json", sections)
     texts_after = texts_of(sections)
     checks["after_repair"] = {**mechanical(texts_after), "chars": {k: len(v) for k, v in texts_after.items()}}
     # Re-check the repaired text with the same reviewer; recorded only, no further rewrite.
-    checks["external_review_after"] = (external_review.review(out, verify_data, texts_after)
+    checks["external_review_after"] = (advisory(external_review.review, out, verify_data, texts_after)
                                        if checks.get("repaired_sections") else {"status": "skipped", "reason": "nothing repaired"})
     if use_claim_check:  # recorded only, like the external re-check
-        checks["claim_check_after"] = (claim_check.review(out, verify_data, texts_after, os.environ.get("FX_REVIEW_MODEL") or None)
+        checks["claim_check_after"] = (advisory(claim_check.review, out, verify_data, texts_after, os.environ.get("FX_REVIEW_MODEL") or None)
                                        if checks.get("repaired_sections") else {"status": "skipped", "reason": "nothing repaired"})
     checks["finished_at"] = datetime.now(daily.JST).isoformat()
     news.save(out / "oneshot-checks.json", checks)

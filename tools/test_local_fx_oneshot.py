@@ -100,20 +100,48 @@ class OneshotTests(unittest.TestCase):
         self.assertIn("同じidを繰り返して", tasks["oneshot-2-topics-retry1"])
         self.assertEqual(len(sections["topics"]), 4)
 
-    def test_topic_selection_that_never_gets_usable_says_so(self):
+    def test_topic_selection_that_never_gets_usable_still_writes_a_report(self):
         material, calendar, ranking = self.inputs()
 
         def calls(out, label, task, data, schema, *rest):
-            one = canned(out, "topics", task, data, schema)["hero_ids"][0]
-            return {"hero_ids": [one], "summary_ids": [one] * 4, "market_view_ids": [],
-                    "topics": [{"title": "話題", "fact_ids": [one, one]}] * 4}
+            if "topics" in label:
+                one = canned(out, "topics", task, data, schema)["hero_ids"][0]
+                return {"hero_ids": [one], "summary_ids": [one] * 4, "market_view_ids": [],
+                        "topics": [{"title": "話題", "fact_ids": [one, one]}] * 4}
+            if "today" in label:
+                raise ValueError("oneshot-3-today: wrong model or incomplete response (length)")
+            return canned(out, label, task, data, schema)
 
         with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
             out = Path(folder) / "oneshot"
             out.mkdir()
             (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "no usable topics after 3 attempts"):
-                oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+            oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+            sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
+            gaps = json.loads((out / "gaps.json").read_text(encoding="utf-8"))
+            self.assertTrue((out / "report.html").exists())
+        self.assertGreaterEqual(len(sections["topics"]), 1)  # built from the material in article order
+        self.assertEqual({g["item"] for g in gaps}, {"話題の選定", "今日の見通しの選定"})
+        self.assertIn("今朝取得できなかった情報", sections["calendar_notes"])
+        self.assertTrue(sections["points"])  # filled from today's key schedule
+
+    def test_picking_calls_receive_the_fact_sentences_without_quotes(self):
+        material, calendar, ranking = self.inputs()
+        seen = {}
+
+        def calls(out, label, task, data, schema, *rest):
+            if label.endswith(("topics", "today")):
+                seen[label] = data
+            return canned(out, label, task, data, schema)
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
+            out = Path(folder) / "oneshot"
+            out.mkdir()
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+        for data in seen.values():
+            self.assertTrue(all("quote" not in f for f in data["facts"]))
+            self.assertNotIn("original_passages", data)
 
     def test_interpretive_sections_are_assembled_from_chosen_ids_only(self):
         material, calendar, ranking = self.inputs()
@@ -145,6 +173,17 @@ class OneshotTests(unittest.TestCase):
         self.assertRegex(sections["risk_level"], r"^高重要度予定 \d+件$")
         pair_ok = sections["focus_pair"] in (view.get("pairs") or [])
         self.assertEqual(oneshot.sentence(view) in sections["focus_body"], pair_ok)  # a view about other pairs is not attached
+
+    def test_check_input_is_cut_to_fit_the_context_quotes_first_then_passages(self):
+        facts = [{"id": f"N{i}-0", "fact": "ドル円は158円。", "quote": "引用" * 200} for i in range(100)]
+        small, cut = oneshot.fit_to_context({"facts": facts[:2], "original_passages": ["a"]})
+        self.assertEqual((cut, small["facts"][0]["quote"][:2]), ({}, "引用"))  # fits: nothing is removed
+        big, cut = oneshot.fit_to_context({"facts": facts, "original_passages": ["段落" * 100 + str(i) for i in range(400)]})
+        self.assertTrue(cut["quotes_removed"])
+        self.assertTrue(all("quote" not in f for f in big["facts"]) and len(big["facts"]) == 100)  # every fact sentence stays
+        self.assertLess(len(big["original_passages"]), 400)
+        self.assertLessEqual(len(json.dumps(big, ensure_ascii=False).encode()), oneshot.VERIFY_INPUT_BYTES)
+        self.assertEqual(big["original_passages"][0], "段落" * 100 + "0")  # passages are cut from the end
 
     def test_join_facts_drops_a_repeated_lead_in_but_keeps_the_first(self):
         a = {"fact": "2026年10月8日のニューヨーク外国為替市場で、ドル円は157.88円で終えた。"}
@@ -291,7 +330,7 @@ class OneshotTests(unittest.TestCase):
 
         def calls(out, label, task, data, schema, *rest):
             if label.endswith("repair"):
-                self.assertEqual(rest, (30000,))  # thinking alone used 12000 on 2026-10-06
+                self.assertEqual(rest, (oneshot.VERIFY_OUTPUT_TOKENS,))  # thinking alone used 12000 on 2026-10-06
                 raise ValueError("oneshot-5-repair: wrong model or incomplete response (length)")
             return canned(out, label, task, data, schema)
 
@@ -321,7 +360,7 @@ class OneshotTests(unittest.TestCase):
 
     def test_failure_is_recorded_and_does_not_raise(self):
         material, calendar, ranking = self.inputs()
-        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=ValueError("boom")):
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "generate", side_effect=ValueError("boom")):
             out = Path(folder)
             (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
             grounding.run_oneshot(out, date(2026, 9, 30), material, calendar, ranking)
