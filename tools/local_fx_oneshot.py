@@ -296,25 +296,49 @@ def site_of(x: dict) -> str:
     return SITE.get(host, host)
 
 
-def price_moves(material: list, limit_pairs: int = 4, per_pair: int = 4) -> list:
-    """The previous day's close and range per pair, so the writer can state the day's net result in one line."""
+def price_move_ids(material: list, limit_pairs: int = 4, per_pair: int = 4) -> dict:
+    """pair -> the fact ids of the previous day's close and range statements shown to the writer for that pair."""
     closes = closing_ids(material)
-    by_id = {x["fact_id"]: x for x in material}
-    moves = []
+    result = {}
     for pair, close_id in list(closes.items())[:limit_pairs]:
         ids = [close_id] + [x["fact_id"] for x in material
                             if x["fact_id"] != close_id and x.get("event_scope") == "previous" and x.get("pairs") == [pair]
                             and re.search(r"高値|安値|一時|まで", x.get("fact", ""))]
-        moves.append({"通貨ペア": pair, "値動き": [{"fact": by_id[i]["fact"], "source": site_of(by_id[i])}
-                                                   for i in ids[:per_pair]]})
-    return moves
+        result[pair] = ids[:per_pair]
+    return result
+
+
+def price_moves(material: list, limit_pairs: int = 4, per_pair: int = 4) -> list:
+    """The previous day's close and range per pair, so the writer can state the day's net result in one line."""
+    by_id = {x["fact_id"]: x for x in material}
+    return [{"通貨ペア": pair, "値動き": [{"fact": by_id[i]["fact"], "source": site_of(by_id[i])} for i in ids]}
+            for pair, ids in price_move_ids(material, limit_pairs, per_pair).items()]
+
+
+def other_previous(material: list, shown: set, limit: int = 30) -> list:
+    return [x for x in material
+            if x.get("fact_id", "").startswith("N") and x.get("event_scope") == "previous" and x.get("kind") != "outlook"
+            and x["fact_id"] not in shown][:limit]
 
 
 def other_previous_facts(material: list, shown: set, limit: int = 30) -> list:
     """Previous-day facts the topic selection did not pick (stocks, oil, gold, positioning...) as background for the writer."""
-    return [{"fact": x["fact"], "source": site_of(x)} for x in material
-            if x.get("fact_id", "").startswith("N") and x.get("event_scope") == "previous" and x.get("kind") != "outlook"
-            and x["fact_id"] not in shown][:limit]
+    return [{"fact": x["fact"], "source": site_of(x)} for x in other_previous(material, shown, limit)]
+
+
+FOLD_ABOVE = 120  # more pickable facts than this are read in parts, each compared with the current choice
+FOLD_BATCH = 70
+
+
+def fold_parts(ids: list) -> list:
+    """Split fact ids (in material order) into parts of about FOLD_BATCH, each ending at an article boundary."""
+    parts, part = [], []
+    for i in ids:
+        if len(part) >= FOLD_BATCH and i.split("-")[0] != part[-1].split("-")[0]:
+            parts.append(part)
+            part = []
+        part.append(i)
+    return parts + ([part] if part else [])
 
 
 def fallback_topics(material: list, take, by_id: dict):
@@ -375,7 +399,7 @@ def advisory(review, *args) -> dict:
 
 def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary_facts: list, market_views: list,
                 risk_views: list, topic_facts: list, key_events: list, date_facts: dict, high_events: list,
-                material: list | None = None, weekly: str = "", quotes: list | None = None, gaps: list | None = None) -> None:
+                material: list | None = None, weekly: str = "", quotes: list | None = None, gaps: list | None = None) -> set:
     """Experiment (FX_WRITE_BODIES=1): the model writes hero/summary/topic bodies/market/risk as prose from the chosen
     facts, the way the Claude morning run does. Numbers are still checked mechanically against the evidence afterwards."""
     def facts_of(items):
@@ -387,11 +411,13 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
             "本日の主な予定": [event_label(e) for e in key_events],
             "本日の高重要度の予定": [{"時刻": e["time"], "国": e["country"], "名称": e["name"],
                                       "予想": e["forecast"], "前回": e["previous"]} for e in high_events]}
+    shown = {x["fact_id"] for x in hero_facts + summary_facts + market_views + risk_views}
+    shown.update(x["fact_id"] for facts in topic_facts for x in facts)
     if material:
         data["前営業日の値動き"] = price_moves(material)
-        shown = {x["fact_id"] for x in hero_facts + summary_facts + market_views + risk_views}
-        shown.update(x["fact_id"] for facts in topic_facts for x in facts)
         data["前営業日のその他の材料"] = other_previous_facts(material, shown)
+        shown.update(i for ids in price_move_ids(material).values() for i in ids)
+        shown.update(x["fact_id"] for x in other_previous(material, shown))
     if quotes:
         data["前営業日の株・商品・金利の終値"] = [q["fact"] for q in quotes]
     if weekly:
@@ -423,6 +449,7 @@ def write_prose(out: Path, style: str, sections: dict, hero_facts: list, summary
     sections["market"], sections["risk_body"] = result["market"].strip(), result["risk"].strip()
     for t, body in zip(sections["topics"], result["topic_bodies"]):
         t["body"] = body.strip()
+    return shown
 
 
 def generate(out: Path, target: date, material: list, calendar: dict, ranking: dict, policy: dict) -> dict:
@@ -477,13 +504,19 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                    "titleは話題の見出し(30字以内。資料にある語と数値だけを使い、資料にない因果や数値は書かない)。最重要材料の話題を先頭にする。"
                    "summary_idsは、前営業日の市場全体(主要通貨ペアの終値、主要指標の結果など)を整理するfactのid(4〜6件)。"
                    "hero・各話題・summaryで同じfactを使わない。"
-                   f"market_view_idsは、本日の地合いの判断材料となる市場関係者の見解のid(最大3件、{view_ids}から)。")
-    topics_schema = news.schema({"hero_ids": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "enum": event_ids}},
-                                 "topics": {"type": "array", "minItems": 4, "maxItems": 5, "items": news.schema({
-                                     "title": S, "fact_ids": {"type": "array", "minItems": 2, "maxItems": 5,
-                                                              "items": {"type": "string", "enum": event_ids}}})},
-                                 "summary_ids": {"type": "array", "minItems": 4, "maxItems": 6, "items": {"type": "string", "enum": event_ids}},
-                                 "market_view_ids": {"type": "array", "minItems": 0, "maxItems": 3, "items": {"type": "string", "enum": view_ids or [""]}}})
+                   "market_view_idsは、本日の地合いの判断材料となる市場関係者の見解のid(最大3件)。")
+    fold_task = ("これは資料の一部で、全体は何回かに分けて読んでいる。『現在の選定』は、ここまでに読んだ分から選んだもの。"
+                 "この一部の中に、現在の選定より重要な材料や、現在の選定にない主要な出来事があれば入れ替えて、選定全体を更新して返す。"
+                 "入れ替える必要がなければ、現在の選定をそのまま返す。")
+
+    def topics_schema_for(events: list, views: list) -> dict:
+        return news.schema({"hero_ids": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "enum": events}},
+                            "topics": {"type": "array", "minItems": 4, "maxItems": 5, "items": news.schema({
+                                "title": S, "fact_ids": {"type": "array", "minItems": 2, "maxItems": 5,
+                                                         "items": {"type": "string", "enum": events}}})},
+                            "summary_ids": {"type": "array", "minItems": 4, "maxItems": 6, "items": {"type": "string", "enum": events}},
+                            "market_view_ids": {"type": "array", "minItems": 0, "maxItems": 3, "items": {"type": "string", "enum": views or [""]}}})
+
     used = set()
 
     closes = closing_ids(material)
@@ -494,36 +527,64 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         used.update(x["fact_id"] for x in facts)
         return facts
 
-    # A picking call can fail (cut-off output, schema mismatch) or return an unusable answer (2026-11-04: the same id in
-    # every slot, so no topic got a fact). Ask again and tell the model what went wrong; if it still fails, build the
-    # topics from the material in article order and record the gap, so the report is always written.
-    retry_note, topic_list, topic_facts = "", [], []
-    topics = {"hero_ids": [], "summary_ids": [], "market_view_ids": []}
-    hero_facts = []
-    for attempt in range(3):
-        try:
-            topics = call(out, "oneshot-2-topics" if attempt == 0 else f"oneshot-2-topics-retry{attempt}",
-                          topics_task + retry_note, picking, topics_schema)
-        except Exception as error:
-            retry_note = f"前回は答えが使えなかった({type(error).__name__}: {str(error)[:80]})。短く、指定の形で答える。"
-            continue
+    def assemble(answer):
         used.clear()
-        hero_facts = take(topics["hero_ids"])
+        hero = take(answer["hero_ids"])
         topic_list, topic_facts = [], []
-        for t in topics["topics"]:
+        for t in answer["topics"]:
             chosen_facts = take(t["fact_ids"])
             if chosen_facts:
                 topic_list.append({"title": t["title"], "body": join_facts(chosen_facts)})
                 topic_facts.append(chosen_facts)
-        if topic_list:
-            break
-        retry_note = ("前回の答えは、同じidを繰り返していて、どの話題にも事実が割り当たらず、使えなかった。"
-                      "heroと各話題とsummaryで、資料の別々のfactのidを選び直す。")
-    if not topic_list:
+        return hero, topic_list, topic_facts
+
+    # The choice never sees hundreds of facts at once (2026-11-04: ~250 ids made the model repeat one id): a long list is
+    # read in parts, and each part is compared with the choice made so far, which is updated (nothing is summarised away).
+    # A call can fail (cut-off output, schema mismatch) or return an unusable answer (the same id in every slot, so no topic
+    # got a fact): ask again and say what went wrong. If nothing usable comes out, build the topics from the material in
+    # article order and record the gap, so the report is always written.
+    event_set, view_set = set(event_ids), set(view_ids)
+    pickable = [x["fact_id"] for x in material if x["fact_id"] in event_set or x["fact_id"] in view_set]
+    parts = fold_parts(pickable) if len(pickable) > FOLD_ABOVE else [pickable]
+    lean_by_id = {f["id"]: f for f in lean_facts}
+    state, hero_facts, topic_list, topic_facts = None, [], [], []
+    for n, part in enumerate(parts, 1):
+        carried = set()
+        if state:
+            carried = set(state["hero_ids"] + state["summary_ids"] + state["market_view_ids"]) | {i for t in state["topics"] for i in t["fact_ids"]}
+        events = [i for i in dict.fromkeys(list(carried) + part) if i in event_set]
+        views = [i for i in dict.fromkeys(list(carried) + part) if i in view_set]
+        if not events:
+            continue
+        data_k = {**picking, "facts": [lean_by_id[i] for i in dict.fromkeys(list(carried) + part) if i in lean_by_id]}
+        if state:
+            data_k["現在の選定"] = state
+        retry_note = ""
+        for attempt in range(3):
+            label = "oneshot-2-topics" if len(parts) == 1 else f"oneshot-2-topics-part{n}"
+            try:
+                answer = call(out, label + ("" if attempt == 0 else f"-retry{attempt}"),
+                              topics_task + (fold_task if state else "") + retry_note, data_k, topics_schema_for(events, views))
+            except Exception as error:
+                retry_note = f"前回は答えが使えなかった({type(error).__name__}: {str(error)[:80]})。短く、指定の形で答える。"
+                continue
+            hero, tl, tf = assemble(answer)
+            if tl:
+                state, hero_facts, topic_list, topic_facts = answer, hero, tl, tf
+                break
+            retry_note = ("前回の答えは、同じidを繰り返していて、どの話題にも事実が割り当たらず、使えなかった。"
+                          "heroと各話題とsummaryで、資料の別々のfactのidを選び直す。")
+    topics = state
+    if state:
+        hero_facts, topic_list, topic_facts = assemble(state)
+    else:
         used.clear()
         hero_facts, topic_list, topic_facts, topics = fallback_topics(material, take, by_id)
-        daily.record_gap(out, "話題の選定", "モデルの選定が3回とも使えず、記事の順に事実を並べた")
-        gaps = gaps + [{"item": "話題の選定", "reason": "モデルの選定が3回とも使えず、記事の順に事実を並べた"}]
+        daily.record_gap(out, "話題の選定", "モデルの選定が使えず、記事の順に事実を並べた")
+        gaps = gaps + [{"item": "話題の選定", "reason": "モデルの選定が使えず、記事の順に事実を並べた"}]
+    if len(parts) > 1:  # the next choice needs the views and the facts already chosen, not every event
+        kept = set(topics.get("hero_ids", []) + topics.get("summary_ids", [])) | {i for t in topics.get("topics", []) for i in t["fact_ids"]}
+        picking["facts"] = [f for f in lean_facts if not f["id"].startswith("N") or f["id"] in view_set or f["id"] in kept]
     summary_facts = take(topics["summary_ids"])
     titles = "、".join(t["title"] for t in topic_list)
     market_views = [by_id[i] for i in dict.fromkeys(topics.get("market_view_ids", [])) if i in by_id and is_view(by_id[i])]
@@ -572,7 +633,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     risk_views = [by_id[i] for i in dict.fromkeys(today.get("risk_view_ids", []))
                   if i in by_id and is_view(by_id[i]) and i not in market_ids
                   and not restates(by_id[i]["fact"], [x["fact"] for x in market_views])]
-    points = []
+    points, point_fact_ids = [], []
     for i in dict.fromkeys(today.get("point_ids", [])):
         if i in {v["fact_id"] for v in risk_views}:
             continue  # the same material is not repeated across sections
@@ -580,6 +641,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
             points.append("本日の予定: " + event_label(calendar["events"][int(i[1:]) - 1]) + "。")
         elif i in by_id:
             points.append(sentence(by_id[i]))
+            point_fact_ids.append(i)
     rank = {"high": 0, "medium": 1}
     for e in sorted(chosen, key=lambda x: rank.get(x.get("importance"), 2)):  # the model may repeat or miss an id: fill up to three from today's key schedule, most important first (time order within a grade)
         text = "本日の予定: " + event_label(e) + "。"
@@ -603,9 +665,16 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                 "risk_body": join_sourced(risk_views) or risk_fallback(calendar["events"]),
                 "points": [{"title": f"焦点{i+1}", "body": p} for i, p in enumerate(points)]}
     written = feature("FX_WRITE_BODIES", "prose_writer")  # experiment 2026-10-14: the model writes the prose from the chosen facts
+    # The facts the report is built from: the checks compare the text with these (plus the schedule and the closes), not with
+    # every extracted fact, so a day with hundreds of facts does not make the check input grow (2026-11-04: 306 KB, cut by the server).
+    used_ids = {x["fact_id"] for x in hero_facts + summary_facts + market_views + risk_views}
+    used_ids.update(x["fact_id"] for facts in topic_facts for x in facts)
+    used_ids.update(point_fact_ids)
+    if focus_view:
+        used_ids.add(focus_view["fact_id"])
     if written:
         try:
-            write_prose(out, style, sections, hero_facts, summary_facts, market_views, risk_views, topic_facts, chosen,
+            used_ids |= write_prose(out, style, sections, hero_facts, summary_facts, market_views, risk_views, topic_facts, chosen,
                         data["date_facts"], [e for e in events if e["importance"] == "high"],
                         material, calendar.get("weekly_themes") or "", quotes, gaps)
         except Exception as error:  # keep the assembled text; record why
@@ -645,8 +714,13 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                                      if re.search(daily.FORBIDDEN, v, re.I) or re.search(CODE_LIKE, v)],
                 "meta_wording": [k for k, v in texts.items() if re.search(r"資料に基づ|記載の範囲|資料に記載|資料にない", v)]}
 
-    verify_data, trimmed = fit_to_context({"date_facts": data["date_facts"], "facts": data["facts"] + compact(quotes),
-                                           "today_calendar": events, "original_passages": data["original_passages"]})
+    def in_report(x):  # news facts only when the report uses them; the schedule, themes and ranking facts are small and always kept
+        return not x["fact_id"].startswith("N") or x["fact_id"] in used_ids
+
+    verify_data, trimmed = fit_to_context({"date_facts": data["date_facts"],
+                                           "facts": compact([x for x in material if in_report(x)]) + compact(quotes),
+                                           "today_calendar": events,
+                                           "original_passages": passages([x for x in material if in_report(x)])})
     issue_schema = news.schema({"issues": {"type": "array", "items": news.schema({
         "sections": {"type": "array", "items": {"type": "string", "enum": keys}},
         "excerpt": S, "kind": {"type": "string", "enum": ["時制", "資料外の因果", "数値", "資料外の出来事", "予想と実績", "その他"]},

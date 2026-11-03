@@ -185,6 +185,42 @@ class OneshotTests(unittest.TestCase):
         self.assertLessEqual(len(json.dumps(big, ensure_ascii=False).encode()), oneshot.VERIFY_INPUT_BYTES)
         self.assertEqual(big["original_passages"][0], "段落" * 100 + "0")  # passages are cut from the end
 
+    def test_many_facts_are_read_in_parts_each_compared_with_the_choice_so_far(self):
+        material, calendar, ranking = self.inputs()
+        base = [f for f in material if f["fact_id"].startswith("N") and not oneshot.is_view(f) and not oneshot.is_theme(f)]
+        extra = [{**base[i % len(base)], "fact_id": f"N{900 + i // 6}-{i % 6}", "fact": f"追加の事実{i}。"} for i in range(260)]
+        material = material + extra
+        calls = []
+
+        def calls_fn(out, label, task, data, schema, *rest):
+            if "topics" in label:
+                ids = schema["properties"]["hero_ids"]["items"]["enum"]
+                self.assertLessEqual(len(data["facts"]), oneshot.FOLD_BATCH + 40)  # no call sees all of the hundreds of facts
+                calls.append((label, bool(data.get("現在の選定")), ids))
+                if "part2" in label:
+                    raise ValueError("cut off")  # this part is skipped, the choice so far stays
+                return {"hero_ids": ids[:1], "summary_ids": ids[1:5],
+                        "topics": [{"title": f"話題{i}", "fact_ids": ids[5 + 2 * i:7 + 2 * i]} for i in range(4)], "market_view_ids": []}
+            return canned(out, label, task, data, schema)
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls_fn):
+            out = Path(folder) / "oneshot"
+            out.mkdir()
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
+            sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
+        labels = [l for l, _, _ in calls]
+        self.assertTrue(labels[0].endswith("part1") and not calls[0][1])  # the first part has no earlier choice
+        self.assertTrue(all(carried for l, carried, _ in calls[1:]))  # later parts are compared with the choice so far
+        self.assertGreaterEqual(len([l for l in labels if l.endswith("part2") or "part2-retry" in l]), 3)  # a failing part is asked again
+        self.assertEqual(len(sections["topics"]), 4)
+
+    def test_fold_parts_end_at_article_boundaries(self):
+        ids = [f"N{a}-{b}" for a in range(10) for b in range(30)]
+        parts = oneshot.fold_parts(ids)
+        self.assertEqual(sum(parts, []), ids)
+        self.assertTrue(all(p[-1].split("-")[0] != nxt[0].split("-")[0] for p, nxt in zip(parts, parts[1:])))
+
     def test_join_facts_drops_a_repeated_lead_in_but_keeps_the_first(self):
         a = {"fact": "2026年10月8日のニューヨーク外国為替市場で、ドル円は157.88円で終えた。"}
         b = {"fact": "2026年10月8日のニューヨーク外国為替市場で、ユーロ円は177.01円で終えた。"}
