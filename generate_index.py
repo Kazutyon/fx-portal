@@ -3,19 +3,19 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY = '2026-11-03'
-WEEKDAY = '火'
-HERO_SUB = '前営業日11/2（月）のドル円は157.94円で引け、4営業日ぶりに反発した。本日11/3（火）は日本が文化の日で休場、12:30にRBAが政策金利を発表し（予想4.85%＝25bp利上げ）、米中間選挙の投開票日を迎える。'
-MARKET_HOLIDAY_H3 = '本日は日本市場が休場（文化の日）'
-MARKET_HOLIDAY_P = '11/3（火）は日本の祝日で東京市場が休場（日経225先物・オプションは祝日取引あり）。KissFX・ForexFactoryで一致。'
-KEY_EVENTS_ITEMS = ['12:30 🇦🇺 豪 RBA政策金利・声明（予想4.85%、前回4.60%）', '13:30 🇦🇺 ブロックRBA総裁 記者会見', '16:30 🇨🇭 スイス 消費者物価指数', '24:00 🇺🇸 米 JOLTS求人（要確認）', '終日 🇺🇸 米中間選挙の投開票']
-REPORT_SUMMARY = 'ドル円157.94円で反発。本日は日本休場、RBAと米中間選挙が焦点'
+TODAY = '2026-11-04'
+WEEKDAY = '水'
+HERO_SUB = '前日11/3（火）のドル円は米JOLT求人件数の上振れで158.77円まで上昇して引けた。本日11/4（水）は米中間選挙の結果判明（日本時間4日以降）、ユーロ圏CPI速報（19:00）、米ADP（22:15）・ISM非製造業（24:00）が材料。'
+MARKET_HOLIDAY_H3 = '本日は主要市場の休場なし'
+MARKET_HOLIDAY_P = '11/4（水）の主要市場休場はKissFXの休場日一覧で確認されない。日本は昨日11/3の休場明け。'
+KEY_EVENTS_ITEMS = ['06:45 🇳🇿 NZ 第3四半期雇用統計', '19:00 🇪🇺 ユーロ圏 消費者物価指数【速報値】', '22:15 🇺🇸 米 ADP雇用統計', '24:00 🇺🇸 米 ISM非製造業景況指数', '終日 🇺🇸 米中間選挙の結果判明（日本時間4日以降）']
+REPORT_SUMMARY = 'ドル円158.77円へ上昇。本日は米中間選挙の結果と米ADP・ISM非製造業が焦点'
 RISK_LEVEL = 'HIGH'
 FRB_RATE   = '3.75–4.00%'; FRB_STANCE = 'タカ派（10/28FOMCで据え置き・2名が利上げ主張（要確認）・12月利上げ観測あり・次回12/9）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '3.75%';      BOE_STANCE = 'タカ派寄り（11/5のMPCは利上げがほぼ確実視・みんかぶ）'; BOE_COLOR = 'var(--muted)'
 BOJ_RATE   = '1.25%';      BOJ_STANCE = 'タカ派（10/30会合で据え置き・12月利上げ観測あり・11/6に植田総裁発言）'; BOJ_COLOR = 'var(--blue)'
 ECB_RATE   = '2.50%';      ECB_STANCE = 'タカ派（10/29据え置き・12月利上げ期待は残る）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.60%';      RBA_STANCE = 'タカ派（9/29に0.25%利上げ・次回11/3）'; RBA_COLOR = 'var(--red)'
+RBA_RATE   = '4.60%';      RBA_STANCE = 'タカ派（9/29に0.25%利上げ・11/3発表の結果は未確認（要確認））'; RBA_COLOR = 'var(--red)'
 RBNZ_RATE  = '3.00%（要確認）';      RBNZ_STANCE = 'タカ派（10月会合で利上げとザイFXが報道。決定後の水準は公式未確認（要確認））'; RBNZ_COLOR = 'var(--red)'
 BOC_RATE   = '2.50%（要確認）';      BOC_STANCE = 'タカ派転換（10/28に利上げとザイFXが報道。2.50%はForex Fundamentals単独（要確認））'; BOC_COLOR = 'var(--red)'
 SNB_RATE   = '0.00%';      SNB_STANCE = 'ハト派〜中立（9/24会合後も0.00%、事実上フラン安容認との評価）'; SNB_COLOR = 'var(--muted)'
