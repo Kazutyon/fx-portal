@@ -654,4 +654,7 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    finally:
+        news.unload_model()  # free the GPU as soon as the replay ends (also after an error)

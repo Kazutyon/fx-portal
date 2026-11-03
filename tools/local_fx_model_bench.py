@@ -23,6 +23,8 @@ if not os.environ.get("FX_LUNA"):
 
 model, dates = sys.argv[1], sys.argv[2:]
 news.MODEL = model
+import atexit
+atexit.register(news.unload_model)  # free the GPU as soon as the replay ends (also after an error)
 tag = re.sub(r"[^a-z0-9]+", "-", model.lower()).strip("-")
 root = daily.ROOT / "shadow-output"
 log = Path(__file__).resolve().parent.parent / ".runtime" / "model-bench.jsonl"
