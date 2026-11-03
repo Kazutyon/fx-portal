@@ -874,7 +874,9 @@ def merge_duplicates(api, out, facts):
     numbers = lambda text: set(re.findall(r"\d+(?:[.,]\d+)?", text))
     by_id = {x["fact_id"]: x for x in live}
     task = ("以下は、複数の記事から取り出した事実の一覧。同じ出来事・同じ内容を述べている事実どうしを、idの組で答える。"
-            "数字、発言者、時刻、市場、ペア、原因などの細部が違うものは別の事実として、組にしない。同じ内容が他にない事実は含めない。")
+            "組にするのは、片方を消しても読者が失う情報がない場合だけ(同じ出来事を言い換えただけ、または一方がもう一方の細部を全て含む)。"
+            "同じ話題でも、別の人の発言、原因の説明、別の数字、別の時刻・市場・ペアを含む事実は、別の事実として組にしない。"
+            "同じ内容が他にない事実は含めない。")
     try:  # the stage name carries "extract" so the call has the larger output budget and no long thinking
         result = api.infer_cached(out, "fact-merge-extract", task,
                                   [{"id": x["fact_id"], "fact": x["fact"]} for x in live],
