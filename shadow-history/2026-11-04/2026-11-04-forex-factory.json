@@ -1,0 +1,287 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-11-04",
+  "fetched_at": "2026-11-04T09:35:37+09:00",
+  "events": [
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "Factory Orders m/m",
+      "importance": "low",
+      "forecast": "1.2%",
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "JOLTS Job Openings",
+      "importance": "medium",
+      "forecast": "7.15M",
+      "previous": "7.08M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "00:15",
+      "country": "USD",
+      "name": "Omdia Total Vehicle Sales",
+      "importance": "low",
+      "forecast": "15.8M",
+      "previous": "16.0M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "00:16",
+      "country": "USD",
+      "name": "Congressional Elections",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "00:27",
+      "country": "NZD",
+      "name": "GDT Price Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "2.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "01:00",
+      "country": "CAD",
+      "name": "BOC Gov Macklem Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "03:00",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Employment Change q/q",
+      "importance": "high",
+      "forecast": "0.4%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Labor Cost Index q/q",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Unemployment Rate",
+      "importance": "high",
+      "forecast": "5.5%",
+      "previous": "5.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Monetary Base y/y",
+      "importance": "low",
+      "forecast": "-14.0%",
+      "previous": "-15.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:00",
+      "country": "NZD",
+      "name": "ANZ Commodity Prices m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Household Spending m/m",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "10:45",
+      "country": "CNY",
+      "name": "RatingDog Services PMI",
+      "importance": "low",
+      "forecast": "51.7",
+      "previous": "51.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Spanish Unemployment Change",
+      "importance": "low",
+      "forecast": "18.7K",
+      "previous": "23.6K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:15",
+      "country": "EUR",
+      "name": "Spanish Services PMI",
+      "importance": "low",
+      "forecast": "57.6",
+      "previous": "58.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:45",
+      "country": "EUR",
+      "name": "Italian Services PMI",
+      "importance": "low",
+      "forecast": "51.4",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:50",
+      "country": "EUR",
+      "name": "French Final Services PMI",
+      "importance": "low",
+      "forecast": "48.4",
+      "previous": "48.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:55",
+      "country": "EUR",
+      "name": "German Final Services PMI",
+      "importance": "low",
+      "forecast": "51.7",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "51.7",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "53.1",
+      "previous": "53.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "CPI Flash Estimate y/y",
+      "importance": "medium",
+      "forecast": "4.0%",
+      "previous": "3.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Core CPI Flash Estimate y/y",
+      "importance": "medium",
+      "forecast": "2.5%",
+      "previous": "2.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "ADP Non-Farm Employment Change",
+      "importance": "low",
+      "forecast": "67K",
+      "previous": "90K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "4.8B",
+      "previous": "4.2B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "-107.9B",
+      "previous": "-105.6B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:45",
+      "country": "USD",
+      "name": "Final Services PMI",
+      "importance": "low",
+      "forecast": "57.9",
+      "previous": "57.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
