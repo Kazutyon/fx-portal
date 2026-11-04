@@ -365,8 +365,16 @@ def fallback_topics(material: list, take, by_id: dict):
     return hero_facts, topic_list, topic_facts, {"summary_ids": summary_ids, "market_view_ids": []}
 
 
-VERIFY_INPUT_BYTES = 115000  # about 36k tokens; the check and repair calls reserve VERIFY_OUTPUT_TOKENS of the 64k context for the answer
-VERIFY_OUTPUT_TOKENS = 22000  # thinking alone used 12000 tokens on 2026-10-06; the answers themselves are 5-6k
+VERIFY_INPUT_BYTES = 115000  # about 36k tokens; the rest of the 64k context is left for the answer
+CONTEXT_TOKENS = 62000  # num_ctx 65536 minus a margin
+
+
+def verify_output_tokens(data: dict) -> int:
+    """Output budget for the check and repair calls: what the context leaves after the input (about 3 bytes a token).
+    The model thinks before it answers (12000-22000 tokens on 2026-11-04, one run cut off at 22000 while the input was
+    only 20k tokens), so a small input gets a large budget; a server that must cut the prompt to fit the output is avoided."""
+    size = len(json.dumps(data, ensure_ascii=False).encode())
+    return max(16000, min(40000, CONTEXT_TOKENS - size // 3))
 
 
 def fit_to_context(data: dict, limit: int = VERIFY_INPUT_BYTES):
@@ -552,9 +560,9 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
         carried = set()
         if state:
             carried = set(state["hero_ids"] + state["summary_ids"] + state["market_view_ids"]) | {i for t in state["topics"] for i in t["fact_ids"]}
-        events = [i for i in dict.fromkeys(list(carried) + part) if i in event_set]
-        views = [i for i in dict.fromkeys(list(carried) + part) if i in view_set]
-        if not events:
+        part_events = [i for i in dict.fromkeys(list(carried) + part) if i in event_set]
+        part_views = [i for i in dict.fromkeys(list(carried) + part) if i in view_set]
+        if not part_events:
             continue
         data_k = {**picking, "facts": [lean_by_id[i] for i in dict.fromkeys(list(carried) + part) if i in lean_by_id]}
         if state:
@@ -564,7 +572,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
             label = "oneshot-2-topics" if len(parts) == 1 else f"oneshot-2-topics-part{n}"
             try:
                 answer = call(out, label + ("" if attempt == 0 else f"-retry{attempt}"),
-                              topics_task + (fold_task if state else "") + retry_note, data_k, topics_schema_for(events, views))
+                              topics_task + (fold_task if state else "") + retry_note, data_k, topics_schema_for(part_events, part_views))
             except Exception as error:
                 retry_note = f"前回は答えが使えなかった({type(error).__name__}: {str(error)[:80]})。短く、指定の形で答える。"
                 continue
@@ -736,7 +744,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     if trimmed:
         checks["verify_input_trimmed"] = trimmed
     try:  # the semantic check is advisory: a cut-off or failed check must not lose the written report
-        review = call(out, "oneshot-4-verify", verify_task, {**verify_data, "draft": texts}, issue_schema, VERIFY_OUTPUT_TOKENS)
+        review = call(out, "oneshot-4-verify", verify_task, {**verify_data, "draft": texts}, issue_schema, verify_output_tokens(verify_data))
     except Exception as error:
         review = {"issues": []}
         checks["semantic_check_error"] = f"{type(error).__name__}: {error}"
@@ -767,7 +775,7 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                          "fixesには修正が必要なsectionだけを、修正後の全文で返す。",
                          {**verify_data, "problems": problems, "current": {k: texts[k] for k in sorted(flagged)}},
                          news.schema({"fixes": {"type": "array", "items": news.schema({
-                             "section": {"type": "string", "enum": sorted(flagged)}, "text": S})}}), VERIFY_OUTPUT_TOKENS)  # thinking alone used 12000 tokens on 2026-10-06
+                             "section": {"type": "string", "enum": sorted(flagged)}, "text": S})}}), verify_output_tokens(verify_data))  # thinking alone used 12000 tokens on 2026-10-06
             for fix in fixed["fixes"]:
                 k, text = fix["section"], fix["text"]
                 if k.startswith("title"):

@@ -201,14 +201,18 @@ class OneshotTests(unittest.TestCase):
                     raise ValueError("cut off")  # this part is skipped, the choice so far stays
                 return {"hero_ids": ids[:1], "summary_ids": ids[1:5],
                         "topics": [{"title": f"話題{i}", "fact_ids": ids[5 + 2 * i:7 + 2 * i]} for i in range(4)], "market_view_ids": []}
+            if "write" in label:
+                n = schema["properties"]["topic_bodies"]["minItems"]
+                return {"hero": "a", "summary": "b", "topic_bodies": ["c"] * n, "market": "d", "risk": "e", "handoff": "f"}
             return canned(out, label, task, data, schema)
 
-        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls_fn):
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls_fn),                 patch.object(oneshot, "feature", return_value=True), patch.object(oneshot.claim_check, "review", return_value={"status": "skipped"}):
             out = Path(folder) / "oneshot"
             out.mkdir()
             (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
             oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
             sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
+        self.assertNotIn("prose_error", sections)  # the writer ran on the real calendar events, not on fact ids
         labels = [l for l, _, _ in calls]
         self.assertTrue(labels[0].endswith("part1") and not calls[0][1])  # the first part has no earlier choice
         self.assertTrue(all(carried for l, carried, _ in calls[1:]))  # later parts are compared with the choice so far
@@ -366,7 +370,8 @@ class OneshotTests(unittest.TestCase):
 
         def calls(out, label, task, data, schema, *rest):
             if label.endswith("repair"):
-                self.assertEqual(rest, (oneshot.VERIFY_OUTPUT_TOKENS,))  # thinking alone used 12000 on 2026-10-06
+                self.assertEqual(len(rest), 1)
+                self.assertTrue(16000 <= rest[0] <= 40000)  # thinking alone used 12000 on 2026-10-06
                 raise ValueError("oneshot-5-repair: wrong model or incomplete response (length)")
             return canned(out, label, task, data, schema)
 
