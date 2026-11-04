@@ -1,5 +1,6 @@
 """keep: importance signals, labels and the weight fit; no network or model calls."""
 import json
+import subprocess
 import tempfile
 import unittest
 from datetime import date
@@ -69,6 +70,32 @@ class ImportanceTests(unittest.TestCase):
         self.assertIn("preview", result["status"])  # 10 days are too few to trust
         self.assertEqual(imp.fit(days[:2])["status"], "not enough days")
         self.assertTrue(names)
+
+    def test_the_dataset_is_committed_and_pushed_without_touching_other_work(self):
+        with tempfile.TemporaryDirectory() as folder:
+            base = Path(folder)
+            remote, work = base / "remote.git", base / "work"
+            run = lambda *a, cwd=work: subprocess.run(["git", *a], cwd=cwd, check=True, capture_output=True, text=True)
+            subprocess.run(["git", "init", "--bare", "-b", "main", str(remote)], check=True, capture_output=True)
+            subprocess.run(["git", "clone", str(remote), str(work)], check=True, capture_output=True)
+            run("config", "user.email", "t@example.com")
+            run("config", "user.name", "t")
+            (work / "other.txt").write_text("1", encoding="utf-8")
+            run("add", "other.txt")
+            run("commit", "-m", "base")
+            run("push", "-u", "origin", "HEAD:main")
+            self.assertEqual(imp.commit_and_push(work), "nothing new")
+            (work / "data" / "importance").mkdir(parents=True)
+            (work / "data" / "importance" / "2026-11-05.json").write_text("{}", encoding="utf-8")
+            (work / "other.txt").write_text("changed by someone else", encoding="utf-8")  # unrelated work in progress
+            self.assertEqual(imp.commit_and_push(work), "committed and pushed")
+            files = run("show", "--name-only", "--format=", "HEAD").stdout.split()
+            self.assertEqual(files, ["data/importance/2026-11-05.json"])  # only the dataset is in the commit
+            self.assertEqual((work / "other.txt").read_text(encoding="utf-8"), "changed by someone else")
+            self.assertIn("2026-11-05.json", run("ls-tree", "-r", "--name-only", "origin/main").stdout)
+            (work / "data" / "importance" / "2026-11-06.json").write_text("{}", encoding="utf-8")
+            run("remote", "set-url", "origin", str(base / "missing.git"))
+            self.assertIn("push failed", imp.commit_and_push(work))  # offline: kept for the next time
 
     def test_auc_of_a_perfect_and_a_tied_ranking(self):
         self.assertEqual(imp.auc([0.1, 0.2, 0.8, 0.9], [0, 0, 1, 1]), 1.0)

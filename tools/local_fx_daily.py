@@ -803,6 +803,8 @@ def main() -> int:
             import local_fx_published_check as published_check
             path = importance.build_day(out, args.date, published_check.fetch_published(args.date, ROOT))
             print(f"STAGE importance-data {path.name if path else 'no material'}", flush=True)
+            if path:
+                print(f"STAGE importance-data-git {importance.commit_and_push(ROOT)}", flush=True)
         except Exception as error:
             print(f"STAGE importance-data skipped {type(error).__name__}", flush=True)
         print("STAGE model-unload " + ("done" if news.unload_model() else "skipped"), flush=True)

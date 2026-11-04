@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import math
 import re
+import subprocess
 import sys
 import unicodedata
 from datetime import date
@@ -127,6 +128,29 @@ def build_day(run: Path, target: date, published: Path | None, root: Path = ROOT
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(day, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return path
+
+
+def commit_and_push(root: Path = ROOT, folder: str = "data/importance") -> str:
+    """Keep the daily dataset: commit only the dataset folder and push, so it survives without anyone remembering to.
+    Other work in the checkout is left alone (the commit is limited to the folder). Offline or any git trouble only returns
+    a message; the files stay and the next morning's commit carries them."""
+    def git(*args, timeout=120):
+        return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, timeout=timeout, encoding="utf-8", errors="replace")
+
+    try:
+        if not git("status", "--porcelain", "--", folder).stdout.strip():
+            return "nothing new"
+        git("add", "--", folder)
+        done = git("commit", "-m", f"importance data {date.today()} (automatic)", "--", folder)
+        if done.returncode != 0:
+            return "commit failed: " + (done.stderr or done.stdout).strip()[:150]
+        pulled = git("pull", "--rebase", "--autostash", timeout=180)
+        pushed = git("push", timeout=180)
+        if pushed.returncode != 0:
+            return "committed, push failed (retried next time): " + (pushed.stderr or pulled.stderr).strip()[:150]
+        return "committed and pushed"
+    except Exception as error:
+        return f"skipped: {type(error).__name__}"
 
 
 def load_days(folder: Path = DATA) -> list:
