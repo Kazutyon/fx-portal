@@ -798,6 +798,13 @@ def main() -> int:
                       f"topics_missing={result.get('coverage', {}).get('missing')} topics_partial={result.get('coverage', {}).get('partial')}", flush=True)
         except Exception as error:
             print(f"STAGE published-check skipped {type(error).__name__}", flush=True)
+        try:  # the day's importance dataset (features and labels found by code), for learning the weights over the days
+            import local_fx_importance as importance
+            import local_fx_published_check as published_check
+            path = importance.build_day(out, args.date, published_check.fetch_published(args.date, ROOT))
+            print(f"STAGE importance-data {path.name if path else 'no material'}", flush=True)
+        except Exception as error:
+            print(f"STAGE importance-data skipped {type(error).__name__}", flush=True)
         print("STAGE model-unload " + ("done" if news.unload_model() else "skipped"), flush=True)
     print(json.dumps({"run_dir": str(out), **status}, ensure_ascii=True), flush=True)
     return 1 if status["status"] == "FAILED" else 0

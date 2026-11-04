@@ -25,6 +25,7 @@ import local_fx_daily as daily  # noqa: E402
 import local_fx_claim_check as claim_check  # noqa: E402
 import local_fx_external_review as external_review  # noqa: E402
 import local_fx_grounding as grounding  # noqa: E402
+import local_fx_importance as importance  # noqa: E402
 import local_fx_news as news  # noqa: E402
 import local_fx_quotes as quotes_mod  # noqa: E402
 
@@ -498,7 +499,10 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
     plain = {k: v for k, v in data.items() if k != "ranking_top5"}  # only the focus call needs the ranking
     # The two picking calls answer with ids only, so the fact sentence is enough; the verbatim quotes and article passages
     # (about half of the input) only matter to the writer and the checks. A shorter list is easier to choose from.
-    lean_facts = [{k: v for k, v in f.items() if k != "quote"} for f in data["facts"]]
+    reported = importance.signals([x for x in material if x["fact_id"].startswith("N")])
+    lean_facts = [{**{k: v for k, v in f.items() if k != "quote"},
+                   **({"報じた記事数": reported[f["id"]]["articles"]} if reported.get(f["id"], {}).get("articles", 1) >= 2 else {})}
+                  for f in data["facts"]]
     picking = {k: v for k, v in plain.items() if k != "original_passages"}
     picking["facts"] = lean_facts
     by_id = {x["fact_id"]: x for x in material}
@@ -512,7 +516,8 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
                    "titleは話題の見出し(30字以内。資料にある語と数値だけを使い、資料にない因果や数値は書かない)。最重要材料の話題を先頭にする。"
                    "summary_idsは、前営業日の市場全体(主要通貨ペアの終値、主要指標の結果など)を整理するfactのid(4〜6件)。"
                    "hero・各話題・summaryで同じfactを使わない。"
-                   "market_view_idsは、本日の地合いの判断材料となる市場関係者の見解のid(最大3件)。")
+                   "market_view_idsは、本日の地合いの判断材料となる市場関係者の見解のid(最大3件)。"
+                   "factに『報じた記事数』があれば、それは同じ出来事・同じ数字を伝えた記事の数で、多いほど複数の媒体が重く見た出来事。")
     fold_task = ("これは資料の一部で、全体は何回かに分けて読んでいる。『現在の選定』は、ここまでに読んだ分から選んだもの。"
                  "この一部の中に、現在の選定より重要な材料や、現在の選定にない主要な出来事があれば入れ替えて、選定全体を更新して返す。"
                  "入れ替える必要がなければ、現在の選定をそのまま返す。")
