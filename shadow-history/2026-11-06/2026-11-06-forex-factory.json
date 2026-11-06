@@ -1,0 +1,217 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-11-06",
+  "fetched_at": "2026-11-06T09:56:51+09:00",
+  "events": [
+    {
+      "time_jst": "00:30",
+      "country": "CAD",
+      "name": "BOC Gov Macklem Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "00:30",
+      "country": "USD",
+      "name": "Natural Gas Storage",
+      "importance": "low",
+      "forecast": "81B",
+      "previous": "80B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "02:45",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "03:00",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:00",
+      "country": "CAD",
+      "name": "Annual Budget Release",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Average Cash Earnings y/y",
+      "importance": "low",
+      "forecast": "3.8%",
+      "previous": "3.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "2.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Lloyds HPI m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "French Trade Balance",
+      "importance": "low",
+      "forecast": "-5.8B",
+      "previous": "-6.1B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "CHF",
+      "name": "Foreign Currency Reserves",
+      "importance": "low",
+      "forecast": null,
+      "previous": "770B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "17:00",
+      "country": "CHF",
+      "name": "SECO Consumer Climate",
+      "importance": "low",
+      "forecast": "-35",
+      "previous": "-36",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:30",
+      "country": "USD",
+      "name": "FOMC Member Williams Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Retail Sales m/m",
+      "importance": "low",
+      "forecast": "-0.1%",
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "20:00",
+      "country": "CHF",
+      "name": "Gov Board Member Tschudin Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:15",
+      "country": "GBP",
+      "name": "MPC Member Pill Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Employment Change",
+      "importance": "high",
+      "forecast": "14.6K",
+      "previous": "-68.3K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Unemployment Rate",
+      "importance": "high",
+      "forecast": "6.5%",
+      "previous": "6.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Average Hourly Earnings m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Non-Farm Employment Change",
+      "importance": "high",
+      "forecast": "65K",
+      "previous": "29K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Unemployment Rate",
+      "importance": "high",
+      "forecast": "4.2%",
+      "previous": "4.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:10",
+      "country": "USD",
+      "name": "FOMC Member Musalem Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}
