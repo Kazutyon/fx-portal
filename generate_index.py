@@ -3,21 +3,21 @@ from datetime import datetime
 from html import unescape
 
 # ── 今日のデータ（実際の値に差し替え） ──────────────────
-TODAY = '2026-11-06'
-WEEKDAY = '金'
-HERO_SUB = '前日11/5（木）はBOEが4.00%へ利上げしポンドが買われ、米株急落でドル円は157.70円で引けた。本日11/6（金）は22:30の米雇用統計が最大の材料。'
+TODAY = '2026-11-09'
+WEEKDAY = '月'
+HERO_SUB = '前営業日11/6（金）のドル円は米雇用統計の上振れで158.48円まで反発して引け、ユーロドルは1.1159付近まで安値を更新した。本日11/9（月）は米国の注目指標がなく、明日11/10の米CPIを前にボウマンFRB副議長の発言（22:40）が材料となる。'
 MARKET_HOLIDAY_H3 = '本日は主要市場の休場なし'
-MARKET_HOLIDAY_P = '11/6（金）の主要市場休場はKissFX・ForexFactory JSONで確認されない。'
-KEY_EVENTS_ITEMS = ['08:30 🇯🇵 日 毎月勤労統計（要確認）', '19:00 🇪🇺 ユーロ圏 小売売上高', '22:30 🇺🇸 米 雇用統計（非農業部門雇用者数・失業率・平均時給）', '22:30 🇨🇦 加 雇用統計', '24:00 🇺🇸 米 ミシガン大学消費者信頼感指数【速報値】', '25:00 🇯🇵 植田日銀総裁の発言']
-REPORT_SUMMARY = 'ドル円は157.70円引け。本日は米雇用統計が焦点'
+MARKET_HOLIDAY_P = '11/9（月）の主要市場休場はKissFX・ForexFactory JSONで確認されない。'
+KEY_EVENTS_ITEMS = ['10:30 🇨🇳 中 消費者物価指数・生産者物価指数', '22:40 🇺🇸 米 ボウマンFRB副議長の発言', '26:25 🇬🇧 英 ベイリーBOE総裁の発言（要確認）', '米国の注目度の高い経済指標の発表なし（明日11/10に米CPI）']
+REPORT_SUMMARY = 'ドル円は158.48円引け。本日は米CPI前でボウマン発言が焦点'
 RISK_LEVEL = 'HIGH'
-FRB_RATE   = '3.75–4.00%'; FRB_STANCE = 'タカ派（10/28FOMCで据え置き・2名が利上げ主張（要確認）・12月利上げ観測あり・次回12/9）'; FRB_COLOR = 'var(--red)'
+FRB_RATE = '3.75–4.00%'; FRB_STANCE = 'タカ派（10/28FOMCで据え置き・11/6雇用統計上振れで利上げ観測強化・次回12/9）'; FRB_COLOR = 'var(--red)'
 BOE_RATE   = '4.00%';      BOE_STANCE = 'タカ派（11/5に25bp利上げ・8対1の決定でマン委員は50bpを主張・ザイFX/みんかぶ一致）'; BOE_COLOR = 'var(--red)'
-BOJ_RATE   = '1.25%';      BOJ_STANCE = 'タカ派（10/30会合で据え置き・12月利上げ観測あり・11/6に植田総裁発言）'; BOJ_COLOR = 'var(--blue)'
+BOJ_RATE = '1.25%'; BOJ_STANCE = 'タカ派（10/30会合で据え置き・12月利上げ観測あり・次回12/18）'; BOJ_COLOR = 'var(--blue)'
 ECB_RATE   = '2.50%';      ECB_STANCE = 'タカ派（10/29据え置き・12月利上げ期待は残る）'; ECB_COLOR = 'var(--red)'
-RBA_RATE   = '4.60%';      RBA_STANCE = 'タカ派（9/29に0.25%利上げ・11/3発表の結果は未確認（要確認））'; RBA_COLOR = 'var(--red)'
-RBNZ_RATE  = '3.00%（要確認）';      RBNZ_STANCE = 'タカ派（10月会合で利上げとザイFXが報道。決定後の水準は公式未確認（要確認））'; RBNZ_COLOR = 'var(--red)'
-BOC_RATE   = '2.50%（要確認）';      BOC_STANCE = 'タカ派転換（10/28に利上げとザイFXが報道。2.50%はForex Fundamentals単独（要確認））'; BOC_COLOR = 'var(--red)'
+RBA_RATE = '4.85%'; RBA_STANCE = 'タカ派（11/3に25bp利上げ・6対3・声明は緩和寄りと評価・次回12/8）'; RBA_COLOR = 'var(--red)'
+RBNZ_RATE = '2.75%'; RBNZ_STANCE = 'タカ派寄り（10/28は4対3で据え置き・利上げ3票・12月利上げ予想）'; RBNZ_COLOR = 'var(--red)'
+BOC_RATE = '2.50%'; BOC_STANCE = 'タカ派転換（10/28に25bp利上げ・次回12/9）'; BOC_COLOR = 'var(--red)'
 SNB_RATE   = '0.00%';      SNB_STANCE = 'ハト派〜中立（9/24会合後も0.00%、事実上フラン安容認との評価）'; SNB_COLOR = 'var(--muted)'
 # ────────────────────────────────────────────────────────
 
