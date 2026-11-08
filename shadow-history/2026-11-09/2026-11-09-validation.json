@@ -1,0 +1,180 @@
+{
+  "date": "2026-11-09",
+  "generated_at_jst": "2026-11-09T08:41:17+09:00",
+  "source_count": 3,
+  "event_count": 11,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "07:30",
+      "country": "AUD",
+      "name": "RBA Assist Gov Hunter Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:30",
+      "country": "CNY",
+      "name": "CPI y/y",
+      "importance": "low",
+      "forecast": "0.8%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:30",
+      "country": "CNY",
+      "name": "PPI y/y",
+      "importance": "low",
+      "forecast": "5.3%",
+      "previous": "5.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "Leading Indicators",
+      "importance": "low",
+      "forecast": "116.7%",
+      "previous": "118.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German Trade Balance",
+      "importance": "low",
+      "forecast": "19.2B",
+      "previous": "19.5B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:03",
+      "country": "CNY",
+      "name": "M2 Money Supply y/y",
+      "importance": "low",
+      "forecast": "7.3%",
+      "previous": "7.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:03",
+      "country": "CNY",
+      "name": "New Loans",
+      "importance": "low",
+      "forecast": "80B",
+      "previous": "1080B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:30",
+      "country": "EUR",
+      "name": "Sentix Investor Confidence",
+      "importance": "low",
+      "forecast": "2.1",
+      "previous": "2.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:15",
+      "country": "EUR",
+      "name": "ECOFIN Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:15",
+      "country": "EUR",
+      "name": "Eurogroup Meetings",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:40",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 07:30 AUD RBA Assist Gov Hunter Speaks",
+    "single source: 10:30 CNY CPI y/y",
+    "single source: 10:30 CNY PPI y/y",
+    "single source: 14:00 JPY Leading Indicators",
+    "single source: 16:00 EUR German Trade Balance",
+    "single source: 18:03 CNY M2 Money Supply y/y",
+    "single source: 18:03 CNY New Loans",
+    "single source: 18:30 EUR Sentix Investor Confidence",
+    "single source: 19:15 EUR ECOFIN Meetings",
+    "single source: 19:15 EUR Eurogroup Meetings",
+    "single source: 22:40 USD FOMC Member Bowman Speaks",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
