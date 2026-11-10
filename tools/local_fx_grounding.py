@@ -465,7 +465,9 @@ def extract(api, sources, target, out, observational=False):
                 "日付のない先週の振り返りを前日扱いにしない。"
                 "market_sessionは原文の市場、分からなければunspecified。pairsは当該事実の対象だけUSD/JPY等で返す。"
                 "実績actual・予想forecast・出典の見通しoutlookを区別。factは日付/市場/ペアを省略せず日本語1文。"
-                "発言・価格反応・原因・条件付き見通しを拾い、同時発生を因果にしない。" +
+                "発言・価格反応・原因・条件付き見通しを拾い、同時発生を因果にしない。"
+                "価格・指数・利回り・商品の数値は、記事が示す時点(終値・取引終了、午後2時台などの取引中の途中経過、日中の高値・安値)をfactの文に含める"
+                "(例『NY午後2時台の時点でダウは…』『終値は…』)。後で同じ指標の別の値と並べるとき、時点が分からないと取り違えるため。記事に時点がない数値に時点を作らない。" +
                 ("先週末はhistorical。前営業日掲載の『本日/今朝』は掲載日であり本日ではない。"
                  "outlookは出典の見方が記録された時点で、将来予定の実施日と混同しない。"
                  if datetime.fromisoformat(source["published_at"]).astimezone(news.JST).date() < target else ""))

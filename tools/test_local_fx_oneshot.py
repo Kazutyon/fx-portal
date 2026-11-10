@@ -365,6 +365,51 @@ class OneshotTests(unittest.TestCase):
         self.assertEqual(headline, "直した見出し")  # the headline follows the lead topic's (repaired) title
         self.assertIn("external_review_after", checks)
 
+    def test_verify_is_told_about_time_basis_and_a_time_issue_reaches_repair(self):
+        """An intraday figure written as a close, or one quantity with two values in the report, is a 時点・呼び名 issue:
+        the verify call is told to look for it, and a finding of that kind goes to the repair step like any other."""
+        material, calendar, ranking = self.inputs()
+        seen = {}
+
+        def calls(out, label, task, data, schema, *rest):
+            if label.endswith("verify"):
+                seen["task"] = task
+                seen["kinds"] = schema["properties"]["issues"]["items"]["properties"]["kind"]["enum"]
+                return {"issues": [{"sections": ["title0"], "excerpt": "話題0", "kind": "時点・呼び名",
+                                    "reason": "午後2時台の途中経過を終値として書いている。終値は51,523.06"}]}
+            if label.endswith("repair"):
+                seen["problems"] = data["problems"]
+                return {"fixes": [{"section": "title0", "text": "直した見出し"}]}
+            return canned(out, label, task, data, schema)
+
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
+            out = Path(folder)
+            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
+            checks = oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking,
+                                      json.loads((out / "policy.json").read_text(encoding="utf-8")))
+        self.assertIn("時点・呼び名", seen["kinds"])
+        for phrase in ("途中経過", "終値", "同じ指標・同じ量が", "前営業日の高値"):
+            self.assertIn(phrase, seen["task"])
+        self.assertTrue(any("51,523.06" in p["reason"] for p in seen["problems"]))
+        self.assertEqual(checks["repaired_sections"], ["title0"])
+
+    def test_writer_is_told_how_to_read_a_time_basis_and_extraction_asks_for_it(self):
+        seen = {}
+
+        def calls(out, label, task, data, schema, *rest):
+            seen["task"] = task
+            return {"hero": "h", "summary": "s", "topic_bodies": ["a", "b"], "market": "m", "risk": "r", "handoff": "o"}
+
+        sections = {"topics": [{"title": "甲"}, {"title": "乙"}]}
+        fact = {"fact_id": "N0-0", "fact": "NY午後2時台の時点でダウは52410.16。", "quote": "q", "source_title": "t", "source_url": "https://example.com/"}
+        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
+            oneshot.write_prose(Path(folder), "", sections, [fact], [fact], [], [], [[fact], [fact]], [], {}, [],
+                                material=[fact], quotes=[{"fact_id": "Q0", "fact": "ダウの終値は51,523.06ドル。"}])
+        for phrase in ("途中経過", "終値", "一つの版にそろえる"):
+            self.assertIn(phrase, seen["task"])
+        extraction = Path(grounding.__file__).read_text(encoding="utf-8")
+        self.assertIn("記事が示す時点(終値・取引終了、午後2時台などの取引中の途中経過", extraction)
+
     def test_cut_off_repair_keeps_the_draft_and_the_report(self):
         material, calendar, ranking = self.inputs()
 
