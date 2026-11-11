@@ -1,0 +1,330 @@
+{
+  "date": "2026-11-11",
+  "generated_at_jst": "2026-11-11T09:38:35+09:00",
+  "source_count": 3,
+  "event_count": 21,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:50",
+      "country": "USD",
+      "name": "FOMC Member Logan Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:01",
+      "country": "USD",
+      "name": "10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.30|2.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:30",
+      "country": "CAD",
+      "name": "BOC Summary of Deliberations",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:30",
+      "country": "GBP",
+      "name": "MPC Member Pill Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "03:30",
+      "country": "USD",
+      "name": "FOMC Member Schmid Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "05:30",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "USD",
+      "name": "FOMC Member Paulson Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "M2 Money Stock y/y",
+      "importance": "low",
+      "forecast": "2.1%",
+      "previous": "2.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "15:00",
+      "country": "JPY",
+      "name": "Prelim Machine Tool Orders y/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "60.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German Final CPI m/m",
+      "importance": "low",
+      "forecast": "-0.2%",
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:01",
+      "country": "EUR",
+      "name": "French Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:15",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Italian Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "-1.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:03",
+      "country": "CNY",
+      "name": "M2 Money Supply y/y",
+      "importance": "low",
+      "forecast": "7.2%",
+      "previous": "7.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:03",
+      "country": "CNY",
+      "name": "New Loans",
+      "importance": "low",
+      "forecast": "80B",
+      "previous": "1080B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:45",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:34",
+      "country": "EUR",
+      "name": "German 30-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.80|1.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:00",
+      "country": "CAD",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:00",
+      "country": "USD",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:50 USD FOMC Member Logan Speaks",
+    "single source: 03:01 USD 10-y Bond Auction",
+    "single source: 03:30 CAD BOC Summary of Deliberations",
+    "single source: 03:30 GBP MPC Member Pill Speaks",
+    "single source: 03:30 USD FOMC Member Schmid Speaks",
+    "single source: 05:30 USD FOMC Member Bowman Speaks",
+    "single source: 06:30 USD API Weekly Statistical Bulletin",
+    "single source: 08:30 USD FOMC Member Bowman Speaks",
+    "single source: 08:30 USD FOMC Member Paulson Speaks",
+    "single source: 08:50 JPY M2 Money Stock y/y",
+    "single source: 15:00 JPY Prelim Machine Tool Orders y/y",
+    "single source: 16:00 EUR German Final CPI m/m",
+    "single source: 16:01 EUR French Bank Holiday",
+    "single source: 17:15 EUR German Buba President Nagel Speaks",
+    "single source: 18:00 EUR Italian Industrial Production m/m",
+    "single source: 18:03 CNY M2 Money Supply y/y",
+    "single source: 18:03 CNY New Loans",
+    "single source: 18:45 EUR ECB President Lagarde Speaks",
+    "single source: 19:34 EUR German 30-y Bond Auction",
+    "single source: 22:00 CAD Bank Holiday",
+    "single source: 22:00 USD Bank Holiday",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
