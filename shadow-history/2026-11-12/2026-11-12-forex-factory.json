@@ -1,0 +1,187 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-11-12",
+  "fetched_at": "2026-11-12T10:53:28+09:00",
+  "events": [
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Visitor Arrivals m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "2.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "PPI y/y",
+      "importance": "low",
+      "forecast": "6.5%",
+      "previous": "6.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:00",
+      "country": "AUD",
+      "name": "MI Inflation Expectations",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:01",
+      "country": "GBP",
+      "name": "RICS House Price Balance",
+      "importance": "low",
+      "forecast": "-33%",
+      "previous": "-32%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Construction Output m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "GDP m/m",
+      "importance": "high",
+      "forecast": "0.0%",
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Goods Trade Balance",
+      "importance": "low",
+      "forecast": "-19.2B",
+      "previous": "-18.0B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Index of Services 3m/3m",
+      "importance": "low",
+      "forecast": "0.9%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "-0.4%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Manufacturing Production m/m",
+      "importance": "low",
+      "forecast": "-0.5%",
+      "previous": "1.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Prelim Business Investment q/q",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "1.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Prelim GDP q/q",
+      "importance": "medium",
+      "forecast": "0.7%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "ECB Economic Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:03",
+      "country": "CNY",
+      "name": "M2 Money Supply y/y",
+      "importance": "low",
+      "forecast": "7.2%",
+      "previous": "7.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:03",
+      "country": "CNY",
+      "name": "New Loans",
+      "importance": "low",
+      "forecast": "80B",
+      "previous": "1080B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Building Permits m/m",
+      "importance": "low",
+      "forecast": "-4.0%",
+      "previous": "8.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "FOMC Member Hammack Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Unemployment Claims",
+      "importance": "medium",
+      "forecast": "194K",
+      "previous": "189K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

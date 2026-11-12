@@ -1,0 +1,284 @@
+{
+  "date": "2026-11-12",
+  "generated_at_jst": "2026-11-12T10:53:30+09:00",
+  "source_count": 3,
+  "event_count": 18,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Visitor Arrivals m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "2.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "PPI y/y",
+      "importance": "low",
+      "forecast": "6.5%",
+      "previous": "6.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:00",
+      "country": "AUD",
+      "name": "MI Inflation Expectations",
+      "importance": "low",
+      "forecast": null,
+      "previous": "5.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:01",
+      "country": "GBP",
+      "name": "RICS House Price Balance",
+      "importance": "low",
+      "forecast": "-33%",
+      "previous": "-32%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Construction Output m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "GDP m/m",
+      "importance": "high",
+      "forecast": "0.0%",
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Goods Trade Balance",
+      "importance": "low",
+      "forecast": "-19.2B",
+      "previous": "-18.0B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Index of Services 3m/3m",
+      "importance": "low",
+      "forecast": "0.9%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "-0.4%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Manufacturing Production m/m",
+      "importance": "low",
+      "forecast": "-0.5%",
+      "previous": "1.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Prelim Business Investment q/q",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "1.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Prelim GDP q/q",
+      "importance": "medium",
+      "forecast": "0.7%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "ECB Economic Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:03",
+      "country": "CNY",
+      "name": "M2 Money Supply y/y",
+      "importance": "low",
+      "forecast": "7.2%",
+      "previous": "7.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:03",
+      "country": "CNY",
+      "name": "New Loans",
+      "importance": "low",
+      "forecast": "80B",
+      "previous": "1080B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Building Permits m/m",
+      "importance": "low",
+      "forecast": "-4.0%",
+      "previous": "8.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "FOMC Member Hammack Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Unemployment Claims",
+      "importance": "medium",
+      "forecast": "194K",
+      "previous": "189K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 06:45 NZD Visitor Arrivals m/m",
+    "single source: 08:50 JPY PPI y/y",
+    "single source: 09:00 AUD MI Inflation Expectations",
+    "single source: 09:01 GBP RICS House Price Balance",
+    "single source: 16:00 GBP Construction Output m/m",
+    "single source: 16:00 GBP GDP m/m",
+    "single source: 16:00 GBP Goods Trade Balance",
+    "single source: 16:00 GBP Index of Services 3m/3m",
+    "single source: 16:00 GBP Industrial Production m/m",
+    "single source: 16:00 GBP Manufacturing Production m/m",
+    "single source: 16:00 GBP Prelim Business Investment q/q",
+    "single source: 16:00 GBP Prelim GDP q/q",
+    "single source: 18:00 EUR ECB Economic Bulletin",
+    "single source: 18:03 CNY M2 Money Supply y/y",
+    "single source: 18:03 CNY New Loans",
+    "single source: 22:30 CAD Building Permits m/m",
+    "single source: 22:30 USD FOMC Member Hammack Speaks",
+    "single source: 22:30 USD Unemployment Claims",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
