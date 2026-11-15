@@ -1,0 +1,329 @@
+{
+  "date": "2026-11-16",
+  "generated_at_jst": "2026-11-16T08:57:23+09:00",
+  "source_count": 3,
+  "event_count": 21,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "06:30",
+      "country": "NZD",
+      "name": "BusinessNZ Services Index",
+      "importance": "low",
+      "forecast": null,
+      "previous": "50.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Prelim GDP Price Index y/y",
+      "importance": "low",
+      "forecast": "2.6%",
+      "previous": "2.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Prelim GDP q/q",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:01",
+      "country": "GBP",
+      "name": "Rightmove HPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "1.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "10:30",
+      "country": "CNY",
+      "name": "New Home Prices m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.14%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Fixed Asset Investment ytd/y",
+      "importance": "low",
+      "forecast": "-7.0%",
+      "previous": "-7.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Industrial Production y/y",
+      "importance": "low",
+      "forecast": "5.3%",
+      "previous": "5.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "NBS Press Conference",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Retail Sales y/y",
+      "importance": "low",
+      "forecast": "0.8%",
+      "previous": "1.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "CNY",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "5.2%",
+      "previous": "5.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "13:30",
+      "country": "JPY",
+      "name": "Revised Industrial Production m/m",
+      "importance": "low",
+      "forecast": "2.2%",
+      "previous": "2.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.3%",
+      "previous": "-0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "USD",
+      "name": "FOMC Member Barr Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "CPI m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Common CPI y/y",
+      "importance": "medium",
+      "forecast": "2.5%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Core CPI m/m",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Median CPI y/y",
+      "importance": "high",
+      "forecast": "2.0%",
+      "previous": "1.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Trimmed CPI y/y",
+      "importance": "high",
+      "forecast": "1.9%",
+      "previous": "1.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Empire State Manufacturing Index",
+      "importance": "low",
+      "forecast": "17.6",
+      "previous": "25.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:05",
+      "country": "USD",
+      "name": "FOMC Member Williams Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:48",
+      "country": "USD",
+      "name": "Cleveland Fed Inflation Expectations",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 06:30 NZD BusinessNZ Services Index",
+    "single source: 08:50 JPY Prelim GDP Price Index y/y",
+    "single source: 08:50 JPY Prelim GDP q/q",
+    "single source: 09:01 GBP Rightmove HPI m/m",
+    "single source: 10:30 CNY New Home Prices m/m",
+    "single source: 11:00 CNY Fixed Asset Investment ytd/y",
+    "single source: 11:00 CNY Industrial Production y/y",
+    "single source: 11:00 CNY NBS Press Conference",
+    "single source: 11:00 CNY Retail Sales y/y",
+    "single source: 11:00 CNY Unemployment Rate",
+    "single source: 13:30 JPY Revised Industrial Production m/m",
+    "single source: 19:00 EUR Industrial Production m/m",
+    "single source: 19:00 USD FOMC Member Barr Speaks",
+    "single source: 22:30 CAD CPI m/m",
+    "single source: 22:30 CAD Common CPI y/y",
+    "single source: 22:30 CAD Core CPI m/m",
+    "single source: 22:30 CAD Median CPI y/y",
+    "single source: 22:30 CAD Trimmed CPI y/y",
+    "single source: 22:30 USD Empire State Manufacturing Index",
+    "single source: 23:05 USD FOMC Member Williams Speaks",
+    "single source: 23:48 USD Cleveland Fed Inflation Expectations",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
