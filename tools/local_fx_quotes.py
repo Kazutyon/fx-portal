@@ -32,11 +32,12 @@ def fetch_chart(symbol: str) -> dict:
 
 
 def daily_bars(chart: dict) -> list:
-    """(local date, close) per session, in the exchange's own calendar; sessions without a close are dropped."""
+    """(local date, close) per session, in the exchange's own calendar. A session whose close is not published yet keeps
+    its date with close None, so a later step can tell "no value yet" (the bar exists) from "market closed" (no bar)."""
     offset = timedelta(seconds=chart["meta"].get("gmtoffset", 0))
     closes = chart["indicators"]["quote"][0]["close"]
     return [((datetime.fromtimestamp(ts, timezone.utc) + offset).date(), close)
-            for ts, close in zip(chart["timestamp"], closes) if close is not None]
+            for ts, close in zip(chart["timestamp"], closes)]
 
 
 def quote_fact(name: str, unit: str, decimals: int, bars: list, target: date, symbol: str, index: int) -> dict | None:
@@ -44,6 +45,11 @@ def quote_fact(name: str, unit: str, decimals: int, bars: list, target: date, sy
     with its change from the session before. A bar dated after it (a Sunday-evening bar of a 24-hour instrument, or a
     partial session) is never a close, so it cannot be picked; a market closed on that day falls back to its own last session."""
     done = [b for b in bars if b[0] <= previous_day(target)]
+    if not done or done[-1][1] is None:
+        # The reference session exists but its close is not published yet (Yahoo fills the Nikkei late): say nothing
+        # rather than present an older session as the previous close.
+        return None
+    done = [b for b in done if b[1] is not None]
     if len(done) < 2:
         return None
     (day, close), (_, before) = done[-1], done[-2]

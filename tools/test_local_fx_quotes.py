@@ -35,6 +35,11 @@ class QuoteTests(unittest.TestCase):
         fact = quotes.quote_fact("日経平均", "円", 2, bars, date(2026, 10, 26), "^N225", 3)
         self.assertIn("2026-10-21", fact["fact"])
 
+    def test_a_reference_session_without_a_close_yields_no_fact_not_an_older_session(self):
+        # 22=Thu, 23=Fri has a bar but its close is not published yet; Thursday's close must not stand in for Friday's
+        bars = quotes.daily_bars(chart([(21, 90.0), (22, 95.0), (23, None)]))
+        self.assertIsNone(quotes.quote_fact("日経平均", "円", 2, bars, date(2026, 10, 26), "^N225", 3))
+
     def test_falling_close_and_missing_values(self):
         bars = quotes.daily_bars(chart([(22, 4060.4), (23, None), (26, 4007.9)]))
         fact = quotes.quote_fact("金先物(1オンス)", "ドル", 1, bars, date(2026, 10, 27), "GC=F", 4)
