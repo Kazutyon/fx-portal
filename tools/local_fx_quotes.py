@@ -8,6 +8,8 @@ import urllib.request
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+from local_fx_grounding import previous_day  # the one definition of the report's previous business day
+
 # symbol, name, unit, decimals
 INSTRUMENTS = [
     ("^DJI", "NYダウ", "ドル", 2),
@@ -38,8 +40,10 @@ def daily_bars(chart: dict) -> list:
 
 
 def quote_fact(name: str, unit: str, decimals: int, bars: list, target: date, symbol: str, index: int) -> dict | None:
-    """The last session before the report date, with its change from the session before."""
-    done = [b for b in bars if b[0] < target]
+    """The last session up to the report's previous business day (the same date every other part of the report uses),
+    with its change from the session before. A bar dated after it (a Sunday-evening bar of a 24-hour instrument, or a
+    partial session) is never a close, so it cannot be picked; a market closed on that day falls back to its own last session."""
+    done = [b for b in bars if b[0] <= previous_day(target)]
     if len(done) < 2:
         return None
     (day, close), (_, before) = done[-1], done[-2]

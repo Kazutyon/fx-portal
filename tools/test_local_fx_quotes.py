@@ -22,6 +22,19 @@ class QuoteTests(unittest.TestCase):
         self.assertIn("146.44ドル(+0.28％)上昇", fact["fact"])
         self.assertEqual(fact["fact_id"], "Q0")
 
+    def test_monday_report_takes_fridays_close_not_a_sunday_bar(self):
+        # 22=Thu, 23=Fri, 25=Sun: a 24-hour instrument has a Sunday-evening bar, which is not a session close
+        bars = quotes.daily_bars(chart([(22, 100.0), (23, 110.0), (25, 111.0)]))
+        fact = quotes.quote_fact("ドルインデックス", "", 3, bars, date(2026, 10, 26), "DX-Y.NYB", 8)
+        self.assertIn("2026-10-23", fact["fact"])
+        self.assertIn("110.000", fact["fact"])
+        self.assertIn("前の営業日の終値100.000", fact["fact"])
+
+    def test_closed_market_falls_back_to_its_own_last_session(self):
+        bars = quotes.daily_bars(chart([(20, 90.0), (21, 95.0)]))  # nothing on 22/23: that market was closed
+        fact = quotes.quote_fact("日経平均", "円", 2, bars, date(2026, 10, 26), "^N225", 3)
+        self.assertIn("2026-10-21", fact["fact"])
+
     def test_falling_close_and_missing_values(self):
         bars = quotes.daily_bars(chart([(22, 4060.4), (23, None), (26, 4007.9)]))
         fact = quotes.quote_fact("金先物(1オンス)", "ドル", 1, bars, date(2026, 10, 27), "GC=F", 4)
