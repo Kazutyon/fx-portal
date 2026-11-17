@@ -1,0 +1,434 @@
+{
+  "date": "2026-11-17",
+  "generated_at_jst": "2026-11-17T11:54:37+09:00",
+  "source_count": 3,
+  "event_count": 28,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "02:00",
+      "country": "USD",
+      "name": "Fed Chairman Warsh Speaks",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:15",
+      "country": "USD",
+      "name": "FOMC Member Hammack Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "05:00",
+      "country": "NZD",
+      "name": "RBNZ Financial Stability Report",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "FPI m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "0.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "07:50",
+      "country": "AUD",
+      "name": "RBA Gov Bullock Speaks",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:10",
+      "country": "USD",
+      "name": "FOMC Member Barkin Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:30",
+      "country": "USD",
+      "name": "FOMC Member Goolsbee Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:00",
+      "country": "NZD",
+      "name": "RBNZ Gov Breman Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Monetary Policy Meeting Minutes",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:00",
+      "country": "NZD",
+      "name": "Inflation Expectations q/q",
+      "importance": "high",
+      "forecast": null,
+      "previous": "2.34%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "13:30",
+      "country": "JPY",
+      "name": "Tertiary Industry Activity m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Average Earnings Index 3m/y",
+      "importance": "medium",
+      "forecast": "3.5%",
+      "previous": "3.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Claimant Count Change",
+      "importance": "low",
+      "forecast": "25.4K",
+      "previous": "30.3K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Unemployment Rate",
+      "importance": "low",
+      "forecast": "4.7%",
+      "previous": "4.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "EU Economic Forecasts",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "German ZEW Economic Sentiment",
+      "importance": "low",
+      "forecast": "28.8",
+      "previous": "28.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "ZEW Economic Sentiment",
+      "importance": "low",
+      "forecast": "19.1",
+      "previous": "18.5",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "USD",
+      "name": "FOMC Member Musalem Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:15",
+      "country": "CAD",
+      "name": "Housing Starts",
+      "importance": "low",
+      "forecast": "241K",
+      "previous": "249K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "19.8K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Foreign Securities Purchases",
+      "importance": "low",
+      "forecast": "14.85B",
+      "previous": "-17.31B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Core Retail Sales m/m",
+      "importance": "high",
+      "forecast": "0.4%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Import Prices m/m",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "1.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Retail Sales m/m",
+      "importance": "high",
+      "forecast": "0.1%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:10",
+      "country": "USD",
+      "name": "FOMC Member Waller Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:15",
+      "country": "USD",
+      "name": "Capacity Utilization Rate",
+      "importance": "low",
+      "forecast": "76.8%",
+      "previous": "76.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:15",
+      "country": "USD",
+      "name": "Industrial Production m/m",
+      "importance": "low",
+      "forecast": "0.0%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:30",
+      "country": "USD",
+      "name": "FOMC Member Hammack Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 02:00 USD Fed Chairman Warsh Speaks",
+    "single source: 04:15 USD FOMC Member Hammack Speaks",
+    "single source: 05:00 NZD RBNZ Financial Stability Report",
+    "single source: 06:45 NZD FPI m/m",
+    "single source: 07:50 AUD RBA Gov Bullock Speaks",
+    "single source: 08:10 USD FOMC Member Barkin Speaks",
+    "single source: 08:30 USD FOMC Member Goolsbee Speaks",
+    "single source: 09:00 NZD RBNZ Gov Breman Speaks",
+    "single source: 09:30 AUD Monetary Policy Meeting Minutes",
+    "single source: 11:00 NZD Inflation Expectations q/q",
+    "single source: 13:30 JPY Tertiary Industry Activity m/m",
+    "single source: 16:00 GBP Average Earnings Index 3m/y",
+    "single source: 16:00 GBP Claimant Count Change",
+    "single source: 16:00 GBP Unemployment Rate",
+    "single source: 19:00 EUR EU Economic Forecasts",
+    "single source: 19:00 EUR German ZEW Economic Sentiment",
+    "single source: 19:00 EUR ZEW Economic Sentiment",
+    "single source: 21:30 USD FOMC Member Musalem Speaks",
+    "single source: 22:15 CAD Housing Starts",
+    "single source: 22:15 USD ADP Weekly Employment Change",
+    "single source: 22:30 CAD Foreign Securities Purchases",
+    "single source: 22:30 USD Core Retail Sales m/m",
+    "single source: 22:30 USD Import Prices m/m",
+    "single source: 22:30 USD Retail Sales m/m",
+    "single source: 23:10 USD FOMC Member Waller Speaks",
+    "single source: 23:15 USD Capacity Utilization Rate",
+    "single source: 23:15 USD Industrial Production m/m",
+    "single source: 23:30 USD FOMC Member Hammack Speaks",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
