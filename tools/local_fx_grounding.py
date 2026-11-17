@@ -15,10 +15,7 @@ import local_fx_news as news
 
 
 def previous_day(target):
-    previous = target - timedelta(days=1)
-    while previous.weekday() >= 5:
-        previous -= timedelta(days=1)
-    return previous
+    return news.previous_business_day(target)
 
 
 def date_facts(target):
@@ -168,17 +165,35 @@ def bind_claim(source, claim, index, target):
     # Do not date an analyst's outlook this way: its reporting date is separate
     # from the date of a forecast event.
     if result["record_type"] in {"actual", "forecast"}:
-        event_day, ambiguous = original_event_day(quote_normal,
-            unicodedata.normalize("NFKC", claim["fact"]), published.date())
-        if ambiguous:
-            result["event_date"] = None
-            result["event_scope"] = "unknown"
-            result["event_date_basis"] = "multiple original dates without an unambiguous event-clause association"
+        # The extractor read the title/opening/heading and answered the day the thing happened; the code only compares
+        # that day with the report days. It outranks the pattern search over the quoted sentence, which cannot tell
+        # "9月2日以来の高値" (a reference) from the day of the event.
+        event_day, ambiguous, basis = None, False, "event date read from the article's title/opening/heading by the extractor"
+        asked = "event_date" in claim
+        if asked and claim["event_date"]:
+            try:
+                event_day = date.fromisoformat(claim["event_date"])
+            except ValueError:
+                event_day = None
+        if event_day is None:  # no reading: fall back to a date written inside the quoted sentence
+            event_day, ambiguous = original_event_day(quote_normal,
+                unicodedata.normalize("NFKC", claim["fact"]), published.date())
+            basis = "explicit original event date, not publication date"
+            if ambiguous:
+                result["event_date"] = None
+                result["event_scope"] = "unknown"
+                result["event_date_basis"] = "multiple original dates without an unambiguous event-clause association"
+            elif event_day is None and asked:
+                # The article never says when this happened. The publication date is not a substitute (it made an
+                # undated remark look like yesterday's news).
+                result["event_date"] = None
+                result["event_scope"] = "unknown"
+                result["event_date_basis"] = "the article does not say when this happened; not guessed from the publication date"
         if event_day is not None:
             result["event_date"] = event_day.isoformat()
             result["event_scope"] = ("future" if event_day > target else "current" if event_day == target else
                                      "previous" if event_day == previous_day(target) else "historical")
-            result["event_date_basis"] = "explicit original event date, not publication date"
+            result["event_date_basis"] = basis
     # The date written at the head of the fact is the model's guess from the publication time. The event date was
     # decided above from the article's own context, so the fact text is made to state that date (one source of truth).
     event_date = result.get("event_date")
@@ -195,10 +210,17 @@ def bind_claim(source, claim, index, target):
     return result
 
 
+DATE_ASK = ("event_dateは出来事が起きた日(YYYY-MM-DD)。source_title・article_opening・nearby_headingや本文にある日付"
+            "(『11月11日の為替相場の振り返り』『ニューヨーク外国為替市場概況・13日』『10日のNY市場』など)から読み取って答える。"
+            "実績・予定の事実で、出来事の日がどこからも分からないときは空文字にする(掲載日から推測しない。"
+            "同じ記事でも事実ごとに日が違うことがある)。outlook(見方)は記録された日でよい。")
+
+
 CLAIMS = news.schema({"claims": {"type": "array", "minItems": 0,
     "items": news.schema({"kind": {"type": "string", "enum": ["event", "price", "cause", "outlook"]},
         "fact": news.STRING, "quote": news.STRING,
         "event_scope": {"type": "string", "enum": ["previous", "current", "historical", "unknown"]},
+        "event_date": news.STRING,
         "market_session": {"type": "string", "enum": ["Tokyo", "London", "NY", "unspecified"]},
         "pairs": {"type": "array", "items": news.STRING, "maxItems": 3},
         "record_type": {"type": "string", "enum": ["actual", "forecast", "outlook"]}})}})
@@ -462,7 +484,7 @@ def extract(api, sources, target, out, observational=False):
                 "『昨日の相場』『なんで動いた？』のように前日を振り返る記事は、タイトルにその日の日付(その日の戦略名)があっても、述べているのは掲載日の前日の出来事。"
                 "朝のNY概況で『きょうのNY』は前営業日のNY。東京市場の『本日』は本日。"
                 "本日07時前に掲載されたNY市場の記事(＝ＮＹ為替など)の出来事も、前営業日のNY市場の出来事で、factの日付は掲載日ではなく出来事の日。"
-                "日付のない先週の振り返りを前日扱いにしない。"
+                "日付のない先週の振り返りを前日扱いにしない。" + DATE_ASK +
                 "market_sessionは原文の市場、分からなければunspecified。pairsは当該事実の対象だけUSD/JPY等で返す。"
                 "実績actual・予想forecast・出典の見通しoutlookを区別。factは日付/市場/ペアを省略せず日本語1文。"
                 "発言・価格反応・原因・条件付き見通しを拾い、同時発生を因果にしない。"
@@ -550,7 +572,7 @@ def extract(api, sources, target, out, observational=False):
                 "USD/JPYはドル円、EUR/USDはユーロドル。指定missing_pairsの実際の値動きを1〜3件抽出。"
                 "『振幅』『推移』『下げ止まり』も実際の動き。別ペアや将来の価格目標は不可。"
                 "quoteは完全一致20〜180文字、event_scope/market_session/record_typeは原文を守る。"
-                "JST朝のNY概況は前営業日のNY。資料に記述がないペアは抽出せず空配列。",
+                "JST朝のNY概況は前営業日のNY。資料に記述がないペアは抽出せず空配列。" + DATE_ASK,
                 {"date_facts": date_facts(target), "missing_pairs": missing_pairs,
                  "source_title": source["title"], "published_at": source["published_at"], "text": core_text}, core_schema)
             for claim in extra["claims"]:

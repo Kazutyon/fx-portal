@@ -112,11 +112,17 @@ def article(url: str, page: str) -> dict:
     }
 
 
-def collect(target: date, count: int, out: Path) -> list[dict]:
-    cutoff = datetime.combine(target, daytime(7), JST)
+def previous_business_day(target: date) -> date:
+    """The report's previous business day (weekends skipped). The only definition: every stage calls this one."""
     previous = target - timedelta(days=1)
     while previous.weekday() >= 5:
         previous -= timedelta(days=1)
+    return previous
+
+
+def collect(target: date, count: int, out: Path) -> list[dict]:
+    cutoff = datetime.combine(target, daytime(7), JST)
+    previous = previous_business_day(target)
     start = datetime.combine(previous, daytime(), JST)
     page = fetch(INDEX)
     links = []

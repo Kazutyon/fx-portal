@@ -495,9 +495,7 @@ def render(target: date, sections: dict, calendar: dict, ranking: dict, out: Pat
     source = (ROOT / "gen_report_20260925.py").read_text(encoding="utf-8")
     tree = ast.parse(source)
     joined = next(n.value for n in tree.body if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "html" for t in n.targets))
-    previous = target - timedelta(days=1)
-    while previous.weekday() >= 5:
-        previous -= timedelta(days=1)
+    previous = news.previous_business_day(target)
     weekday = "月火水木金土日"[target.weekday()]
     # Do not turn unresolved/single-source rows into reader-facing "recheck" prose.
     # Retain all rows and disagreements in calendar.json/validation.json instead.

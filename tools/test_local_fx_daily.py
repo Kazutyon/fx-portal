@@ -379,6 +379,40 @@ class DailyTests(unittest.TestCase):
         self.assertIn("29日午前の東京市場", bound["source_context"]["article_opening"])
         self.assertEqual(bound["event_date"], "2026-09-29")
 
+    def test_event_day_comes_from_the_extractors_reading_not_the_publication_date(self):
+        # 11/13 report: a remark in an article published 11/12 that is a recap of 11/11 was dated "yesterday" (11/12)
+        import local_fx_grounding as grounding
+        quote = "FRBウォラー理事による0.5％利上げ検討発言や米10月CPIを受けたドル高が加速。"
+        source = {"source_id": 11, "title": "11月12日(木)のFXトレード戦略を解説！", "source_url": "https://test.example/11",
+                  "published_at": "2026-11-12T09:48:00+09:00",
+                  "text": "こんにちは。11月11日の為替相場の振り返りと今後の作戦を約3分で解説します。 【相場のポイント】 ・" + quote}
+        base = {"kind": "event", "fact": "FRBウォラー理事が0.5％利上げ検討発言を行った。", "quote": quote,
+                "event_scope": "previous", "market_session": "unspecified", "pairs": [], "record_type": "actual"}
+        read = grounding.bind_claim(source, {**base, "event_date": "2026-11-11"}, 0, date(2026, 11, 13))
+        self.assertEqual((read["event_scope"], read["event_date"]), ("historical", "2026-11-11"))
+        silent = grounding.bind_claim(source, {**base, "event_date": ""}, 0, date(2026, 11, 13))
+        self.assertEqual((silent["event_scope"], silent["event_date"]), ("unknown", None))  # never "yesterday" by default
+        old = grounding.bind_claim(source, base, 0, date(2026, 11, 13))  # a claim without the field keeps the earlier path
+        self.assertEqual(old["event_scope"], "previous")
+
+    def test_a_reference_date_in_the_quote_is_not_the_event_day(self):
+        # "9月2日以来の高値" names the last time the level was seen; the event happened on the day the extractor read
+        import local_fx_grounding as grounding
+        quote = "ドル円は1時30分過ぎに一時160.05円と9月2日以来の高値を付けた。"
+        source = {"source_id": 0, "title": "ニューヨーク外国為替市場概況・12日", "source_url": "https://test.example/0",
+                  "published_at": "2026-11-13T07:03:00+09:00", "text": quote}
+        claim = {"kind": "price", "fact": "2026-11-12のNY市場で、ドル円は一時160.05円と9月2日以来の高値を付けた。", "quote": quote,
+                 "event_scope": "previous", "event_date": "2026-11-12", "market_session": "NY", "pairs": ["USD/JPY"],
+                 "record_type": "actual"}
+        bound = grounding.bind_claim(source, claim, 0, date(2026, 11, 13))
+        self.assertEqual((bound["event_scope"], bound["event_date"]), ("previous", "2026-11-12"))
+
+    def test_the_previous_business_day_has_one_definition(self):
+        import local_fx_grounding as grounding, local_fx_news as news
+        for d in [date(2026, 11, 16), date(2026, 11, 17), date(2026, 11, 21)]:
+            self.assertEqual(grounding.previous_day(d), news.previous_business_day(d))
+        self.assertEqual(news.previous_business_day(date(2026, 11, 16)), date(2026, 11, 13))
+
     def test_tokyo_only_statement_cannot_claim_ny(self):
         import local_fx_grounding as grounding
         facts = [{"fact_id": "N0-0", "market_session": "Tokyo", "record_type": "actual"}]

@@ -124,9 +124,7 @@ def collect(target: date, out, snapshot, choose=None):
     cutoff = datetime.now(news.JST)
     if target != cutoff.date():
         raise ValueError("live source acquisition only supports today's JST date; use dated input for history")
-    previous = target - timedelta(days=1)
-    while previous.weekday() >= 5:
-        previous -= timedelta(days=1)
+    previous = news.previous_business_day(target)
     start = datetime.combine(previous, time(), news.JST)
     sources, rejected, seen = [], [], set()
     candidates = []
@@ -223,9 +221,7 @@ def supplement_previous(target, out, snapshot, sources):
         bundle = json.loads((out / "source-bundle.json").read_text(encoding="utf-8"))
         return bundle["sources"]
     cutoff = datetime.combine(target, time(7), news.JST)
-    previous = target - timedelta(days=1)
-    while previous.weekday() >= 5:
-        previous -= timedelta(days=1)
+    previous = news.previous_business_day(target)
     start = datetime.combine(previous, time(), news.JST)
     sources = list(sources)
     seen = {x["source_url"] for x in sources}
@@ -277,9 +273,7 @@ def recover_article_formats(target, out, snapshot, sources):
     marker = out / "source-format-supplement-review.json"
     if marker.exists():
         return json.loads((out / "source-bundle.json").read_text(encoding="utf-8"))["sources"]
-    previous = target - timedelta(days=1)
-    while previous.weekday() >= 5:
-        previous -= timedelta(days=1)
+    previous = news.previous_business_day(target)
     start = datetime.combine(previous, time(), news.JST)
     finish = datetime.combine(target, time(7), news.JST)
     review = json.loads((out / "supplement-review.json").read_text(encoding="utf-8"))
