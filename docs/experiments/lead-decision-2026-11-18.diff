@@ -1,0 +1,128 @@
+diff --git a/tools/local_fx_oneshot.py b/tools/local_fx_oneshot.py
+index aa2068f..7e2546b 100644
+--- a/tools/local_fx_oneshot.py
++++ b/tools/local_fx_oneshot.py
+@@ -342,6 +342,43 @@ def fold_parts(ids: list) -> list:
+     return parts + ([part] if part else [])
+ 
+ 
++def choose_lead(out: Path, style: str, hero_facts: list, topic_facts: list, topic_list: list, lean_by_id: dict,
++                quotes: list, date_facts: dict) -> list | None:
++    """The one place the day's most important event is decided, over the whole choice at once.
++
++    The topic choice reads the material in parts and each part only sees about a hundred facts, so what leads the report
++    would otherwise depend on which part held it and on the reading order (the first article's lead survived all six parts
++    on 2026-11-18 while the stock slump that moved the market most sat in two other parts and was never compared with it).
++    Here the model sees the facts the earlier choice kept, grouped by topic, with the closes of the stock and yield
++    indices and how many articles reported each fact, and answers with the fact ids at the centre of the day.
++    Returns those ids, or None when the model's answer cannot be used (the earlier choice then stands)."""
++    groups = ([hero_facts] if hero_facts else []) + list(topic_facts)
++    # The groups carry no title and no sign of which one the earlier choice put first: a label such as "ranked most
++    # important in the parts" is read by the model as the answer (2026-11-17 replay: it said so in its reasoning), and a
++    # topic title is the earlier choice's own wording. They are ordered by the largest number of articles that reported any
++    # of their facts, the cue the question names, so the order itself carries evidence rather than the earlier ranking.
++    def reported(facts):
++        return max([(lean_by_id.get(f["fact_id"]) or {}).get("報じた記事数", 0) for f in facts] or [0])
++    groups = sorted(groups, key=reported, reverse=True)
++    shown = [{"話題": chr(ord("A") + n), "facts": [lean_by_id.get(f["fact_id"], {"id": f["fact_id"], "fact": f["fact"]}) for f in facts]}
++             for n, facts in enumerate(groups)]
++    groups = [{"facts": facts} for facts in groups]
++    candidates = [f["fact_id"] for g in groups for f in g["facts"]]
++    if len(candidates) < 2:
++        return None
++    data = {"date_facts": date_facts, "選定の全体": shown, "前営業日の株・商品・金利の終値": [q["fact"] for q in quotes]}
++    task = (style + "前営業日の相場の振り返りの選定は、資料を何回かに分けて読んで作った。読んだ順番や、どの部分にあったかで重要度は決まらない。"
++            "ここでは選定の全体を見渡して、前営業日の相場を最も動かした出来事を一つ選び、その中心になるfactのid(1〜2件)を答える。"
++            "手がかりは、終値の変化や市場の反応の大きさと、factに付いた『報じた記事数』。答えは『選定の全体』にあるidだけ。")
++    schema = news.schema({"hero_ids": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string", "enum": candidates}}})
++    try:
++        answer = call(out, "oneshot-2c-lead", task, data, schema, 4000)
++    except Exception:
++        return None
++    ids = [i for i in dict.fromkeys(answer.get("hero_ids") or []) if i in candidates]
++    return ids or None
++
++
+ def fallback_topics(material: list, take, by_id: dict):
+     """No model: when the topic selection could not be had, line up the previous session's facts article by article
+     (the first article's first fact leads, then up to four facts per article for up to five articles). The result is
+@@ -593,6 +630,16 @@ def generate(out: Path, target: date, material: list, calendar: dict, ranking: d
+     topics = state
+     if state:
+         hero_facts, topic_list, topic_facts = assemble(state)
++        lead_ids = choose_lead(out, style, hero_facts, topic_facts, topic_list, lean_by_id, quotes, data["date_facts"])
++        if lead_ids is None:
++            daily.record_gap(out, "最重要の出来事の選定", "モデルの答えが使えず、部分ごとの選定のまま冒頭に置いた")
++            gaps = gaps + [{"item": "最重要の出来事の選定", "reason": "モデルの答えが使えず、部分ごとの選定のまま冒頭に置いた"}]
++        elif lead_ids != [x["fact_id"] for x in hero_facts]:
++            # The topic that holds the chosen fact leads (its title is the headline); the facts the earlier choice had put
++            # at the top stay out of the structured picks and remain available to the writer as background.
++            state = {**state, "hero_ids": lead_ids, "topics": sorted(state["topics"], key=lambda t: lead_ids[0] not in t["fact_ids"])}
++            topics = state
++            hero_facts, topic_list, topic_facts = assemble(state)
+     else:
+         used.clear()
+         hero_facts, topic_list, topic_facts, topics = fallback_topics(material, take, by_id)
+diff --git a/tools/test_local_fx_oneshot.py b/tools/test_local_fx_oneshot.py
+index 90ee00b..13fbaeb 100644
+--- a/tools/test_local_fx_oneshot.py
++++ b/tools/test_local_fx_oneshot.py
+@@ -303,6 +303,58 @@ class OneshotTests(unittest.TestCase):
+         self.assertEqual(sections["headline"], "甲")
+         self.assertEqual(sections["market"], oneshot.sentence(views[0]))
+ 
++    def lead_run(self, lead_answer):
++        """Run generate with a fixed topic choice (hero = a, topics 甲/乙/丙) and the given answer to the lead call;
++        returns (sections, what the lead call was shown, gap items, ids a..e)."""
++        material, calendar, ranking = self.inputs()
++        events = [f for f in material if f["fact_id"].startswith("N") and not oneshot.is_view(f) and not oneshot.is_theme(f)]
++        a, b, c, d, e = events[:5]
++        seen = {}
++
++        def calls(out, label, task, data, schema, *rest):
++            if label.endswith("topics"):
++                return {"hero_ids": [a["fact_id"]], "summary_ids": [e["fact_id"]],
++                        "topics": [{"title": "甲", "fact_ids": [b["fact_id"], c["fact_id"]]},
++                                   {"title": "乙", "fact_ids": [d["fact_id"], events[5]["fact_id"]]}], "market_view_ids": []}
++            if label.endswith("lead"):
++                seen["data"], seen["schema"] = data, schema
++                return lead_answer(a, b, c, d)
++            return canned(out, label, task, data, schema)
++
++        with tempfile.TemporaryDirectory() as folder, patch.object(oneshot, "call", side_effect=calls):
++            out = Path(folder)
++            (out / "policy.json").write_text((RUN / "policy.json").read_text(encoding="utf-8"), encoding="utf-8")
++            (out / "quotes.json").write_text(json.dumps([{"fact_id": "Q0", "kind": "price", "event_scope": "previous", "record_type": "actual", "pairs": [], "fact": "2026-09-29のNYダウの終値は…", "quote": "2026-09-29のNYダウの終値は…", "source_title": "Yahoo", "source_url": "", "published_at": "", "source_context": {}}], ensure_ascii=False), encoding="utf-8")
++            oneshot.generate(out, date(2026, 9, 30), material, calendar, ranking, json.loads((out / "policy.json").read_text(encoding="utf-8")))
++            sections = json.loads((out / "sections.json").read_text(encoding="utf-8"))
++            gaps = [g["item"] for g in json.loads((out / "gaps.json").read_text(encoding="utf-8"))] if (out / "gaps.json").exists() else []
++        return sections, seen, gaps, (a, b, c, d, e)
++
++    def test_the_day_leads_with_the_event_chosen_over_the_whole_selection(self):
++        sections, seen, gaps, (a, b, c, d, e) = self.lead_run(lambda a, b, c, d: {"hero_ids": [d["fact_id"]]})
++        # the lead call saw every kept fact grouped by topic, the closes, and could answer only with those ids
++        # the groups are only lettered: neither a topic's title nor a "ranked most important" label shows what the earlier choice preferred
++        self.assertEqual([g["話題"] for g in seen["data"]["選定の全体"]], ["A", "B", "C"])
++        shown = json.dumps(seen["data"]["選定の全体"], ensure_ascii=False)
++        self.assertNotIn("最重要", shown)
++        self.assertNotIn('"甲"', shown)
++        self.assertEqual(seen["data"]["前営業日の株・商品・金利の終値"], ["2026-09-29のNYダウの終値は…"])
++        self.assertEqual(set(seen["schema"]["properties"]["hero_ids"]["items"]["enum"]),
++                         {f["id"] for g in seen["data"]["選定の全体"] for f in g["facts"]})
++        self.assertTrue({x["fact_id"] for x in (a, b, c, d)} <= set(seen["schema"]["properties"]["hero_ids"]["items"]["enum"]))
++        self.assertEqual(sections["hero"], oneshot.join_facts([d]))
++        self.assertEqual(sections["headline"], "乙")  # the topic holding the chosen fact leads and gives the headline
++        self.assertEqual([t["title"] for t in sections["topics"]], ["乙", "甲"])
++        self.assertNotIn(oneshot.join_facts([d]), sections["topics"][0]["body"])  # not repeated under its own topic
++        self.assertEqual(gaps.count("最重要の出来事の選定"), 0)
++
++    def test_an_unusable_lead_answer_keeps_the_earlier_choice_and_records_a_gap(self):
++        for answer in ({"hero_ids": ["NOPE"]}, {"hero_ids": []}, {"issues": []}):
++            sections, _, gaps, (a, *_rest) = self.lead_run(lambda a, b, c, d, answer=answer: answer)
++            self.assertEqual(sections["hero"], oneshot.join_facts([a]))
++            self.assertEqual(sections["headline"], "甲")
++            self.assertIn("最重要の出来事の選定", gaps)
++
+     def test_assembled_sections_are_never_sent_to_repair(self):
+         material, calendar, ranking = self.inputs()
+         issue = {"status": "ok", "issues": [{"section": "risk", "excerpt": "x", "kind": "取り違え", "reason": "x"},
