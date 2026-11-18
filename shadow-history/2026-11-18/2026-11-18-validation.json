@@ -1,0 +1,389 @@
+{
+  "date": "2026-11-18",
+  "generated_at_jst": "2026-11-18T11:24:47+09:00",
+  "source_count": 3,
+  "event_count": 25,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "Business Inventories m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "NAHB Housing Market Index",
+      "importance": "low",
+      "forecast": "29",
+      "previous": "29",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:25",
+      "country": "USD",
+      "name": "FOMC Member Williams Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "PPI Input q/q",
+      "importance": "low",
+      "forecast": "1.5%",
+      "previous": "2.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "PPI Output q/q",
+      "importance": "low",
+      "forecast": "1.1%",
+      "previous": "1.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:39",
+      "country": "AUD",
+      "name": "MI Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "Trade Balance",
+      "importance": "low",
+      "forecast": "-0.90T",
+      "previous": "-0.70T",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Wage Price Index q/q",
+      "importance": "medium",
+      "forecast": "1.0%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "11:45",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "CPI y/y",
+      "importance": "high",
+      "forecast": "3.6%",
+      "previous": "3.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.8%",
+      "previous": "2.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "PPI Input m/m",
+      "importance": "low",
+      "forecast": "0.8%",
+      "previous": "1.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "PPI Output m/m",
+      "importance": "low",
+      "forecast": "0.6%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "GBP",
+      "name": "RPI y/y",
+      "importance": "low",
+      "forecast": "4.1%",
+      "previous": "3.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:02",
+      "country": "CNY",
+      "name": "Foreign Direct Investment ytd/y",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-4.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:30",
+      "country": "GBP",
+      "name": "BOE Gov Bailey Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "ECB Financial Stability Review",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "HPI y/y",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "0.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Final CPI y/y",
+      "importance": "low",
+      "forecast": "4.0%",
+      "previous": "4.0%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:00",
+      "country": "EUR",
+      "name": "Final Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.5%",
+      "previous": "2.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "NHPI m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "-0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Building Permits",
+      "importance": "low",
+      "forecast": "1.38M",
+      "previous": "1.40M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Housing Starts",
+      "importance": "low",
+      "forecast": "1.25M",
+      "previous": "1.22M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:25",
+      "country": "EUR",
+      "name": "ECB President Lagarde Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:00 USD Business Inventories m/m",
+    "single source: 00:00 USD NAHB Housing Market Index",
+    "single source: 04:25 USD FOMC Member Williams Speaks",
+    "single source: 06:30 USD API Weekly Statistical Bulletin",
+    "single source: 06:45 NZD PPI Input q/q",
+    "single source: 06:45 NZD PPI Output q/q",
+    "single source: 08:39 AUD MI Leading Index m/m",
+    "single source: 08:50 JPY Trade Balance",
+    "single source: 09:30 AUD Wage Price Index q/q",
+    "single source: 11:45 EUR German Buba President Nagel Speaks",
+    "single source: 16:00 GBP CPI y/y",
+    "single source: 16:00 GBP Core CPI y/y",
+    "single source: 16:00 GBP PPI Input m/m",
+    "single source: 16:00 GBP PPI Output m/m",
+    "single source: 16:00 GBP RPI y/y",
+    "single source: 16:02 CNY Foreign Direct Investment ytd/y",
+    "single source: 16:30 GBP BOE Gov Bailey Speaks",
+    "single source: 18:00 EUR ECB Financial Stability Review",
+    "single source: 18:30 GBP HPI y/y",
+    "single source: 19:00 EUR Final CPI y/y",
+    "single source: 19:00 EUR Final Core CPI y/y",
+    "single source: 22:30 CAD NHPI m/m",
+    "single source: 22:30 USD Building Permits",
+    "single source: 22:30 USD Housing Starts",
+    "single source: 23:25 EUR ECB President Lagarde Speaks",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
