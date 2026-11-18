@@ -471,6 +471,31 @@ class DailyTests(unittest.TestCase):
         self.assertEqual(sorted(x["pairs"][0] for x in facts), ["EUR/USD", "USD/JPY"])
         self.assertEqual([c.args[1] for c in gap.call_args_list], ["前営業日の出来事"])  # only the thin-day note, no lost chunk
 
+    def test_extraction_keeps_halving_until_a_piece_answers_and_only_then_records_a_gap(self):
+        import local_fx_grounding as grounding
+        sentences = [f"ニューヨーク時間の銘柄{i}は{100 + i}円で引けた。" * 3 for i in range(8)]
+        text = "".join(sentences)
+        source = {"source_id": 7, "title": "NY概況", "source_url": "https://test.example/7",
+                  "published_at": "2026-09-29T05:50:00+09:00", "text": text}
+        limit = len(text) // 3  # a call over this size comes back cut off, as a long list or a repeating loop does
+
+        def infer(out, label, task, data, schema):
+            if len(data["text"]) > limit:
+                raise ValueError("wrong model or incomplete response")
+            quote = data["text"][:20]
+            return {"claims": [{"kind": "price", "fact": "前営業日のNYで" + quote, "quote": quote, "event_scope": "previous",
+                                "market_session": "NY", "pairs": ["USD/JPY"], "record_type": "actual"}]}
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "source_chunks", return_value=[text]), \
+                patch.object(daily, "infer_cached", side_effect=infer), patch.object(daily, "record_gap") as gap:
+            facts = grounding.extract(daily, [source], date(2026, 9, 29), Path(folder), True)
+        self.assertGreaterEqual(len(facts), 3)  # the quarters answered; nothing was dropped after one level of halving
+        self.assertEqual([c.args[1] for c in gap.call_args_list], ["前営業日の出来事"])  # no lost piece
+        with tempfile.TemporaryDirectory() as folder, patch.object(daily, "source_chunks", return_value=[text]), \
+                patch.object(daily, "infer_cached", side_effect=ValueError("down")), patch.object(daily, "record_gap") as gap:
+            grounding.extract(daily, [source], date(2026, 9, 29), Path(folder), True)
+        notes = [c.args[1] for c in gap.call_args_list]
+        self.assertIn("ニュース記事の事実抽出", notes)  # a piece that never answers is recorded, and the splitting stops
+
     def test_duplicate_facts_are_merged_keeping_every_number(self):
         import local_fx_grounding as grounding
         mk = lambda i, text, title: {"fact_id": i, "fact": text, "source_title": title, "claim_gate_accepted": True}

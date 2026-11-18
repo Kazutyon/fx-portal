@@ -210,6 +210,7 @@ def bind_claim(source, claim, index, target):
     return result
 
 
+MAX_EXTRACT_SPLITS = 3   # a chunk is split in half at most this many times before its part is recorded as a gap
 DATE_ASK = ("event_dateは出来事が起きた日(YYYY-MM-DD)。source_title・article_opening・nearby_headingや本文にある日付"
             "(『11月11日の為替相場の振り返り』『ニューヨーク外国為替市場概況・13日』『10日のNY市場』など)から読み取って答える。"
             "実績・予定の事実で、出来事の日がどこからも分からないときは空文字にする(掲載日から推測しない。"
@@ -499,17 +500,21 @@ def extract(api, sources, target, out, observational=False):
                  "source_title": source["title"], "article_opening": source["text"][:240],
                  "nearby_heading": context_for(source, piece)["nearby_heading"], "text": piece}, CLAIMS)
             label = f'source-{source["source_id"]:02}-part-{part:02}-typed-extract'
-            try:
-                value = ask(label, text)
-            except ValueError:  # a call that came back cut off or unreadable: ask again on each half instead of losing the chunk
-                value = {"claims": []}
-                cut = text.rfind("。", 0, len(text) // 2 + 1) + 1 or len(text) // 2
-                for tag, piece in (("a", text[:cut]), ("b", text[cut:])):
-                    try:
-                        value["claims"] += ask(label.replace("-typed-extract", tag + "-typed-extract"), piece)["claims"]
-                    except ValueError as error:
+
+            def extract_piece(label, piece, depth=0, ask=ask, source=source):
+                """One rule for every cut-off or unreadable answer (a long list that hit the output limit, a repeating loop):
+                ask again on each half, and on the halves of a half, until the depth limit is reached. Only then is a gap recorded."""
+                try:
+                    return ask(label, piece)["claims"]
+                except ValueError as error:
+                    if depth >= MAX_EXTRACT_SPLITS or len(piece) < 2:
                         if hasattr(api, "record_gap"):
                             api.record_gap(out, "ニュース記事の事実抽出", f"{source['title'][:30]} の一部: {error}")
+                        return []
+                    cut = piece.rfind("。", 0, len(piece) // 2 + 1) + 1 or len(piece) // 2
+                    return [claim for tag, half in (("a", piece[:cut]), ("b", piece[cut:]))
+                            for claim in extract_piece(label.replace("-typed-extract", tag + "-typed-extract"), half, depth + 1)]
+            value = {"claims": extract_piece(label, text)}
             chunk_facts = []
             for claim in value["claims"]:
                 if claim["quote"] not in text:
