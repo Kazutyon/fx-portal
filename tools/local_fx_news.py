@@ -13,6 +13,7 @@ import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 from datetime import date, datetime, time as daytime, timedelta, timezone
 from html.parser import HTMLParser
@@ -203,8 +204,18 @@ def infer(stage: str, task: str, data: object, output_schema: dict, out: Path, m
             headers={"Content-Type": "application/json"},
         )
         started = time.monotonic()
-        with urllib.request.urlopen(request, timeout=180) as response:
-            result = json.load(response)
+        try:
+            with urllib.request.urlopen(request, timeout=180) as response:
+                result = json.load(response)
+        except urllib.error.HTTPError as error:
+            # Ollama aborts a looping answer (same token over and over) and reports it as HTTP 500. That is an
+            # unusable answer like any other, so it takes the caller's ask-again/halve path (ValueError).
+            # Any other HTTP error is a real fault and still stops the run.
+            detail = error.read().decode("utf-8", "replace")
+            if "token repeat limit" not in detail:
+                raise
+            save(out / f"{stage}.repeat-limit.json", {"http_status": error.code, "body": detail[:300]})
+            raise ValueError(f"{stage}: answer aborted by the server (token repeat limit)") from error
         save(out / f"{stage}.response.json", result)
         info = {
             "stage": stage, "model": result.get("model"), "input_bytes": input_bytes,

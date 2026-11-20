@@ -83,6 +83,25 @@ class PilotRegressionTests(unittest.TestCase):
                     pilot.infer("topic-write", "test", {}, pilot.QC_SCHEMA, Path(folder))
             self.assertEqual(urlopen.call_count, 2)
 
+    def http_error(self, body):
+        return pilot.urllib.error.HTTPError("http://localhost/api/chat", 500, "Internal Server Error", {}, io.BytesIO(body.encode()))
+
+    def test_server_aborted_repeat_loop_is_an_unusable_answer_not_a_crash(self):
+        # 2026-11-20: Ollama answered a looping extraction with HTTP 500 "token repeat limit reached"; that stopped the whole run.
+        with tempfile.TemporaryDirectory() as folder:
+            error = self.http_error('{"error":"prediction aborted, token repeat limit reached"}')
+            with patch.object(pilot.urllib.request, "urlopen", side_effect=error):
+                with self.assertRaisesRegex(ValueError, "token repeat limit"):
+                    pilot.infer("test-extract", "test", {}, pilot.QC_SCHEMA, Path(folder))
+            self.assertTrue((Path(folder) / "test-extract.repeat-limit.json").exists())
+
+    def test_other_http_errors_still_stop_the_run(self):
+        with tempfile.TemporaryDirectory() as folder:
+            error = self.http_error('{"error":"model failed to load"}')
+            with patch.object(pilot.urllib.request, "urlopen", side_effect=error):
+                with self.assertRaises(pilot.urllib.error.HTTPError):
+                    pilot.infer("test-extract", "test", {}, pilot.QC_SCHEMA, Path(folder))
+
     def test_visible_publication_time_controls_cutoff(self):
         page = '''<script type="application/ld+json">{
         "@type":"NewsArticle","headline":"test", "datePublished":"2026-09-29T06:55:00+09:00"
