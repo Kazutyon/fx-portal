@@ -1,0 +1,270 @@
+{
+  "date": "2026-11-23",
+  "generated_at_jst": "2026-11-23T09:49:08+09:00",
+  "source_count": 3,
+  "event_count": 17,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Core Retail Sales q/q",
+      "importance": "low",
+      "forecast": "0.8%",
+      "previous": "0.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:45",
+      "country": "NZD",
+      "name": "Retail Sales q/q",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "-0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "07:00",
+      "country": "AUD",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": null,
+      "previous": "49.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "07:00",
+      "country": "AUD",
+      "name": "Flash Services PMI",
+      "importance": "low",
+      "forecast": null,
+      "previous": "47.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:00",
+      "country": "JPY",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:15",
+      "country": "EUR",
+      "name": "French Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "49.8",
+      "previous": "49.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:15",
+      "country": "EUR",
+      "name": "French Flash Services PMI",
+      "importance": "medium",
+      "forecast": "47.4",
+      "previous": "48.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "EUR",
+      "name": "German Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "54.1",
+      "previous": "54.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:30",
+      "country": "EUR",
+      "name": "German Flash Services PMI",
+      "importance": "medium",
+      "forecast": "52.4",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": "52.7",
+      "previous": "52.4",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Flash Services PMI",
+      "importance": "low",
+      "forecast": "51.8",
+      "previous": "51.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "53.0",
+      "previous": "52.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:30",
+      "country": "GBP",
+      "name": "Flash Services PMI",
+      "importance": "medium",
+      "forecast": "53.0",
+      "previous": "53.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:00",
+      "country": "GBP",
+      "name": "MPC Member Pill Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Corporate Profits q/q",
+      "importance": "low",
+      "forecast": null,
+      "previous": "8.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:45",
+      "country": "USD",
+      "name": "Flash Manufacturing PMI",
+      "importance": "medium",
+      "forecast": "54.5",
+      "previous": "56.0",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:45",
+      "country": "USD",
+      "name": "Flash Services PMI",
+      "importance": "medium",
+      "forecast": "55.6",
+      "previous": "57.9",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 06:45 NZD Core Retail Sales q/q",
+    "single source: 06:45 NZD Retail Sales q/q",
+    "single source: 07:00 AUD Flash Manufacturing PMI",
+    "single source: 07:00 AUD Flash Services PMI",
+    "single source: 09:00 JPY Bank Holiday",
+    "single source: 17:15 EUR French Flash Manufacturing PMI",
+    "single source: 17:15 EUR French Flash Services PMI",
+    "single source: 17:30 EUR German Flash Manufacturing PMI",
+    "single source: 17:30 EUR German Flash Services PMI",
+    "single source: 18:00 EUR Flash Manufacturing PMI",
+    "single source: 18:00 EUR Flash Services PMI",
+    "single source: 18:30 GBP Flash Manufacturing PMI",
+    "single source: 18:30 GBP Flash Services PMI",
+    "single source: 22:00 GBP MPC Member Pill Speaks",
+    "single source: 22:30 CAD Corporate Profits q/q",
+    "single source: 23:45 USD Flash Manufacturing PMI",
+    "single source: 23:45 USD Flash Services PMI",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
