@@ -42,6 +42,7 @@ https://fx.minkabu.jp/news
 
 【書き方の見本（事実の取得元ではない）】
 https://min-fx.jp/market/report/ を開き、一番上の最新レポート1本を読む。前日振り返りの文章は、この見本の読みやすさに合わせて書く。見本の内容（相場の事実）は日報に使わない。
+前回までの比較メモ notes/style-notes.md があれば読み、書き方の参考にする（メモは気づきの記録であり、守るべき規則ではない）。
 
 抽出する内容：
 - 前日の主要出来事・トピック（3〜5本）
@@ -833,11 +834,15 @@ with open('archive.html', 'w', encoding='utf-8') as f:
 print('archive.html regenerated')
 ```
 
+### 6-3b: 書き方の比較メモ（毎朝・日報を書き終えたあと）
+今日の日報（前日振り返り・一言まとめ）と、Step 2で読んだみんなのFXの最新レポートを読み比べ、読みやすさで差を感じた点と、次に試してみたいことを notes/style-notes.md に書く。各回2〜3行、日付つき。ファイルには直近5回分だけ残し、古い回は消す。自分の気づきだけを書き、見本の文章や相場の数字は写さない。メモは情報であり規則ではない。次回どう書くかはその日の判断でよい。
+
 ### 6-4: Git commit & push
 ```bash
 git config user.email "bot@fx-portal" && git config user.name "FX Bot"
 python generate_index.py
 git add reports/ index.html archive.html style.css assets/hero-wave.png trigger_prompt.txt generate_index.py daytrade_ranking.py
+if [ -f notes/style-notes.md ]; then git add notes/style-notes.md; fi
 if [ -f data/daytrade-ranking.json ]; then git add data/daytrade-ranking.json; fi
 git commit -m "FX日報 YYYY-MM-DD（曜日）"
 git push origin main
