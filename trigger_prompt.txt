@@ -40,6 +40,9 @@ https://zai.diamond.jp/category/zaifxnews
 https://www.gaitame.com/markets/news/
 https://fx.minkabu.jp/news
 
+【書き方の見本（事実の取得元ではない）】
+https://min-fx.jp/market/report/ を開き、一番上の最新レポート1本を読む。前日振り返りの文章は、この見本の読みやすさに合わせて書く。見本の内容（相場の事実）は日報に使わない。
+
 抽出する内容：
 - 前日の主要出来事・トピック（3〜5本）
 - 各トピックでなぜ相場が動いたか（理由・背景を具体的に）
