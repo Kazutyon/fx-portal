@@ -239,28 +239,26 @@
       <div class="panel full" id="calendar">
         <div class="panel-head">
           <h3>📅 本日の経済指標カレンダー（全件）</h3>
-          <span>KissFX × ForexFactory 2ソース照合済み（要確認あり）</span>
         </div>
         <table class="fx-table" style="font-size:0.9em;">
           <thead>
             <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
           </thead>
           <tbody>
-            <tr><td>04:00</td><td>🇺🇸 米</td><td>消費者信用残高（ForexFactoryのみ・要確認）</td><td>低</td><td>+11.9B</td><td>+14.2B</td></tr>
-            <tr><td>08:50</td><td>🇯🇵 日</td><td>M2マネーストック【前年比】（ForexFactoryのみ・要確認）</td><td>低</td><td>+2.2%</td><td>+2.2%</td></tr>
-            <tr><td><strong>10:30</strong></td><td>🇨🇳 中</td><td><strong>消費者物価指数(CPI)【前年比】（KissFX・ForexFactory一致）</strong> <span class="badge-important">★重要</span></td><td>中</td><td>+0.8%</td><td>+0.5%</td></tr>
-            <tr><td>10:30</td><td>🇨🇳 中</td><td>生産者物価指数(PPI)【前年比】（KissFX・ForexFactory一致）</td><td>中</td><td>+3.6%</td><td>+3.5%</td></tr>
-            <tr><td>15:00</td><td>🇯🇵 日</td><td>工作機械受注【改定・前年比】（KissFX・ForexFactory一致）</td><td>低</td><td>—</td><td>+50.4%</td></tr>
+            <tr><td>04:00</td><td>🇺🇸 米</td><td>消費者信用残高（要確認）</td><td>低</td><td>+11.9B</td><td>+14.2B</td></tr>
+            <tr><td>08:50</td><td>🇯🇵 日</td><td>M2マネーストック【前年比】（要確認）</td><td>低</td><td>+2.2%</td><td>+2.2%</td></tr>
+            <tr><td><strong>10:30</strong></td><td>🇨🇳 中</td><td><strong>消費者物価指数(CPI)【前年比】</strong> <span class="badge-important">★重要</span></td><td>中</td><td>+0.8%</td><td>+0.5%</td></tr>
+            <tr><td>10:30</td><td>🇨🇳 中</td><td>生産者物価指数(PPI)【前年比】</td><td>中</td><td>+3.6%</td><td>+3.5%</td></tr>
+            <tr><td>15:00</td><td>🇯🇵 日</td><td>工作機械受注【改定・前年比】</td><td>低</td><td>—</td><td>+50.4%</td></tr>
             <tr><td>15:45</td><td>🇫🇷 仏</td><td>鉱工業生産【前月比/前年比】（KissFX・ForexFactory一致、m/mのみ照合）</td><td>中</td><td>+0.2%/+0.4%</td><td>+0.1%/-0.1%</td></tr>
-            <tr><td>15:45</td><td>🇫🇷 仏</td><td>製造業生産指数【前年比】（KissFXのみ・要確認）</td><td>低</td><td>-1.1%</td><td>-1.7%</td></tr>
-            <tr><td>18:42</td><td>🇩🇪 独</td><td>10年国債入札（ForexFactoryのみ・要確認）</td><td>低</td><td>—</td><td>利回り3.26%/応札倍率1.1</td></tr>
-            <tr><td>20:00</td><td>🇺🇸 米</td><td>MBA住宅ローン申請指数（KissFXのみ・要確認）</td><td>低</td><td>—</td><td>+0.8%</td></tr>
-            <tr><td>21:15</td><td>🇺🇸 米</td><td>ADP週間雇用統計（ForexFactoryのみ・要確認）</td><td>低</td><td>—</td><td>+11.8K</td></tr>
+            <tr><td>15:45</td><td>🇫🇷 仏</td><td>製造業生産指数【前年比】（要確認）</td><td>低</td><td>-1.1%</td><td>-1.7%</td></tr>
+            <tr><td>18:42</td><td>🇩🇪 独</td><td>10年国債入札（要確認）</td><td>低</td><td>—</td><td>利回り3.26%/応札倍率1.1</td></tr>
+            <tr><td>20:00</td><td>🇺🇸 米</td><td>MBA住宅ローン申請指数（要確認）</td><td>低</td><td>—</td><td>+0.8%</td></tr>
+            <tr><td>21:15</td><td>🇺🇸 米</td><td>ADP週間雇用統計（要確認）</td><td>低</td><td>—</td><td>+11.8K</td></tr>
             <tr><td><strong>翌02:01</strong></td><td>🇺🇸 米</td><td><strong>10年債入札（KissFX・ForexFactory両ソースで確認、発行予定額390億ドル）</strong> <span class="badge-important">★重要</span></td><td>高</td><td>390億ドル</td><td>応札倍率2.5/利回り4.68%</td></tr>
           </tbody>
         </table>
-        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。KissFX（主・ランク付き）とForexFactoryの機械可読カレンダー（ff_calendar_thisweek.json、ET→JST変換済み。economic_calendar_forexfactory.pyで正規化）の2つの独立ソースで照合済み。両ソースで一致した指標はそのまま掲載し、片方のソースにしか掲載がない指標には「（要確認）」を付しています。本日は主要国の市場休場はありません。指標の網羅性は保証できないため、発表直前に各社カレンダーで再確認してください。</p>
-      </div>
+        </div>
 
     </div><!-- /content-grid -->
 

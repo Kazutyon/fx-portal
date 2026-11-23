@@ -237,25 +237,23 @@
       <div class="panel full" id="calendar">
         <div class="panel-head">
           <h3>📅 本日の経済指標カレンダー（全件）</h3>
-          <span>KissFX × ForexFactory 2ソース照合済み（要確認あり）</span>
         </div>
         <table class="fx-table" style="font-size:0.9em;">
           <thead>
             <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>終日</strong></td><td>🇯🇵 日本</td><td><strong>⚠️ <strong>敬老の日（日本祝日）— 東京市場（株式・銀行）休場、日経225先物・オプションは祝日取引あり</strong>（KissFX・ForexFactory一致）</strong> <span class="badge-important">★重要</span></td><td>◎</td><td>—</td><td>—</td></tr>
-            <tr><td>08:01</td><td>🇬🇧 英</td><td>ライトムーブ住宅価格指数【前月比／前年比】（KissFX・ForexFactory一致、値の対応関係に相違あり・要確認）</td><td>低</td><td>-2.0%／-1.0%(Kiss)</td><td>-2.0%(FF)</td></tr>
-            <tr><td>12:00</td><td>🇳🇿 NZ</td><td>クレジットカード支出【前年比】（ForexFactoryのみ・要確認）</td><td>低</td><td>—</td><td>+5.3%</td></tr>
-            <tr><td>19:00</td><td>🇪🇺 欧</td><td>独連銀（ブンデスバンク）月報（ForexFactoryのみ・要確認）</td><td>低</td><td>—</td><td>—</td></tr>
-            <tr><td>19:30</td><td>🇺🇸 米</td><td>グールズビー・シカゴ連銀総裁（投票権なし） 発言（KissFX・ForexFactory一致）</td><td>要人発言</td><td>—</td><td>—</td></tr>
-            <tr><td>21:30</td><td>🇺🇸 米</td><td>シカゴ連銀全米活動指数（KissFXのみ・要確認）</td><td>低</td><td>-0.04</td><td>-0.06</td></tr>
-            <tr><td>24:00</td><td>🇪🇺 欧</td><td>ラガルドECB総裁 発言（KissFX・ForexFactory一致）</td><td>要人発言</td><td>—</td><td>—</td></tr>
+            <tr><td><strong>終日</strong></td><td>🇯🇵 日本</td><td><strong>⚠️ <strong>敬老の日（日本祝日）— 東京市場（株式・銀行）休場、日経225先物・オプションは祝日取引あり</strong></strong> <span class="badge-important">★重要</span></td><td>◎</td><td>—</td><td>—</td></tr>
+            <tr><td>08:01</td><td>🇬🇧 英</td><td>ライトムーブ住宅価格指数【前月比／前年比】（KissFX・ForexFactory一致、値の対応関係に相違あり・要確認）</td><td>低</td><td>-2.0%／-1.0%</td><td>-2.0%</td></tr>
+            <tr><td>12:00</td><td>🇳🇿 NZ</td><td>クレジットカード支出【前年比】（要確認）</td><td>低</td><td>—</td><td>+5.3%</td></tr>
+            <tr><td>19:00</td><td>🇪🇺 欧</td><td>独連銀（ブンデスバンク）月報（要確認）</td><td>低</td><td>—</td><td>—</td></tr>
+            <tr><td>19:30</td><td>🇺🇸 米</td><td>グールズビー・シカゴ連銀総裁（投票権なし） 発言</td><td>要人発言</td><td>—</td><td>—</td></tr>
+            <tr><td>21:30</td><td>🇺🇸 米</td><td>シカゴ連銀全米活動指数（要確認）</td><td>低</td><td>-0.04</td><td>-0.06</td></tr>
+            <tr><td>24:00</td><td>🇪🇺 欧</td><td>ラガルドECB総裁 発言</td><td>要人発言</td><td>—</td><td>—</td></tr>
             <tr><td>24:20</td><td>🇨🇦 加</td><td>マックレムBOC総裁 発言（KissFX24:20・ForexFactory24:05で時刻相違・要確認）</td><td>要人発言</td><td>—</td><td>—</td></tr>
           </tbody>
         </table>
-        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻はJST。KissFX（主・ランク付き、https://kissfx.com/article/fxdays20260921.html）とForexFactoryの機械可読カレンダー（ff_calendar_thisweek.json、ET→JST変換済み。economic_calendar_forexfactory.pyで正規化）の2つの独立ソースで照合済み。両ソースで一致した指標はそのまま掲載し、片方のソースにしか掲載がない指標、または予想値・前回値・時刻がソース間で相違する指標には「（要確認）」を付しています。本日は敬老の日で日本市場が休場です（9/21〜23、日経225先物・オプションは祝日取引あり）。KissFXは「本日は注目度の高い米国の経済指標の発表はない」と明記しています。指標の網羅性は保証できないため、発表直前に各社カレンダーで再確認してください。</p>
-      </div>
+        </div>
 
       <div class="panel full" id="fundamentals">
         <div class="panel-head">
