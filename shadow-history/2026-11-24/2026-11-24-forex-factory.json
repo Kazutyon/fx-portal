@@ -1,0 +1,107 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-11-24",
+  "fetched_at": "2026-11-24T13:45:48+09:00",
+  "events": [
+    {
+      "time_jst": "06:00",
+      "country": "USD",
+      "name": "FOMC Member Williams Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "JPY",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": "53.5",
+      "previous": "53.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "German ifo Business Climate",
+      "importance": "low",
+      "forecast": "90.5",
+      "previous": "90.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "20:00",
+      "country": "GBP",
+      "name": "CBI Realized Sales",
+      "importance": "low",
+      "forecast": "-27",
+      "previous": "-10",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:30",
+      "country": "GBP",
+      "name": "MPC Member Greene Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "23.8K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "CNY",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "EUR",
+      "name": "Belgian NBB Business Climate",
+      "importance": "low",
+      "forecast": "-9.4",
+      "previous": "-9.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "HPI m/m",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "S&P/CS Composite-20 HPI y/y",
+      "importance": "low",
+      "forecast": "2.7%",
+      "previous": "2.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

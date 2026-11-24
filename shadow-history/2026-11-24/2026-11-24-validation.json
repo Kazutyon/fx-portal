@@ -1,0 +1,165 @@
+{
+  "date": "2026-11-24",
+  "generated_at_jst": "2026-11-24T13:45:50+09:00",
+  "source_count": 3,
+  "event_count": 10,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "06:00",
+      "country": "USD",
+      "name": "FOMC Member Williams Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "JPY",
+      "name": "Flash Manufacturing PMI",
+      "importance": "low",
+      "forecast": "53.5",
+      "previous": "53.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "German ifo Business Climate",
+      "importance": "low",
+      "forecast": "90.5",
+      "previous": "90.2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "20:00",
+      "country": "GBP",
+      "name": "CBI Realized Sales",
+      "importance": "low",
+      "forecast": "-27",
+      "previous": "-10",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "GBP",
+      "name": "MPC Member Greene Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:15",
+      "country": "USD",
+      "name": "ADP Weekly Employment Change",
+      "importance": "low",
+      "forecast": null,
+      "previous": "23.8K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "CNY",
+      "name": "CB Leading Index m/m",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "EUR",
+      "name": "Belgian NBB Business Climate",
+      "importance": "low",
+      "forecast": "-9.4",
+      "previous": "-9.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "HPI m/m",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "23:00",
+      "country": "USD",
+      "name": "S&P/CS Composite-20 HPI y/y",
+      "importance": "low",
+      "forecast": "2.7%",
+      "previous": "2.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 06:00 USD FOMC Member Williams Speaks",
+    "single source: 09:30 JPY Flash Manufacturing PMI",
+    "single source: 18:00 EUR German ifo Business Climate",
+    "single source: 20:00 GBP CBI Realized Sales",
+    "single source: 21:30 GBP MPC Member Greene Speaks",
+    "single source: 22:15 USD ADP Weekly Employment Change",
+    "single source: 23:00 CNY CB Leading Index m/m",
+    "single source: 23:00 EUR Belgian NBB Business Climate",
+    "single source: 23:00 USD HPI m/m",
+    "single source: 23:00 USD S&P/CS Composite-20 HPI y/y",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
