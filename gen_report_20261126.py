@@ -1,0 +1,334 @@
+# -*- coding: utf-8 -*-
+"""FX日報 2026-11-26（木）生成スクリプト"""
+import glob, os, datetime
+
+TODAY = '2026-11-26'
+WEEKDAY = '木'
+DAYS = ['月', '火', '水', '木', '金', '土', '日']
+
+HERO_SUB = ('11/25（水）は米GDP改定値と失業保険申請件数が強く、ドル円は159.38円まで買われたが、米国の新関税案とAI株安で158.66円まで反落し、159円台前半に戻して引けた。本日は米国が感謝祭で休場。10:00の田村日銀審議委員の講演が円の材料。')
+
+# サイドバー用アーカイブ（今日を除く直近10件）
+files = sorted(glob.glob('reports/*.html'), reverse=True)
+files = [f for f in files if os.path.basename(f) != f'{TODAY}.html'][:10]
+archive_items = ''
+for f in files:
+    name = os.path.basename(f).replace('.html', '')
+    d = datetime.date.fromisoformat(name)
+    archive_items += f'<li><a href="{name}.html">{name}（{DAYS[d.weekday()]}）</a></li>\n'
+
+ICON_GRID = '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>'
+ICON_DOC = '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>'
+ICON_CHART = '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 7"/></svg>'
+ICON_TOOL = '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="11" cy="18" r="2"/></svg>'
+ICON_INFO = '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+ICON_SHIELD = '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>'
+ICON_MAIL = '<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>'
+
+# 経済指標カレンダー（時刻, 国旗+国, 指標, 重要度, 予想, 前回）
+CAL = [
+    ('00:00', '🇺🇸 米', '【発表済み】新築住宅販売件数（10月）結果70.1万件', 'A', '65.0万件', '61.4万件（67.6万件から修正）'),
+    ('00:30', '🇺🇸 米', '【発表済み】EIA週間原油在庫 結果+110.9万バレル', 'BB', '+200万バレル（要確認）', '+338.0万バレル'),
+    ('02:00', '🇺🇸 米', '【発表済み】週間天然ガス貯蔵量（結果は要確認）', 'B', '-190億立方フィート', '+200億立方フィート'),
+    ('04:00', '🇺🇸 米', '【発表済み】地区連銀経済報告（ベージュブック）12地区中8地区が「緩慢から緩やか」な成長', 'B', '—', '—'),
+    ('09:30', '🇦🇺 豪', '民間設備投資（第3四半期）前期比', '○', '+4.3%〜+4.5%（要確認）', '-3.6%'),
+    ('09:30', '🇦🇺 豪', 'RBA紀要 公表（要確認）', '低', '—', '—'),
+    ('10:00', '🇯🇵 日', '田村日銀審議委員 講演（山梨県金融経済懇談会）', '○', '要人発言', '—'),
+    ('10:00', '🇨🇳 中', 'SWIFTグローバル支払い 人民元建て比率（10月）（要確認）', '低', '—', '3.33%'),
+    ('10:10', '🇯🇵 日', '国債買い入れオペ（残存3-5年・10-25年・物価連動債）（要確認）', '低', '—', '—'),
+    ('14:00', '🇯🇵 日', '景気先行CI指数 改定値（9月）', '×', '—', '116.4'),
+    ('14:00', '🇯🇵 日', '景気一致CI指数 改定値（9月）', '×', '—', '119.5'),
+    ('未定', '🇯🇵 日', '田村日銀審議委員 記者会見', '○', '要人発言', '—'),
+    ('未定', '🇰🇷 韓', '韓国銀行 政策金利発表（要確認）', '低', '3.25%', '3.00%'),
+    ('未定', '🇪🇺 欧', 'EU特別予算サミット（要確認）', '低', '—', '—'),
+    ('16:00', '🇩🇪 独', 'GfK消費者信頼感調査（12月）', '×', '-30.0〜-29.4（要確認）', '-30.8'),
+    ('16:45', '🇫🇷 仏', '生産者物価指数（10月）前月比／前年比（要確認）', '△', '—', '+1.7%／+6.8%'),
+    ('18:00', '🇪🇺 欧', 'マネーサプライM3（10月）前年比', '低', '3.5%', '3.5%'),
+    ('18:00', '🇪🇺 欧', '民間向け貸出（10月）前年比（要確認）', '低', '3.2%', '3.1%'),
+    ('19:30', '🇬🇧 英', 'BOE金融安定報告書・FPC声明 公表', '○', '—', '—'),
+    ('19:30', '🇬🇧 英', 'FPC議事要旨 公表（要確認）', '低', '—', '—'),
+    ('20:30', '🇧🇷 ブ', '経常収支（10月）（要確認）', '低', '-30.5億ドル', '-51.0億ドル'),
+    ('20:30', '🇧🇷 ブ', '海外直接投資（10月）（要確認）', '低', '77.00億ドル', '112.94億ドル'),
+    ('21:00', '🇧🇷 ブ', '拡大消費者物価指数 IPCA-15（11月）前年比（要確認）', '低', '4.78%', '4.62%'),
+    ('21:30', '🇪🇺 欧', 'ECB理事会議事要旨（10月28日・29日開催分）', '○', '—', '—'),
+    ('終日', '🇺🇸 米', '感謝祭で株式・債券市場休場（注目度の高い米指標の発表なし）', '—', '—', '—'),
+    ('30:00', '🇳🇿 NZ', 'ANZ消費者信頼感指数（11月）（要確認）', '×', '—', '96.2'),
+]
+cal_rows = '\n'.join(
+    f'            <tr><td>{t}</td><td>{c}</td><td>{n}</td><td>{r}</td><td>{fc}</td><td>{pv}</td></tr>'
+    for t, c, n, r, fc, pv in CAL)
+
+html = f'''<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX日報 {TODAY}（{WEEKDAY}） | AUXEN FX Portal</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../assets/logo.svg">
+<script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+</head>
+<body class="report-page">
+
+<header class="mobile-header">
+  <a href="../index.html" class="mobile-brand">
+    <img src="../assets/logo.svg" alt="AUXEN">
+    <span>
+      <strong>AUXEN</strong>
+      <em>FX Research Lab</em>
+    </span>
+  </a>
+  <a href="#report-menu" class="mobile-menu-button" aria-label="日報メニュー">
+    <span></span><span></span><span></span>
+  </a>
+</header>
+
+<section class="mobile-report-hero">
+  <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+  <h1>FX日報 {TODAY}（{WEEKDAY}）</h1>
+  <p>{HERO_SUB}</p>
+</section>
+
+<nav class="mobile-report-jump-grid" id="report-menu" aria-label="日報メニュー">
+  <a href="#summary"><span>一言まとめ</span><strong>今日の方向</strong></a>
+  <a href="#points"><span>注目ポイント</span><strong>重要イベント</strong></a>
+  <a href="#ranking"><span>通貨ランキング</span><strong>優先通貨</strong></a>
+  <a href="#calendar"><span>重要指標</span><strong>本日の予定</strong></a>
+  <a href="#review"><span>前日振り返り</span><strong>流れ確認</strong></a>
+  <a href="../index.html"><span>ポータル</span><strong>トップへ</strong></a>
+</nav>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="../assets/logo.svg" alt="AUXEN"></div>
+      <div>
+        <h1>AUXEN</h1>
+        <p>FX Research Lab</p>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <span class="nav-section">メイン</span>
+      <a href="../index.html">{ICON_GRID}ダッシュボード</a>
+      <a href="#" class="active">{ICON_DOC}日報</a>
+      <a href="../archive.html">{ICON_CHART}アーカイブ</a>
+      <span class="nav-section">ツール・販売</span>
+      <a href="../index.html#tools">{ICON_TOOL}トレードインジケーター</a>
+      <span class="nav-section">サイト情報</span>
+      <a href="../about.html">{ICON_INFO}About</a>
+      <a href="../disclaimer.html">{ICON_SHIELD}免責事項</a>
+      <a href="../contact.html">{ICON_MAIL}お問い合わせ</a>
+    </nav>
+
+    <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
+      <p style="font-size:11px;color:var(--muted);margin:0 0 10px;letter-spacing:.06em;text-transform:uppercase;">過去のレポート</p>
+      <ul class="archive-list">
+{archive_items}      </ul>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <header class="hero">
+      <div>
+        <p class="eyebrow">AUXEN FX PORTAL — AI Daily Report</p>
+        <h2>FX日報 {TODAY}（{WEEKDAY}）<span class="badge-live">最新</span></h2>
+        <p class="sub">{HERO_SUB}</p>
+      </div>
+      <div class="date-card">
+        <span>Report Date</span>
+        <strong>{TODAY}</strong>
+        <em>{WEEKDAY}</em>
+      </div>
+    </header>
+
+        <div class="summary-grid" id="summary">
+      <div class="card highlight">
+        <p class="label">一言まとめ</p>
+        <h3>強い米指標と新関税案が打ち消し合い、ドル円は159円台に戻った。今日は米国休場で、円の材料は田村日銀委員の講演</h3>
+        <p>昨日は米GDP改定値が+4.3%（予想+3.5%）、新規失業保険申請件数が18.9万件と1969年以来の低さに並び、FRBの12月追加利上げがほぼ確実視されてドルが買われた。ドル円は159.38円まで上げた。ところが米国がEUに最大20%、中国に20%超、日本と韓国に15%の関税を提案したと伝わり、AI株の売りも再燃して円が買われ、ドル円は158.66円まで下げた。AI株が下げ渋ると159円台前半に戻した。今日は米国が感謝祭で休場で、NY時間の取引は細る。10:00の田村日銀審議委員の講演と記者会見で、12/18会合の利上げに前向きな発言が出れば円買い、慎重なら円売りに傾く。</p>
+      </div>
+      <div class="card">
+        <p class="label">最注目通貨</p>
+        <h3>AUD/JPY 🇦🇺🇯🇵</h3>
+        <p>4時間足デイトレ適性は1位（11/25時点、スコア85・最適、ADX43.7、方向は下降）。昨日は豪10月CPIが前年比+4.9%（予想+4.7%）と加速したのに豪ドルは買いが続かず、豪州経済のスタグフレーション懸念とドル高で105円を割り込んだ。NY時間は104.65円前後まで下げた後、105.53円前後に戻した。今日は09:30の豪設備投資と10:00の田村委員の講演が東京時間に続けて出る。設備投資が弱く、田村委員が利上げに前向きなら、下降トレンドに沿って豪ドル安・円高が重なる。15分・30分足では105円を割れた後の戻りの高値を基準に売りを考える。</p>
+      </div>
+      <div class="card">
+        <p class="label">Market Risk</p>
+        <h3 style="color:var(--orange,#e67e22)">MEDIUM</h3>
+        <p>米国は感謝祭で株式・債券市場が休場、27日（金）は短縮取引で、NY時間の流動性が大きく落ちる。注目度の高い米指標はない。ただAI株は昨日もナスダックが一時4%超下げるほど不安定で、中東では親イラン武装組織フーシ派がサウジの製油所を攻撃した。薄い市場で突発的なニュースが出ると値が飛びやすい。30日（月）は月末。</p>
+      </div>
+      <div class="card">
+        <p class="label">本日の重要指標</p>
+        <h3>5件</h3>
+        <p>豪 民間設備投資(09:30)、日 田村日銀審議委員 講演(10:00)・記者会見(時刻未定)、英 BOE金融安定報告書(19:30)、欧 ECB理事会議事要旨(21:30)</p>
+      </div>
+    </div>
+
+    <div class="content-grid">
+
+      <div class="panel" id="points">
+        <div class="panel-head">
+          <h3>⚔️ 今日の注目ポイント</h3>
+          <span>経済指標・イベント</span>
+        </div>
+        <div class="report-body">
+          <div class="points-block">
+            <div class="block-title">🚫 本日の市場休場</div>
+            <ul class="points-list">
+              <li>米国：感謝祭で株式・債券市場が休場。27日（金）は感謝祭翌日で短縮取引となり、米国勢の多くは今日から連休に入る。</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">📌 必見経済指標（時刻順）</div>
+            <ul class="points-list">
+              <li>09:30 🇦🇺 豪 民間設備投資（第3四半期）前期比 予想+4.3%〜+4.5%（要確認）（○）</li>
+              <li>10:00 🇯🇵 日 田村日銀審議委員 講演（山梨県金融経済懇談会）（○）</li>
+              <li>時刻未定 🇯🇵 日 田村日銀審議委員 記者会見（○）</li>
+              <li>19:30 🇬🇧 英 BOE金融安定報告書・FPC声明（○）</li>
+              <li>21:30 🇪🇺 欧 ECB理事会議事要旨（10月28日・29日開催分）（○）</li>
+            </ul>
+          </div>
+          <div class="points-block">
+            <div class="block-title">👁 その他注目点</div>
+            <ul class="points-list">
+              <li><strong>ドル円：159.50円の上値と158.66円の下値</strong>：昨日の東京午後の高値が159.50円、NY時間の安値が158.66円。158円台後半には21日・100日・200日の移動平均線が集まっており、昨日はここで下げ止まった。15分・30分足で159.50円を上抜ければ160円に向けた上昇、158.66円を割れば移動平均線の下に抜けて下げ幅が広がる。160円に近づくと為替介入への警戒で上値は重い。米国休場で値幅は出にくく、レンジの上下で逆張りが入りやすい日。</li>
+              <li><strong>日銀：田村委員の講演で12月利上げ観測を確認</strong>：日銀の次回会合は12/18。田村委員が講演と会見で物価や円安への警戒を強く示せば、12月利上げ観測が高まり円買い。利上げを急がない姿勢なら円売り。東京時間の10:00以降、クロス円の方向を決める材料になる。</li>
+              <li><strong>米関税案：日本・EU・中国が対象</strong>：昨日、米国が貿易調査を経て、EUに最大20%、中国とベトナムに20%超、日本と韓国に実質15%の関税を提案したと伝わった。AI株への不安と重なってリスク回避の円買いとスイスフラン買いが入った。続報が出れば、薄い市場で円買いが急に進む。</li>
+              <li><strong>ポンド：BOEの利上げ姿勢とエネルギー価格</strong>：英国のエネルギー価格上限が1月から26%引き上げられると発表され、ポンドは一時売られた。一方でベイリー総裁らは議会証言で、エネルギー価格が下がらなければ追加利上げが必要になる公算が大きいと述べ、ポンドは買い戻された。19:30の金融安定報告書でも、物価と金融環境への見方がポンドの材料になる。</li>
+              <li><strong>原油：フーシ派がサウジ最大級の製油所を攻撃</strong>：フーシ派がサウジ東部のラスタヌラ製油所と首都リヤドの金融街を攻撃し、WTIは83.68ドル（+1.99%）と続伸した。原油高は米国のインフレ懸念を通じてFRBの利上げ観測を支え、ドルの下値を固める。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="ranking">
+        <div class="panel-head">
+          <h3>🌏 今日の市場環境</h3>
+          <span>地合い・センチメント</span>
+        </div>
+        <div class="report-body" style="margin-bottom:20px;">
+          <strong>米国株</strong>：11/25はダウ50,182.95ドル（+164.25ドル、+0.33%）で3日続伸、S&amp;P500 7,182.78（-0.25%）、ナスダック23,585.80（-0.62%）。ナスダックはAI関連株の売りで一時4%超下げたが、後半に下げ幅を縮めた。エヌビディアは-3.91%。ヘルスケアや生活必需品などディフェンシブ株に資金が移った。<strong>米国債利回り</strong>：午後2時台で10年債4.84%（-0.09）、2年債4.63%（-0.05）。<strong>ドル指数</strong>：103.62（-0.18%）。<strong>商品</strong>：WTIは83.68ドル（+1.63ドル、+1.99%）、金2月限は3,564.60ドル（-0.74%）。<strong>FRB</strong>：短期金融市場は12/9の追加利上げを約94%織り込んでいる。<br><br><strong>政策金利（11/23確認値を継続）：</strong> FRB 3.75〜4.00％、日銀 1.25％、ECB 預金金利2.50％、BOE 4.00％、RBA 4.85％、RBNZ 2.75％、BOC 2.50％、SNB 0.00％。次回会合はRBA 12/8、FRB・RBNZ・BOC 12/9、SNB 12/10、ECB・BOE 12/17、日銀 12/18。<br><br><strong>今週の残り：</strong> 27日 米短縮取引、30日 月末。
+        </div>
+
+        <div class="panel-head" style="margin-top:4px;">
+          <h3>🏆 通貨ランキング</h3>
+          <span>本日の優先順</span>
+        </div>
+        <table class="fx-table">
+          <thead>
+            <tr><th>ランク</th><th>ペア</th><th>4H</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>AUD/JPY</strong><br><span style="color:var(--muted);font-size:12px;">スコア85・最適。ADX43.7、5日ADR 99.0pips（5年比111%）、4H方向は下降。豪CPIの上振れでも買いが続かず105円を割り込んだ。今日は豪設備投資と田村委員の講演が東京時間に重なる。NY時間引けは105.53円前後。</span></td>
+              <td><span class="trend-down">↓</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-a">A</span></td>
+              <td><strong>GBP/JPY</strong><br><span style="color:var(--muted);font-size:12px;">スコア72・適。ADX29.4、5日ADR 161.4pips（5年比112%）と値幅は最大、4H方向はレンジ。昨日はエネルギー価格上限の引き上げで207.60円付近まで下げた後、BOEの利上げ姿勢で208.93円前後まで戻した。19:30の金融安定報告書が材料。</span></td>
+              <td><span class="trend-range">→</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>EUR/AUD</strong><br><span style="color:var(--muted);font-size:12px;">スコア71・適。ADX26.5、5日ADR 114.4pips、4H方向は上昇。豪ドルが豪CPI後に売られ、ユーロがNY時間に買われたことで上昇が続いた。4Hで上昇方向が出ている数少ないペア。</span></td>
+              <td><span class="trend-up">↑</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>EUR/JPY</strong><br><span style="color:var(--muted);font-size:12px;">スコア69・適。ADX24.7、5日ADR 136.1pips、4H方向はレンジ。昨日はロンドン朝に173.91円まで下げた後、NY時間に174.88円まで上げた。21:30のECB議事要旨が材料。</span></td>
+              <td><span class="trend-range">→</span></td>
+            </tr>
+            <tr>
+              <td><span class="rank-badge rank-b">B</span></td>
+              <td><strong>GBP/USD</strong><br><span style="color:var(--muted);font-size:12px;">スコア64・候補。ADX32.0、4H方向はレンジ。昨日は1.3046ドルまで下げた後、1.3129ドルまで戻した。米国休場の今日は、ポンド側の材料で動く。</span></td>
+              <td><span class="trend-range">→</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">※ 4時間足ランキングは本日分が未更新のため、2026/11/25 12:05 JST生成分のスコアを使用し、11/25の値動きを踏まえて順位を調整した。スコア・ADX・ADRは候補選定の補助指標であり、売買推奨ではない。USD/JPYは11/25時点10位（スコア37・見送り、ADX14.7）。</p>
+      </div>
+
+      <div class="panel wide" id="review">
+        <div class="panel-head">
+          <h3>📰 前日の相場振り返り（前営業日 2026-11-25 水）</h3>
+          <span>前日の主要トピック</span>
+        </div>
+        <div class="report-body">
+          <div class="topic">
+            <div class="topic-title">【トピック1】豪CPIが加速したのに、豪ドルは買いが続かず105円割れ（東京朝）</div>
+            09:30の豪10月CPIは前年比+4.9%（予想+4.7%、前回+4.3%）、前月比+0.5%（予想+0.3%）、トリム平均は前年比+3.8%（予想+3.6%）と、どれも予想を上回った。豪ドル米ドルは0.6630ドル台から0.6665ドルまで上げたが、すぐに反落し、午後には0.6580ドル台まで下げた。物価が上がる一方で雇用が弱い「スタグフレーション」への懸念と、ドル全体の上昇が重しになった。豪ドル円は105.60円前後から一時上げた後、105円を割り込んだ。この時点のドル円は159円台前半。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック2】AI株安で円買いの後、午後はドル全面高（東京）</div>
+            前日のナスダックの下落と、アジア市場でのAI関連株安、ナスダック先物の続落が重しになり、ドル円は昼前後に159.11円まで下げた。その後はドルが全面的に買われ、ドル円は159.50円まで反発した。ユーロドルは1.0960ドル前後から1.0931ドルへ、ポンドドルは1.3110ドル前後から1.3070ドル台へ下げた。ユーロ円は174.27円まで下げた後も上値が重かった。この時点のドル円は159.50円。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック3】英エネルギー価格上限26%引き上げでポンド安、スイスフランは安全通貨として買われる（ロンドン）</div>
+            英ガス・電力市場規制局が1月からエネルギー価格上限を26%引き上げると発表し、英国の家計への負担が懸念されてポンドが売られた。ポンドドルは1.30ドル台後半、ポンド円は208円付近まで下げた。株式市場の乱高下を受けて、スイスフランは直近24時間でG10通貨の中で唯一ドルに対して買われ、円もそれに次いで強かった。ユーロ円は173.91円まで下げた。ドル円はドル買いと円買いが交錯し、159.00〜159.50円の間で上下した。この時点のドル円は159.30円近辺。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック4】米指標は強くドル買い、続く新関税案とAI株安で円買いに転じる（NY前半）</div>
+            感謝祭前で米指標がまとめて発表された。7-9月期GDP改定値は前期比年率+4.3%（予想+3.5%、速報+3.4%）、個人消費は+4.2%。新規失業保険申請件数は18.9万件（予想20.0万件）で1969年以来の低さに並んだ。10月のコアPCE価格指数は前年比+3.3%（予想+3.2%）と加速し、FRBの12月追加利上げがより確実視された。ドル円は159.38円まで上げた。個人支出は+0.3%（予想+0.4%）、耐久財受注は+0.2%（予想+0.7%）と弱かった。その後、米国がEUに最大20%、中国とベトナムに20%超、日本と韓国に実質15%の関税を提案したと伝わり、ナスダックは一時4%超下げた。米国債が買われて金利が下がり、ドル円は158.66円まで下げた。この時点のドル円は158.66円。
+          </div>
+          <div class="topic">
+            <div class="topic-title">【トピック5】AI株の下げ渋りでドル円は159円台に戻る、ポンドはBOEの利上げ姿勢で買い戻し（NY後半）</div>
+            ナスダックが後半に下げ幅を縮めると円買いが止まり、ドル円は159円台前半に戻した。158円台後半に集まる21日・100日・200日の移動平均線で下げ止まった形。新築住宅販売件数は70.1万件（予想65.0万件）と上振れ。ベージュブックでは12地区中8地区が「緩慢から緩やか」な成長を報告し、物価は緩やかに上がっているとした。英国ではベイリー総裁ら複数の政策委員が議会証言で、エネルギー価格の高止まりによるインフレを無視できないと述べ、来月の追加利上げに含みを持たせた。ポンドドルは1.3046ドルから1.3129ドル、ポンド円は207.60円付近から208円台後半へ戻した。ユーロドルは1.0934ドルから1.0993ドルへ上げて引けた。原油はフーシ派のサウジ製油所攻撃でWTIが83.68ドルと続伸。この時点のドル円は159.22円前後。
+          </div>
+          <div class="handover">
+            <strong>本日（11/26木）への引継ぎ：昨日のドル円は、強い米指標で159.38円まで上げ、関税案とAI株安で158.66円まで下げ、159円台前半に戻るという往って来いだった。FRBの12月利上げ観測がドルの下値を支え、160円に近づくと介入警戒が上値を抑える構図は変わらない。今日は米国が感謝祭で休場で、NY時間は値動きが細る。材料は東京時間の豪設備投資と田村日銀委員の講演・会見、欧州時間のBOE金融安定報告書とECB議事要旨。ドル円は159.50円と158.66円のどちらを抜けるかで方向を決める。</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel full" id="calendar">
+        <div class="panel-head">
+          <h3>📅 本日の経済指標カレンダー（全件）</h3>
+          <span>本日の主要予定</span>
+        </div>
+        <table class="fx-table" style="font-size:0.9em;">
+          <thead>
+            <tr><th>時刻(JST)</th><th>国</th><th>指標名</th><th>重要度</th><th>予想</th><th>前回</th></tr>
+          </thead>
+          <tbody>
+{cal_rows}
+          </tbody>
+        </table>
+        <p style="font-size:11px;color:var(--muted);margin-top:12px;">※ 時刻は日本時間（24時以降は翌日11/27金）。冬時間のため米東部時間+14時間で換算。複数の情報で一致した値を掲載し、一致を確認できない項目・数値には「（要確認）」を付記。重要度は米国 SS&gt;S&gt;AA&gt;A&gt;BB&gt;B&gt;C、その他 ◎&gt;○&gt;△&gt;×。「低」は低重要度の参考指標。【発表済み】は本日0時〜7時に実施済みの項目。</p>
+      </div>
+
+    </div><!-- /content-grid -->
+
+  </main>
+</div>
+<nav class="mobile-bottom-nav" aria-label="スマホ下部ナビ">
+  <a href="../index.html">Home</a>
+  <a href="#summary" class="active">日報</a>
+  <a href="#calendar">指標</a>
+  <a href="#report-menu">Menu</a>
+</nav>
+<footer class="footer">
+  <div>© 2026 AUXEN FX Portal — 本サイトの情報は投資助言ではありません。FX取引はリスクを伴います。</div>
+  <div class="footer-links">
+    <a href="../about.html">About</a>
+    <a href="../disclaimer.html">免責事項</a>
+    <a href="../privacy.html">プライバシーポリシー</a>
+    <a href="../terms.html">利用規約</a>
+    <a href="../contact.html">お問い合わせ</a>
+  </div>
+</footer>
+</body>
+</html>
+'''
+
+with open(f'reports/{TODAY}.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print(f'reports/{TODAY}.html written ({len(html)} chars)')
