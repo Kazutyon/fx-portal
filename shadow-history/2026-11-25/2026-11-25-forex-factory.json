@@ -1,0 +1,227 @@
+{
+  "source": "forex-factory-weekly-feed",
+  "date": "2026-11-25",
+  "fetched_at": "2026-11-25T12:31:00+09:00",
+  "events": [
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "CB Consumer Confidence",
+      "importance": "medium",
+      "forecast": "92.4",
+      "previous": "91.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "Richmond Manufacturing Index",
+      "importance": "low",
+      "forecast": "-2",
+      "previous": "-2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "02:25",
+      "country": "CAD",
+      "name": "BOC Gov Macklem Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "06:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "SPPI y/y",
+      "importance": "low",
+      "forecast": "3.6%",
+      "previous": "3.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "CPI m/m",
+      "importance": "high",
+      "forecast": "0.4%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "CPI y/y",
+      "importance": "high",
+      "forecast": "4.7%",
+      "previous": "4.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Construction Work Done q/q",
+      "importance": "low",
+      "forecast": "0.8%",
+      "previous": "-2.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Trimmed Mean CPI m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "BOJ Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.5%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German Final GDP q/q",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "18:00",
+      "country": "CHF",
+      "name": "UBS Economic Expectations",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-15.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "19:42",
+      "country": "EUR",
+      "name": "German 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.37|1.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "21:25",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Core Durable Goods Orders m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Core PCE Price Index m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Durable Goods Orders m/m",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "1.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Personal Income m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Personal Spending m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Prelim GDP Price Index q/q",
+      "importance": "medium",
+      "forecast": "2.3%",
+      "previous": "2.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Prelim GDP q/q",
+      "importance": "high",
+      "forecast": "3.5%",
+      "previous": "3.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Unemployment Claims",
+      "importance": "low",
+      "forecast": "201K",
+      "previous": "203K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+    }
+  ]
+}

@@ -1,0 +1,371 @@
+{
+  "date": "2026-11-25",
+  "generated_at_jst": "2026-11-25T12:31:02+09:00",
+  "source_count": 3,
+  "event_count": 24,
+  "confirmed_count": 2,
+  "events": [
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "CB Consumer Confidence",
+      "importance": "medium",
+      "forecast": "92.4",
+      "previous": "91.7",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "Richmond Manufacturing Index",
+      "importance": "low",
+      "forecast": "-2",
+      "previous": "-2",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "02:25",
+      "country": "CAD",
+      "name": "BOC Gov Macklem Speaks",
+      "importance": "medium",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "06:30",
+      "country": "USD",
+      "name": "API Weekly Statistical Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "08:50",
+      "country": "JPY",
+      "name": "SPPI y/y",
+      "importance": "low",
+      "forecast": "3.6%",
+      "previous": "3.7%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "CPI m/m",
+      "importance": "high",
+      "forecast": "0.4%",
+      "previous": "0.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "CPI y/y",
+      "importance": "high",
+      "forecast": "4.7%",
+      "previous": "4.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Construction Work Done q/q",
+      "importance": "low",
+      "forecast": "0.8%",
+      "previous": "-2.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Trimmed Mean CPI m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "14:00",
+      "country": "JPY",
+      "name": "BOJ Core CPI y/y",
+      "importance": "low",
+      "forecast": "2.5%",
+      "previous": "2.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German Final GDP q/q",
+      "importance": "low",
+      "forecast": "0.2%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "CHF",
+      "name": "UBS Economic Expectations",
+      "importance": "low",
+      "forecast": null,
+      "previous": "-15.3",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:42",
+      "country": "EUR",
+      "name": "German 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "3.37|1.1",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:25",
+      "country": "USD",
+      "name": "FOMC Member Bowman Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Core Durable Goods Orders m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Core PCE Price Index m/m",
+      "importance": "high",
+      "forecast": "0.3%",
+      "previous": "0.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Durable Goods Orders m/m",
+      "importance": "low",
+      "forecast": "0.7%",
+      "previous": "1.8%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "GDP (Second Estimate) and Corporate Profits, 3rd Quarter 2026",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": true,
+      "source_url": "https://www.bea.gov/news/schedule",
+      "sources": [
+        "us-bea-official-schedule"
+      ],
+      "confirmed": true
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Personal Income and Outlays, October 2026",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": true,
+      "source_url": "https://www.bea.gov/news/schedule",
+      "sources": [
+        "us-bea-official-schedule"
+      ],
+      "confirmed": true
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Personal Income m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "0.2%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Personal Spending m/m",
+      "importance": "low",
+      "forecast": "0.4%",
+      "previous": "0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Prelim GDP Price Index q/q",
+      "importance": "medium",
+      "forecast": "2.3%",
+      "previous": "2.3%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Prelim GDP q/q",
+      "importance": "high",
+      "forecast": "3.5%",
+      "previous": "3.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Unemployment Claims",
+      "importance": "low",
+      "forecast": "201K",
+      "previous": "203K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:00 USD CB Consumer Confidence",
+    "single source: 00:00 USD Richmond Manufacturing Index",
+    "single source: 02:25 CAD BOC Gov Macklem Speaks",
+    "single source: 06:30 USD API Weekly Statistical Bulletin",
+    "single source: 08:50 JPY SPPI y/y",
+    "single source: 09:30 AUD CPI m/m",
+    "single source: 09:30 AUD CPI y/y",
+    "single source: 09:30 AUD Construction Work Done q/q",
+    "single source: 09:30 AUD Trimmed Mean CPI m/m",
+    "single source: 14:00 JPY BOJ Core CPI y/y",
+    "single source: 16:00 EUR German Final GDP q/q",
+    "single source: 18:00 CHF UBS Economic Expectations",
+    "single source: 19:42 EUR German 10-y Bond Auction",
+    "single source: 21:25 USD FOMC Member Bowman Speaks",
+    "single source: 22:30 USD Core Durable Goods Orders m/m",
+    "single source: 22:30 USD Core PCE Price Index m/m",
+    "single source: 22:30 USD Durable Goods Orders m/m",
+    "single source: 22:30 USD Personal Income m/m",
+    "single source: 22:30 USD Personal Spending m/m",
+    "single source: 22:30 USD Prelim GDP Price Index q/q",
+    "single source: 22:30 USD Prelim GDP q/q",
+    "single source: 22:30 USD Unemployment Claims"
+  ],
+  "publish_ready": true
+}

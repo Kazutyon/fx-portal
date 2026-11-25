@@ -1,0 +1,27 @@
+{
+  "source": "us-bea-official-schedule",
+  "date": "2026-11-25",
+  "fetched_at": "2026-11-25T12:31:01+09:00",
+  "events": [
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "GDP (Second Estimate) and Corporate Profits, 3rd Quarter 2026",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": true,
+      "source_url": "https://www.bea.gov/news/schedule"
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Personal Income and Outlays, October 2026",
+      "importance": "high",
+      "forecast": null,
+      "previous": null,
+      "official": true,
+      "source_url": "https://www.bea.gov/news/schedule"
+    }
+  ]
+}
