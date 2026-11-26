@@ -1,0 +1,240 @@
+{
+  "date": "2026-11-26",
+  "generated_at_jst": "2026-11-26T11:49:57+09:00",
+  "source_count": 3,
+  "event_count": 15,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "00:00",
+      "country": "USD",
+      "name": "New Home Sales",
+      "importance": "low",
+      "forecast": "650K",
+      "previous": "676K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "00:30",
+      "country": "USD",
+      "name": "Crude Oil Inventories",
+      "importance": "low",
+      "forecast": "2.0M",
+      "previous": "3.4M",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "02:00",
+      "country": "USD",
+      "name": "Natural Gas Storage",
+      "importance": "low",
+      "forecast": "-19B",
+      "previous": "20B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "04:00",
+      "country": "USD",
+      "name": "Beige Book",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "Private Capital Expenditure q/q",
+      "importance": "low",
+      "forecast": "4.5%",
+      "previous": "-3.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "09:30",
+      "country": "AUD",
+      "name": "RBA Bulletin",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:00",
+      "country": "EUR",
+      "name": "German GfK Consumer Climate",
+      "importance": "low",
+      "forecast": "-29.4",
+      "previous": "-30.8",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "M3 Money Supply y/y",
+      "importance": "low",
+      "forecast": "3.5%",
+      "previous": "3.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:00",
+      "country": "EUR",
+      "name": "Private Loans y/y",
+      "importance": "low",
+      "forecast": "3.2%",
+      "previous": "3.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "18:15",
+      "country": "EUR",
+      "name": "Euro Summit",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:30",
+      "country": "GBP",
+      "name": "BOE Financial Stability Report",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:30",
+      "country": "GBP",
+      "name": "FPC Meeting Minutes",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:30",
+      "country": "GBP",
+      "name": "FPC Statement",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:30",
+      "country": "EUR",
+      "name": "ECB Monetary Policy Meeting Accounts",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:00",
+      "country": "USD",
+      "name": "Bank Holiday",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 00:00 USD New Home Sales",
+    "single source: 00:30 USD Crude Oil Inventories",
+    "single source: 02:00 USD Natural Gas Storage",
+    "single source: 04:00 USD Beige Book",
+    "single source: 09:30 AUD Private Capital Expenditure q/q",
+    "single source: 09:30 AUD RBA Bulletin",
+    "single source: 16:00 EUR German GfK Consumer Climate",
+    "single source: 18:00 EUR M3 Money Supply y/y",
+    "single source: 18:00 EUR Private Loans y/y",
+    "single source: 18:15 EUR Euro Summit",
+    "single source: 19:30 GBP BOE Financial Stability Report",
+    "single source: 19:30 GBP FPC Meeting Minutes",
+    "single source: 19:30 GBP FPC Statement",
+    "single source: 21:30 EUR ECB Monetary Policy Meeting Accounts",
+    "single source: 22:00 USD Bank Holiday",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
