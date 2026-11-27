@@ -91,7 +91,7 @@ Cloudflare系bot対策により素のHTTP取得は常時403で、実際にはほ
 
 **VIX**: https://jp.investing.com/indices/volatility-s-p-500
 **米国債10年利回り**: https://jp.investing.com/rates-bonds/u.s.-10-year-bond-yield
-**米国債2年利回り**: https://jp.investing.com/rates-bonds/u-s.-2-year-bond-yield
+**米国債2年利回り**: https://jp.investing.com/rates-bonds/u.s.-2-year-bond-yield
 **DXY**: https://jp.investing.com/indices/usdollar
 **金（Gold）**: https://jp.investing.com/commodities/gold
 **原油（WTI）**: https://jp.investing.com/commodities/crude-oil
