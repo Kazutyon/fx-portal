@@ -1,0 +1,195 @@
+{
+  "date": "2026-11-27",
+  "generated_at_jst": "2026-11-27T11:49:58+09:00",
+  "source_count": 3,
+  "event_count": 12,
+  "confirmed_count": 0,
+  "events": [
+    {
+      "time_jst": "08:30",
+      "country": "JPY",
+      "name": "Tokyo Core CPI y/y",
+      "importance": "medium",
+      "forecast": "3.0%",
+      "previous": "2.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "French Consumer Spending m/m",
+      "importance": "low",
+      "forecast": "0.1%",
+      "previous": "-0.5%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "French Final Private Payrolls q/q",
+      "importance": "low",
+      "forecast": "-0.1%",
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "French Prelim CPI m/m",
+      "importance": "low",
+      "forecast": "-0.2%",
+      "previous": "0.4%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "16:45",
+      "country": "EUR",
+      "name": "French Prelim GDP q/q",
+      "importance": "low",
+      "forecast": "-0.1%",
+      "previous": "-0.1%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:00",
+      "country": "EUR",
+      "name": "Spanish Flash CPI y/y",
+      "importance": "low",
+      "forecast": "4.7%",
+      "previous": "4.9%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "17:55",
+      "country": "EUR",
+      "name": "German Unemployment Change",
+      "importance": "low",
+      "forecast": "5K",
+      "previous": "4K",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "19:33",
+      "country": "EUR",
+      "name": "Italian 10-y Bond Auction",
+      "importance": "low",
+      "forecast": null,
+      "previous": "4.49|1.6",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "21:40",
+      "country": "EUR",
+      "name": "German Buba President Nagel Speaks",
+      "importance": "low",
+      "forecast": null,
+      "previous": null,
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "CAD",
+      "name": "Current Account",
+      "importance": "low",
+      "forecast": "9.5B",
+      "previous": "8.8B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Goods Trade Balance",
+      "importance": "low",
+      "forecast": "-135.9B",
+      "previous": "-134.9B",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    },
+    {
+      "time_jst": "22:30",
+      "country": "USD",
+      "name": "Prelim Wholesale Inventories m/m",
+      "importance": "low",
+      "forecast": "0.5%",
+      "previous": "0.6%",
+      "official": false,
+      "source_url": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+      "sources": [
+        "forex-factory-weekly-feed"
+      ],
+      "confirmed": false
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "single source: 08:30 JPY Tokyo Core CPI y/y",
+    "single source: 16:45 EUR French Consumer Spending m/m",
+    "single source: 16:45 EUR French Final Private Payrolls q/q",
+    "single source: 16:45 EUR French Prelim CPI m/m",
+    "single source: 16:45 EUR French Prelim GDP q/q",
+    "single source: 17:00 EUR Spanish Flash CPI y/y",
+    "single source: 17:55 EUR German Unemployment Change",
+    "single source: 19:33 EUR Italian 10-y Bond Auction",
+    "single source: 21:40 EUR German Buba President Nagel Speaks",
+    "single source: 22:30 CAD Current Account",
+    "single source: 22:30 USD Goods Trade Balance",
+    "single source: 22:30 USD Prelim Wholesale Inventories m/m",
+    "no high-importance events",
+    "no events confirmed by a second source or official schedule"
+  ],
+  "publish_ready": false
+}
