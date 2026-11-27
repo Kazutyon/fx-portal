@@ -417,8 +417,8 @@ html = f"""<!DOCTYPE html>
 <link rel="apple-touch-icon" href="assets/logo.svg">
 <script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
-<script>document.addEventListener('DOMContentLoaded',function(){twemoji.parse(document.body,{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'});});</script>
-<script>document.addEventListener('DOMContentLoaded',function(){const b=document.querySelector('.mobile-menu-button'),m=document.getElementById('mobile-menu');if(!b||!m)return;b.addEventListener('click',function(){const open=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',String(!open));m.hidden=open;document.body.classList.toggle('menu-open',!open);});m.addEventListener('click',function(e){if(e.target.closest('a')){b.setAttribute('aria-expanded','false');m.hidden=true;document.body.classList.remove('menu-open');}});});</script>
+<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
+<script>document.addEventListener('DOMContentLoaded',function(){{const b=document.querySelector('.mobile-menu-button'),m=document.getElementById('mobile-menu');if(!b||!m)return;b.addEventListener('click',function(){{const open=b.getAttribute('aria-expanded')==='true';b.setAttribute('aria-expanded',String(!open));m.hidden=open;document.body.classList.toggle('menu-open',!open);}});m.addEventListener('click',function(e){{if(e.target.closest('a')){{b.setAttribute('aria-expanded','false');m.hidden=true;document.body.classList.remove('menu-open');}}}});}});</script>
 </head>
 <body class="home-page">
 <header class="mobile-header">
@@ -733,7 +733,7 @@ archive_html = f"""<!DOCTYPE html>
 <link rel="apple-touch-icon" href="assets/logo.svg">
 <script data-goatcounter="https://auxen.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
-<script>document.addEventListener('DOMContentLoaded',function(){twemoji.parse(document.body,{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'});});</script>
+<script>document.addEventListener('DOMContentLoaded',function(){{twemoji.parse(document.body,{{folder:'svg',ext:'.svg',base:'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/'}});}});</script>
 </head>
 <body class="home-page">
 <header class="mobile-header">
